@@ -273,13 +273,21 @@ public sealed class LearningService(
             session.EndedUtc = Now;
             // An abandoned placement (less than 70 % answered) does not calibrate anything; the banner stays.
             if (session.Kind == SessionKind.Placement && session.StepsDone >= session.StepsTotal * 0.7)
-            {
-                var profile = await db.Profiles.FindAsync([1], ct);
-                if (profile is not null) profile.PlacementCompletedUtc = Now;
-            }
+                await MarkPlacementCompletedAsync(db, ct);
             await db.SaveChangesAsync(ct);
         }
         return session;
+    }
+
+    private static async Task MarkPlacementCompletedAsync(LotseDbContext db, CancellationToken ct)
+    {
+        var profile = await db.Profiles.FindAsync([1], ct);
+        if (profile is null)
+        {
+            profile = new LearnerProfile { Id = 1, CreatedUtc = DateTime.UtcNow };
+            db.Profiles.Add(profile);
+        }
+        profile.PlacementCompletedUtc = DateTime.UtcNow;
     }
 
     public async Task AbandonSessionAsync(Guid id, CancellationToken ct = default)
@@ -414,11 +422,7 @@ public sealed class LearningService(
         if (complete && session.EndedUtc is null)
         {
             session.EndedUtc = DateTime.UtcNow;
-            if (session.Kind == SessionKind.Placement)
-            {
-                var profile = await db.Profiles.FindAsync([1], ct);
-                if (profile is not null) profile.PlacementCompletedUtc = DateTime.UtcNow;
-            }
+            if (session.Kind == SessionKind.Placement) await MarkPlacementCompletedAsync(db, ct);
         }
         return complete;
     }
@@ -546,6 +550,22 @@ public sealed class LearningService(
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         return await db.SkillStates.AsNoTracking().ToDictionaryAsync(s => s.NodeId, ct);
+    }
+
+    /// <summary>Errors made during one session (deterministic ones via attempts, AI ones via productions), grouped for the summary screen.</summary>
+    public async Task<IReadOnlyList<(string Code, string Title, string NodeTitle, int Count)>> GetSessionErrorsAsync(Guid sessionId, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var attemptIds = await db.Attempts.Where(a => a.SessionId == sessionId).Select(a => a.Id).ToListAsync(ct);
+        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == sessionId, ct);
+        var from = session?.StartedUtc ?? DateTime.MinValue;
+        var to = session?.EndedUtc ?? Now;
+        var rows = await db.ErrorEvents.AsNoTracking()
+            .Where(e => (e.AttemptId != null && attemptIds.Contains(e.AttemptId.Value)) || (e.FromAi && e.Utc >= from && e.Utc <= to))
+            .ToListAsync(ct);
+        return rows.GroupBy(r => r.Code)
+            .Select(g => (g.Key, Catalog.Error(g.Key)?.Title ?? g.Key, Catalog.NodeTitle(Catalog.Error(g.Key)?.NodeId ?? g.First().NodeId), g.Count()))
+            .OrderByDescending(t => t.Item4).ToList();
     }
 
     public async Task<IReadOnlyList<ErrorJournalEntry>> GetErrorJournalAsync(int days = 30, int take = 100, CancellationToken ct = default)

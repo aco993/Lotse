@@ -19,6 +19,14 @@ else
         </MudAlert>
     }
 
+    @if (_m.Profile.TargetExamDate is { } exam)
+    {
+        var days = exam.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber;
+        <MudAlert Severity="@(days < 30 ? Severity.Warning : Severity.Normal)" Dense="true" Variant="Variant.Text" Class="mb-2" Icon="@Icons.Material.Filled.Event">
+            Prüfung am @exam.ToString("dd.MM.yyyy") – @(days >= 0 ? $"noch {days} Tage" : "Termin liegt in der Vergangenheit"). @(days is >= 0 and < 30 ? "Jetzt vor allem Simulationen und Wiedervorlagen." : "")
+        </MudAlert>
+    }
+
     <MudGrid Spacing="2" Class="mb-3">
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.StreakDays 🔥</div><div class="l">Tage in Folge</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.MinutesToday</div><div class="l">Minuten heute</div></MudPaper></MudItem>

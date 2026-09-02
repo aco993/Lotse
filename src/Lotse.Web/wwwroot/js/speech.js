@@ -84,3 +84,23 @@ export function focusElement(id) {
     const el = document.getElementById(id);
     if (el) el.focus();
 }
+
+// Global keyboard shortcuts for the exercise runner (Enter = continue, 1-4 = choose option).
+// Ignored while typing in an input/textarea so Enter-to-check keeps working through the field itself.
+let keyHandler = null;
+export function registerKeys(dotnetRef) {
+    unregisterKeys();
+    keyHandler = (e) => {
+        const tag = (e.target && e.target.tagName) || "";
+        const typing = tag === "INPUT" || tag === "TEXTAREA" || (e.target && e.target.isContentEditable);
+        if (e.key === "Enter" && !typing) {
+            dotnetRef.invokeMethodAsync("OnGlobalKey", "Enter");
+        } else if (!typing && /^[1-9]$/.test(e.key)) {
+            dotnetRef.invokeMethodAsync("OnGlobalKey", e.key);
+        }
+    };
+    document.addEventListener("keydown", keyHandler);
+}
+export function unregisterKeys() {
+    if (keyHandler) { document.removeEventListener("keydown", keyHandler); keyHandler = null; }
+}
