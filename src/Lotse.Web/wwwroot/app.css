@@ -34,6 +34,15 @@ html, body { height: 100%; }
 .recording { animation: pulse 1.4s infinite; }
 
 .mono { font-family: Consolas, "Courier New", monospace; }
+
+/* Phones: tables scroll inside their box, cards use the full width, big tap targets. */
+.mud-table-container, .mud-simple-table { overflow-x: auto; }
+@media (max-width: 600px) {
+    .ex-prompt { font-size: 1.1rem; }
+    .kpi .v { font-size: 1.5rem; }
+    .mud-expansion-panel-text { font-size: .9rem; }
+    .wo-chunk { font-size: 1rem; }
+}
 .preline { white-space: pre-line; }
 
 #blazor-error-ui { display: none; }
