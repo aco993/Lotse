@@ -1,0 +1,65 @@
+@* Dispatches one session step to the right exercise component and shows why it was chosen. *@
+
+<MudCard Elevation="2" Class="ex-card">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-2" Wrap="Wrap.Wrap">
+            <MudChip T="string" Size="Size.Small" Color="@KindColor" Variant="Variant.Filled">@KindLabel</MudChip>
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@NodeTitle</MudChip>
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@Exercise.Band.Label()</MudChip>
+            <MudSpacer />
+            @if (Total > 0) { <MudText Typo="Typo.caption">@(Index + 1) / @Total</MudText> }
+        </MudStack>
+        @if (!string.IsNullOrWhiteSpace(Reason))
+        {
+            <MudText Typo="Typo.body2" Class="ex-reason mb-3">@Reason</MudText>
+        }
+
+        @switch (Exercise.Type)
+        {
+            case ExerciseType.FreeWrite:
+            case ExerciseType.Speak:
+                <ProductionExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnProductionDone" OnSkip="OnSkip" />
+                break;
+            case ExerciseType.Reading:
+                <ReadingExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
+                break;
+            default:
+                <ClosedExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
+                break;
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public string NodeTitle { get; set; } = "";
+    [Parameter] public StepKind Kind { get; set; }
+    [Parameter] public string? Reason { get; set; }
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int Index { get; set; }
+    [Parameter] public int Total { get; set; }
+    [Parameter] public EventCallback<AnswerResult> OnAnswered { get; set; }
+    [Parameter] public EventCallback<double> OnProductionDone { get; set; }
+    [Parameter] public EventCallback OnSkip { get; set; }
+
+    private string KindLabel => Kind switch
+    {
+        StepKind.Review => "Wiederholung",
+        StepKind.Focus => "Schwerpunkt",
+        StepKind.Recheck => "Wiedervorlage",
+        StepKind.Production => Exercise.Type == ExerciseType.Speak ? "Sprechen" : "Schreiben",
+        StepKind.Input => Exercise.Type == ExerciseType.Reading && !Exercise.AudioOnly ? "Lesen" : "Hören",
+        StepKind.Explore => "Erkundung",
+        _ => Kind.ToString(),
+    };
+
+    private Color KindColor => Kind switch
+    {
+        StepKind.Review => Color.Info,
+        StepKind.Focus => Color.Primary,
+        StepKind.Recheck => Color.Warning,
+        StepKind.Production => Color.Secondary,
+        StepKind.Input => Color.Tertiary,
+        _ => Color.Default,
+    };
+}

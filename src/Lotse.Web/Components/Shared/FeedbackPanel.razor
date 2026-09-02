@@ -1,0 +1,68 @@
+@* Feedback after a closed exercise: verdict, expected answer, explanation, contrastive note, mastery. *@
+<MudPaper Elevation="0" Class="@($"pa-4 mt-3 {CssClass}")" Style="background: var(--mud-palette-background-gray)">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudIcon Icon="@Icon" Color="@IconColor" />
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600">@Headline</MudText>
+        <MudSpacer />
+        @if (Result.Node is not null)
+        {
+            <MudTooltip Text="Geschätzte Sicherheit bei B2-Aufgaben zu diesem Thema">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default">@Result.Node.Title · @Result.MasteryAfter.ToString("P0")</MudChip>
+            </MudTooltip>
+        }
+    </MudStack>
+
+    @if (Result.Check.Outcome != Outcome.Correct)
+    {
+        <MudText Class="mt-2"><b>Lösung:</b> @Result.Check.Expected</MudText>
+    }
+    @if (Result.Check.Outcome == Outcome.AlmostCorrect)
+    {
+        <MudText Typo="Typo.body2" Class="mt-1">@Result.Check.Feedback</MudText>
+    }
+    @if (!string.IsNullOrWhiteSpace(Result.Exercise.Explanation))
+    {
+        <MudText Typo="Typo.body2" Class="mt-2">@Result.Exercise.Explanation</MudText>
+    }
+    @if (Result.InterferenceNote is not null)
+    {
+        <div class="ex-serbian mt-3">
+            <MudText Typo="Typo.caption" Style="font-weight:600">Serbisch ↔ Deutsch</MudText>
+            <MudText Typo="Typo.body2">@Result.InterferenceNote</MudText>
+        </div>
+    }
+    @if (Result.Exercise.Type == ExerciseType.Vocab && !string.IsNullOrWhiteSpace(Result.Exercise.ExampleDe))
+    {
+        <MudText Typo="Typo.body2" Class="mt-2"><i>@Result.Exercise.ExampleDe</i>@(Result.Exercise.Plural is null ? "" : $" · Plural: {Result.Exercise.Plural}")</MudText>
+    }
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public AnswerResult Result { get; set; } = default!;
+
+    private string CssClass => Result.Check.Outcome switch
+    {
+        Outcome.Correct => "ex-feedback-correct",
+        Outcome.AlmostCorrect => "ex-feedback-almost",
+        _ => "ex-feedback-wrong",
+    };
+    private string Icon => Result.Check.Outcome switch
+    {
+        Outcome.Correct => Icons.Material.Filled.CheckCircle,
+        Outcome.AlmostCorrect => Icons.Material.Filled.Adjust,
+        _ => Icons.Material.Filled.Cancel,
+    };
+    private Color IconColor => Result.Check.Outcome switch
+    {
+        Outcome.Correct => Color.Tertiary,
+        Outcome.AlmostCorrect => Color.Secondary,
+        _ => Color.Error,
+    };
+    private string Headline => Result.Check.Outcome switch
+    {
+        Outcome.Correct => "Richtig",
+        Outcome.AlmostCorrect => "Fast richtig",
+        Outcome.Graded => Result.Check.Expected,
+        _ => "Leider nicht",
+    };
+}

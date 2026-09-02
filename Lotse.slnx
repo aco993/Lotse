@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lotse.Core/Lotse.Core.csproj" />
+    <Project Path="src/Lotse.Infrastructure/Lotse.Infrastructure.csproj" />
+    <Project Path="src/Lotse.Web/Lotse.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lotse.Core.Tests/Lotse.Core.Tests.csproj" />
+  </Folder>
+</Solution>

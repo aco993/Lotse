@@ -1,0 +1,79 @@
+@page "/fortschritt"
+@inject LearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+
+<PageTitle>Fortschritt – Lotse</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3">Fortschritt</MudText>
+
+@if (_states is null) { <MudSkeleton Height="200px" /> }
+else
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Letzte 30 Tage</MudText>
+        @if (_history.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine Aufgaben bearbeitet.</MudText> }
+        else
+        {
+            <div style="display:flex; align-items:flex-end; gap:3px; height:90px">
+                @{ var max = Math.Max(1, _history.Max(h => h.Attempts)); }
+                @foreach (var day in Enumerable.Range(0, 30).Select(i => DateTime.UtcNow.Date.AddDays(-29 + i)))
+                {
+                    var h = _history.FirstOrDefault(x => x.Day == day);
+                    var height = h == default ? 2 : Math.Max(4, 86.0 * h.Attempts / max);
+                    var color = h == default ? "var(--mud-palette-lines-default)" : h.Accuracy >= 0.8 ? "var(--mud-palette-tertiary)" : h.Accuracy >= 0.6 ? "var(--mud-palette-primary)" : "var(--mud-palette-secondary)";
+                    <MudTooltip Text="@(h == default ? day.ToString("dd.MM.") : $"{day:dd.MM.}: {h.Attempts} Aufgaben, {h.Accuracy:P0} richtig")">
+                        <div style="@($"width:14px;height:{height:F0}px;background:{color};border-radius:3px")"></div>
+                    </MudTooltip>
+                }
+            </div>
+            <MudText Typo="Typo.caption" Style="opacity:.6">Balkenhöhe = Aufgaben pro Tag, Farbe = Trefferquote (grün ≥ 80 %, blau ≥ 60 %).</MudText>
+        }
+    </MudPaper>
+
+    @foreach (var area in Enum.GetValues<SkillArea>())
+    {
+        var nodes = CatalogProvider.Catalog.Nodes.Where(n => n.Area == area).OrderBy(n => n.Band).ThenBy(n => n.Title).ToList();
+        if (nodes.Count == 0) continue;
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">@AreaLabel(area)</MudText>
+            @foreach (var n in nodes)
+            {
+                var s = _states.GetValueOrDefault(n.Id);
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
+                    <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="opacity:.5">@n.Band.Label()</span></MudText>
+                    <div style="flex:1"><MasteryBar Value="@(s?.Mastery ?? 0.5)" Confidence="@(s?.Confidence ?? 0)" /></div>
+                    <MudText Typo="Typo.caption" Style="width:110px;text-align:right">
+                        @if (s is null || s.Attempts == 0) { <span style="opacity:.5">noch nicht geübt</span> }
+                        else { @($"{s.Mastery:P0} · {s.Attempts}×") }
+                    </MudText>
+                    @if (s?.RecheckDueUtc is not null) { <MudTooltip Text="@($"Wiedervorlage am {s.RecheckDueUtc:dd.MM.}")"><MudIcon Icon="@Icons.Material.Filled.EventRepeat" Size="Size.Small" Color="Color.Warning" /></MudTooltip> }
+                    else if (s?.IsStrong == true) { <MudIcon Icon="@Icons.Material.Filled.Verified" Size="Size.Small" Color="Color.Tertiary" /> }
+                    else { <span style="width:20px;display:inline-block"></span> }
+                </MudStack>
+            }
+        </MudPaper>
+    }
+}
+
+@code {
+    private IReadOnlyDictionary<string, SkillState>? _states;
+    private IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)> _history = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _states = await Learning.GetSkillStatesAsync();
+        _history = await Learning.GetDailyHistoryAsync();
+    }
+
+    private static string AreaLabel(SkillArea a) => a switch
+    {
+        SkillArea.Grammatik => "Grammatik",
+        SkillArea.Wortschatz => "Wortschatz",
+        SkillArea.Redemittel => "Redemittel",
+        SkillArea.Lesen => "Lesen",
+        SkillArea.Hoeren => "Hören",
+        SkillArea.Schreiben => "Schreiben",
+        SkillArea.Sprechen => "Sprechen",
+        _ => a.ToString(),
+    };
+}

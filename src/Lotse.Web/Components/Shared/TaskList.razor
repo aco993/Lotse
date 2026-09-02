@@ -1,0 +1,29 @@
+@* Pickable list of production / reading tasks with context and length badges. *@
+@inject ContentCatalogProvider CatalogProvider
+
+@if (Items.Count == 0)
+{
+    <MudText Typo="Typo.body2" Style="opacity:.7">Keine Aufgaben in dieser Kategorie.</MudText>
+}
+<MudStack Spacing="2">
+    @foreach (var ex in Items)
+    {
+        var item = ex;
+        <MudPaper Class="pa-3" Elevation="1" Style="cursor:pointer" @onclick="() => OnPick.InvokeAsync(item)">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1" Wrap="Wrap.Wrap">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(item.Context == ExerciseContext.Beruf ? Color.Primary : item.Context == ExerciseContext.Pruefung ? Color.Secondary : Color.Default)">@item.Context</MudChip>
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@item.Band.Label()</MudChip>
+                @if (item.MinWords is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">~@item.MinWords Wörter</MudChip> }
+                @if (item.TargetSeconds is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">~@(item.TargetSeconds / 60) min</MudChip> }
+                <MudSpacer />
+                <MudText Typo="Typo.caption" Style="opacity:.7">@CatalogProvider.Catalog.NodeTitle(item.NodeId)</MudText>
+            </MudStack>
+            <MudText Typo="Typo.body2">@item.Prompt</MudText>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<Exercise> Items { get; set; } = [];
+    [Parameter] public EventCallback<Exercise> OnPick { get; set; }
+}

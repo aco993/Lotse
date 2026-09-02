@@ -1,0 +1,180 @@
+@* Typed answer, multiple choice or word order. Checks deterministically, shows feedback, then hands over with "Weiter". *@
+@inject LearningService Learning
+@inject SpeechService Speech
+
+<div class="ex-prompt mb-3">
+    @if (Exercise.Type == ExerciseType.Dictation)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => PlayAsync()" Disabled="_playing">Anhören</MudButton>
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.SlowMotionVideo" OnClick="() => PlayAsync(0.75)" Disabled="_playing">Langsam</MudButton>
+            <MudText Typo="Typo.body2" Style="opacity:.75">@Exercise.Prompt</MudText>
+        </MudStack>
+    }
+    else
+    {
+        @RenderPrompt(Exercise.Prompt)
+    }
+</div>
+@if (!string.IsNullOrWhiteSpace(Exercise.Instruction) && Exercise.Type != ExerciseType.Dictation)
+{
+    <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">@Exercise.Instruction</MudText>
+}
+
+@if (_result is null)
+{
+    @switch (Exercise.Type)
+    {
+        case ExerciseType.MultipleChoice:
+            <MudStack Spacing="1">
+                @for (var i = 0; i < Exercise.Options.Count; i++)
+                {
+                    var idx = i;
+                    <MudButton Variant="@(_choice == idx ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-3"
+                               OnClick="() => _choice = idx">@Exercise.Options[idx]</MudButton>
+                }
+            </MudStack>
+            break;
+        case ExerciseType.WordOrder:
+            <div class="wo-answer mb-2">
+                @if (_placed.Count == 0)
+                {
+                    <MudText Typo="Typo.body2" Style="opacity:.5">Tippe die Bausteine in der richtigen Reihenfolge an …</MudText>
+                }
+                @foreach (var p in _placed)
+                {
+                    var item = p;
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Filled" Class="wo-chunk" OnClick="() => Unplace(item)">@_pool[item]</MudChip>
+                }
+            </div>
+            <div class="wo-pool">
+                @for (var i = 0; i < _pool.Count; i++)
+                {
+                    var idx = i;
+                    if (_placed.Contains(idx)) continue;
+                    <MudChip T="string" Variant="Variant.Outlined" Class="wo-chunk" OnClick="() => Place(idx)">@_pool[idx]</MudChip>
+                }
+            </div>
+            break;
+        default:
+            <MudTextField @bind-Value="_answer" Label="Deine Antwort" Variant="Variant.Outlined" Immediate="true" AutoFocus="true"
+                          Lines="@(Exercise.Type is ExerciseType.Translate or ExerciseType.Transform or ExerciseType.Dictation ? 2 : 1)"
+                          OnKeyDown="OnKey" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.KeyboardReturn" />
+            break;
+    }
+
+    <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Spacing="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => SubmitAsync()" Disabled="@(_busy || !CanSubmit)">Prüfen</MudButton>
+        @if (!string.IsNullOrWhiteSpace(Exercise.Hint) && !_hintShown)
+        {
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Lightbulb" OnClick="() => _hintShown = true">Tipp</MudButton>
+        }
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="() => SubmitAsync(giveUp: true)" Disabled="_busy">Weiß ich nicht</MudButton>
+    </MudStack>
+    @if (_hintShown)
+    {
+        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2" Variant="Variant.Text">@Exercise.Hint</MudAlert>
+    }
+}
+else
+{
+    <FeedbackPanel Result="_result" />
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int StepIndex { get; set; }
+    [Parameter] public EventCallback<AnswerResult> OnDone { get; set; }
+
+    private string _answer = "";
+    private int? _choice;
+    private List<string> _pool = [];
+    private readonly List<int> _placed = [];
+    private bool _hintShown;
+    private bool _busy;
+    private bool _playing;
+    private AnswerResult? _result;
+    private DateTime _shownAt = DateTime.UtcNow;
+
+    protected override void OnParametersSet()
+    {
+        if (_lastExerciseId == Exercise.Id) return;
+        _lastExerciseId = Exercise.Id;
+        _answer = "";
+        _choice = null;
+        _placed.Clear();
+        _hintShown = false;
+        _result = null;
+        _shownAt = DateTime.UtcNow;
+        var rng = new Random(Exercise.Id.GetHashCode());
+        _pool = Exercise.Type == ExerciseType.WordOrder ? Exercise.Options.OrderBy(_ => rng.Next()).ToList() : [];
+    }
+    private string? _lastExerciseId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Exercise.Type == ExerciseType.Dictation) await PlayAsync();
+    }
+
+    private bool CanSubmit => Exercise.Type switch
+    {
+        ExerciseType.MultipleChoice => _choice is not null,
+        ExerciseType.WordOrder => _placed.Count == _pool.Count,
+        _ => !string.IsNullOrWhiteSpace(_answer),
+    };
+
+    private void Place(int idx) { if (!_placed.Contains(idx)) _placed.Add(idx); }
+    private void Unplace(int idx) => _placed.Remove(idx);
+
+    private async Task OnKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey && CanSubmit && !_busy) await SubmitAsync();
+    }
+
+    private async Task PlayAsync(double rate = 0.95)
+    {
+        if (string.IsNullOrWhiteSpace(Exercise.Text)) return;
+        _playing = true;
+        try { await Speech.SpeakAsync(Exercise.Text, rate); }
+        finally { _playing = false; StateHasChanged(); }
+    }
+
+    private async Task SubmitAsync(bool giveUp = false)
+    {
+        if (_busy) return;
+        _busy = true;
+        try
+        {
+            var answer = giveUp ? "" : Exercise.Type switch
+            {
+                ExerciseType.MultipleChoice => _choice?.ToString() ?? "",
+                ExerciseType.WordOrder => string.Join(' ', _placed.Select(i => _pool[i])),
+                _ => _answer,
+            };
+            var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
+            _result = await Learning.SubmitAnswerAsync(SessionId, StepIndex, Exercise.Id, answer, ms, _hintShown);
+        }
+        finally { _busy = false; }
+    }
+
+    private RenderFragment RenderPrompt(string prompt) => builder =>
+    {
+        var parts = prompt.Split("___");
+        for (var i = 0; i < parts.Length; i++)
+        {
+            builder.AddContent(i * 2, parts[i]);
+            if (i < parts.Length - 1)
+            {
+                builder.OpenElement(i * 2 + 1, "span");
+                builder.AddAttribute(0, "class", "gap");
+                builder.AddContent(1, " ");
+                builder.CloseElement();
+            }
+        }
+    };
+}
