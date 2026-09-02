@@ -20,8 +20,10 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ⬜ Run the placement, then 10 daily sessions; log every friction point.
 - ⬜ Tune planner constants (review cap, production frequency, difficulty offset) from real accuracy data – target 70–80 % success on focus drills.
 - ⬜ Content pass: fix any item whose accepted answers are too narrow (the error journal will show "wrong" answers that were actually right); add accepted variants.
-- ⬜ Keyboard-first flow: Enter to check, Enter to continue, number keys for multiple choice.
-- ⬜ Interleave placement items across nodes instead of node-by-node.
+- ✅ Keyboard-first flow: Enter to check, Enter to continue, number keys for multiple choice.
+- ✅ Interleave placement items across nodes (easy pass, then harder pass).
+- ✅ Session summary shows the error codes of that session; dashboard counts down to the exam date.
+- ✅ Service integration tests against a temporary SQLite database (74 tests total); CI workflow; MIT license.
 - ⬜ Persist review state also for production exercises so the same prompt is not repeated too soon (currently handled by the recent-ids window only).
 - ⬜ EF Core migrations instead of `EnsureCreated` once the schema settles.
 

@@ -34,6 +34,22 @@ public sealed class SpeechService(IJSRuntime js) : IAsyncDisposable
 
     public async ValueTask FocusAsync(string elementId) => await (await ModuleAsync()).InvokeVoidAsync("focusElement", elementId);
 
+    public event Action<string>? GlobalKey;
+
+    /// <summary>Document-level shortcuts (Enter, digits) outside of text fields.</summary>
+    public async ValueTask RegisterKeysAsync()
+    {
+        _self ??= DotNetObjectReference.Create(this);
+        await (await ModuleAsync()).InvokeVoidAsync("registerKeys", _self);
+    }
+
+    public async ValueTask UnregisterKeysAsync()
+    {
+        if (_module is not null) await _module.InvokeVoidAsync("unregisterKeys");
+    }
+
+    [JSInvokable] public void OnGlobalKey(string key) => GlobalKey?.Invoke(key);
+
     [JSInvokable] public void OnTranscript(string text, bool isFinal) => Transcript?.Invoke(text, isFinal);
     [JSInvokable] public void OnRecognitionError(string error) => RecognitionError?.Invoke(error);
     [JSInvokable] public void OnRecognitionEnded() => RecognitionEnded?.Invoke();
@@ -43,7 +59,7 @@ public sealed class SpeechService(IJSRuntime js) : IAsyncDisposable
         _self?.Dispose();
         if (_module is not null)
         {
-            try { await _module.InvokeVoidAsync("stopRecognition"); await _module.DisposeAsync(); }
+            try { await _module.InvokeVoidAsync("stopRecognition"); await _module.InvokeVoidAsync("unregisterKeys"); await _module.DisposeAsync(); }
             catch (JSDisconnectedException) { /* circuit gone */ }
         }
     }

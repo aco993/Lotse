@@ -1,6 +1,7 @@
 @* Typed answer, multiple choice or word order. Checks deterministically, shows feedback, then hands over with "Weiter". *@
 @inject LearningService Learning
 @inject SpeechService Speech
+@implements IDisposable
 
 <div class="ex-prompt mb-3">
     @if (Exercise.Type == ExerciseType.Dictation)
@@ -31,7 +32,7 @@
                 {
                     var idx = i;
                     <MudButton Variant="@(_choice == idx ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-3"
-                               OnClick="() => _choice = idx">@Exercise.Options[idx]</MudButton>
+                               OnClick="() => _choice = idx"><span style="opacity:.55;margin-right:.6em">@(idx + 1)</span>@Exercise.Options[idx]</MudButton>
                 }
             </MudStack>
             break;
@@ -80,7 +81,8 @@
 else
 {
     <FeedbackPanel Result="_result" />
-    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+    <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
+        <MudText Typo="Typo.caption" Style="opacity:.6">Enter = weiter</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
     </MudStack>
 }
@@ -116,9 +118,40 @@ else
     }
     private string? _lastExerciseId;
 
+    private bool _keysRegistered;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Exercise.Type == ExerciseType.Dictation) await PlayAsync();
+        if (!firstRender) return;
+        Speech.GlobalKey += OnGlobalKey;
+        await Speech.RegisterKeysAsync();
+        _keysRegistered = true;
+        if (Exercise.Type == ExerciseType.Dictation) await PlayAsync();
+    }
+
+    /// <summary>Enter continues after feedback (or checks a multiple-choice/word-order answer); digits pick an option.</summary>
+    private void OnGlobalKey(string key)
+    {
+        _ = InvokeAsync(async () =>
+        {
+            if (key == "Enter")
+            {
+                if (_result is not null) await OnDone.InvokeAsync(_result);
+                else if (Exercise.Type is ExerciseType.MultipleChoice or ExerciseType.WordOrder && CanSubmit && !_busy) await SubmitAsync();
+            }
+            else if (_result is null && Exercise.Type == ExerciseType.MultipleChoice && int.TryParse(key, out var n) && n >= 1 && n <= Exercise.Options.Count)
+            {
+                _choice = n - 1;
+            }
+            StateHasChanged();
+        });
+    }
+
+    // The JS listener stays registered for the circuit (registration is idempotent); only this component's
+    // subscription is removed, so the next exercise's registration cannot be undone by this one's disposal.
+    public void Dispose()
+    {
+        if (_keysRegistered) Speech.GlobalKey -= OnGlobalKey;
     }
 
     private bool CanSubmit => Exercise.Type switch

@@ -23,6 +23,16 @@ else if (_finished || _view.IsComplete)
             {
                 <MudText Typo="Typo.body2" Class="mb-3">@Encouragement</MudText>
             }
+            @if (_sessionErrors.Count > 0)
+            {
+                <MudText Typo="Typo.subtitle2" Class="mb-1">Fehler in dieser Session</MudText>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="1" Class="mb-3">
+                    @foreach (var e in _sessionErrors)
+                    {
+                        <MudTooltip Text="@e.NodeTitle"><MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@e.Title@(e.Count > 1 ? $" ×{e.Count}" : "")</MudChip></MudTooltip>
+                    }
+                </MudStack>
+            }
             @if (_summaryByNode.Count > 0)
             {
                 <MudSimpleTable Dense="true" Elevation="0" Class="mb-3">
@@ -67,6 +77,7 @@ else
     private int _index;
     private bool _finished;
     private readonly List<(string Node, int Ok, int Total)> _summaryByNode = [];
+    private IReadOnlyList<(string Code, string Title, string NodeTitle, int Count)> _sessionErrors = [];
 
     private double Progress => _view is null || _view.Steps.Count == 0 ? 0 : 100.0 * _view.Steps.Count(s => s.Done) / _view.Steps.Count;
     private int Correct => _view?.Steps.Count(s => s.Done && s.Score >= 0.7) ?? 0;
@@ -81,8 +92,19 @@ else
         _ => "Harter Tag. Das ist Information, kein Urteil: Der Lotse nimmt morgen leichtere Einstiege zu diesen Themen.",
     };
 
+    private Guid _loadedId;
+
     protected override async Task OnParametersSetAsync()
     {
+        if (_loadedId != Id)
+        {
+            // Same page component, new session id (e.g. "Noch 5 Minuten"): drop everything from the previous session.
+            _loadedId = Id;
+            _finished = false;
+            _index = 0;
+            _summaryByNode.Clear();
+            _sessionErrors = [];
+        }
         _view = await Learning.GetSessionAsync(Id);
         if (_view is null) { Nav.NavigateTo(""); return; }
         _index = Math.Max(0, _view.NextIndex);
@@ -131,6 +153,12 @@ else
         }
     }
 
+    private async Task LoadSessionErrorsAsync()
+    {
+        _sessionErrors = await Learning.GetSessionErrorsAsync(Id);
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task AnotherAsync()
     {
         var s = await Learning.StartSessionAsync(5);
@@ -141,6 +169,7 @@ else
     {
         _summaryByNode.Clear();
         if (_view is null) return;
+        _ = LoadSessionErrorsAsync();
         var groups = _view.Steps.Zip(_view.Exercises, (s, e) => (s, e)).Where(t => t.s.Done)
             .GroupBy(t => Catalog.NodeTitle(t.e.NodeId))
             .Select(g => (g.Key, g.Count(t => t.s.Score >= 0.7), g.Count()))
