@@ -6,11 +6,11 @@ Status legend: ✅ done · 🔄 in progress · ⬜ planned
 
 - ✅ Solution skeleton: `Lotse.Core` (engine), `Lotse.Infrastructure` (EF Core/SQLite, content, Claude), `Lotse.Web` (Blazor Server + MudBlazor), `Lotse.Core.Tests` (xUnit v3).
 - ✅ Skill taxonomy (48 nodes) and error catalogue (54 codes) with Serbian-contrast notes.
-- ✅ Content bank: 485 exercises – grammar drills, vocabulary (work, IT, everyday, exam topics, false friends), Redemittel, 10 micro + 10 exam-format writing tasks, 14 speaking tasks, 4 reading texts, 3 audio-only listening tasks, 12 dictations.
+- ✅ Content bank: 749 exercises – 498 grammar and phrase drills, 154 vocabulary items (work, IT, everyday, exam topics, false friends), 31 writing tasks (micro + exam Teil 1/2), 29 speaking tasks (spontaneous, Vortrag, Diskussion), 10 reading texts in exam part formats, 7 audio-only listening tasks, 20 dictations.
 - ✅ Engine: logistic ability model, answer checker with slip detection, SM-2-family scheduler, session planner with reasons, weak-area analysis, readiness report, re-check lifecycle, placement test, Goethe B2 blueprint.
 - ✅ Application service, persistence, startup schema creation.
 - ✅ UI: Heute (dashboard + one-click session), session runner (closed / reading / production), Schreiben, Sprechen (incl. AI discussion partner), Prüfung, Fortschritt, Fehlerjournal, Themen (focus sessions, AI generation), Einstellungen.
-- ✅ Claude tutor: evaluation with JSON-schema output, exercise generation, discussion partner; null tutor fallback with self-check rubrics.
+- ✅ Claude tutor: evaluation with JSON-schema output, drill generation, reading/listening generation in exam formats, one-click top-up for the three weakest topics, discussion partner; null tutor fallback with self-check rubrics.
 - ✅ 46 unit tests (engine + content integrity).
 
 ## Phase 1 – Daily use hardening 🔄 (first two weeks of real use)

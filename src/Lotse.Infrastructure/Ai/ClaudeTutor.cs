@@ -191,6 +191,56 @@ public sealed class ClaudeTutor : ITutor
     }
 
     // ------------------------------------------------------------------------------------------
+    // Reading / listening generation
+    // ------------------------------------------------------------------------------------------
+
+    private const string ReadingSchema = """
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["part", "instruction", "text", "questions"],
+          "properties": {
+            "part": { "type": "string", "description": "z. B. Lesen Teil 3 oder Hören Teil 2" },
+            "instruction": { "type": "string", "description": "Arbeitsanweisung wie in der Prüfung, ein Satz" },
+            "text": { "type": "string", "description": "Der vollständige Text (250-400 Wörter); bei Hören ein natürlich gesprochener Monolog oder Dialog mit Sprechernamen" },
+            "questions": { "type": "array", "minItems": 4, "maxItems": 7, "items": { "type": "object", "additionalProperties": false, "required": ["question", "options", "correctIndex"],
+              "properties": { "question": { "type": "string" }, "options": { "type": "array", "minItems": 3, "maxItems": 4, "items": { "type": "string" } }, "correctIndex": { "type": "integer" } } } }
+          }
+        }
+        """;
+
+    private sealed record ReadingDto(string Part, string Instruction, string Text, List<ReadingQuestionDto> Questions);
+    private sealed record ReadingQuestionDto(string Question, List<string> Options, int CorrectIndex);
+
+    public async Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
+    {
+        var system = BuildSystemPrompt(context) + "\n\nDu erstellst jetzt eine Prüfungsaufgabe im Format des Goethe-Zertifikats B2. Der Text muss authentisch klingen (Zeitungsartikel, Forumsbeiträge, Ansage, Interview), inhaltlich aktuell und für einen Berufstätigen in Deutschland relevant sein. Distraktoren müssen plausibel sein und dürfen nicht wörtlich im Text stehen.";
+        var kind = audioOnly ? "HÖREN (wird per Sprachausgabe vorgelesen, nicht gezeigt)" : "LESEN";
+        var user = $"Aufgabentyp: {kind}. Knoten: {node.Title} – {node.Description}. Niveau {band.Label()}. " +
+                   (audioOnly ? "Wähle Teil 1 (Alltagsansage/Telefonat), Teil 2 (Interview) oder Teil 4 (Radiobeitrag/Vortrag)." : "Wähle Teil 1 (vier Meinungen, Zuordnung), Teil 3 (Artikel, Multiple Choice) oder Teil 5 (Regelwerk, Zuordnung).") +
+                   " Liefere Text und 4–6 Fragen mit genau einer richtigen Antwort.";
+        var json = await CompleteJsonAsync(system, user, ReadingSchema, ct);
+        var dto = JsonSerializer.Deserialize<ReadingDto>(json, ContentLoader.Options);
+        if (dto is null || dto.Questions.Count == 0) return null;
+
+        var ex = new Exercise
+        {
+            Id = $"gen.{node.Id.ToLowerInvariant()}.{Guid.NewGuid():N}"[..40],
+            Type = ExerciseType.Reading,
+            NodeId = node.Id,
+            Band = band,
+            Context = ExerciseContext.Pruefung,
+            Source = ExerciseSource.Generated,
+            Prompt = $"{dto.Part}: {dto.Instruction}",
+            Text = dto.Text,
+            AudioOnly = audioOnly,
+            Questions = dto.Questions.Select(q => new ReadingQuestion(q.Question, q.Options, q.CorrectIndex)).ToList(),
+            Tags = ["generiert"],
+        };
+        return ExerciseValidator.Validate(ex).Count == 0 ? ex : null;
+    }
+
+    // ------------------------------------------------------------------------------------------
     // Discussion partner
     // ------------------------------------------------------------------------------------------
 

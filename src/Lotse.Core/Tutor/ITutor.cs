@@ -58,6 +58,9 @@ public interface ITutor
 
     /// <summary>One turn of a B2 discussion. The tutor plays the exam partner and gently corrects at the end of its turn.</summary>
     Task<string> DiscussAsync(string thesis, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>A reading (or, when <paramref name="audioOnly"/>, listening) task in Goethe B2 part format for a Lesen/Hören node.</summary>
+    Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default);
 }
 
 /// <summary>Used when no API key is configured. Never throws; the UI falls back to self-checks.</summary>
@@ -74,4 +77,7 @@ public sealed class NullTutor : ITutor
 
     public Task<string> DiscussAsync(string thesis, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
+
+    public Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
+        => Task.FromResult<Exercise?>(null);
 }
