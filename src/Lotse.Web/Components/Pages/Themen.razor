@@ -9,6 +9,19 @@
 <MudText Typo="Typo.h5" Class="mb-1">Themen</MudText>
 <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">Normalerweise entscheidet der Lotse. Wenn du ein Thema gezielt willst – etwa vor einem Meeting –, starte hier eine Fokus-Session. Mit Tutor kannst du die Übungsbank zu einem Thema erweitern lassen.</MudText>
 
+@if (Learning.Tutor.IsAvailable)
+{
+    <MudPaper Class="pa-3 mb-3" Elevation="1" Style="border:1px solid var(--mud-palette-primary)">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
+            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" />
+            <MudText Typo="Typo.body2">Übungsbank auffüllen: je 6 neue Aufgaben für deine 3 schwächsten Themen, zugeschnitten auf deine letzten Fehler.</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="FillWeakestAsync" Disabled="_filling">@(_filling ? "Erzeuge …" : "Auffüllen")</MudButton>
+        </MudStack>
+        @if (_fillResult is not null) { <MudText Typo="Typo.caption" Class="mt-1 d-block">@_fillResult</MudText> }
+    </MudPaper>
+}
+
 <MudTextField @bind-Value="_search" Placeholder="Thema suchen …" Variant="Variant.Outlined" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-3" />
 
 @foreach (var node in CatalogProvider.Catalog.Nodes.Where(Matches).OrderBy(n => n.Area).ThenBy(n => n.Band))
@@ -39,6 +52,14 @@
             {
                 <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : "6 neue Übungen erzeugen")</MudButton>
             }
+            @if (Learning.Tutor.IsAvailable && n.Area is SkillArea.Lesen or SkillArea.Hoeren)
+            {
+                <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateReadingAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : (n.Area == SkillArea.Lesen ? "Neuen Lesetext erzeugen" : "Neue Höraufgabe erzeugen"))</MudButton>
+            }
+            @if (CatalogProvider.Catalog.ForNode(n.Id).Any(e => e.Type == ExerciseType.Reading))
+            {
+                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => StartReadingAsync(n.Id)">@(n.Area == SkillArea.Hoeren ? "Höraufgabe üben" : "Lesetext üben")</MudButton>
+            }
         </MudStack>
     </MudPaper>
 }
@@ -58,6 +79,42 @@
     {
         var s = await Learning.StartSessionAsync(10, nodeId);
         Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private bool _filling;
+    private string? _fillResult;
+
+    private async Task FillWeakestAsync()
+    {
+        _filling = true;
+        try
+        {
+            var result = await Learning.FillWeakestAsync();
+            _fillResult = result.Count == 0 ? "Keine schwachen Themen mit Daten gefunden – erst ein paar Sessions machen." : string.Join(" · ", result.Select(r => $"{r.NodeTitle}: {r.Count}"));
+        }
+        catch (Exception e) { _fillResult = "Fehler: " + e.Message; }
+        finally { _filling = false; }
+    }
+
+    private async Task StartReadingAsync(string nodeId)
+    {
+        var pool = CatalogProvider.Catalog.ForNode(nodeId).Where(e => e.Type == ExerciseType.Reading).ToList();
+        if (pool.Count == 0) return;
+        var ex = pool[Random.Shared.Next(pool.Count)];
+        var s = await Learning.StartSingleAsync(ex.Id, SessionKind.Free);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private async Task GenerateReadingAsync(string nodeId)
+    {
+        _generating = nodeId;
+        try
+        {
+            var ex = await Learning.GenerateReadingForNodeAsync(nodeId);
+            Snackbar.Add(ex is null ? "Keine gültige Aufgabe erhalten." : "Neue Aufgabe in der Bank: " + ex.Prompt, ex is null ? Severity.Warning : Severity.Success);
+        }
+        catch (Exception e) { Snackbar.Add("Generierung fehlgeschlagen: " + e.Message, Severity.Error); }
+        finally { _generating = null; }
     }
 
     private async Task GenerateAsync(string nodeId)

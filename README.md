@@ -11,7 +11,7 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 - **Skill map, not lessons.** 48 skill nodes (grammar, vocabulary, Redemittel, reading, listening, writing, speaking) on CEFR sub-bands; 54 error codes; contrastive Serbian↔German notes on every interference-prone topic.
 - **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
 - **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
-- **Works without any API key.** 485 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
+- **Works without any API key.** 749 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
 - **Claude as tutor (optional).** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise generation for weak topics, a discussion partner for the oral exam. Structured JSON-schema output, official Anthropic .NET SDK.
 - **Exam realism.** Goethe B2 blueprint as data, writing/speaking tasks in exact exam formats, reading and audio-only listening tasks in exam part formats, readiness report against the 60 % rule.
 

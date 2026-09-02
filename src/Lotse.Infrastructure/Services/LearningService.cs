@@ -109,7 +109,8 @@ public sealed class LearningService(
         var sessions7 = await db.Sessions.CountAsync(s => s.EndedUtc != null && s.EndedUtc >= since7, ct);
         var todayStart = now.Date;
         var todaySessions = await db.Sessions.Where(s => s.StartedUtc >= todayStart).ToListAsync(ct);
-        var minutesToday = (int)todaySessions.Sum(s => ((s.EndedUtc ?? now) - s.StartedUtc).TotalMinutes);
+        // Only finished sessions count; an open tab left overnight must not inflate the number.
+        var minutesToday = (int)todaySessions.Where(s => s.EndedUtc != null).Sum(s => Math.Min(60, (s.EndedUtc!.Value - s.StartedUtc).TotalMinutes));
         var open = await db.Sessions.Where(s => s.EndedUtc == null && s.StartedUtc >= now.AddHours(-12)).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
         var totalAttempts = await db.Attempts.CountAsync(ct);
 
@@ -586,6 +587,48 @@ public sealed class LearningService(
         await db.SaveChangesAsync(ct);
         await catalogProvider.RefreshAsync(ct);
         return generated;
+    }
+
+    /// <summary>Generates one reading (Lesen node) or listening (Hören node) task in exam format and adds it to the bank.</summary>
+    public async Task<Exercise?> GenerateReadingForNodeAsync(string nodeId, CancellationToken ct = default)
+    {
+        var node = Catalog.Node(nodeId) ?? throw new KeyNotFoundException(nodeId);
+        if (!tutor.IsAvailable) return null;
+        var context = await BuildLearnerContextAsync(ct);
+        var states = await GetSkillStatesAsync(ct);
+        var theta = states.GetValueOrDefault(nodeId)?.Theta ?? -0.2;
+        var band = CefrBandExtensions.FromDifficulty(Ability.TargetDifficulty(theta));
+        if (band < CefrBand.B1_2) band = CefrBand.B1_2;
+        if (band > CefrBand.B2_2) band = CefrBand.B2_2;
+        var ex = await tutor.GenerateReadingAsync(node, band, node.Area == SkillArea.Hoeren, context, ct);
+        if (ex is null) return null;
+
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        db.GeneratedExercises.Add(new GeneratedExerciseEntity { Id = ex.Id, NodeId = ex.NodeId, Json = ContentLoader.Serialize(ex), CreatedUtc = Now });
+        await db.SaveChangesAsync(ct);
+        await catalogProvider.RefreshAsync(ct);
+        return ex;
+    }
+
+    /// <summary>Tops up the bank for the weakest drill nodes. Returns (node title, generated count) per node.</summary>
+    public async Task<IReadOnlyList<(string NodeTitle, int Count)>> FillWeakestAsync(int nodes = 3, int perNode = 6, CancellationToken ct = default)
+    {
+        if (!tutor.IsAvailable) return [];
+        var states = await GetSkillStatesAsync(ct);
+        await using (var db = await dbFactory.CreateDbContextAsync(ct))
+        {
+            var errors = await RecentErrorsAsync(db, 30, ct);
+            var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, Now, take: 20)
+                .Where(w => w.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+                .Take(nodes).ToList();
+            var result = new List<(string, int)>();
+            foreach (var w in weak)
+            {
+                var made = await GenerateForNodeAsync(w.NodeId, perNode, ct);
+                result.Add((w.Title, made.Count));
+            }
+            return result;
+        }
     }
 
     public async Task ResetAllDataAsync(CancellationToken ct = default)
