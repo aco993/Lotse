@@ -26,8 +26,19 @@
 </MudLayout>
 
 @code {
-    private bool _drawerOpen = true;
+    [Inject] private IBrowserViewportService Viewport { get; set; } = default!;
+
+    // Closed until we know the viewport: on phones the drawer is an overlay and must start closed.
+    private bool _drawerOpen;
     private bool _dark;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var bp = await Viewport.GetCurrentBreakpointAsync();
+        _drawerOpen = bp >= Breakpoint.Md;
+        StateHasChanged();
+    }
 
     private readonly MudTheme _theme = new()
     {
