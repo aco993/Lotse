@@ -1,0 +1,12 @@
+@* Mastery 0..1 as a bar; low confidence renders translucent so a guess never looks like a fact. *@
+<div class="heat" title="@Tip"><span style="@Style"></span></div>
+
+@code {
+    [Parameter] public double Value { get; set; }
+    [Parameter] public double Confidence { get; set; } = 1;
+    [Parameter] public double Threshold { get; set; } = 0.5;
+
+    private string Color => Value >= 0.8 ? "var(--mud-palette-tertiary)" : Value >= Threshold ? "var(--mud-palette-primary)" : Value >= Threshold - 0.2 ? "var(--mud-palette-secondary)" : "var(--mud-palette-error)";
+    private string Style => $"width:{Math.Clamp(Value, 0, 1) * 100:F0}%; background:{Color}; opacity:{0.35 + 0.65 * Math.Clamp(Confidence, 0, 1):F2}";
+    private string Tip => $"{Value:P0} · Sicherheit der Schätzung {Confidence:P0}";
+}

@@ -1,0 +1,56 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0" Dense="true" Class="lotse-appbar">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" />
+        <MudText Typo="Typo.h6" Class="ml-1" Style="font-weight:600; letter-spacing:.3px">Lotse</MudText>
+        <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.75">Dein Kurs auf B2</MudText>
+        <MudSpacer />
+        <MudTooltip Text="@(_dark ? "Helles Design" : "Dunkles Design")">
+            <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" />
+        </MudTooltip>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="1" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Md" ClipMode="DrawerClipMode.Always">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-4 px-3 px-sm-6">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private bool _dark;
+
+    private readonly MudTheme _theme = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#1F5F8B",
+            Secondary = "#E07A1F",
+            Tertiary = "#2E8B57",
+            AppbarBackground = "#1F5F8B",
+            Background = "#F6F7F9",
+            Surface = "#FFFFFF",
+        },
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#6FB1E0",
+            Secondary = "#F2A65A",
+            Tertiary = "#5CC08A",
+            AppbarBackground = "#16324A",
+            Background = "#111820",
+            Surface = "#1A2430",
+            DrawerBackground = "#16202B",
+        },
+        LayoutProperties = new LayoutProperties { DefaultBorderRadius = "10px", DrawerWidthLeft = "230px" },
+        Typography = new Typography { Default = new DefaultTypography { FontFamily = ["Roboto", "Segoe UI", "Helvetica", "Arial", "sans-serif"] } },
+    };
+}

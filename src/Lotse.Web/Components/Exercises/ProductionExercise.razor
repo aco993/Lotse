@@ -1,0 +1,240 @@
+@* Free writing or speaking. With a tutor: rubric feedback + tagged errors. Without: self-check against the rubric + model answer. *@
+@inject LearningService Learning
+@inject SpeechService Speech
+@implements IDisposable
+
+<MudText Class="ex-prompt mb-2">@Exercise.Prompt</MudText>
+<MudStack Row="true" Spacing="1" Class="mb-3" Wrap="Wrap.Wrap">
+    @if (Exercise.MinWords is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">ca. @Exercise.MinWords Wörter</MudChip> }
+    @if (Exercise.TargetSeconds is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">ca. @(Exercise.TargetSeconds.Value / 60):@((Exercise.TargetSeconds.Value % 60).ToString("00")) min</MudChip> }
+    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">@(IsSpeaking ? "Sprechen" : "Schreiben")</MudChip>
+    @if (_secondsElapsed > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">⏱ @(_secondsElapsed / 60):@((_secondsElapsed % 60).ToString("00"))</MudChip> }
+</MudStack>
+
+@if (_production is null)
+{
+    <MudExpansionPanels Elevation="0" Class="mb-3">
+        <MudExpansionPanel Text="Worauf es ankommt (Bewertungskriterien)">
+            <MudList T="string" Dense="true" ReadOnly="true">
+                @foreach (var r in Exercise.Rubric) { <MudListItem T="string" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank">@r</MudListItem> }
+            </MudList>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+
+    @if (IsSpeaking)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+            @if (!_recording)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Mic" OnClick="StartRecordingAsync" Disabled="!_sttSupported">Aufnahme starten</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopRecordingAsync" Class="recording">Aufnahme beenden</MudButton>
+            }
+            @if (!_sttSupported)
+            {
+                <MudText Typo="Typo.caption" Color="Color.Warning">Spracherkennung wird von diesem Browser nicht unterstützt (Chrome/Edge nutzen). Du kannst deinen Beitrag stattdessen tippen.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Style="opacity:.7">Sprich frei – das Transkript erscheint unten und kann vor dem Absenden korrigiert werden.</MudText>
+            }
+        </MudStack>
+    }
+
+    <MudTextField @bind-Value="_text" Lines="@(IsSpeaking ? 6 : 12)" Variant="Variant.Outlined" Immediate="true"
+                  Label="@(IsSpeaking ? "Transkript" : "Dein Text")" HelperText="@WordInfo" />
+
+    <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Spacing="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || Words < 3)">
+            @(Learning.Tutor.IsAvailable ? "Vom Tutor bewerten lassen" : "Abgeben und selbst prüfen")
+        </MudButton>
+        @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> <MudText Typo="Typo.caption">Bewertung läuft …</MudText> }
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" OnClick="() => OnSkip.InvokeAsync()" Disabled="_busy">Überspringen</MudButton>
+    </MudStack>
+}
+else if (_production.Evaluation is { } ev)
+{
+    <MudPaper Elevation="0" Class="pa-4 mt-2" Style="background: var(--mud-palette-background-gray)">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+            <MudChip T="string" Color="@(ev.OverallScore >= 0.6 ? Color.Tertiary : Color.Warning)" Variant="Variant.Filled">@ev.OverallScore.ToString("P0")</MudChip>
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">Niveau dieses Textes: @ev.EstimatedLevel</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.caption">@_production.WordCount Wörter</MudText>
+        </MudStack>
+        <MudText Class="preline mb-3">@ev.Feedback</MudText>
+
+        <MudGrid Spacing="1" Class="mb-2">
+            @foreach (var r in ev.Rubric)
+            {
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="0" Class="pa-2" Style="border:1px solid var(--mud-palette-lines-default)">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                            <MudText Typo="Typo.body2" Style="font-weight:600">@r.Criterion</MudText>
+                            <MudSpacer />
+                            <MudRating SelectedValue="@r.Score" MaxValue="5" ReadOnly="true" Size="Size.Small" />
+                        </MudStack>
+                        <MudText Typo="Typo.caption">@r.Comment</MudText>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+
+        @if (ev.Errors.Count > 0)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-3 mb-1">Fehler (@ev.Errors.Count) – landen in deinem Fehlerjournal</MudText>
+            <MudSimpleTable Dense="true" Hover="true" Elevation="0" Style="background:transparent">
+                <tbody>
+                @foreach (var e in ev.Errors)
+                {
+                    <tr>
+                        <td><MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@e.Code</MudChip></td>
+                        <td><s style="opacity:.7">@e.Snippet</s> → <b>@e.Correction</b><br /><span style="opacity:.8">@e.Explanation</span></td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        }
+
+        @if (ev.Upgrades.Count > 0)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-3 mb-1">So klingt es auf B2</MudText>
+            @foreach (var u in ev.Upgrades) { <MudText Typo="Typo.body2" Class="mb-1">• @u</MudText> }
+        }
+
+        <MudExpansionPanels Elevation="0" Class="mt-3">
+            <MudExpansionPanel Text="Korrigierte Fassung"><MudText Class="preline">@ev.CorrectedText</MudText></MudExpansionPanel>
+            @if (!string.IsNullOrWhiteSpace(Exercise.ModelAnswer))
+            {
+                <MudExpansionPanel Text="Musterlösung"><MudText Class="preline">@Exercise.ModelAnswer</MudText></MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    </MudPaper>
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(ev.OverallScore)">Weiter</MudButton>
+    </MudStack>
+}
+else
+{
+    @* Self-check path *@
+    <MudPaper Elevation="0" Class="pa-4 mt-2" Style="background: var(--mud-palette-background-gray)">
+        @if (_production.TutorError is not null)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">KI-Bewertung nicht möglich (@_production.TutorError). Selbstcheck stattdessen.</MudAlert>
+        }
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600">Selbstcheck – ehrlich abhaken</MudText>
+        <MudText Typo="Typo.caption" Class="mb-2 d-block">@_production.WordCount Wörter@(_production.MinWords is > 0 ? $" (Ziel ca. {_production.MinWords})" : "")</MudText>
+        @for (var i = 0; i < _production.Rubric.Count; i++)
+        {
+            var idx = i;
+            <MudCheckBox T="bool" Value="_checks[idx]" ValueChanged="v => _checks[idx] = v" Label="@_production.Rubric[idx]" Color="Color.Tertiary" Dense="true" />
+        }
+        @if (!string.IsNullOrWhiteSpace(_production.ModelAnswer))
+        {
+            <MudExpansionPanels Elevation="0" Class="mt-2">
+                <MudExpansionPanel Text="Musterlösung zum Vergleich"><MudText Class="preline">@_production.ModelAnswer</MudText></MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.75">Tipp: Mit einem API-Schlüssel (Einstellungen) bewertet Claude deinen Text nach den Prüfungskriterien und markiert jeden Fehler.</MudText>
+    </MudPaper>
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="FinishSelfCheckAsync" Disabled="_busy">Speichern & weiter</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int StepIndex { get; set; }
+    [Parameter] public EventCallback<double> OnDone { get; set; }
+    [Parameter] public EventCallback OnSkip { get; set; }
+
+    private bool IsSpeaking => Exercise.Type == ExerciseType.Speak;
+    private string _text = "";
+    private bool _busy;
+    private bool _recording;
+    private bool _sttSupported = true;
+    private ProductionResult? _production;
+    private bool[] _checks = [];
+    private System.Threading.Timer? _timer;
+    private int _secondsElapsed;
+    private string? _lastId;
+
+    private int Words => AnswerChecker.CountWords(_text);
+    private string WordInfo => Exercise.MinWords is > 0 ? $"{Words} / ca. {Exercise.MinWords} Wörter" : $"{Words} Wörter";
+
+    protected override void OnParametersSet()
+    {
+        if (_lastId == Exercise.Id) return;
+        _lastId = Exercise.Id;
+        _text = "";
+        _production = null;
+        _secondsElapsed = 0;
+        _timer?.Dispose();
+        _timer = new System.Threading.Timer(_ => { _secondsElapsed++; _ = InvokeAsync(StateHasChanged); }, null, 1000, 1000);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        Speech.Transcript += OnTranscript;
+        Speech.RecognitionEnded += OnRecognitionEnded;
+        Speech.RecognitionError += OnRecognitionError;
+        if (IsSpeaking)
+        {
+            _sttSupported = await Speech.SttSupportedAsync();
+            StateHasChanged();
+        }
+    }
+
+    private void OnTranscript(string text, bool isFinal) { _text = text; _ = InvokeAsync(StateHasChanged); }
+    private void OnRecognitionEnded() { _recording = false; _ = InvokeAsync(StateHasChanged); }
+    private void OnRecognitionError(string error) { _recording = false; _ = InvokeAsync(StateHasChanged); }
+
+    private async Task StartRecordingAsync()
+    {
+        _recording = await Speech.StartRecognitionAsync();
+    }
+
+    private async Task StopRecordingAsync()
+    {
+        await Speech.StopRecognitionAsync();
+        _recording = false;
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_busy) return;
+        _busy = true;
+        _timer?.Dispose();
+        try
+        {
+            if (_recording) await StopRecordingAsync();
+            _production = await Learning.SubmitProductionAsync(SessionId, StepIndex, Exercise.Id, _text, IsSpeaking);
+            _checks = new bool[_production.Rubric.Count];
+        }
+        finally { _busy = false; }
+    }
+
+    private async Task FinishSelfCheckAsync()
+    {
+        if (_production is null) return;
+        _busy = true;
+        try
+        {
+            var score = await Learning.SubmitSelfCheckAsync(_production.ProductionId, SessionId, StepIndex, _checks);
+            await OnDone.InvokeAsync(score);
+        }
+        finally { _busy = false; }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        Speech.Transcript -= OnTranscript;
+        Speech.RecognitionEnded -= OnRecognitionEnded;
+        Speech.RecognitionError -= OnRecognitionError;
+    }
+}

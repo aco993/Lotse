@@ -1,0 +1,37 @@
+@page "/schreiben"
+@inject LearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+@inject NavigationManager Nav
+
+<PageTitle>Schreiben – Lotse</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1">Schreiben</MudText>
+<MudText Typo="Typo.body2" Class="mb-4" Style="opacity:.8">Kurze Nachrichten für den Alltag, formelle Mails für den Job, Prüfungsformate für Teil 1 und 2. Deine größte Lücke ist aktives Produzieren – hier schließt du sie.</MudText>
+
+<MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" Class="mt-2">
+    <MudTabPanel Text="Kurz (5 min)">
+        <TaskList Items="Micro" OnPick="StartAsync" />
+    </MudTabPanel>
+    <MudTabPanel Text="Prüfung Teil 2 – Nachricht">
+        <TaskList Items="Teil2" OnPick="StartAsync" />
+    </MudTabPanel>
+    <MudTabPanel Text="Prüfung Teil 1 – Forumsbeitrag">
+        <TaskList Items="Teil1" OnPick="StartAsync" />
+    </MudTabPanel>
+    <MudTabPanel Text="Bisherige Texte">
+        <RecentProductions Speaking="false" />
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private IReadOnlyList<Exercise> All => CatalogProvider.Catalog.Exercises.Where(e => e.Type == ExerciseType.FreeWrite).ToList();
+    private IReadOnlyList<Exercise> Micro => All.Where(e => e.MinWords < 100).OrderBy(e => e.Context).ThenBy(e => e.Id).ToList();
+    private IReadOnlyList<Exercise> Teil2 => All.Where(e => e.MinWords is >= 100 and < 150).ToList();
+    private IReadOnlyList<Exercise> Teil1 => All.Where(e => e.MinWords >= 150).ToList();
+
+    private async Task StartAsync(Exercise ex)
+    {
+        var s = await Learning.StartSingleAsync(ex.Id, SessionKind.Free);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+}

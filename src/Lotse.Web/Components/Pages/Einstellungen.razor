@@ -1,0 +1,100 @@
+@page "/einstellungen"
+@inject LearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+@inject ISnackbar Snackbar
+
+<PageTitle>Einstellungen – Lotse</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3">Einstellungen</MudText>
+
+@if (_p is null) { <MudSkeleton Height="200px" /> }
+else
+{
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Lernplan</MudText>
+        <MudGrid Spacing="2">
+            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.Name" Label="Name (für Musterlösungen)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.Occupation" Label="Beruf (Kontext für den Tutor)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="int" @bind-Value="_p.DailyMinutes" Label="Tägliche Session" Variant="Variant.Outlined">
+                    <MudSelectItem T="int" Value="5">5 Minuten</MudSelectItem>
+                    <MudSelectItem T="int" Value="10">10 Minuten</MudSelectItem>
+                    <MudSelectItem T="int" Value="15">15 Minuten</MudSelectItem>
+                    <MudSelectItem T="int" Value="30">30 Minuten</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" /></MudItem>
+        </MudGrid>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="SaveAsync">Speichern</MudButton>
+        @if (_p.PlacementCompletedUtc is { } done)
+        {
+            <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Einstufung am @done.ToLocalTime().ToString("dd.MM.yyyy") abgeschlossen.</MudText>
+        }
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">KI-Tutor</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-2">
+            <MudIcon Icon="@(Learning.Tutor.IsAvailable ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)" Color="@(Learning.Tutor.IsAvailable ? Color.Tertiary : Color.Default)" />
+            <MudText Typo="Typo.body2">@Learning.Tutor.Description</MudText>
+        </MudStack>
+        <MudText Typo="Typo.body2" Class="mb-2">Der Schlüssel wird bewusst nicht in der App gespeichert. Hinterlege ihn einmalig außerhalb des Repos – dann bewertet Claude deine Texte und Aufnahmen nach den Prüfungskriterien, markiert Fehler mit Code und spielt den Diskussionspartner.</MudText>
+        <MudText Typo="Typo.caption" Class="d-block">Variante A – Umgebungsvariable (dauerhaft, dann App neu starten):</MudText>
+        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">setx ANTHROPIC_API_KEY "sk-ant-…"</pre>
+        <MudText Typo="Typo.caption" Class="d-block">Variante B – .NET User Secrets im Projektordner src/Lotse.Web:</MudText>
+        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-…"</pre>
+        <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.7">Modell und Aufwand: appsettings.json → Lotse:Tutor (Standard claude-opus-5, Aufwand medium). Ohne Schlüssel funktioniert alles außer KI-Bewertung, Diskussionspartner und Übungsgenerierung.</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Inhalte</MudText>
+        <MudText Typo="Typo.body2">@CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen aus den Content-Dateien · @CatalogProvider.GeneratedExerciseCount vom Tutor erzeugt</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4" Elevation="1" Style="border:1px solid var(--mud-palette-error)">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Zurücksetzen</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Löscht Lernstand, Sessions, Fehlerjournal und generierte Übungen. Die Content-Dateien bleiben.</MudText>
+        @if (!_confirmReset)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _confirmReset = true">Alle Lerndaten löschen</MudButton>
+        }
+        else
+        {
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.body2" Color="Color.Error">Wirklich? Das lässt sich nicht rückgängig machen.</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetAsync">Ja, löschen</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="() => _confirmReset = false">Abbrechen</MudButton>
+            </MudStack>
+        }
+    </MudPaper>
+}
+
+@code {
+    private LearnerProfile? _p;
+    private DateTime? _examDate;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _p = await Learning.GetProfileAsync();
+        _examDate = _p.TargetExamDate?.ToDateTime(TimeOnly.MinValue);
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_p is null) return;
+        _p.TargetExamDate = _examDate is { } d ? DateOnly.FromDateTime(d) : null;
+        await Learning.SaveProfileAsync(_p);
+        Snackbar.Add("Gespeichert.", Severity.Success);
+    }
+
+    private bool _confirmReset;
+
+    private async Task ResetAsync()
+    {
+        _confirmReset = false;
+        await Learning.ResetAllDataAsync();
+        await CatalogProvider.RefreshAsync();
+        _p = await Learning.GetProfileAsync();
+        Snackbar.Add("Lerndaten gelöscht.", Severity.Info);
+    }
+}

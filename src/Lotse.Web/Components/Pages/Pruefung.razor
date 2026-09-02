@@ -1,0 +1,99 @@
+@page "/pruefung"
+@inject LearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+@inject NavigationManager Nav
+
+<PageTitle>Prüfung B2 – Lotse</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1">@ExamBlueprint.Name</MudText>
+<MudText Typo="Typo.body2" Class="mb-4" Style="opacity:.8">Vier Module, jedes einzeln bestehbar, jeweils 60 % nötig. Unten das Format mit Tipps – und die Simulationen, die es hier schon gibt.</MudText>
+
+<MudGrid Spacing="2" Class="mb-4">
+    @foreach (var m in ExamBlueprint.Modules)
+    {
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-3" Elevation="1" Style="height:100%">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-1">
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:600">@m.Name</MudText>
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@m.Minutes min</MudChip>
+                    <MudSpacer />
+                    @if (_readiness is not null)
+                    {
+                        var r = _readiness.Modules.FirstOrDefault(x => x.Module == m.Name);
+                        if (r is not null) { <MudChip T="string" Size="Size.Small" Color="@(r.Readiness >= 0.6 ? Color.Tertiary : Color.Warning)">@r.Readiness.ToString("P0")</MudChip> }
+                    }
+                </MudStack>
+                <MudExpansionPanels Elevation="0" Dense="true">
+                    @foreach (var p in m.Parts)
+                    {
+                        <MudExpansionPanel Text="@($"{p.Name} · {p.Items} {(p.Items == 1 ? "Aufgabe" : "Items")}")">
+                            <MudText Typo="Typo.body2">@p.TaskFormat</MudText>
+                            <MudText Typo="Typo.caption" Class="mt-1 d-block" Color="Color.Primary">Tipp: @p.Tip</MudText>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+                <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">@m.PassRule</MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+<MudText Typo="Typo.h6" Class="mb-2">Simulationen</MudText>
+<MudGrid Spacing="2" Class="mb-4">
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-3" Elevation="1" Style="height:100%">
+            <MudText Typo="Typo.subtitle2">Schreiben Teil 1</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mb-2">Forumsbeitrag, 150 Wörter, 50 min. Timer läuft in der Aufgabe.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => StartRandom(Teil1)">Starten</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-3" Elevation="1" Style="height:100%">
+            <MudText Typo="Typo.subtitle2">Schreiben Teil 2</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mb-2">Formelle Nachricht, 100 Wörter, 25 min.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => StartRandom(Teil2)">Starten</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-3" Elevation="1" Style="height:100%">
+            <MudText Typo="Typo.subtitle2">Sprechen Teil 1</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mb-2">Vortrag, 4 min, Aufnahme + Bewertung.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => StartRandom(Vortrag)">Starten</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-3" Elevation="1" Style="height:100%">
+            <MudText Typo="Typo.subtitle2">Lesen / Hören</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mb-2">Ein Prüfungsteil im Originalformat.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => StartRandom(LesenHoeren)">Starten</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true">
+    <b>telc statt Goethe?</b> @ExamBlueprint.TelcDifferences
+</MudAlert>
+
+@code {
+    private ReadinessReport? _readiness;
+
+    private static readonly Func<Exercise, bool> Teil1 = e => e.Type == ExerciseType.FreeWrite && e.MinWords >= 150;
+    private static readonly Func<Exercise, bool> Teil2 = e => e.Type == ExerciseType.FreeWrite && e.MinWords is >= 100 and < 150;
+    private static readonly Func<Exercise, bool> Vortrag = e => e.Type == ExerciseType.Speak && e.NodeId == "SP.VORTRAG";
+    private static readonly Func<Exercise, bool> LesenHoeren = e => e.Type == ExerciseType.Reading && e.Context == ExerciseContext.Pruefung;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var states = await Learning.GetSkillStatesAsync();
+        _readiness = LearnerAnalysis.Readiness(CatalogProvider.Catalog, states);
+    }
+
+    private async Task StartRandom(Func<Exercise, bool> filter)
+    {
+        var pool = CatalogProvider.Catalog.Exercises.Where(filter).ToList();
+        if (pool.Count == 0) return;
+        var ex = pool[Random.Shared.Next(pool.Count)];
+        var s = await Learning.StartSingleAsync(ex.Id, SessionKind.Exam);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+}

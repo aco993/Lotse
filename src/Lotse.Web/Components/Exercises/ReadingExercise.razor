@@ -1,0 +1,109 @@
+@* Reading passage (shown) or listening passage (spoken only) with multiple-choice questions. *@
+@inject LearningService Learning
+@inject SpeechService Speech
+
+<MudText Typo="Typo.body2" Class="mb-2" Style="opacity:.8">@Exercise.Prompt</MudText>
+
+@if (Exercise.AudioOnly)
+{
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => PlayAsync()" Disabled="_playing">Abspielen (@_plays/2)</MudButton>
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopAsync">Stopp</MudButton>
+        @if (_result is not null)
+        {
+            <MudButton Variant="Variant.Text" OnClick="() => _showTranscript = !_showTranscript">@(_showTranscript ? "Text verbergen" : "Text anzeigen")</MudButton>
+        }
+    </MudStack>
+    @if (_showTranscript)
+    {
+        <MudPaper Elevation="0" Class="pa-3 mb-3 reading-text" Style="background: var(--mud-palette-background-gray)">@Exercise.Text</MudPaper>
+    }
+}
+else
+{
+    <MudPaper Elevation="0" Class="pa-4 mb-3 reading-text" Style="background: var(--mud-palette-background-gray); max-height: 46vh; overflow:auto">@Exercise.Text</MudPaper>
+}
+
+@for (var q = 0; q < Exercise.Questions.Count; q++)
+{
+    var qi = q;
+    var question = Exercise.Questions[qi];
+    <MudPaper Elevation="0" Class="pa-3 mb-2" Style="border:1px solid var(--mud-palette-lines-default)">
+        <MudText Typo="Typo.subtitle2" Class="mb-1">@(qi + 1). @question.Question</MudText>
+        <MudStack Spacing="0">
+            @for (var o = 0; o < question.Options.Count; o++)
+            {
+                var oi = o;
+                var isChosen = _chosen[qi] == oi;
+                var color = _result is null ? (isChosen ? Color.Primary : Color.Default)
+                            : oi == question.CorrectIndex ? Color.Tertiary : isChosen ? Color.Error : Color.Default;
+                <MudButton Variant="@(isChosen || (_result is not null && oi == question.CorrectIndex) ? Variant.Filled : Variant.Text)" Color="@color" Size="Size.Small"
+                           Class="justify-start text-none" Disabled="_result is not null" OnClick="() => _chosen[qi] = oi">@question.Options[oi]</MudButton>
+            }
+        </MudStack>
+    </MudPaper>
+}
+
+@if (_result is null)
+{
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _chosen.Any(c => c < 0))">Auswerten</MudButton>
+    </MudStack>
+}
+else
+{
+    <FeedbackPanel Result="_result" />
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int StepIndex { get; set; }
+    [Parameter] public EventCallback<AnswerResult> OnDone { get; set; }
+
+    private int[] _chosen = [];
+    private bool _busy;
+    private bool _playing;
+    private bool _showTranscript;
+    private int _plays;
+    private AnswerResult? _result;
+    private DateTime _shownAt = DateTime.UtcNow;
+    private string? _lastId;
+
+    protected override void OnParametersSet()
+    {
+        if (_lastId == Exercise.Id) return;
+        _lastId = Exercise.Id;
+        _chosen = Enumerable.Repeat(-1, Exercise.Questions.Count).ToArray();
+        _result = null;
+        _plays = 0;
+        _showTranscript = false;
+        _shownAt = DateTime.UtcNow;
+    }
+
+    private async Task PlayAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Exercise.Text) || _playing) return;
+        _playing = true;
+        _plays++;
+        try { await Speech.SpeakAsync(Exercise.Text, 0.95); }
+        finally { _playing = false; StateHasChanged(); }
+    }
+
+    private async Task StopAsync() { await Speech.StopSpeakingAsync(); _playing = false; }
+
+    private async Task SubmitAsync()
+    {
+        _busy = true;
+        try
+        {
+            await Speech.StopSpeakingAsync();
+            var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
+            _result = await Learning.SubmitReadingAsync(SessionId, StepIndex, Exercise.Id, _chosen, ms);
+        }
+        finally { _busy = false; }
+    }
+}

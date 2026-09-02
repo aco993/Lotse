@@ -1,0 +1,20 @@
+@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Fehler – Lotse</PageTitle>
+
+<MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mt-4">
+    <MudText Typo="Typo.h6">Da ist etwas schiefgelaufen.</MudText>
+    <MudText>Lade die Seite neu. Wenn der Fehler bleibt, hilft das Server-Log weiter.</MudText>
+    @if (ShowRequestId)
+    {
+        <MudText Typo="Typo.caption" Class="mono">Request-ID: @RequestId</MudText>
+    }
+</MudAlert>
+
+@code {
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    protected override void OnInitialized() => RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

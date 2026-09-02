@@ -1,0 +1,150 @@
+@page "/session/{Id:guid}"
+@inject LearningService Learning
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<PageTitle>Session – Lotse</PageTitle>
+
+@if (_view is null)
+{
+    <MudSkeleton Height="300px" />
+}
+else if (_finished || _view.IsComplete)
+{
+    <MudCard Elevation="2">
+        <MudCardContent>
+            <MudText Typo="Typo.h5" Class="mb-1">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung abgeschlossen" : "Session geschafft")</MudText>
+            <MudText Typo="Typo.body1" Class="mb-3">@Correct von @Done Aufgaben gelöst (@Accuracy.ToString("P0")) · @Duration Minuten@(Done < _view.Steps.Count ? $" · {_view.Steps.Count - Done} übersprungen" : "")</MudText>
+            @if (_view.Session.Kind == SessionKind.Placement)
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">Das Lernermodell ist jetzt kalibriert. Ab morgen plant der Lotse jede Session nach deinen Schwachstellen – und prüft später nach, ob sie wirklich sitzen.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">@Encouragement</MudText>
+            }
+            @if (_summaryByNode.Count > 0)
+            {
+                <MudSimpleTable Dense="true" Elevation="0" Class="mb-3">
+                    <thead><tr><th>Thema</th><th style="text-align:right">Gelöst</th></tr></thead>
+                    <tbody>
+                    @foreach (var (node, ok, total) in _summaryByNode)
+                    {
+                        <tr><td>@node</td><td style="text-align:right">@ok / @total</td></tr>
+                    }
+                    </tbody>
+                </MudSimpleTable>
+            }
+            <MudStack Row="true" Spacing="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="">Zur Übersicht</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AnotherAsync">Noch 5 Minuten</MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2" Spacing="2">
+        <MudText Typo="Typo.subtitle2" Style="opacity:.8">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung" : _view.Session.Summary)</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Default" OnClick="FinishEarlyAsync">Beenden</MudButton>
+    </MudStack>
+    <MudProgressLinear Color="Color.Primary" Value="@Progress" Rounded="true" Size="Size.Medium" Class="mb-3" />
+
+    var step = _view.Steps[_index];
+    var ex = _view.Exercises[_index];
+    <ExerciseRunner @key="ex.Id" Exercise="ex" NodeTitle="@Catalog.NodeTitle(ex.NodeId)" Kind="step.Kind" Reason="@step.Reason"
+                    SessionId="_view.Session.Id" Index="_index" Total="_view.Steps.Count"
+                    OnAnswered="OnAnsweredAsync" OnProductionDone="OnProductionDoneAsync" OnSkip="OnSkipAsync" />
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    [Inject] private ContentCatalogProvider CatalogProvider { get; set; } = default!;
+    private ContentCatalog Catalog => CatalogProvider.Catalog;
+
+    private SessionView? _view;
+    private int _index;
+    private bool _finished;
+    private readonly List<(string Node, int Ok, int Total)> _summaryByNode = [];
+
+    private double Progress => _view is null || _view.Steps.Count == 0 ? 0 : 100.0 * _view.Steps.Count(s => s.Done) / _view.Steps.Count;
+    private int Correct => _view?.Steps.Count(s => s.Done && s.Score >= 0.7) ?? 0;
+    private int Done => _view?.Steps.Count(s => s.Done) ?? 0;
+    private double Accuracy => Done == 0 ? 0 : (double)Correct / Done;
+    private int Duration => _view is null ? 0 : (int)Math.Round(((_view.Session.EndedUtc ?? DateTime.UtcNow) - _view.Session.StartedUtc).TotalMinutes);
+    private string Encouragement => Accuracy switch
+    {
+        >= 0.9 => "Stark. Der Lotse dreht beim nächsten Mal die Schwierigkeit etwas hoch.",
+        >= 0.7 => "Solide Session. Die Fehler von heute kommen in ein paar Tagen automatisch wieder.",
+        >= 0.5 => "Anstrengend, aber genau das bringt dich weiter – die Themen von heute bekommen jetzt mehr Gewicht.",
+        _ => "Harter Tag. Das ist Information, kein Urteil: Der Lotse nimmt morgen leichtere Einstiege zu diesen Themen.",
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _view = await Learning.GetSessionAsync(Id);
+        if (_view is null) { Nav.NavigateTo(""); return; }
+        _index = Math.Max(0, _view.NextIndex);
+        if (_view.IsComplete) BuildSummary();
+    }
+
+    private async Task OnAnsweredAsync(AnswerResult result) => await AdvanceAsync();
+    private async Task OnProductionDoneAsync(double score) => await AdvanceAsync();
+
+    private async Task OnSkipAsync()
+    {
+        if (_view is null) return;
+        await Learning.SkipStepAsync(_view.Session.Id, _index);
+        await AdvanceAsync();
+    }
+
+    private async Task AdvanceAsync()
+    {
+        _view = await Learning.GetSessionAsync(Id);
+        if (_view is null) return;
+        if (_view.IsComplete)
+        {
+            await Learning.FinishSessionAsync(Id);
+            _view = await Learning.GetSessionAsync(Id);
+            BuildSummary();
+            _finished = true;
+            return;
+        }
+        _index = _view.NextIndex;
+    }
+
+    private async Task FinishEarlyAsync()
+    {
+        if (_view is null) return;
+        if (_view.Steps.Any(s => s.Done))
+        {
+            await Learning.FinishSessionAsync(Id);
+            _view = await Learning.GetSessionAsync(Id);
+            BuildSummary();
+            _finished = true;
+        }
+        else
+        {
+            await Learning.AbandonSessionAsync(Id);
+            Nav.NavigateTo("");
+        }
+    }
+
+    private async Task AnotherAsync()
+    {
+        var s = await Learning.StartSessionAsync(5);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private void BuildSummary()
+    {
+        _summaryByNode.Clear();
+        if (_view is null) return;
+        var groups = _view.Steps.Zip(_view.Exercises, (s, e) => (s, e)).Where(t => t.s.Done)
+            .GroupBy(t => Catalog.NodeTitle(t.e.NodeId))
+            .Select(g => (g.Key, g.Count(t => t.s.Score >= 0.7), g.Count()))
+            .OrderBy(t => (double)t.Item2 / t.Item3);
+        _summaryByNode.AddRange(groups);
+    }
+}

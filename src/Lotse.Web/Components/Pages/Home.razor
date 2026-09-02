@@ -1,0 +1,141 @@
+@page "/"
+@inject LearningService Learning
+@inject NavigationManager Nav
+
+<PageTitle>Heute – Lotse</PageTitle>
+
+@if (_m is null)
+{
+    <MudSkeleton Height="120px" Class="mb-3" /><MudSkeleton Height="200px" />
+}
+else
+{
+    @if (_m.Profile.PlacementCompletedUtc is null)
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Class="mb-4" Icon="@Icons.Material.Filled.Explore">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">Willkommen an Bord.</MudText>
+            <MudText Typo="Typo.body2">Bevor der Lotse steuern kann, braucht er eine Standortbestimmung: 28 kurze Aufgaben zu den 14 Kernthemen, etwa 15–20 Minuten. Danach weiß das System, wo du stehst – und jede Session ist auf dich zugeschnitten.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="StartPlacementAsync" Disabled="_busy">Einstufung starten</MudButton>
+        </MudAlert>
+    }
+
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.StreakDays 🔥</div><div class="l">Tage in Folge</div></MudPaper></MudItem>
+        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.MinutesToday</div><div class="l">Minuten heute</div></MudPaper></MudItem>
+        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.DueReviews</div><div class="l">Wiederholungen fällig</div></MudPaper></MudItem>
+        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.Readiness.Overall.ToString("P0")</div><div class="l">B2-Bereitschaft</div></MudPaper></MudItem>
+    </MudGrid>
+
+    <MudCard Elevation="2" Class="mb-4">
+        <MudCardContent>
+            @if (_m.OpenSession is not null)
+            {
+                <MudText Typo="Typo.h6">Session läuft noch</MudText>
+                <MudText Typo="Typo.body2" Class="mb-2">@_m.OpenSession.Summary · @_m.OpenSession.StepsDone / @_m.OpenSession.StepsTotal erledigt</MudText>
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Nav.NavigateTo($"session/{_m.OpenSession.Id}"))">Weitermachen</MudButton>
+                    <MudButton Variant="Variant.Text" OnClick="AbandonAsync">Abbrechen</MudButton>
+                </MudStack>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6">Deine Session heute</MudText>
+                <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">Der Lotse schlägt vor: <b>@_m.NextSessionPreview</b></MudText>
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@_m.Profile.DailyMinutes Minuten starten</MudButton>
+                    @foreach (var m in new[] { 5, 10, 15, 30 }.Where(x => x != _m.Profile.DailyMinutes))
+                    {
+                        var minutes = m;
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => StartAsync(minutes)" Disabled="_busy">@minutes min</MudButton>
+                    }
+                </MudStack>
+                @if (_m.PendingRechecks > 0)
+                {
+                    <MudText Typo="Typo.caption" Class="mt-2 d-block" Color="Color.Warning">@_m.PendingRechecks Wiedervorlage@(_m.PendingRechecks == 1 ? "" : "n") fällig – früher schwache Themen werden heute nachgeprüft.</MudText>
+                }
+            }
+        </MudCardContent>
+    </MudCard>
+
+    <MudGrid Spacing="3">
+        <MudItem xs="12" md="7">
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Woran du gerade arbeitest</MudText>
+                @if (_m.WeakAreas.Count == 0)
+                {
+                    <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine Daten. Nach der Einstufung erscheinen hier deine Schwerpunkte.</MudText>
+                }
+                @foreach (var w in _m.WeakAreas.Take(6))
+                {
+                    <div class="mb-2">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                            <MudText Typo="Typo.body2" Style="font-weight:500">@w.Title</MudText>
+                            <TrendIcon Trend="w.Trend" />
+                            <MudSpacer />
+                            <MudText Typo="Typo.caption">@w.Mastery.ToString("P0")@(w.Errors7d > 0 ? $" · {w.Errors7d} Fehler / 7 Tage" : "")</MudText>
+                        </MudStack>
+                        <MasteryBar Value="w.Mastery" Confidence="w.Confidence" />
+                    </div>
+                }
+                <MudButton Variant="Variant.Text" Size="Size.Small" Href="fortschritt" EndIcon="@Icons.Material.Filled.ArrowForward">Alle Themen</MudButton>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="5">
+            <MudPaper Class="pa-4 mb-3" Elevation="1">
+                <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">B2-Prognose</MudText>
+                <MudText Typo="Typo.body2" Class="mb-2">@_m.Readiness.Verdict</MudText>
+                @foreach (var mod in _m.Readiness.Modules)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
+                        <MudText Typo="Typo.caption" Style="width:80px">@mod.Module</MudText>
+                        <div style="flex:1"><MasteryBar Value="mod.Readiness" Confidence="mod.Coverage" Threshold="0.6" /></div>
+                        <MudText Typo="Typo.caption" Style="width:38px;text-align:right">@mod.Readiness.ToString("P0")</MudText>
+                    </MudStack>
+                }
+            </MudPaper>
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Häufigste Fehler (30 Tage)</MudText>
+                @if (_m.TopErrors.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine.</MudText> }
+                @foreach (var e in _m.TopErrors.Take(5))
+                {
+                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                        <MudText Typo="Typo.body2">@e.Title</MudText>
+                        <MudSpacer />
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@e.Count×</MudChip>
+                    </MudStack>
+                }
+                <MudButton Variant="Variant.Text" Size="Size.Small" Href="fehler" EndIcon="@Icons.Material.Filled.ArrowForward">Fehlerjournal</MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.caption" Class="mt-4 d-block" Style="opacity:.6">Tutor: @_m.TutorDescription</MudText>
+}
+
+@code {
+    private DashboardModel? _m;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync() => _m = await Learning.GetDashboardAsync();
+
+    private async Task StartAsync(int minutes)
+    {
+        _busy = true;
+        var s = await Learning.StartSessionAsync(minutes);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private async Task StartPlacementAsync()
+    {
+        _busy = true;
+        var s = await Learning.StartPlacementAsync();
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private async Task AbandonAsync()
+    {
+        if (_m?.OpenSession is null) return;
+        await Learning.AbandonSessionAsync(_m.OpenSession.Id);
+        _m = await Learning.GetDashboardAsync();
+    }
+}

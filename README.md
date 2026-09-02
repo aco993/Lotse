@@ -1,0 +1,77 @@
+# Lotse – adaptive German coach for a real B2
+
+**Lotse** (German for a harbour pilot) is a personal, adaptive German-learning application built to get one specific learner – a Serbian-speaking software developer living in Germany – from an uneven B1–B2 to a solid, exam-ready B2 (Goethe-Zertifikat B2 format; telc B2 transfers).
+
+It is not a course. It is a closed loop: every answer updates a per-topic ability model, every mistake is tagged with an error code, and a planner composes each day's 5–30-minute session from due repetitions, targeted drills on the weakest topics, one production task (writing or speaking) and scheduled re-checks of topics that used to be weak.
+
+> Concept and methodology: [docs/KONZEPT.md](docs/KONZEPT.md) · Roadmap: [docs/PLAN.md](docs/PLAN.md) · Architecture: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md)
+
+## Highlights
+
+- **Skill map, not lessons.** 48 skill nodes (grammar, vocabulary, Redemittel, reading, listening, writing, speaking) on CEFR sub-bands; 54 error codes; contrastive Serbian↔German notes on every interference-prone topic.
+- **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
+- **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
+- **Works without any API key.** 485 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
+- **Claude as tutor (optional).** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise generation for weak topics, a discussion partner for the oral exam. Structured JSON-schema output, official Anthropic .NET SDK.
+- **Exam realism.** Goethe B2 blueprint as data, writing/speaking tasks in exact exam formats, reading and audio-only listening tasks in exam part formats, readiness report against the 60 % rule.
+
+## Screens
+
+| Heute | Session | Fortschritt |
+|---|---|---|
+| Streak, minutes, due reviews, readiness; one button starts the planned session; weak areas and exam prognosis. | One card per step with a reason chip ("Wiederholung fällig", "Schwerpunkt Passiv: 3 Fehler / 7 Tage"), immediate feedback with explanation and Serbian contrast. | Mastery per node with confidence, 30-day activity, re-check markers. |
+
+Also: *Schreiben* (micro tasks, exam Teil 1/2), *Sprechen* (spontaneous, Vortrag, discussion with AI partner), *Prüfung B2* (blueprint + simulations), *Fehlerjournal*, *Themen* (focus sessions, generate exercises), *Einstellungen*.
+
+## Quick start
+
+Requirements: .NET 10 SDK. Chrome or Edge for speech recognition (any browser for the rest).
+
+```bash
+git clone <this repo> && cd Lotse
+dotnet run --project src/Lotse.Web
+```
+
+Open http://localhost:5178 (or the port printed in the console). Data lives in `src/Lotse.Web/data/lotse.db` (SQLite, created on first start).
+
+### Optional: enable the Claude tutor
+
+Set an API key **outside the repository** – either as environment variable or as a .NET user secret:
+
+```bash
+setx ANTHROPIC_API_KEY "sk-ant-..."
+```
+
+```bash
+cd src/Lotse.Web
+dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."
+```
+
+Model and effort are configured in `appsettings.json` under `Lotse:Tutor` (default `claude-opus-5`, effort `medium`). Without a key every feature except AI evaluation, generation and the discussion partner is available.
+
+### Tests
+
+```bash
+dotnet test
+```
+
+46 tests cover the engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour) and content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker, word-order chunks consistent).
+
+## Project layout
+
+```
+content/                 taxonomy.json (nodes + error codes), exercises/*.json (the bank)
+src/Lotse.Core           domain model + learning engine, no dependencies
+src/Lotse.Infrastructure EF Core (SQLite), content loader, Claude tutor, application service
+src/Lotse.Web            Blazor Server UI (MudBlazor), browser speech interop
+tests/Lotse.Core.Tests   xUnit v3 (Microsoft.Testing.Platform)
+docs/                    concept, plan, architecture
+```
+
+## Status
+
+Phase 0 (foundation) complete; Phase 1 (daily-use hardening) in progress. See [docs/PLAN.md](docs/PLAN.md).
+
+## License
+
+MIT

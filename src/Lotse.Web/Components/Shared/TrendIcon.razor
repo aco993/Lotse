@@ -1,0 +1,16 @@
+@switch (Trend)
+{
+    case Trend.Improving:
+        <MudTooltip Text="Weniger Fehler als in der Vorwoche"><MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Tertiary" Size="Size.Small" /></MudTooltip>
+        break;
+    case Trend.Worsening:
+        <MudTooltip Text="Mehr Fehler als in der Vorwoche"><MudIcon Icon="@Icons.Material.Filled.TrendingDown" Color="Color.Error" Size="Size.Small" /></MudTooltip>
+        break;
+    case Trend.Stable:
+        <MudIcon Icon="@Icons.Material.Filled.TrendingFlat" Size="Size.Small" Style="opacity:.5" />
+        break;
+}
+
+@code {
+    [Parameter] public Trend Trend { get; set; }
+}

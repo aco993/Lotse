@@ -1,0 +1,39 @@
+html, body { height: 100%; }
+
+.lotse-appbar .mud-typography { color: #fff; }
+
+/* Exercise card */
+.ex-card { border-radius: 14px; }
+.ex-prompt { font-size: 1.25rem; line-height: 1.55; }
+.ex-prompt .gap { display: inline-block; min-width: 3.5em; border-bottom: 2px solid var(--mud-palette-primary); margin: 0 .15em; }
+.ex-reason { opacity: .8; font-style: italic; }
+.ex-feedback-correct { border-left: 4px solid var(--mud-palette-tertiary); }
+.ex-feedback-almost { border-left: 4px solid var(--mud-palette-secondary); }
+.ex-feedback-wrong { border-left: 4px solid var(--mud-palette-error); }
+.ex-serbian { background: rgba(224, 122, 31, .08); border-radius: 8px; padding: 8px 12px; }
+
+/* Word-order chips */
+.wo-pool, .wo-answer { min-height: 48px; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border-radius: 10px; }
+.wo-answer { border: 2px dashed var(--mud-palette-lines-default); }
+.wo-chunk { cursor: pointer; user-select: none; }
+
+/* Reading text */
+.reading-text { white-space: pre-wrap; line-height: 1.7; font-size: 1.05rem; }
+
+/* Mastery heat */
+.heat { display: block; width: 100%; height: 10px; border-radius: 5px; background: var(--mud-palette-lines-default); overflow: hidden; }
+.heat > span { display: block; height: 100%; border-radius: 5px; }
+
+/* Streak / KPI tiles */
+.kpi { text-align: center; padding: 12px 8px; }
+.kpi .v { font-size: 1.8rem; font-weight: 600; line-height: 1.1; }
+.kpi .l { font-size: .8rem; opacity: .75; }
+
+/* Recording pulse */
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(224,122,31,.5);} 70% { box-shadow: 0 0 0 14px rgba(224,122,31,0);} 100% { box-shadow: 0 0 0 0 rgba(224,122,31,0);} }
+.recording { animation: pulse 1.4s infinite; }
+
+.mono { font-family: Consolas, "Courier New", monospace; }
+.preline { white-space: pre-line; }
+
+#blazor-error-ui { display: none; }

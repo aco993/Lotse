@@ -1,0 +1,158 @@
+@page "/sprechen"
+@inject LearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+@inject NavigationManager Nav
+@inject SpeechService Speech
+@implements IDisposable
+
+<PageTitle>Sprechen – Lotse</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1">Sprechen</MudText>
+<MudText Typo="Typo.body2" Class="mb-4" Style="opacity:.8">Spontan reden ist die härteste Disziplin – und die, die im Alltag am meisten zählt. Der Browser transkribiert, der Tutor bewertet (oder du selbst). Für die Diskussion steht ein KI-Partner bereit.</MudText>
+
+<MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" Class="mt-2">
+    <MudTabPanel Text="Spontan (1–2 min)">
+        <TaskList Items="Alltag" OnPick="StartAsync" />
+    </MudTabPanel>
+    <MudTabPanel Text="Prüfung Teil 1 – Vortrag">
+        <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3" Variant="Variant.Text">In der Prüfung hast du 15 Minuten Vorbereitung für beide Teile. Nutze Stichworte, keine ganzen Sätze. Struktur: Einleitung → Leitpunkte → Fazit.</MudAlert>
+        <TaskList Items="Vortrag" OnPick="StartAsync" />
+    </MudTabPanel>
+    <MudTabPanel Text="Prüfung Teil 2 – Diskussion">
+        @if (!Learning.Tutor.IsAvailable)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">Der Diskussionspartner braucht den KI-Tutor (API-Schlüssel, siehe Einstellungen). Ohne ihn kannst du deine Position als Monolog aufnehmen und selbst prüfen.</MudAlert>
+            <TaskList Items="Diskussion" OnPick="StartAsync" />
+        }
+        else if (_thesis is null)
+        {
+            <MudStack Spacing="2">
+                @foreach (var d in Diskussion)
+                {
+                    var item = d;
+                    <MudPaper Class="pa-3" Elevation="1" Style="cursor:pointer" @onclick="() => BeginDiscussion(item)">
+                        <MudText Typo="Typo.body2">@item.Prompt</MudText>
+                    </MudPaper>
+                }
+            </MudStack>
+        }
+        else
+        {
+            <MudPaper Class="pa-3 mb-2" Elevation="1">
+                <MudText Typo="Typo.subtitle2">These: @_thesisText</MudText>
+            </MudPaper>
+            <MudPaper Class="pa-3 mb-2" Elevation="0" Style="background: var(--mud-palette-background-gray); max-height: 45vh; overflow:auto">
+                @foreach (var t in _history)
+                {
+                    <MudStack Row="true" Justify="@(t.FromLearner ? Justify.FlexEnd : Justify.FlexStart)" Class="mb-2">
+                        <MudPaper Class="pa-2 px-3" Elevation="0" Style="@($"max-width:85%; background:{(t.FromLearner ? "var(--mud-palette-primary)" : "var(--mud-palette-surface)")}; color:{(t.FromLearner ? "var(--mud-palette-primary-text)" : "inherit")}")">
+                            <MudText Typo="Typo.body2" Class="preline">@t.Text</MudText>
+                        </MudPaper>
+                    </MudStack>
+                }
+                @if (_partnerThinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+            </MudPaper>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                @if (!_recording)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Mic" Color="Color.Secondary" Variant="Variant.Filled" OnClick="StartRecordingAsync" Disabled="_partnerThinking" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Stop" Color="Color.Error" Variant="Variant.Filled" Class="recording" OnClick="StopRecordingAsync" />
+                }
+                <MudTextField @bind-Value="_draft" Variant="Variant.Outlined" Lines="2" Immediate="true" Placeholder="Sprich oder tippe deinen Beitrag …" Class="flex-grow-1" />
+                <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" Variant="Variant.Filled" OnClick="SendAsync" Disabled="@(_partnerThinking || string.IsNullOrWhiteSpace(_draft))" />
+            </MudStack>
+            <MudStack Row="true" Class="mt-2" Spacing="2">
+                <MudButton Variant="Variant.Text" OnClick="() => _thesis = null">Andere These</MudButton>
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="ReadLastAsync" Disabled="@(_history.Count == 0)">Letzten Beitrag vorlesen</MudButton>
+            </MudStack>
+        }
+    </MudTabPanel>
+    <MudTabPanel Text="Bisherige Aufnahmen">
+        <RecentProductions Speaking="true" />
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private IReadOnlyList<Exercise> All => CatalogProvider.Catalog.Exercises.Where(e => e.Type == ExerciseType.Speak).ToList();
+    private IReadOnlyList<Exercise> Alltag => All.Where(e => e.NodeId == "SP.ALLTAG_BERUF").ToList();
+    private IReadOnlyList<Exercise> Vortrag => All.Where(e => e.NodeId == "SP.VORTRAG").ToList();
+    private IReadOnlyList<Exercise> Diskussion => All.Where(e => e.NodeId == "SP.DISKUSSION").ToList();
+
+    private Exercise? _thesis;
+    private string _thesisText = "";
+    private readonly List<ChatTurn> _history = [];
+    private string _draft = "";
+    private bool _partnerThinking;
+    private bool _recording;
+    private bool _subscribed;
+
+    private async Task StartAsync(Exercise ex)
+    {
+        var s = await Learning.StartSingleAsync(ex.Id, SessionKind.Free);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private void BeginDiscussion(Exercise ex)
+    {
+        _thesis = ex;
+        var start = ex.Prompt.IndexOf('„');
+        var end = ex.Prompt.IndexOf('“');
+        _thesisText = start >= 0 && end > start ? ex.Prompt[(start + 1)..end] : ex.Prompt;
+        _history.Clear();
+        _draft = "";
+        _ = OpenAsync();
+    }
+
+    private async Task OpenAsync()
+    {
+        _partnerThinking = true;
+        try
+        {
+            var ctx = await Learning.BuildLearnerContextAsync();
+            var reply = await Learning.Tutor.DiscussAsync(_thesisText, _history, ctx);
+            _history.Add(new ChatTurn(false, reply));
+        }
+        catch (Exception e) { _history.Add(new ChatTurn(false, "(Partner nicht erreichbar: " + e.Message + ")")); }
+        finally { _partnerThinking = false; StateHasChanged(); }
+    }
+
+    private async Task SendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_draft)) return;
+        if (_recording) await StopRecordingAsync();
+        _history.Add(new ChatTurn(true, _draft.Trim()));
+        _draft = "";
+        await OpenAsync();
+    }
+
+    private async Task ReadLastAsync()
+    {
+        var last = _history.LastOrDefault(t => !t.FromLearner);
+        if (last is null) return;
+        var idx = last.Text.IndexOf("✎", StringComparison.Ordinal);
+        await Speech.SpeakAsync(idx > 0 ? last.Text[..idx] : last.Text);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender || _subscribed) return;
+        _subscribed = true;
+        Speech.Transcript += OnTranscript;
+        Speech.RecognitionEnded += OnEnded;
+    }
+
+    private void OnTranscript(string text, bool isFinal) { _draft = text; _ = InvokeAsync(StateHasChanged); }
+    private void OnEnded() { _recording = false; _ = InvokeAsync(StateHasChanged); }
+    private async Task StartRecordingAsync() => _recording = await Speech.StartRecognitionAsync();
+    private async Task StopRecordingAsync() { await Speech.StopRecognitionAsync(); _recording = false; }
+
+    public void Dispose()
+    {
+        if (!_subscribed) return;
+        Speech.Transcript -= OnTranscript;
+        Speech.RecognitionEnded -= OnEnded;
+    }
+}
