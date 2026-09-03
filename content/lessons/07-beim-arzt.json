@@ -1,0 +1,56 @@
+{
+  "lesson": {
+    "id": "L07", "order": 7, "title": "Beim Arzt", "subtitle": "Beschwerden beschreiben, Termine erkämpfen, Konjunktiv II im Alltag",
+    "theme": "Alltag", "band": "B1_2", "scene": "doctor", "minutes": 15,
+    "intro": "Seit drei Tagen Rückenschmerzen, der Praxis-Anrufbeantworter sagt „alles voll“. Du willst heute noch drankommen – und dann dem Arzt genau erklären, was los ist, statt „es tut weh“ zu sagen.",
+    "story": [
+      { "speaker": "Praxis (Telefon)", "text": "Praxis Dr. Hartmann, Fischer, guten Morgen." },
+      { "speaker": "Du", "text": "…", "options": ["Guten Morgen, mein Name ist Micić, ich bin Patient bei Ihnen. Ich habe seit drei Tagen starke Rückenschmerzen – hätten Sie heute noch einen Termin für mich?", "Guten Morgen, Micić. Ich habe Rückenschmerzen, ich brauche heute Termin.", "Guten Morgen. Mein Rücken tut weh. Kann ich kommen?"],
+        "correctIndex": 0, "feedback": ["Name, Patientenstatus, Symptom mit Dauer, Bitte im Konjunktiv – die Sprechstundenhilfe hat alles, was sie braucht.", "„brauche heute Termin“ – Artikel fehlt und der Ton ist fordernd. „hätten Sie … einen Termin“ öffnet Türen.", "Zu wenig Information; sie muss nachfragen, wer du bist und seit wann."] },
+      { "speaker": "Praxis (Telefon)", "text": "Heute ist leider alles voll. Frühestens nächsten Dienstag." },
+      { "speaker": "Du", "text": "…", "options": ["Bis Dienstag halte ich das kaum aus, ich kann kaum sitzen. Gäbe es die Möglichkeit, in die offene Sprechstunde zu kommen, oder könnten Sie mich anrufen, falls jemand absagt?", "Dienstag ist zu spät. Ich komme trotzdem heute.", "Okay, dann Dienstag."],
+        "correctIndex": 0, "feedback": ["Dringlichkeit begründen, dann zwei konkrete Alternativen im Konjunktiv – so bekommt man doch noch einen Termin.", "Mit Ankündigung einfach zu erscheinen funktioniert in deutschen Praxen nicht und verärgert das Personal.", "Wer sich mit Schmerzen abwimmeln lässt, sitzt eine Woche zu Hause. Nachfragen ist erlaubt."] },
+      { "speaker": "Praxis (Telefon)", "text": "Kommen Sie um 11:30 in die Akutsprechstunde, dann sieht der Doktor kurz drauf. Versichertenkarte nicht vergessen." },
+      { "speaker": "Dr. Hartmann", "text": "So, Herr Micić, was führt Sie zu mir?" },
+      { "speaker": "Du", "text": "…", "options": ["Seit Montag habe ich starke Schmerzen im unteren Rücken, vor allem beim Sitzen und morgens nach dem Aufstehen. Ins linke Bein zieht es manchmal. Ich habe Ibuprofen genommen, das hilft nur kurz.", "Ich habe Schmerzen in Rücken seit Montag. Es tut weh wenn ich sitze. Ich habe Ibuprofen genommen.", "Der Rücken. Seit Montag. Sehr schlimm."],
+        "correctIndex": 0, "feedback": ["Ort, Dauer, Auslöser, Ausstrahlung, bisherige Behandlung – das ist eine Anamnese, wie Ärzte sie lieben. Und „im unteren Rücken“, „ins Bein“ sind Wechselpräpositionen, sauber gesetzt.", "Inhaltlich fast alles da, aber „in Rücken“ ohne Artikel und ohne Komma vor „wenn“.", "Ein Arzt braucht mehr als Stichworte; die Nachfragen kosten die knappe Zeit."] },
+      { "speaker": "Dr. Hartmann", "text": "Klingt nach einer Reizung, nicht nach einem Bandscheibenvorfall. Ich verschreibe Ihnen etwas Stärkeres und Physiotherapie. Wenn es ins Bein ausstrahlt und taub wird, kommen Sie sofort wieder." }
+    ],
+    "grammar": {
+      "title": "Konjunktiv II im Alltag: Wünsche, Bitten, Alternativen",
+      "nodeId": "GR.KONJUNKTIV2",
+      "text": "Neben der Höflichkeit hat der Konjunktiv II eine zweite Aufgabe: Er öffnet Möglichkeiten. „Gäbe es …?“, „Könnten Sie …, falls …?“, „Es wäre gut, wenn …“ – so verhandelt man mit Praxen, Ämtern und Vermietern, ohne zu fordern. Formen, die du auswendig brauchst: hätte, wäre, gäbe, käme, wüsste, könnte, müsste, dürfte, sollte, würde + Infinitiv. Alles andere mit „würde“.",
+      "examples": [
+        { "german": "Gäbe es die Möglichkeit, heute noch zu kommen?", "serbian": "Da li bi postojala mogućnost da dođem još danas?", "note": "gäbe = Konj. II von geben" },
+        { "german": "Könnten Sie mich anrufen, falls jemand absagt?", "serbian": "Da li biste me pozvali ako neko otkaže?", "note": "könnten + falls" },
+        { "german": "Ich wüsste gern, ob das gefährlich ist.", "serbian": "Voleo bih da znam da li je to opasno.", "note": "wüsste = wissen" },
+        { "german": "An Ihrer Stelle würde ich sofort zum Arzt gehen.", "serbian": "Na Vašem mestu bih odmah otišao lekaru.", "note": "Rat mit würde" }
+      ]
+    },
+    "steps": ["gr.k2.000", "l07.match.001", "gr.k2.003", "gr.k2.006", "l07.spot.001", "gr.k2.009", "gr.k2.011", "l07.dlg.001", "gr.k2.103", "ws.st.005", "gr.k2.105"],
+    "productionExerciseId": "sp.alltag.002",
+    "merksatz": "„Gäbe es …?“ bekommt Termine, „Ich will“ bekommt Dienstag in zwei Wochen.",
+    "nodeIds": ["GR.KONJUNKTIV2", "WS.ALLTAG_SMALLTALK", "GR.WECHSELPRAEPOSITIONEN", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l07.match.001", "type": "Match", "nodeId": "GR.KONJUNKTIV2", "band": "B1_2", "context": "Alltag",
+      "prompt": "Indikativ → Konjunktiv II: Ordne die Formen zu.",
+      "pairs": [ { "left": "ich habe", "right": "ich hätte" }, { "left": "es gibt", "right": "es gäbe" }, { "left": "ich weiß", "right": "ich wüsste" }, { "left": "wir sind", "right": "wir wären" }, { "left": "sie kommt", "right": "sie käme" }, { "left": "du kannst", "right": "du könntest" } ],
+      "explanation": "Die unregelmäßigen Konjunktive lernt man als Liste; alle anderen Verben nehmen würde + Infinitiv." },
+    { "id": "l07.spot.001", "type": "SpotError", "nodeId": "GR.KONJUNKTIV2", "band": "B2_1", "context": "Alltag",
+      "prompt": "Deine Nachricht an die Physiotherapie hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Guten", "Tag,", "ich", "würde", "gern", "einen", "Termin", "vereinbaren", "und", "wäre", "dankbar,", "wenn", "es", "diese", "Woche", "noch", "möglich", "würde", "sein."],
+      "correctIndex": 17, "answers": ["wäre"], "explanation": "sein hat eine eigene Form: „wenn es … möglich wäre“ – nie „würde sein“." },
+    { "id": "l07.dlg.001", "type": "Dialogue", "nodeId": "WS.ALLTAG_SMALLTALK", "band": "B2_1", "context": "Alltag",
+      "prompt": "In der Apotheke: Das verschriebene Medikament ist nicht vorrätig.",
+      "lines": [
+        { "speaker": "Apothekerin", "text": "Das haben wir gerade nicht da. Ich könnte es bis morgen früh bestellen." },
+        { "speaker": "Du", "text": "…", "options": ["Gäbe es ein vergleichbares Mittel, das Sie vorrätig haben? Die Schmerzen sind ziemlich stark, ich würde ungern bis morgen warten.", "Nein, ich brauche es jetzt. Was soll ich machen?", "Okay, dann morgen."],
+          "correctIndex": 0, "feedback": ["Frage nach Alternative, Begründung, Wunsch im Konjunktiv – die Apothekerin sucht jetzt für dich.", "„Was soll ich machen?“ überträgt das Problem, statt eine Lösung zu erfragen.", "Mit starken Schmerzen darf man nachfragen; Apotheken haben fast immer einen Ersatz."] },
+        { "speaker": "Apothekerin", "text": "Es gibt ein Generikum mit demselben Wirkstoff. Ich müsste kurz beim Arzt anrufen, ob ich tauschen darf – haben Sie fünf Minuten?" },
+        { "speaker": "Du", "text": "…", "options": ["Natürlich, vielen Dank für die Mühe.", "Fünf Minuten? Na gut.", "Ja. Schnell bitte."],
+          "correctIndex": 0, "feedback": ["Kurz, warm, dankbar. Fünf Minuten Wartezeit sind hier ein Geschenk.", "Klingt genervt, obwohl sie dir gerade hilft.", "„Schnell bitte“ ist im Deutschen unhöflich, auch mit „bitte“."] },
+        { "speaker": "Apothekerin", "text": "Alles klar, der Arzt ist einverstanden. Zweimal täglich nach dem Essen, und bitte keinen Alkohol dazu." }
+      ], "explanation": "Alltag: Alternativen erfragen statt Probleme abgeben; Hilfsbereitschaft mit Dank beantworten." }
+  ]
+}

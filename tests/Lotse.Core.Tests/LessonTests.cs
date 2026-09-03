@@ -1,0 +1,78 @@
+using Lotse.Core.Engine;
+using Lotse.Core.Model;
+
+namespace Lotse.Core.Tests;
+
+public class LessonContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
+{
+    [Fact]
+    public void Course_has_twelve_ordered_lessons()
+    {
+        var lessons = fx.Catalog.Lessons;
+        Assert.Equal(12, lessons.Count);
+        Assert.Equal(Enumerable.Range(1, 12), lessons.Select(l => l.Order));
+    }
+
+    [Fact]
+    public void Every_lesson_is_complete()
+    {
+        foreach (var l in fx.Catalog.Lessons)
+        {
+            Assert.True(l.Steps.Count >= 8, $"{l.Id}: nur {l.Steps.Count} Schritte");
+            Assert.NotNull(l.ProductionExerciseId);
+            Assert.True(l.Story.Count >= 5, $"{l.Id}: zu kurze Geschichte");
+            Assert.True(l.Story.Count(s => s.IsLearnerTurn) >= 2, $"{l.Id}: zu wenige Lerner-Züge");
+            Assert.True(l.Grammar.Examples.Count >= 3, $"{l.Id}: zu wenige Beispiele");
+            Assert.False(string.IsNullOrWhiteSpace(l.Merksatz));
+            Assert.NotEmpty(l.NodeIds);
+        }
+    }
+
+    [Fact]
+    public void Every_lesson_mixes_interactive_types()
+    {
+        foreach (var l in fx.Catalog.Lessons)
+        {
+            var types = l.Steps.Select(id => fx.Catalog.Exercise(id)!.Type).ToHashSet();
+            Assert.Contains(ExerciseType.Dialogue, types);
+            Assert.Contains(ExerciseType.Match, types);
+            Assert.Contains(ExerciseType.SpotError, types);
+            Assert.True(types.Count >= 4, $"{l.Id}: nur {types.Count} Aufgabentypen");
+        }
+    }
+
+    [Fact]
+    public void Dialogue_turns_have_one_best_option_with_feedback_for_each()
+    {
+        var dialogues = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.Dialogue).ToList();
+        Assert.True(dialogues.Count >= 12);
+        foreach (var d in dialogues)
+            foreach (var turn in d.Lines.Where(l => l.IsLearnerTurn))
+            {
+                Assert.Equal(3, turn.Options!.Count);
+                Assert.InRange(turn.CorrectIndex!.Value, 0, 2);
+                Assert.NotNull(turn.Feedback);
+                Assert.Equal(3, turn.Feedback!.Count);
+                Assert.All(turn.Feedback, f => Assert.True(f.Length > 15, $"{d.Id}: Feedback zu knapp"));
+            }
+        foreach (var l in fx.Catalog.Lessons)
+            foreach (var turn in l.Story.Where(s => s.IsLearnerTurn))
+                Assert.Equal(turn.Options!.Count, turn.Feedback!.Count);
+    }
+
+    [Fact]
+    public void Spot_error_words_and_correction_are_consistent()
+    {
+        foreach (var e in fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.SpotError))
+        {
+            var wrong = e.Options[e.CorrectIndex!.Value];
+            Assert.NotEqual(wrong.Trim(',', '.'), e.Answers[0].Trim(',', '.'));
+            Assert.Equal(Outcome.Correct, AnswerChecker.Check(e, e.CorrectIndex.ToString()).Outcome);
+            Assert.Equal(Outcome.Incorrect, AnswerChecker.Check(e, ((e.CorrectIndex.Value + 1) % e.Options.Count).ToString()).Outcome);
+        }
+    }
+
+    [Fact]
+    public void Lesson_steps_cover_the_declared_grammar_node()
+        => Assert.All(fx.Catalog.Lessons, l => Assert.Contains(l.Steps, id => fx.Catalog.Exercise(id)!.NodeId == l.Grammar.NodeId));
+}

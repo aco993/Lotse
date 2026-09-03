@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L04", "order": 4, "title": "Der Kunde ist verärgert", "subtitle": "Beschwerden beantworten, Passiv, Nomen-Verb-Verbindungen",
+    "theme": "Beruf", "band": "B2_1", "scene": "customer", "minutes": 18,
+    "intro": "Herr Wagner von der Firma Hansa Logistik ruft an: Seit dem Update fehlen in seinen Rechnungen die Positionen aus dem Import. Er ist sauer. Jonas ist im Meeting – du nimmst das Gespräch an.",
+    "story": [
+      { "speaker": "Herr Wagner", "text": "Wagner, Hansa Logistik. Seit Ihrem Update fehlen mir in jeder Rechnung die Importpositionen! Wissen Sie, was das für uns bedeutet?" },
+      { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, Micić am Apparat. Das tut mir leid, ich verstehe, dass das für Sie ein ernstes Problem ist. Damit ich es sofort weitergeben kann: Seit wann genau fehlen die Positionen?", "Guten Tag. Das ist nicht mein Bereich, Herr Bauer ist im Meeting.", "Guten Tag, Herr Wagner. Das kann nicht sein, das Update wurde getestet."],
+          "correctIndex": 0, "feedback": ["Entschuldigung, Verständnis, dann eine präzise Rückfrage – das nimmt dem Gespräch die Hitze.", "Zuständigkeit abschieben ist das Schlimmste, was ein verärgerter Kunde hören kann.", "Widerspruch als erste Reaktion. Selbst wenn du recht hast: erst zuhören."] },
+      { "speaker": "Herr Wagner", "text": "Seit Montag. Drei Rechnungen sind schon falsch rausgegangen. Ich muss die alle stornieren!" },
+      { "speaker": "Du", "text": "…", "options": ["Verstanden. Das Problem wird von uns mit höchster Priorität behandelt. Ich nehme es jetzt auf und Sie erhalten bis 16 Uhr eine Rückmeldung mit dem Stand.", "Verstanden. Wir behandeln das Problem mit höchster Priorität und ich rufe Sie irgendwann zurück.", "Verstanden. Man wird sich kümmern."],
+          "correctIndex": 0, "feedback": ["Passiv für den Vorgang, „aufnehmen“, eine konkrete Uhrzeit – Sicherheit für den Kunden.", "„irgendwann“ ist genau das Wort, das der Kunde nicht hören will.", "„Man wird sich kümmern“ – unpersönlich und ohne Termin. Klingt nach Abwimmeln."] },
+      { "speaker": "Herr Wagner", "text": "Bis 16 Uhr, gut. Und was ist mit den falschen Rechnungen?" },
+      { "speaker": "Du", "text": "…", "options": ["Die betroffenen Rechnungen können nach der Korrektur neu erzeugt werden – das übernehmen wir, Sie müssen nichts manuell stornieren.", "Die betroffenen Rechnungen können nach der Korrektur neu erzeugt. Das machen wir.", "Die Rechnungen müssen Sie stornieren, das ist ja Ihr System."],
+          "correctIndex": 0, "feedback": ["Passiv mit Modalverb (können … erzeugt werden) und die Zusage, die Arbeit abzunehmen.", "Passiv mit Modalverb braucht „werden“ am Ende: können … erzeugt WERDEN.", "Verantwortung zurückwerfen – inhaltlich vielleicht, im Ton nie."] },
+      { "speaker": "Herr Wagner", "text": "In Ordnung. Dann warte ich auf Ihre Nachricht. Danke, Herr Micić." }
+    ],
+    "grammar": {
+      "title": "Passiv: Wenn der Vorgang wichtiger ist als der Täter",
+      "nodeId": "GR.PASSIV",
+      "text": "Im Kundengespräch und in formellen Texten steht oft nicht, WER etwas tut, sondern DASS es getan wird: „Das Problem wird bearbeitet.“ Deutsch bildet das Vorgangspassiv mit werden + Partizip II (Präsens: wird bearbeitet, Präteritum: wurde bearbeitet, Perfekt: ist bearbeitet worden), das Zustandspassiv mit sein + Partizip II (ist bearbeitet = fertig). Mit Modalverb: muss/kann … bearbeitet WERDEN. Serbisch nutzt meist das se-Passiv („problem se rešava“) – im Deutschen immer „werden“.",
+      "examples": [
+        { "german": "Das Problem wird mit höchster Priorität behandelt.", "serbian": "Problem se rešava sa najvišim prioritetom.", "note": "Vorgang, Präsens" },
+        { "german": "Der Fehler wurde gestern behoben.", "serbian": "Greška je otklonjena juče.", "note": "Vorgang, Vergangenheit" },
+        { "german": "Der Fehler ist behoben.", "serbian": "Greška je otklonjena (i to je stanje sada).", "note": "Zustand = Ergebnis" },
+        { "german": "Die Rechnungen können neu erzeugt werden.", "serbian": "Računi mogu ponovo da se generišu.", "note": "Modalverb + Partizip + werden" }
+      ]
+    },
+    "steps": ["gr.pas.001", "rm.bb.001", "l04.match.001", "gr.pas.003", "gr.pas.004", "l04.spot.001", "ws.nvv.001", "gr.pas.007", "l04.dlg.001", "gr.pas.005", "ws.nvv.008"],
+    "productionExerciseId": "sw.micro.003",
+    "merksatz": "Vorgang: wird gemacht. Ergebnis: ist gemacht. Beides ohne Täter – und ohne „se“.",
+    "nodeIds": ["GR.PASSIV", "RM.BESCHWERDE_BITTE", "WS.NOMEN_VERB_VERBINDUNGEN", "WS.BERUF_BUERO"]
+  },
+  "exercises": [
+    { "id": "l04.match.001", "type": "Match", "nodeId": "GR.PASSIV", "band": "B2_1", "context": "Beruf",
+      "prompt": "Vorgang oder Zustand? Ordne die Sätze zu.",
+      "pairs": [ { "left": "Der Server wird gerade neu gestartet.", "right": "Vorgang läuft (werden)" }, { "left": "Der Server ist neu gestartet.", "right": "Zustand erreicht (sein)" }, { "left": "Die Daten wurden gestern gesichert.", "right": "Vorgang in der Vergangenheit (wurden)" }, { "left": "Die Daten sind gesichert worden.", "right": "Vorgang, Perfekt (sind … worden)" }, { "left": "Die Daten müssen gesichert werden.", "right": "Vorgang mit Modalverb" } ],
+      "explanation": "werden = Vorgang, sein = Ergebnis; „worden“ nur im Perfekt/Plusquamperfekt des Vorgangspassivs." },
+    { "id": "l04.spot.001", "type": "SpotError", "nodeId": "GR.PASSIV", "band": "B2_1", "context": "Beruf",
+      "prompt": "Dein Entwurf der Rückmeldung an Herrn Wagner hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Sehr", "geehrter", "Herr", "Wagner,", "der", "Fehler", "ist", "heute", "Vormittag", "von", "uns", "behoben", "geworden."],
+      "correctIndex": 12, "answers": ["worden"], "explanation": "Im Passiv Perfekt heißt das Partizip „worden“ (ohne ge-): ist … behoben worden. „geworden“ gehört zu „werden“ als Vollverb (Er ist Arzt geworden)." },
+    { "id": "l04.dlg.001", "type": "Dialogue", "nodeId": "RM.BESCHWERDE_BITTE", "band": "B2_1", "context": "Beruf",
+      "prompt": "Rückruf um 15:50: Der Fehler ist gefunden, die Korrektur wird heute Nacht ausgeliefert. Informiere Herrn Wagner.",
+      "lines": [
+        { "speaker": "Herr Wagner", "text": "Wagner." },
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, Micić von Nordlicht. Ich melde mich wie versprochen: Die Ursache ist gefunden, die Korrektur wird heute Nacht eingespielt. Ab morgen früh werden die Positionen wieder korrekt übernommen.", "Hallo Herr Wagner, hier Micić. Also, wir haben den Bug gefixt, wird heute Nacht deployed.", "Guten Tag, Herr Wagner. Der Fehler war übrigens nicht bei uns, sondern in Ihren Daten."],
+          "correctIndex": 0, "feedback": ["„wie versprochen“, Passiv ohne Täter, konkreter Zeitpunkt – der Kunde weiß genau, was passiert.", "Denglisch am Telefon mit einem Logistik-Kunden – Bug, gefixt, deployed. Er versteht es vielleicht, aber es wirkt unprofessionell.", "Selbst wenn es stimmt: Schuldzuweisung als Einstieg zerstört das Gespräch. Erst Lösung, dann sachlich Ursache."] },
+        { "speaker": "Herr Wagner", "text": "Das freut mich. Und die drei falschen Rechnungen?" },
+        { "speaker": "Du", "text": "…", "options": ["Die werden morgen Vormittag von uns neu erzeugt und Ihnen zugeschickt. Ich bitte Sie, die alten Nummern noch nicht zu verwenden.", "Die machen wir morgen neu, und die alten Nummern bitte nicht nehmen.", "Die werden morgen Vormittag von uns neu erzeugen."],
+          "correctIndex": 0, "feedback": ["Passiv Präsens für Zukünftiges, klare Bitte mit „Ich bitte Sie, … zu …“.", "Verständlich, aber „machen“ und „nehmen“ sind zu allgemein für ein Kundengespräch: erzeugen, verwenden.", "Passiv braucht das Partizip II: werden … erzeugT."] },
+        { "speaker": "Herr Wagner", "text": "Sehr gut. Danke für die schnelle Reaktion, Herr Micić. Das habe ich anders erwartet." }
+      ], "explanation": "Rückmeldung nach einer Beschwerde: Bezug („wie versprochen“), Stand im Passiv, nächster Schritt mit Zeit." }
+  ]
+}

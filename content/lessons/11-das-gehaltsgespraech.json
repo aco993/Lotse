@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L11", "order": 11, "title": "Das Gehaltsgespräch", "subtitle": "Verhandeln, Leistungen benennen, Nominalstil und irreale Bedingungen",
+    "theme": "Beruf", "band": "B2_2", "scene": "salary", "minutes": 18,
+    "intro": "Nach acht Monaten steht dein erstes Mitarbeitergespräch mit Sabine an. Du hast den Import stabilisiert, zwei Kunden gerettet und den automatischen Test eingeführt. Jetzt geht es um Geld – auf Deutsch, ohne zu bitten und ohne zu drohen.",
+    "story": [
+      { "speaker": "Sabine", "text": "Aleksandar, bevor wir zu den Zielen kommen: Wie siehst du selbst deine ersten acht Monate?" },
+      { "speaker": "Du", "text": "…", "options": ["Insgesamt sehr positiv. Nach der Stabilisierung des Imports laufen die Kundensysteme seit April ohne Ausfall, und durch die Einführung des automatischen Tests haben wir seitdem keinen Schnittstellenfehler mehr ausgeliefert. Beides hätte ohne die Unterstützung des Teams länger gedauert.", "Gut. Ich habe den Import gefixt und Tests gemacht. Das Team war okay.", "Insgesamt sehr positiv. Nachdem ich den Import stabilisiert habe, laufen die Kundensysteme ohne Ausfall, und nachdem ich den Test eingeführt habe, gibt es keine Fehler mehr. Ich habe das alles allein gemacht."],
+        "correctIndex": 0, "feedback": ["Nominalstil (Stabilisierung, Einführung), messbare Ergebnisse, und der Dank ans Team – das ist Führungs-Deutsch.", "Zu wenig, zu locker. „gefixt“ und „Tests gemacht“ unter Wert verkauft.", "Sprachlich fast gut, aber „alles allein“ ist im deutschen Kontext ein Warnsignal – Teamleistung zählt."] },
+      { "speaker": "Sabine", "text": "Das sehe ich genauso, und die Kunden auch. Gibt es etwas, das du dir für das nächste Jahr wünschst?" },
+      { "speaker": "Du", "text": "…", "options": ["Ja, zwei Dinge. Ich würde gern mehr Verantwortung für die Schnittstellen übernehmen. Und ich möchte über mein Gehalt sprechen: Angesichts der Ergebnisse und des Marktniveaus für meine Rolle halte ich eine Anpassung um acht Prozent für angemessen.", "Ja. Mehr Geld. Acht Prozent. Sonst schaue ich mich um.", "Ja, ich würde gern über mein Gehalt sprechen, wenn das möglich wäre, falls es passt, ich weiß nicht, ob das jetzt der richtige Zeitpunkt ist …"],
+        "correctIndex": 0, "feedback": ["Erst Verantwortung, dann Gehalt mit Begründung (angesichts + Genitiv) und einer konkreten Zahl. Ruhig, sachlich, unverhandelbar höflich.", "Die Drohung („sonst schaue ich mich um“) zerstört in Deutschland fast jedes Gespräch – selbst wenn die Zahl berechtigt ist.", "Drei Konjunktive und zwei Entschuldigungen: Der Konjunktiv ist für Bitten da, nicht für Rechtfertigungen. Beim Gehalt: Indikativ und Zahl."] },
+      { "speaker": "Sabine", "text": "Acht Prozent kann ich nicht allein entscheiden. Ich kann fünf zusagen und für den Rest mit Herrn Krüger sprechen. Wärst du damit einverstanden?" },
+      { "speaker": "Du", "text": "…", "options": ["Danke, dass du das mitnimmst. Wenn die fünf Prozent ab nächstem Monat gelten und wir die restlichen drei im Januar noch einmal besprechen, wäre ich einverstanden. Könnten wir das schriftlich festhalten?", "Nein, acht oder nichts.", "Ja, okay, fünf ist auch gut."],
+        "correctIndex": 0, "feedback": ["Bedingung im Realis (wenn … gelten), Konjunktiv nur für „wäre einverstanden“ und die Bitte um Schriftform. Ein Verhandlungsabschluss, kein Rückzug.", "Alles-oder-nichts wirkt in einem Gespräch, das gerade gut läuft, unreif.", "Zu schnell nachgegeben; die drei Prozent waren gerade auf dem Tisch."] },
+      { "speaker": "Sabine", "text": "Schriftlich, ja. Ich schicke dir heute noch eine Zusammenfassung. Und die Schnittstellen sind ab sofort deins." }
+    ],
+    "grammar": {
+      "title": "Nominalstil: Handlungen als Nomen – knapp, formell, prüfungsrelevant",
+      "nodeId": "GR.NOMINALISIERUNG",
+      "text": "Im Gespräch mit Vorgesetzten, in Berichten und in Prüfungstexten stehen Handlungen oft als Nomen: „nach der Stabilisierung des Imports“ statt „nachdem ich den Import stabilisiert hatte“. Nebensatz → Präposition + Nomen: weil → wegen/aufgrund + Genitiv, obwohl → trotz + Genitiv, nachdem → nach + Dativ, bevor → vor + Dativ, wenn → bei + Dativ, um … zu → zur/zum + Nomen, angesichts + Genitiv (in Anbetracht). Die Nomen entstehen meist auf -ung (feminin) oder als nominalisierter Infinitiv (das Testen, neutrum). Zu viel davon klingt bürokratisch – die Kunst liegt in der Mischung.",
+      "examples": [
+        { "german": "Nach der Stabilisierung des Imports laufen die Systeme stabil.", "serbian": "Nakon stabilizacije uvoza sistemi rade stabilno.", "note": "nachdem → nach + Dativ" },
+        { "german": "Durch die Einführung des Tests gibt es keine Fehler mehr.", "serbian": "Uvođenjem testa više nema grešaka.", "note": "dadurch, dass → durch + Akk." },
+        { "german": "Angesichts der Ergebnisse halte ich eine Anpassung für angemessen.", "serbian": "S obzirom na rezultate, smatram da je korekcija primerena.", "note": "angesichts + Genitiv" },
+        { "german": "Trotz der hohen Kosten wurde das Projekt genehmigt.", "serbian": "Uprkos visokim troškovima, projekat je odobren.", "note": "obwohl → trotz + Genitiv" }
+      ]
+    },
+    "steps": ["gr.nom.000", "ws.bb.104", "l11.match.001", "gr.nom.001", "gr.nom.002", "l11.spot.001", "gr.nom.004", "ws.nvv.005", "l11.dlg.001", "gr.nom.006", "gr.k2.104"],
+    "productionExerciseId": "sw.t2.002",
+    "merksatz": "Ergebnisse als Nomen, Bitten im Konjunktiv, Zahlen im Indikativ.",
+    "nodeIds": ["GR.NOMINALISIERUNG", "GR.KONJUNKTIV2", "WS.BERUF_BUERO", "WS.NOMEN_VERB_VERBINDUNGEN"]
+  },
+  "exercises": [
+    { "id": "l11.match.001", "type": "Match", "nodeId": "GR.NOMINALISIERUNG", "band": "B2_2", "context": "Beruf",
+      "prompt": "Verbalstil → Nominalstil: Ordne die Paare zu.",
+      "pairs": [ { "left": "nachdem der Vertrag unterschrieben wurde", "right": "nach der Unterzeichnung des Vertrags" }, { "left": "weil die Kosten gestiegen sind", "right": "wegen der gestiegenen Kosten" }, { "left": "obwohl der Zeitplan eng ist", "right": "trotz des engen Zeitplans" }, { "left": "um die Qualität zu verbessern", "right": "zur Verbesserung der Qualität" }, { "left": "wenn Sie Fragen haben", "right": "bei Fragen" } ],
+      "explanation": "Fünf Umformungen, die in Schreiben Teil 2 und im Gespräch mit der Leitung sofort B2 signalisieren." },
+    { "id": "l11.spot.001", "type": "SpotError", "nodeId": "GR.NOMINALISIERUNG", "band": "B2_2", "context": "Beruf",
+      "prompt": "Deine schriftliche Zusammenfassung des Gesprächs hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Angesichts", "die", "Ergebnisse", "des", "letzten", "Jahres", "wurde", "eine", "Gehaltsanpassung", "um", "fünf", "Prozent", "ab", "Oktober", "vereinbart."],
+      "correctIndex": 1, "answers": ["der"], "explanation": "angesichts + Genitiv: angesichts DER Ergebnisse." },
+    { "id": "l11.dlg.001", "type": "Dialogue", "nodeId": "WS.BERUF_BUERO", "band": "B2_2", "context": "Beruf",
+      "prompt": "Herr Krüger will die restlichen drei Prozent an eine Bedingung knüpfen. Verhandle sachlich.",
+      "lines": [
+        { "speaker": "Herr Krüger", "text": "Frau Berger hat mir Ihren Wunsch vorgelegt. Die drei Prozent kann ich mir vorstellen – wenn Sie ab Januar die Betreuung des Kunden Hansa Logistik komplett übernehmen." },
+        { "speaker": "Du", "text": "…", "options": ["Das ist ein faires Angebot, und die Betreuung übernehme ich gern. Damit ich das gut machen kann, bräuchte ich allerdings eine Vertretung für den Import – sonst würde bei einem Ausfall beides gleichzeitig bei mir liegen.", "Okay, mache ich. (denkst: Wie soll ich das schaffen?)", "Nur wenn ich dafür weniger Import mache."],
+          "correctIndex": 0, "feedback": ["Annahme, dann eine Bedingung mit Begründung im Konjunktiv (bräuchte, würde … liegen). Verhandeln ohne Konfrontation.", "Was man nicht schafft, sagt man vor der Zusage, nicht nach dem ersten Ausfall.", "Inhaltlich derselbe Punkt, aber als Forderung ohne Begründung formuliert."] },
+        { "speaker": "Herr Krüger", "text": "Eine Vertretung ist sinnvoll. Wen schlagen Sie vor?" },
+        { "speaker": "Du", "text": "…", "options": ["Jonas kennt den Import am besten; wenn er in den nächsten zwei Monaten eingearbeitet würde, könnte er ab Januar die Vertretung übernehmen. Ich würde ihm die Dokumentation und eine Einweisung geben.", "Jonas. Der kann das.", "Das müssen Sie entscheiden."],
+          "correctIndex": 0, "feedback": ["Vorschlag, Zeitrahmen, eigener Beitrag – du löst das Problem, das du benannt hast.", "Richtiger Name, aber ohne Plan – der Chef muss wieder nachfragen.", "Verantwortung zurückgeben wirkt passiv, nachdem du selbst den Punkt aufgebracht hast."] },
+        { "speaker": "Herr Krüger", "text": "Dann machen wir es so: drei Prozent ab Januar, Übergabe des Imports an Herrn Bauer bis Dezember. Frau Berger schreibt es fest." }
+      ], "explanation": "Verhandlung: annehmen, Bedingung begründen, Lösung anbieten." }
+  ]
+}

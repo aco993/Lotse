@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L05", "order": 5, "title": "Beim Bürgeramt", "subtitle": "Behördendeutsch verstehen, Präpositionen mit Kasus, Anträge stellen",
+    "theme": "Alltag", "band": "B1_2", "scene": "office", "minutes": 15,
+    "intro": "Ihr seid innerhalb Bremens umgezogen. Innerhalb von zwei Wochen musst du dich ummelden, sonst droht ein Bußgeld. Termin um 8:20, Wartemarke 47. Die Sachbearbeiterin hat wenig Zeit und viele Formulare.",
+    "story": [
+      { "speaker": "Sachbearbeiterin", "text": "Nummer 47, bitte. Guten Morgen, was kann ich für Sie tun?" },
+      { "speaker": "Du", "text": "…", "options": ["Guten Morgen. Ich möchte mich ummelden, wir sind letzte Woche innerhalb Bremens umgezogen.", "Guten Morgen. Ich möchte Ummeldung, wir haben letzte Woche in Bremen Umzug.", "Guten Morgen. Ich bin umgezogen. Ich brauche das Papier."],
+        "correctIndex": 0, "feedback": ["„sich ummelden“ als Verb, „innerhalb + Genitiv“ – genau die Sprache des Amtes.", "Nomen ohne Artikel und ohne Verb: „möchte Ummeldung“, „haben Umzug“. Im Deutschen mit Verben: mich ummelden, umgezogen sein.", "„das Papier“ ist zu vage; jede Behörde hat ihr Wort dafür: die Meldebestätigung."] },
+      { "speaker": "Sachbearbeiterin", "text": "Dann brauche ich Ihren Ausweis oder Pass, die Wohnungsgeberbestätigung des Vermieters und das Anmeldeformular. Haben Sie das ausgefüllt?" },
+      { "speaker": "Du", "text": "…", "options": ["Ja, hier ist alles: der Pass, die Bestätigung vom Vermieter und das ausgefüllte Formular. Meine Frau und die Kinder melde ich gleich mit an, richtig?", "Ja, hier ist alles: Pass, Bestätigung von Vermieter und ausgefülltes Formular. Frau und Kinder auch mit anmelden, oder?", "Ja. Hier."],
+        "correctIndex": 0, "feedback": ["Artikel überall, „vom Vermieter“ (von + dem), „mit anmelden“ als trennbares Verb mit Objekt. Und die Rückfrage spart einen zweiten Termin.", "Artikel fehlen (der Pass, die Bestätigung, vom Vermieter). Wörtlich aus dem Serbischen übertragen.", "Höflich genug, aber die Frage nach der Familie fehlt – und die kostet sonst einen zweiten Termin."] },
+      { "speaker": "Sachbearbeiterin", "text": "Richtig, die Familie melden Sie mit dem gleichen Formular an. Sind alle Personen auf der Wohnungsgeberbestätigung eingetragen?" },
+      { "speaker": "Du", "text": "…", "options": ["Ja, alle vier. Bekomme ich die Meldebestätigung gleich mit, und muss ich die Adresse auch bei der Ausländerbehörde ändern lassen?", "Ja, alle vier. Ich bekomme Meldebestätigung jetzt? Und Ausländerbehörde?", "Ja, alle vier. Und was ist mit der Ausländerbehörde, muss ich da hin?"],
+        "correctIndex": 0, "feedback": ["Zwei präzise Fragen mit den richtigen Amtsbegriffen, „ändern lassen“ – so bekommt man verlässliche Antworten.", "Verständlich, aber telegrafisch; Artikel fehlt („die Meldebestätigung“).", "Fast gut, nur umgangssprachlich („da hin“). Auf dem Amt darf es etwas formeller sein."] },
+      { "speaker": "Sachbearbeiterin", "text": "Die Meldebestätigung drucke ich Ihnen jetzt aus. Die Adressänderung im Aufenthaltstitel beantragen Sie bitte bei der Ausländerbehörde, dafür brauchen Sie einen Termin. Das war’s – einen schönen Tag noch." }
+    ],
+    "grammar": {
+      "title": "Präpositionen mit festem Kasus",
+      "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+      "text": "Jede Präposition „bestellt“ ihren Kasus. Dativ: mit, nach, bei, seit, von, zu, aus, gegenüber. Akkusativ: für, ohne, gegen, um, durch, bis. Genitiv (schriftlich und auf dem Amt): wegen, trotz, während, innerhalb, außerhalb, statt, aufgrund. Das Prinzip kennst du aus dem Serbischen mit seinen sieben Fällen – nur die Zuordnung ist anders: „sa + instrumental“ → „mit + Dativ“, „za + akuzativ“ → „für + Akkusativ“, „zbog + genitiv“ → „wegen + Genitiv“ (das stimmt sogar überein). Lerne Präposition und Kasus als ein Paar.",
+      "examples": [
+        { "german": "die Bestätigung vom Vermieter (von + dem)", "serbian": "potvrda od stanodavca", "note": "von + Dativ" },
+        { "german": "innerhalb von zwei Wochen / innerhalb zweier Wochen", "serbian": "u roku od dve nedelje", "note": "innerhalb + Genitiv / von + Dativ" },
+        { "german": "seit einem Jahr in Deutschland", "serbian": "godinu dana u Nemačkoj", "note": "seit + Dativ, Präsens!" },
+        { "german": "wegen des Umzugs", "serbian": "zbog selidbe", "note": "wegen + Genitiv" }
+      ]
+    },
+    "steps": ["ws.beh.001", "gr.kp.001", "l05.match.001", "gr.kp.003", "ws.beh.013", "l05.spot.001", "gr.kp.004", "gr.kp.007", "l05.dlg.001", "gr.kp.011", "ws.beh.010"],
+    "productionExerciseId": "sp.alltag.102",
+    "merksatz": "Präposition und Kasus sind ein Paar – wer „mit“ sagt, hat schon „dem“ bestellt.",
+    "nodeIds": ["GR.KASUS_PRAEPOSITIONEN", "WS.ALLTAG_BEHOERDEN", "GR.ARTIKEL_GENUS"]
+  },
+  "exercises": [
+    { "id": "l05.match.001", "type": "Match", "nodeId": "WS.ALLTAG_BEHOERDEN", "band": "B1_2", "context": "Alltag",
+      "prompt": "Behördendeutsch: Was ist gemeint?",
+      "pairs": [ { "left": "die Wohnungsgeberbestätigung", "right": "Bescheinigung des Vermieters für die Anmeldung" }, { "left": "die Meldebestätigung", "right": "Nachweis, dass man angemeldet ist" }, { "left": "der Aufenthaltstitel", "right": "Aufenthaltserlaubnis (Karte/Visum)" }, { "left": "das Bußgeld", "right": "Strafe in Geld" }, { "left": "der Bescheid", "right": "schriftliche Entscheidung der Behörde" }, { "left": "die Vollmacht", "right": "Erlaubnis, für jemanden zu handeln" } ],
+      "explanation": "Sechs Wörter, ohne die man in Deutschland keinen Amtsgang übersteht." },
+    { "id": "l05.spot.001", "type": "SpotError", "nodeId": "GR.KASUS_PRAEPOSITIONEN", "band": "B1_2", "context": "Alltag",
+      "prompt": "Deine Notiz für den Termin hat einen Kasusfehler. Tippe auf das falsche Wort.",
+      "options": ["Mitbringen:", "Pass,", "Bestätigung", "vom", "Vermieter,", "Formular", "für", "der", "Anmeldung", "der", "Familie."],
+      "correctIndex": 7, "answers": ["die"], "explanation": "für + Akkusativ: für DIE Anmeldung. („der Familie“ danach ist Genitiv – richtig.)" },
+    { "id": "l05.dlg.001", "type": "Dialogue", "nodeId": "WS.ALLTAG_BEHOERDEN", "band": "B2_1", "context": "Alltag",
+      "prompt": "Telefonisch einen Termin bei der Ausländerbehörde vereinbaren. Die Leitung ist schlecht, die Person am Telefon kurz angebunden.",
+      "lines": [
+        { "speaker": "Ausländerbehörde", "text": "Ausländerbehörde Bremen, Terminvergabe." },
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, mein Name ist Micić. Ich bin umgezogen und muss die Adresse in meinem Aufenthaltstitel ändern lassen. Könnte ich dafür einen Termin bekommen?", "Guten Tag, Micić. Ich brauche Termin für Adresse ändern in Aufenthaltstitel.", "Guten Tag. Ich habe Umzug gemacht, was muss ich machen?"],
+          "correctIndex": 0, "feedback": ["Anliegen in einem Satz mit dem richtigen Fachwort, dann die Bitte im Konjunktiv.", "Alle Artikel fehlen und „Adresse ändern“ ohne „lassen“ – man ändert sie nicht selbst, man lässt sie ändern.", "„Umzug gemacht“ statt „umgezogen“; die offene Frage bringt eine genervte Gegenfrage."] },
+        { "speaker": "Ausländerbehörde", "text": "Adressänderung, gut. Der nächste freie Termin ist in fünf Wochen, am 12. Oktober um 7:45 Uhr." },
+        { "speaker": "Du", "text": "…", "options": ["Fünf Wochen … gibt es eine Frist, innerhalb der ich die Änderung melden muss? Ich möchte kein Bußgeld riskieren.", "Fünf Wochen? Das ist zu lang. Ich will früher.", "Okay. Bis dann."],
+          "correctIndex": 0, "feedback": ["Die richtige Sorge, höflich formuliert, mit „innerhalb der“ (Relativsatz mit Genitivpräposition). Beeindruckend auf B2.", "„Ich will früher“ bringt auf dem Amt nichts außer schlechter Laune.", "Man darf ruhig nachfragen – die Frist ist wichtig."] },
+        { "speaker": "Ausländerbehörde", "text": "Wenn Sie den Termin gebucht haben, gilt die Frist als gewahrt. Sie bekommen eine Bestätigung per E-Mail." }
+      ], "explanation": "Am Telefon mit Behörden: Anliegen + Fachwort + Konjunktiv; Fristen aktiv erfragen." }
+  ]
+}

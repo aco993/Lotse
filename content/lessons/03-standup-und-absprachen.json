@@ -1,0 +1,54 @@
+{
+  "lesson": {
+    "id": "L03", "order": 3, "title": "Stand-up und Absprachen", "subtitle": "Aufgaben übernehmen, Termine verschieben, trennbare Verben im Alltag",
+    "theme": "Beruf", "band": "B2_1", "scene": "meeting", "minutes": 15,
+    "intro": "Jeden Morgen um 9:15 steht das Team im Kreis: Was war gestern, was ist heute, wo hakt es? Zehn Minuten, klare Sätze. Heute leitet Jonas, weil Sabine noch im Urlaub ist.",
+    "story": [
+      { "speaker": "Jonas", "text": "Guten Morgen zusammen. Aleksandar, fang du doch an – gestern, heute, Blocker?" },
+      { "speaker": "Du", "text": "…", "options": ["Gestern habe ich den Importfehler analysiert – die Ursache liegt in der Schnittstelle zur Buchhaltung. Heute schreibe ich die Korrektur und die Tests. Blocker: Ich warte noch auf den Testserver-Zugang.", "Gestern ich habe Importfehler analysiert. Heute ich schreibe Korrektur und Tests. Blocker: Testserver.", "Gestern habe ich das Import-Issue debugged, heute mache ich den Fix und die Tests, Blocker ist der Testserver-Access."],
+        "correctIndex": 0, "feedback": ["Drei Teile, Perfekt für gestern, Präsens für heute, deutsche Fachbegriffe (Schnittstelle, Korrektur). Vorbildlich.", "Zweimal „Gestern ich habe / Heute ich schreibe“ – Verb an Position 2! Und Artikel fehlen (den Importfehler, die Korrektur).", "Verständlich, aber „debugged“, „Fix“, „Access“ – in deutschen Teams sagt man das oft, in der Prüfung und gegenüber Kunden nicht."] },
+      { "speaker": "Jonas", "text": "Danke. Zum Testserver: Die Freigabe ist gestern reingekommen, die IT richtet ihn heute ein. Ich habe noch eine Bitte an alle: Das Review-Meeting am Freitag müssen wir verschieben, der Kunde kann nicht." },
+      { "speaker": "Lena", "text": "Auf wann denn? Ich bin nächste Woche Montag und Dienstag auf Dienstreise." },
+      { "speaker": "Jonas", "text": "Mittwoch um zehn? Aleksandar, passt das bei dir? Dann könntest du gleich den Import-Teil vorstellen." },
+      { "speaker": "Du", "text": "…", "options": ["Mittwoch um zehn passt. Ich bereite die Präsentation bis Dienstagabend vor und schicke sie dir vorher zu.", "Mittwoch um zehn passt. Ich vorbereite die Präsentation bis Dienstagabend und zuschicke sie dir vorher.", "Mittwoch um zehn passt. Ich bereite vor die Präsentation bis Dienstagabend und schicke zu sie dir vorher."],
+        "correctIndex": 0, "feedback": ["Beide trennbaren Verben richtig: bereite … vor, schicke … zu – der Präfix wandert ans Satzende.", "Trennbare Verben werden im Hauptsatz getrennt: nicht „ich vorbereite“, sondern „ich bereite … vor“.", "Der Präfix steht ganz am Ende des Satzes, nicht direkt hinter dem Verb: „bereite die Präsentation … vor“."] },
+      { "speaker": "Jonas", "text": "Super. Ich trage den Termin ein und sage dem Kunden Bescheid. Das war’s – schönen Tag!" }
+    ],
+    "grammar": {
+      "title": "Trennbare Verben und die Satzklammer",
+      "nodeId": "GR.TRENNBARE_VERBEN",
+      "text": "Deutsche Präfixverben zerfallen im Hauptsatz in zwei Teile: das konjugierte Verb auf Position 2, der Präfix ganz am Ende – dazwischen liegt der Rest des Satzes (Satzklammer). Serbische Präfixverben (pripremiti, poslati) bleiben immer ein Wort, deshalb rutscht der Präfix bei serbischen Muttersprachlern gern nach vorn. Im Nebensatz, im Infinitiv und im Partizip bleibt das Verb zusammen: „… dass ich die Präsentation vorbereite“, „vorbereiten“, „vorbereitet“. Betonte Präfixe sind trennbar (an-, auf-, aus-, ein-, mit-, vor-, zu-, zurück-), unbetonte nicht (be-, ge-, er-, ver-, zer-, ent-).",
+      "examples": [
+        { "german": "Ich bereite die Präsentation bis Dienstag vor.", "serbian": "Pripremiću prezentaciju do utorka.", "note": "Präfix am Ende" },
+        { "german": "Ich rufe dich morgen an.", "serbian": "Zvaću te sutra.", "note": "anrufen + Akkusativ" },
+        { "german": "Ich weiß nicht, wann der Chef zurückkommt.", "serbian": "Ne znam kad se šef vraća.", "note": "Nebensatz: nicht getrennt" },
+        { "german": "Wir müssen das Meeting verschieben. (untrennbar)", "serbian": "Moramo da pomerimo sastanak.", "note": "ver- bleibt immer dran" }
+      ]
+    },
+    "steps": ["gr.tv.001", "rm.mb.012", "l03.match.001", "gr.tv.003", "gr.tv.005", "l03.spot.001", "rm.mb.001", "gr.tv.006", "l03.dlg.001", "gr.tv.007", "rm.mb.004"],
+    "productionExerciseId": "sp.alltag.001",
+    "merksatz": "Hauptsatz: Verb vorn, Präfix hinten. Nebensatz: alles zusammen am Ende.",
+    "nodeIds": ["GR.TRENNBARE_VERBEN", "RM.MEETING_BERUF", "WS.BERUF_BUERO", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l03.match.001", "type": "Match", "nodeId": "RM.MEETING_BERUF", "band": "B2_1", "context": "Beruf",
+      "prompt": "Meeting-Deutsch: Was bedeutet der Ausdruck?",
+      "pairs": [ { "left": "Ich kümmere mich darum.", "right": "Ich übernehme die Aufgabe." }, { "left": "Das klären wir bilateral.", "right": "Das besprechen wir später zu zweit." }, { "left": "Können wir den Punkt vertagen?", "right": "Können wir das beim nächsten Mal besprechen?" }, { "left": "Das halten wir so fest.", "right": "Das ist jetzt beschlossen und dokumentiert." }, { "left": "Da bin ich überfragt.", "right": "Das weiß ich nicht, ich muss nachsehen." } ],
+      "explanation": "Fünf Sätze, die in jedem deutschen Meeting fallen – und die man als Neuer oft nicht versteht." },
+    { "id": "l03.spot.001", "type": "SpotError", "nodeId": "GR.TRENNBARE_VERBEN", "band": "B2_1", "context": "Beruf",
+      "prompt": "Lenas Chat-Nachricht hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Ich", "abhole", "den", "Kunden", "um", "neun", "am", "Bahnhof", "–", "kann", "jemand", "den", "Raum", "vorbereiten?"],
+      "correctIndex": 1, "answers": ["hole"], "explanation": "abholen ist trennbar: „Ich hole den Kunden … ab“. „vorbereiten“ nach „kann“ bleibt als Infinitiv zusammen – das ist richtig." },
+    { "id": "l03.dlg.001", "type": "Dialogue", "nodeId": "RM.MEETING_BERUF", "band": "B2_1", "context": "Beruf",
+      "prompt": "Jonas bittet dich kurzfristig, eine Aufgabe zu übernehmen, die nicht in deinen Tag passt. Reagiere professionell.",
+      "lines": [
+        { "speaker": "Jonas", "text": "Aleksandar, kannst du heute noch den Export für die Buchhaltung anpassen? Frau Kaya braucht ihn morgen früh." },
+        { "speaker": "Du", "text": "…", "options": ["Heute schaffe ich das leider nicht, ich muss die Import-Korrektur bis fünf abgeben. Ich könnte morgen früh als Erstes damit anfangen – reicht das Frau Kaya bis zehn?", "Nein, keine Zeit. Frag Lena.", "Ja klar, mache ich. (denkst: Das wird nichts.)"],
+          "correctIndex": 0, "feedback": ["Klare Absage mit Grund, dann ein Gegenangebot mit Uhrzeit. Genau so verhandelt man Prioritäten.", "Ein „Nein“ ohne Begründung und ohne Alternative wirkt im deutschen Team unkooperativ.", "Zusagen, was man nicht halten kann, kostet Vertrauen. Lieber ehrlich verhandeln."] },
+        { "speaker": "Jonas", "text": "Bis zehn müsste gehen, ich frag sie. Und wenn nicht?" },
+        { "speaker": "Du", "text": "…", "options": ["Dann melde ich mich um acht bei ihr und wir schauen, welcher Teil des Exports zuerst gebraucht wird.", "Dann melde mich ich um acht bei ihr und wir schauen.", "Dann ist das ihr Problem."],
+          "correctIndex": 0, "feedback": ["„sich melden bei“ + Uhrzeit + Lösungsangebot. Reflexivpronomen richtig platziert.", "Wortstellung: „Dann melde ich mich“ – Subjekt vor Reflexivpronomen.", "Auch wenn es stimmt: So sagt man es nicht."] },
+        { "speaker": "Jonas", "text": "Perfekt, das halten wir so fest. Danke dir." }
+      ], "explanation": "Prioritäten verhandeln: Grund, Gegenangebot, Uhrzeit." }
+  ]
+}

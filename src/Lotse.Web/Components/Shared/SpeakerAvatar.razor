@@ -1,0 +1,29 @@
+@* Round avatar with initials; colour derived from the name so each character keeps a stable colour across lessons. *@
+<div class="avatar" style="@($"background:{Colour}")" title="@Name" aria-hidden="true">@Initials</div>
+
+@code {
+    [Parameter, EditorRequired] public string Name { get; set; } = "";
+
+    private string Clean => Name.Split('(')[0].Trim();
+    private string Initials
+    {
+        get
+        {
+            var parts = Clean.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0) return "?";
+            if (Clean.StartsWith("Du", StringComparison.Ordinal)) return "Du";
+            return parts.Length == 1 ? parts[0][..Math.Min(2, parts[0].Length)] : $"{parts[0][0]}{parts[^1][0]}";
+        }
+    }
+    private static readonly string[] Palette = ["#1F5F8B", "#2E8B57", "#B5651D", "#6A4C93", "#C44536", "#0E7C7B", "#8A6D3B", "#4B6587"];
+    private string Colour
+    {
+        get
+        {
+            if (Clean.StartsWith("Du", StringComparison.Ordinal)) return "#E07A1F";
+            var h = 0;
+            foreach (var c in Clean) h = unchecked(h * 31 + c);
+            return Palette[Math.Abs(h) % Palette.Length];
+        }
+    }
+}

@@ -1,0 +1,57 @@
+{
+  "lesson": {
+    "id": "L06", "order": 6, "title": "Wohnung, Vermieter, Nachbarn", "subtitle": "Wo oder wohin? Wechselpräpositionen, Beschwerden, Mietrecht-Wörter",
+    "theme": "Alltag", "band": "B1_2", "scene": "home", "minutes": 15,
+    "intro": "Die neue Wohnung ist schön, aber die Heizung tropft, der Nachbar über euch spielt nachts Schlagzeug, und die Hausverwaltung antwortet nicht. Zeit, höflich, aber bestimmt zu werden.",
+    "story": [
+      { "speaker": "Herr Schmidt (Nachbar)", "text": "Ach, Sie sind die Neuen von unten! Schmidt, dritter Stock. Alles gut bei Ihnen?" },
+      { "speaker": "Du", "text": "…", "options": ["Guten Abend, Herr Schmidt, freut mich. Ja, fast alles – ich wollte Sie ohnehin ansprechen: Abends ist bei uns das Schlagzeug ziemlich gut zu hören. Könnten wir eine Uhrzeit vereinbaren, bis zu der Sie spielen?", "Guten Abend. Nein, nicht alles gut. Ihr Schlagzeug ist zu laut, das geht so nicht.", "Guten Abend, Herr Schmidt, freut mich. Ja, alles gut. (denkst: das Schlagzeug …)"],
+        "correctIndex": 0, "feedback": ["Freundlicher Einstieg, das Problem sachlich, dann ein Vorschlag im Konjunktiv. Nachbarschaftskonflikte löst man so.", "Direkt bis konfrontativ – „das geht so nicht“ als erster Satz macht aus dem Nachbarn einen Gegner.", "Konfliktvermeidung ist bequem, aber das Schlagzeug bleibt. Sag es freundlich beim ersten Mal."] },
+      { "speaker": "Herr Schmidt (Nachbar)", "text": "Oh, das tut mir leid, das wusste ich gar nicht! Ab 21 Uhr spiele ich nicht mehr, versprochen. Und wie läuft es mit der Verwaltung? Die sind ja berüchtigt." },
+      { "speaker": "Du", "text": "…", "options": ["Nicht gut. Die Heizung im Wohnzimmer tropft seit zwei Wochen, ich habe zweimal an die Verwaltung geschrieben und keine Antwort bekommen.", "Nicht gut. Die Heizung ins Wohnzimmer tropft seit zwei Wochen, ich habe zweimal an der Verwaltung geschrieben.", "Nicht gut. Die Heizung tropft, ich schreibe seit zwei Wochen an die Verwaltung, keine Antwort."],
+        "correctIndex": 0, "feedback": ["„im Wohnzimmer“ (wo? → Dativ), „an die Verwaltung schreiben“ (wohin? → Akkusativ). Genau das ist die Wechselpräposition.", "Beides vertauscht: die Heizung ist IM Wohnzimmer (Lage), man schreibt AN DIE Verwaltung (Richtung).", "Verständlich; nur „ich schreibe seit zwei Wochen“ klingt, als würdest du seit 14 Tagen ununterbrochen tippen. Perfekt + Anzahl ist präziser."] },
+      { "speaker": "Herr Schmidt (Nachbar)", "text": "Schreiben Sie per Einschreiben und setzen Sie eine Frist. Und erwähnen Sie das Wort Mietminderung – dann geht es plötzlich schnell." },
+      { "speaker": "Du", "text": "…", "options": ["Danke für den Tipp! Dann setze ich morgen eine Frist bis Ende nächster Woche.", "Danke für den Tipp! Dann ich setze morgen eine Frist bis Ende nächster Woche.", "Danke für den Tipp! Dann setze ich morgen ein Frist bis Ende nächste Woche."],
+        "correctIndex": 0, "feedback": ["Nach „Dann“ das Verb, „eine Frist“ (feminin), „bis Ende nächster Woche“ (Genitiv). Sauber.", "„Dann ich setze“ – Verb an Position 2!", "„ein Frist“ – die Frist ist feminin; „Ende nächster Woche“ braucht den Genitiv."] },
+      { "speaker": "Herr Schmidt (Nachbar)", "text": "So macht man das. Und falls Sie mal einen Bohrer brauchen – dritter Stock, klingeln." }
+    ],
+    "grammar": {
+      "title": "Wechselpräpositionen: Wo? Dativ – Wohin? Akkusativ",
+      "nodeId": "GR.WECHSELPRAEPOSITIONEN",
+      "text": "Neun Präpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen) wechseln den Kasus: Lage (wo?) → Dativ, Richtung/Bewegung hin (wohin?) → Akkusativ. Das Serbische macht genau dasselbe mit Lokativ und Akkusativ: „u kancelariji“ (wo) vs. „u kancelariju“ (wohin). Übertrage es 1:1: im Büro / ins Büro, an der Wand / an die Wand, auf dem Tisch / auf den Tisch. Achtung: Bei Verben mit fester Präposition (sich ärgern über, warten auf) gilt immer der feste Kasus – meist Akkusativ.",
+      "examples": [
+        { "german": "Die Heizung im Wohnzimmer tropft.", "serbian": "Grejanje u dnevnoj sobi curi.", "note": "wo? → im = in dem" },
+        { "german": "Ich habe an die Verwaltung geschrieben.", "serbian": "Pisao sam upravi (ka upravi).", "note": "wohin? → an die" },
+        { "german": "Der Schlüssel liegt auf dem Tisch. / Leg ihn auf den Tisch.", "serbian": "Ključ je na stolu. / Stavi ga na sto.", "note": "Lage / Richtung" },
+        { "german": "Ich ärgere mich über den Nachbarn.", "serbian": "Ljutim se na komšiju.", "note": "feste Präposition → immer Akk." }
+      ]
+    },
+    "steps": ["gr.wp.001", "ws.beh.002", "l06.match.001", "gr.wp.002", "gr.wp.003", "l06.spot.001", "gr.wp.007", "gr.wp.008", "ws.beh.003", "l06.dlg.001", "rm.bb.005"],
+    "productionExerciseId": "sw.t2.004",
+    "merksatz": "Wo? Dativ. Wohin? Akkusativ. Wie im Serbischen – nur die Wörter sind neu.",
+    "nodeIds": ["GR.WECHSELPRAEPOSITIONEN", "WS.ALLTAG_BEHOERDEN", "RM.BESCHWERDE_BITTE", "SC.FORMELLE_NACHRICHT"]
+  },
+  "exercises": [
+    { "id": "l06.match.001", "type": "Match", "nodeId": "WS.ALLTAG_BEHOERDEN", "band": "B1_2", "context": "Alltag",
+      "prompt": "Mietrecht in fünf Wörtern – ordne zu.",
+      "pairs": [ { "left": "die Nebenkosten", "right": "Heizung, Wasser, Müll – zusätzlich zur Kaltmiete" }, { "left": "die Kaution", "right": "Geld als Sicherheit, maximal drei Kaltmieten" }, { "left": "die Kündigungsfrist", "right": "meist drei Monate für Mieter" }, { "left": "die Mietminderung", "right": "weniger Miete zahlen, weil etwas kaputt ist" }, { "left": "die Hausverwaltung", "right": "Firma, die das Haus für den Eigentümer betreut" } ],
+      "explanation": "Wer diese fünf kennt, versteht jeden Mietvertrag und jede Nebenkostenabrechnung." },
+    { "id": "l06.spot.001", "type": "SpotError", "nodeId": "GR.WECHSELPRAEPOSITIONEN", "band": "B1_2", "context": "Alltag",
+      "prompt": "Dein Brief an die Hausverwaltung hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Seit", "zwei", "Wochen", "tropft", "die", "Heizung", "in", "das", "Wohnzimmer,", "ich", "habe", "das", "Problem", "bereits", "am", "3.", "September", "gemeldet."],
+      "correctIndex": 7, "answers": ["dem"], "explanation": "Die Heizung tropft, wo? → im Wohnzimmer (in dem). „in das“ wäre eine Richtung." },
+    { "id": "l06.dlg.001", "type": "Dialogue", "nodeId": "RM.BESCHWERDE_BITTE", "band": "B2_1", "context": "Alltag",
+      "prompt": "Die Hausverwaltung ruft endlich zurück. Bleib freundlich, aber halte die Frist.",
+      "lines": [
+        { "speaker": "Hausverwaltung", "text": "Guten Tag, Herr Micić, Weber von der Hausverwaltung. Sie haben wegen der Heizung geschrieben?" },
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Frau Weber, danke für den Rückruf. Ja, die Heizung im Wohnzimmer tropft seit dem 3. September. Ich hatte um einen Reparaturtermin bis Ende dieser Woche gebeten.", "Guten Tag. Ja, endlich! Seit drei Wochen warte ich. Wann kommt jemand?", "Guten Tag, Frau Weber. Ja, es tropft. Was schlagen Sie vor?"],
+          "correctIndex": 0, "feedback": ["Dank, Fakten mit Datum, Erinnerung an die gesetzte Frist – freundlich und unmissverständlich.", "„endlich!“ ist verständlich, aber die Verwaltung macht danach dicht.", "Zu passiv; du hast schon eine Frist gesetzt, daran erinnerst du."] },
+        { "speaker": "Hausverwaltung", "text": "Der Handwerker könnte am Montag in zwei Wochen kommen, früher ist nichts frei." },
+        { "speaker": "Du", "text": "…", "options": ["Zwei Wochen ist bei einer tropfenden Heizung zu lang – der Boden nimmt Schaden. Wenn bis Freitag niemand kommt, werde ich die Miete anteilig mindern, wie ich schon schriftlich angekündigt habe.", "Zwei Wochen? Nein. Ich zahle keine Miete mehr.", "Na gut, dann in zwei Wochen."],
+          "correctIndex": 0, "feedback": ["Begründung, Konsequenz, Verweis auf die schriftliche Ankündigung – rechtlich und sprachlich sauber.", "„keine Miete mehr“ ist rechtlich falsch (nur anteilige Minderung) und klingt nach Drohung.", "Nachgeben belohnt die Verzögerung; die Frist war der ganze Punkt."] },
+        { "speaker": "Hausverwaltung", "text": "Ich schaue noch einmal … Donnerstag zwischen 8 und 12 Uhr könnte der Notdienst kommen. Passt das?" },
+        { "speaker": "Du", "text": "…", "options": ["Donnerstagvormittag passt, vielen Dank. Ich bin dann zu Hause.", "Donnerstagvormittag passt, vielen Dank. Ich bin dann nach Hause.", "Donnerstagvormittag passt, vielen Dank. Ich bin dann zuhause zu Hause."],
+          "correctIndex": 0, "feedback": ["„zu Hause“ = wo? (Lage). Richtig.", "„nach Hause“ = wohin? (Richtung: ich gehe nach Hause). Hier geht es um die Lage.", "Doppelt gemoppelt."] }
+      ], "explanation": "Fristen halten: Fakten, Konsequenz, Verweis auf das Schriftliche – ohne Drohgebärde." }
+  ]
+}

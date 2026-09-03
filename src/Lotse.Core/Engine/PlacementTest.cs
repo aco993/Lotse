@@ -34,7 +34,8 @@ public static class PlacementTest
         var hardPass = new List<Exercise>();
         foreach (var nodeId in CoreNodeIds)
         {
-            var pool = catalog.ForNode(nodeId).Where(e => !e.IsProduction && !e.IsReceptive).ToList();
+            // Only single-answer items: the placement must be quick and comparable across nodes.
+            var pool = catalog.ForNode(nodeId).Where(e => !e.IsProduction && !e.IsReceptive && !e.IsComposite).ToList();
             if (pool.Count == 0) continue;
             var lower = pool.Where(e => e.Band <= CefrBand.B1_2).OrderBy(_ => rng.Next()).FirstOrDefault();
             var upper = pool.Where(e => e.Band >= CefrBand.B2_1).OrderBy(_ => rng.Next()).FirstOrDefault();

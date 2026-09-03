@@ -52,6 +52,7 @@ public static class AnswerChecker
         return exercise.Type switch
         {
             ExerciseType.MultipleChoice => CheckChoice(exercise, answer),
+            ExerciseType.SpotError => CheckSpotError(exercise, answer),
             ExerciseType.WordOrder => CheckTyped(exercise, answer, allowTypo: false),
             ExerciseType.Vocab => CheckTyped(exercise, answer, allowTypo: true),
             ExerciseType.Cloze or ExerciseType.Transform or ExerciseType.Translate or ExerciseType.Dictation
@@ -67,6 +68,17 @@ public static class AnswerChecker
         return ok
             ? new CheckResult(Outcome.Correct, expected, [], "Richtig.")
             : new CheckResult(Outcome.Incorrect, expected, [], $"Richtig wäre: {expected}");
+    }
+
+    /// <summary>The learner tapped word <paramref name="answer"/> (index); the expected answer shows the corrected word.</summary>
+    private static CheckResult CheckSpotError(Exercise exercise, string answer)
+    {
+        var wrongWord = exercise.Options[exercise.CorrectIndex!.Value];
+        var expected = $"{wrongWord} → {exercise.Answers[0]}";
+        var ok = int.TryParse(answer, out var idx) && idx == exercise.CorrectIndex;
+        return ok
+            ? new CheckResult(Outcome.Correct, expected, [], "Gefunden.")
+            : new CheckResult(Outcome.Incorrect, expected, [], $"Der Fehler steckt in „{wrongWord}“ – richtig: {exercise.Answers[0]}");
     }
 
     private static CheckResult CheckTyped(Exercise exercise, string answer, bool allowTypo)

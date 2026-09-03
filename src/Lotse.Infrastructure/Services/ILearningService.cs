@@ -25,6 +25,11 @@ public interface ILearningService
 
     Task<AnswerResult> SubmitAnswerAsync(Guid? sessionId, int stepIndex, string exerciseId, string? answer, int durationMs, bool hintUsed, CancellationToken ct = default);
     Task<AnswerResult> SubmitReadingAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default);
+    Task<AnswerResult> SubmitDialogueAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default);
+    Task<AnswerResult> SubmitMatchAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosenRight, int durationMs, CancellationToken ct = default);
+
+    Task<CourseOverview> GetCourseAsync(CancellationToken ct = default);
+    Task<SessionEntity> StartLessonAsync(string lessonId, CancellationToken ct = default);
 
     Task<LearnerContext> BuildLearnerContextAsync(CancellationToken ct = default);
     Task<ProductionResult> SubmitProductionAsync(Guid? sessionId, int stepIndex, string exerciseId, string text, bool speaking, CancellationToken ct = default);

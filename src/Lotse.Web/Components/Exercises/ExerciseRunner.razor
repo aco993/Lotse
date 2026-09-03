@@ -23,6 +23,12 @@
             case ExerciseType.Reading:
                 <ReadingExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
                 break;
+            case ExerciseType.Dialogue:
+                <DialogueExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
+                break;
+            case ExerciseType.Match:
+                <MatchExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
+                break;
             default:
                 <ClosedExercise Exercise="Exercise" SessionId="SessionId" StepIndex="Index" OnDone="OnAnswered" />
                 break;
@@ -45,6 +51,9 @@
     private string KindLabel => Kind switch
     {
         StepKind.Review => "Wiederholung",
+        StepKind.Focus or StepKind.Explore when Exercise.Type == ExerciseType.Dialogue => "Gespräch",
+        StepKind.Focus or StepKind.Explore when Exercise.Type == ExerciseType.Match => "Zuordnen",
+        StepKind.Focus or StepKind.Explore when Exercise.Type == ExerciseType.SpotError => "Fehler finden",
         StepKind.Focus => "Schwerpunkt",
         StepKind.Recheck => "Wiedervorlage",
         StepKind.Production => Exercise.Type == ExerciseType.Speak ? "Sprechen" : "Schreiben",

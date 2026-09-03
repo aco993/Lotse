@@ -166,7 +166,9 @@ public sealed class LearningServiceTests : IAsyncLifetime
             var ex = view.Exercises[i];
             if (ex.IsProduction) await _svc.SkipStepAsync(session.Id, i);
             else if (ex.Type == ExerciseType.Reading) await _svc.SubmitReadingAsync(session.Id, i, ex.Id, ex.Questions.Select(q => q.CorrectIndex).ToList(), 1000);
-            else await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, ex.Type == ExerciseType.MultipleChoice ? ex.CorrectIndex.ToString() : ex.Answers[0], 2000, false);
+            else if (ex.Type == ExerciseType.Dialogue) await _svc.SubmitDialogueAsync(session.Id, i, ex.Id, ex.Lines.Where(l => l.IsLearnerTurn).Select(l => l.CorrectIndex!.Value).ToList(), 1000);
+            else if (ex.Type == ExerciseType.Match) await _svc.SubmitMatchAsync(session.Id, i, ex.Id, Enumerable.Range(0, ex.Pairs.Count).ToList(), 1000);
+            else await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, ex.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError ? ex.CorrectIndex.ToString() : ex.Answers[0], 2000, false);
         }
         var done = (await _svc.GetSessionAsync(session.Id))!;
         Assert.True(done.IsComplete);
@@ -197,7 +199,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
         for (var i = 0; i < view.Steps.Count; i++)
         {
             var ex = view.Exercises[i];
-            await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, ex.Type == ExerciseType.MultipleChoice ? ex.CorrectIndex.ToString() : ex.Answers[0], 2000, false);
+            await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, ex.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError ? ex.CorrectIndex.ToString() : ex.Answers[0], 2000, false);
         }
         var profile = await _svc.GetProfileAsync();
         Assert.NotNull(profile.PlacementCompletedUtc);
@@ -284,6 +286,66 @@ public sealed class LearningServiceTests : IAsyncLifetime
         var states = await _svc.GetSkillStatesAsync();
         Assert.Empty(states);
         Assert.True(_provider.Catalog.Exercises.Count >= 700);
+    }
+
+    [Fact]
+    public async Task Lesson_flow_marks_progress_and_recommends_the_next_one()
+    {
+        var course = await _svc.GetCourseAsync();
+        Assert.Equal(12, course.Lessons.Count);
+        Assert.Equal("L01", course.Next!.Lesson.Id);
+
+        var session = await _svc.StartLessonAsync("L01");
+        var view = (await _svc.GetSessionAsync(session.Id))!;
+        Assert.Equal(SessionKind.Lesson, view.Session.Kind);
+        Assert.Equal(StepKind.Production, view.Steps[^1].Kind);
+
+        var started = await _svc.GetCourseAsync();
+        Assert.True(started.Lessons[0].IsStarted);
+        Assert.Equal("L01", started.Next!.Lesson.Id);
+
+        for (var i = 0; i < view.Steps.Count; i++)
+        {
+            var ex = view.Exercises[i];
+            switch (ex.Type)
+            {
+                case ExerciseType.Dialogue:
+                    await _svc.SubmitDialogueAsync(session.Id, i, ex.Id, ex.Lines.Where(l => l.IsLearnerTurn).Select(l => l.CorrectIndex!.Value).ToList(), 1000);
+                    break;
+                case ExerciseType.Match:
+                    await _svc.SubmitMatchAsync(session.Id, i, ex.Id, Enumerable.Range(0, ex.Pairs.Count).ToList(), 1000);
+                    break;
+                case ExerciseType.FreeWrite or ExerciseType.Speak:
+                    await _svc.SkipStepAsync(session.Id, i);
+                    break;
+                default:
+                    await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, ex.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError ? ex.CorrectIndex.ToString() : ex.Answers[0], 1500, false);
+                    break;
+            }
+        }
+
+        var done = await _svc.GetCourseAsync();
+        Assert.True(done.Lessons[0].IsCompleted);
+        Assert.Equal(1, done.Completed);
+        Assert.Equal("L02", done.Next!.Lesson.Id);
+        Assert.InRange(done.Lessons[0].Progress!.Score!.Value, 0.85, 1.0); // one skipped production step
+    }
+
+    [Fact]
+    public async Task Dialogue_and_match_are_scored_as_fractions_and_feed_the_node()
+    {
+        var dlg = First(e => e.Type == ExerciseType.Dialogue);
+        var turns = dlg.Lines.Where(l => l.IsLearnerTurn).ToList();
+        var half = turns.Select((t, i) => i == 0 ? (t.CorrectIndex!.Value + 1) % 3 : t.CorrectIndex!.Value).ToList();
+        var r = await _svc.SubmitDialogueAsync(null, 0, dlg.Id, half, 1000);
+        Assert.Contains($"{turns.Count - 1} von {turns.Count}", r.Check.Expected);
+
+        var match = First(e => e.Type == ExerciseType.Match);
+        var wrongAll = Enumerable.Range(0, match.Pairs.Count).Select(i => (i + 1) % match.Pairs.Count).ToList();
+        var m = await _svc.SubmitMatchAsync(null, 0, match.Id, wrongAll, 1000);
+        Assert.Equal(Outcome.Incorrect, m.Check.Outcome);
+        var journal = await _svc.GetErrorJournalAsync();
+        Assert.Contains(journal, j => _provider.Catalog.Error(j.Code)!.NodeId == match.NodeId);
     }
 
     [Fact]

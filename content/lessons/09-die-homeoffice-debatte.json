@@ -1,0 +1,53 @@
+{
+  "lesson": {
+    "id": "L09", "order": 9, "title": "Die Homeoffice-Debatte", "subtitle": "Argumentieren, Konnektoren, Meinung mit Struktur – Vorbereitung auf Schreiben Teil 1",
+    "theme": "Pruefung", "band": "B2_1", "scene": "debate", "minutes": 20,
+    "intro": "Die Geschäftsleitung will Homeoffice von drei auf einen Tag pro Woche kürzen. Im Teamforum wird hitzig diskutiert. Sabine bittet jeden um einen kurzen Beitrag – „mit Argumenten, nicht mit Gefühlen“. Genau das verlangt auch die Prüfung.",
+    "story": [
+      { "speaker": "Lena (Forum)", "text": "Ein Tag Homeoffice ist ein Rückschritt. Ich bin dreimal produktiver zu Hause. Punkt." },
+      { "speaker": "Jonas (Forum)", "text": "Verstehe ich, aber die Neuen lernen im Büro schneller. Ich war ein halbes Jahr nur eine Kachel auf dem Bildschirm." },
+      { "speaker": "Du (Forum)", "text": "…", "options": ["Ich sehe beide Punkte. Einerseits arbeite ich zu Hause konzentrierter, andererseits habe ich in den ersten Wochen im Büro mehr gelernt als in jedem Onlinekurs. Deshalb halte ich zwei Bürotage für einen guten Kompromiss.", "Ich bin auch für Homeoffice. Zu Hause ist besser. Ein Tag ist zu wenig.", "Lena hat recht und Jonas hat auch recht. Schwierig."],
+        "correctIndex": 0, "feedback": ["einerseits/andererseits, ein Beispiel aus eigener Erfahrung, deshalb + Schlussfolgerung. Das ist die Struktur eines B2-Arguments.", "Meinung ohne Begründung – „ist besser“ ist kein Argument.", "Beide Seiten anerkennen ist gut, aber ohne eigene Position bleibt es leer."] },
+      { "speaker": "Sabine (Forum)", "text": "Danke, Aleksandar. Kannst du ausführen, warum genau zwei Tage? Die Geschäftsleitung will Gründe." },
+      { "speaker": "Du (Forum)", "text": "…", "options": ["Gern. Erstens ermöglichen zwei Bürotage einen festen Teamtag, an dem alle da sind, sodass spontane Absprachen wieder stattfinden. Zweitens bleibt genug Zeit für konzentriertes Arbeiten zu Hause. Hinzu kommt, dass Fahrzeit und Bürokosten sinken, obwohl der Austausch erhalten bleibt.", "Gern. Zwei Tage sind gut weil man sieht sich und man kann auch zu Hause arbeiten und es kostet weniger.", "Gern. Erstens ermöglichen zwei Bürotage einen festen Teamtag, an dem alle da sind, sodass spontane Absprachen wieder stattfinden. Zweitens bleibt genug Zeit für konzentriertes Arbeiten zu Hause. Trotzdem sinken Fahrzeit und Bürokosten, obwohl der Austausch erhalten bleibt."],
+        "correctIndex": 0, "feedback": ["Erstens/zweitens, sodass (Folge), Hinzu kommt, dass (Ergänzung), obwohl (Einräumung) – jeder Konnektor sitzt logisch.", "Ein Satz, dreimal „und“, kein Komma vor „weil“ – die Gründe sind da, die Struktur fehlt. Genau das kostet in der Prüfung Punkte bei „Kohärenz“.", "Fast identisch, aber „Trotzdem sinken“ ist unlogisch: Die Kosten sinken nicht TROTZ, sondern ZUSÄTZLICH. „Hinzu kommt“ passt, „trotzdem“ nicht."] },
+      { "speaker": "Sabine (Forum)", "text": "Das nehme ich so mit in die Leitungsrunde. Schreib mir das bitte als kurzen Text – vier Punkte, 150 Wörter, wie ein Forumsbeitrag." }
+    ],
+    "grammar": {
+      "title": "Konnektoren: Das Gerüst eines Arguments",
+      "nodeId": "GR.KONNEKTOREN",
+      "text": "Konnektoren machen aus Sätzen einen Gedankengang. Drei Familien mit drei Wortstellungen: (1) Adverbien auf Position 1, danach das Verb: deshalb, trotzdem, dennoch, außerdem, allerdings, andererseits. (2) Nebensatzkonnektoren, Verb am Ende: weil, obwohl, während, sodass, damit, falls. (3) Zweiteilige: einerseits … andererseits, nicht nur … sondern auch, zwar … aber, je … desto. Der häufigste Logikfehler: „trotzdem“ (Gegensatz) statt „außerdem/hinzu kommt“ (Ergänzung). Prüfe: Widerspricht der zweite Satz dem ersten, oder ergänzt er ihn?",
+      "examples": [
+        { "german": "Ich arbeite zu Hause konzentrierter, deshalb halte ich zwei Bürotage für genug.", "serbian": "Kod kuće radim koncentrisanije, zato smatram da su dva dana u kancelariji dovoljna.", "note": "Folge: deshalb + Inversion" },
+        { "german": "Obwohl Homeoffice Vorteile hat, fehlt vielen der Kontakt.", "serbian": "Iako rad od kuće ima prednosti, mnogima nedostaje kontakt.", "note": "Einräumung: obwohl, Verb am Ende" },
+        { "german": "Einerseits spart man Zeit, andererseits verliert man den Austausch.", "serbian": "S jedne strane štedi se vreme, s druge strane gubi se razmena.", "note": "zweiteilig" },
+        { "german": "Hinzu kommt, dass die Bürokosten sinken.", "serbian": "Uz to, troškovi kancelarije se smanjuju.", "note": "Ergänzung, nicht Gegensatz" }
+      ]
+    },
+    "steps": ["rm.ma.001", "gr.kon.001", "l09.match.001", "gr.kon.003", "rm.ma.008", "l09.spot.001", "gr.kon.006", "rm.ma.012", "l09.dlg.001", "gr.kon.012", "rm.ma.006"],
+    "productionExerciseId": "sw.t1.001",
+    "merksatz": "Erst prüfen: Ergänzt der Satz oder widerspricht er? Dann den Konnektor wählen.",
+    "nodeIds": ["GR.KONNEKTOREN", "RM.MEINUNG_ARGUMENTATION", "SC.FORUMSBEITRAG", "WS.MEINUNG_GESELLSCHAFT"]
+  },
+  "exercises": [
+    { "id": "l09.match.001", "type": "Match", "nodeId": "GR.KONNEKTOREN", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Welche Logik steckt im Konnektor?",
+      "pairs": [ { "left": "deshalb", "right": "Folge" }, { "left": "obwohl", "right": "Einräumung / Gegensatz im Nebensatz" }, { "left": "außerdem", "right": "Ergänzung" }, { "left": "damit", "right": "Ziel / Absicht" }, { "left": "falls", "right": "Bedingung" }, { "left": "allerdings", "right": "Einschränkung" } ],
+      "explanation": "Sechs Konnektoren, sechs Logiken – wer sie sauber trennt, schreibt kohärent." },
+    { "id": "l09.spot.001", "type": "SpotError", "nodeId": "GR.KONNEKTOREN", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Dieser Forumssatz hat einen Logikfehler beim Konnektor. Tippe auf das falsche Wort.",
+      "options": ["Homeoffice", "spart", "Fahrzeit,", "trotzdem", "senkt", "es", "die", "Bürokosten", "und", "erhöht", "die", "Zufriedenheit."],
+      "correctIndex": 3, "answers": ["außerdem"], "explanation": "Die drei Vorteile ergänzen einander – „trotzdem“ würde einen Widerspruch behaupten. Richtig: außerdem / zudem / darüber hinaus." },
+    { "id": "l09.dlg.001", "type": "Dialogue", "nodeId": "RM.MEINUNG_ARGUMENTATION", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Mündliche Kurzdiskussion mit Jonas – wie in Sprechen Teil 2. Reagiere auf sein Argument, nicht nur auf das Thema.",
+      "lines": [
+        { "speaker": "Jonas", "text": "Ich finde, wer neu ist, sollte die ersten drei Monate jeden Tag ins Büro kommen. Ich habe im Homeoffice ein halbes Jahr verloren." },
+        { "speaker": "Du", "text": "…", "options": ["Da stimme ich dir zu, was die Einarbeitung betrifft. Allerdings würde ich es nicht pauschal vorschreiben – bei mir hat ein fester Ansprechpartner mehr gebracht als die Anwesenheit im Büro.", "Nein, Homeoffice ist besser, ich bin zu Hause produktiver.", "Ja, genau, alle ins Büro."],
+          "correctIndex": 0, "feedback": ["Teilweise Zustimmung, dann Einschränkung mit „allerdings“ und ein eigenes Beispiel. Das ist Interaktion.", "Du antwortest auf das Thema, nicht auf sein Argument (Einarbeitung). In der Prüfung: „Interaktion“ mangelhaft.", "Reine Zustimmung ohne eigenen Beitrag."] },
+        { "speaker": "Jonas", "text": "Ein Ansprechpartner, okay. Aber der ist im Homeoffice auch nur eine Kachel." },
+        { "speaker": "Du", "text": "…", "options": ["Das ist ein guter Punkt. Könnten wir uns darauf einigen, dass Neue in den ersten Wochen an den Bürotagen ihres Ansprechpartners ebenfalls kommen – also gezielt statt pauschal?", "Nein, das stimmt nicht.", "Kachel, Kachel – du übertreibst."],
+          "correctIndex": 0, "feedback": ["Anerkennen, dann ein Kompromiss mit „Könnten wir uns darauf einigen, dass …“ – exakt das Ende, das Prüfer sehen wollen.", "Widerspruch ohne Argument.", "Persönlich statt sachlich."] },
+        { "speaker": "Jonas", "text": "Gezielt statt pauschal – damit kann ich leben." }
+      ], "explanation": "Diskussion: zustimmen + einschränken, Beispiel, Kompromissformel." }
+  ]
+}

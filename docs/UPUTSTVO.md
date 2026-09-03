@@ -25,6 +25,19 @@ pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfi
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.
 
+## 2a. Kurs: 12 lekcija sa pričom
+
+Pored dnevnih sesija postoji **Kurs** (meni → Kurs): dvanaest lekcija koje prate tvoju prvu godinu u firmi Nordlicht GmbH u Bremenu: prvi dan u timu, prvi mejl šefici, stand-up, ljut klijent, Bürgeramt, stan i komšije, lekar, pad produkcionog sistema, debata o radu od kuće, vikend, razgovor o plati, dan ispita.
+
+Svaka lekcija ima:
+- **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog.
+- **Objašnjenje gramatike** sa tabelom nemački ↔ srpski i zvučnikom uz svaki primer.
+- **10–11 interaktivnih koraka**: razgovor, „Fehler finden" (klikni pogrešnu reč u kolegin mejl), spajanje parova, praznine, prevodi.
+- **Završni zadatak**: pišeš ili govoriš sam.
+- **Merksatz** – jedna rečenica koju nosiš sa sobom.
+
+Redosled prati težinu; početna strana uvek predlaže sledeću lekciju. Lekcije možeš ponavljati, napredak i ocena se pamte.
+
 ## 3. Svaki dan: jedno dugme
 
 Na strani **Heute** Lotse već zna šta ti treba i predlaže sesiju (npr. „Schwerpunkt Passiv · 2 Wiederholungen · eine Sprechaufgabe"). Klikni **10 Minuten starten** (ili 5/15/30). Redosled u sesiji je namerno takav:

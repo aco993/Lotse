@@ -13,7 +13,14 @@ else if (_finished || _view.IsComplete)
 {
     <MudCard Elevation="2">
         <MudCardContent>
-            <MudText Typo="Typo.h5" Class="mb-1">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung abgeschlossen" : "Session geschafft")</MudText>
+            <MudText Typo="Typo.h5" Class="mb-1">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung abgeschlossen" : _view.Session.Kind == SessionKind.Lesson ? "Lektion abgeschlossen" : "Session geschafft")</MudText>
+            @if (_view.Session.Kind == SessionKind.Lesson && _view.Session.LessonId is { } lid && Catalog.Lesson(lid) is { } lesson)
+            {
+                <MudPaper Elevation="0" Class="pa-3 mb-3" Style="background: var(--mud-palette-background-gray); border-left: 4px solid var(--mud-palette-secondary)">
+                    <MudText Typo="Typo.caption" Style="opacity:.7">Merksatz aus „@lesson.Title“</MudText>
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:600">„@lesson.Merksatz“</MudText>
+                </MudPaper>
+            }
             <MudText Typo="Typo.body1" Class="mb-3">@Correct von @Done Aufgaben gelöst (@Accuracy.ToString("P0")) · @Duration Minuten@(Done < _view.Steps.Count ? $" · {_view.Steps.Count - Done} übersprungen" : "")</MudText>
             @if (_view.Session.Kind == SessionKind.Placement)
             {
@@ -45,8 +52,15 @@ else if (_finished || _view.IsComplete)
                     </tbody>
                 </MudSimpleTable>
             }
-            <MudStack Row="true" Spacing="2">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="">Zur Übersicht</MudButton>
+            <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                @if (_view.Session.Kind == SessionKind.Lesson)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="kurs">Zum Kurs</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="">Zur Übersicht</MudButton>
+                }
                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AnotherAsync">Noch 5 Minuten</MudButton>
             </MudStack>
         </MudCardContent>

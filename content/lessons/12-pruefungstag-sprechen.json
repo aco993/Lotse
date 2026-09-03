@@ -1,0 +1,59 @@
+{
+  "lesson": {
+    "id": "L12", "order": 12, "title": "Prüfungstag: Sprechen", "subtitle": "Vortrag strukturieren, Diskussion führen, Redemittel automatisieren",
+    "theme": "Pruefung", "band": "B2_1", "scene": "exam", "minutes": 20,
+    "intro": "Goethe-Institut, Prüfungsraum 3. Fünfzehn Minuten Vorbereitung sind um. Zwei Prüferinnen, eine Partnerin namens Ana aus Kroatien. Teil 1: dein Vortrag. Teil 2: Diskussion. Alles, was du in elf Lektionen gelernt hast, in fünfzehn Minuten.",
+    "story": [
+      { "speaker": "Prüferin", "text": "Herr Micić, bitte beginnen Sie mit Ihrem Vortrag. Sie haben Thema B gewählt: „Sollte man im Beruf duzen oder siezen?“" },
+      { "speaker": "Du", "text": "…", "options": ["Vielen Dank. Ich möchte heute über die Frage sprechen, ob man im Beruf duzen oder siezen sollte. Zunächst stelle ich die Möglichkeiten vor, danach gehe ich auf Vor- und Nachteile ein, anschließend berichte ich von meinen Erfahrungen und schließe mit der Situation in meinem Heimatland.", "Also, mein Thema ist Duzen oder Siezen. Ich finde Duzen besser, weil es freundlicher ist. In meiner Firma duzen alle.", "Duzen oder siezen. Das ist eine schwierige Frage. Ich weiß nicht genau, was ich sagen soll, aber ich versuche es."],
+        "correctIndex": 0, "feedback": ["Themennennung plus Gliederung in vier Schritten – die Prüfer wissen, was kommt, und haken „Struktur“ schon ab.", "Direkt bei der Meinung, ohne Einleitung und ohne Gliederung. Inhaltlich okay, aber Struktur ist ein Bewertungskriterium.", "Unsicherheit ankündigen kostet Punkte bei „Erfüllung“ und „Flüssigkeit“. Auch wenn du unsicher bist: Struktur vortragen."] },
+      { "speaker": "Prüferin", "text": "(nach vier Minuten) Vielen Dank. Eine Frage dazu: Sie sagten, in Serbien werde im Beruf mehr gesiezt als in Deutschland. Sehen Sie das als Vorteil?" },
+      { "speaker": "Du", "text": "…", "options": ["Teils, teils. Einerseits schafft das Siezen Klarheit, wer welche Rolle hat. Andererseits habe ich hier erlebt, dass das Du die Zusammenarbeit im Team erleichtert – man fragt schneller nach. Für Kundenkontakte würde ich allerdings beim Sie bleiben.", "Ja, das ist ein Vorteil, Siezen ist besser.", "Nein, in Deutschland ist es besser, weil alle duzen."],
+        "correctIndex": 0, "feedback": ["Differenziert (teils, teils), zweiteiliger Konnektor, eigene Erfahrung, Einschränkung – eine B2-Antwort auf eine Rückfrage.", "Eine Rückfrage will Differenzierung, nicht eine Wiederholung der Meinung.", "Pauschal; „alle duzen“ stimmt zudem nicht."] },
+      { "speaker": "Prüferin", "text": "Danke. Nun zu Teil 2. Sie diskutieren mit Frau Kovač die These: „Überstunden sollten immer mit Freizeit statt mit Geld ausgeglichen werden.“ Frau Kovač, Sie beginnen." },
+      { "speaker": "Ana", "text": "Ich bin dagegen. Viele Leute brauchen das Geld, gerade am Anfang. Freizeit kann man sich nicht kaufen – aber Miete auch nicht." },
+      { "speaker": "Du", "text": "…", "options": ["Da haben Sie natürlich Recht, dass viele auf das Geld angewiesen sind. Trotzdem würde ich Freizeitausgleich als Regel bevorzugen, weil Erholung die Gesundheit schützt – und ein Arbeitgeber, der Überstunden nur bezahlt, hat keinen Grund, sie zu vermeiden. Wie sehen Sie das?", "Nein, Freizeit ist besser. Geld ist nicht wichtig.", "Ich bin auch dagegen."],
+        "correctIndex": 0, "feedback": ["Zustimmung im Detail, dann Gegenposition mit zwei Argumenten, dann die Rückfrage – „Interaktion“ voll erfüllt.", "Widerspruch ohne auf ihr Argument einzugehen; „Geld ist nicht wichtig“ ist zudem keine Position, die man verteidigen kann.", "Zustimmung ohne eigenen Beitrag – dann gibt es keine Diskussion, und beide verlieren Punkte."] },
+      { "speaker": "Ana", "text": "Das mit dem Arbeitgeber ist ein Punkt. Vielleicht sollte man wählen dürfen?" },
+      { "speaker": "Du", "text": "…", "options": ["Das wäre ein guter Kompromiss: Freizeitausgleich als Standard, mit der Möglichkeit, sich auf Wunsch auszahlen zu lassen. Könnten wir uns darauf einigen?", "Okay.", "Nein, wählen ist keine Lösung."],
+        "correctIndex": 0, "feedback": ["Kompromiss aufgreifen, konkretisieren, Einigungsformel – das Ende, auf das die Prüfer warten.", "Ein Wort beendet die Diskussion, bevor sie den Kompromiss erreicht hat.", "Ihren Vorschlag abzulehnen, ohne einen besseren zu haben, wirkt stur."] },
+      { "speaker": "Prüferin", "text": "Vielen Dank Ihnen beiden. Das war die mündliche Prüfung." }
+    ],
+    "grammar": {
+      "title": "Redemittel für Vortrag und Diskussion – die Gerüste, die man auswendig kann",
+      "nodeId": "RM.VORTRAG_STRUKTUR",
+      "text": "In der mündlichen Prüfung entscheidet nicht nur die Grammatik, sondern ob du Struktur hörbar machst. Vortrag: „Ich möchte über … sprechen. Zunächst …, danach …, anschließend …, abschließend …“ – „Aus eigener Erfahrung kann ich sagen, dass …“ – „In meinem Heimatland …“ – „Zusammenfassend lässt sich sagen, dass …“. Diskussion: „Da stimme ich Ihnen zu, allerdings …“ – „Das sehe ich anders, weil …“ – „Wie sehen Sie das?“ – „Könnten wir uns darauf einigen, dass …?“. Diese Sätze müssen automatisch kommen, damit der Kopf frei ist für den Inhalt.",
+      "examples": [
+        { "german": "Zunächst …, danach …, abschließend …", "serbian": "Najpre …, zatim …, na kraju …", "note": "Gliederung hörbar machen" },
+        { "german": "Da haben Sie Recht, allerdings …", "serbian": "Tu ste u pravu, međutim …", "note": "zustimmen + einschränken" },
+        { "german": "Wie sehen Sie das?", "serbian": "Kako Vi to vidite?", "note": "Partner einbeziehen" },
+        { "german": "Könnten wir uns darauf einigen, dass …?", "serbian": "Da li bismo mogli da se složimo da …?", "note": "Kompromissformel" }
+      ]
+    },
+    "steps": ["rm.vs.001", "rm.vs.002", "l12.match.001", "rm.vs.007", "rm.di.001", "l12.spot.001", "rm.di.005", "rm.di.006", "l12.dlg.001", "rm.vs.005", "rm.di.010"],
+    "productionExerciseId": "sp.vortrag.001",
+    "merksatz": "Struktur hörbar machen, auf den Partner eingehen, mit einem Kompromiss enden.",
+    "nodeIds": ["RM.VORTRAG_STRUKTUR", "RM.DISKUSSION", "SP.VORTRAG", "SP.DISKUSSION"]
+  },
+  "exercises": [
+    { "id": "l12.match.001", "type": "Match", "nodeId": "RM.VORTRAG_STRUKTUR", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Welches Redemittel gehört in welchen Teil des Vortrags?",
+      "pairs": [ { "left": "Ich möchte heute über … sprechen.", "right": "Einleitung" }, { "left": "Mein Vortrag gliedert sich in drei Teile.", "right": "Gliederung ankündigen" }, { "left": "Aus eigener Erfahrung kann ich sagen, dass …", "right": "eigene Erfahrung" }, { "left": "In meinem Heimatland ist das anders geregelt.", "right": "Situation im Heimatland" }, { "left": "Zusammenfassend lässt sich sagen, dass …", "right": "Fazit" }, { "left": "Damit bin ich am Ende. Haben Sie noch Fragen?", "right": "Abschluss" } ],
+      "explanation": "Die sechs Stationen eines Vortrags – in dieser Reihenfolge, jede mit einem Satz, der sie hörbar macht." },
+    { "id": "l12.spot.001", "type": "SpotError", "nodeId": "RM.DISKUSSION", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Eine Diskussionsreplik mit einem Wortstellungsfehler. Tippe auf das falsche Wort.",
+      "options": ["Da", "stimme", "ich", "Ihnen", "zu,", "allerdings", "ich", "glaube,", "dass", "die", "meisten", "Firmen", "das", "anders", "sehen."],
+      "correctIndex": 6, "answers": ["glaube ich,"], "explanation": "„allerdings“ steht auf Position 1 → danach sofort das Verb: „allerdings glaube ich, dass …“." },
+    { "id": "l12.dlg.001", "type": "Dialogue", "nodeId": "RM.DISKUSSION", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Übungsdiskussion mit Ana: „Soziale Medien sollten für Kinder unter 16 verboten werden.“ Du bist dafür, Ana dagegen.",
+      "lines": [
+        { "speaker": "Ana", "text": "Verbote funktionieren nie. Die Kinder finden immer einen Weg – dann lieber Medienkompetenz in der Schule." },
+        { "speaker": "Du", "text": "…", "options": ["Medienkompetenz halte ich auch für wichtig, da bin ich ganz bei Ihnen. Allerdings schützt sie ein Zwölfjähriges nicht vor Algorithmen, die auf Sucht ausgelegt sind. Deshalb bin ich für eine Altersgrenze – als Schutz, nicht als Strafe.", "Nein, Verbote funktionieren, zum Beispiel bei Alkohol.", "Ich bin dafür, weil soziale Medien schlecht sind."],
+          "correctIndex": 0, "feedback": ["Zustimmung im Teil, Einschränkung mit Argument, Position mit „deshalb“, Umdeutung (Schutz statt Strafe). Sehr stark.", "Ein Gegenbeispiel ist gut, aber du gehst nicht auf ihr Argument (Medienkompetenz) ein.", "„schlecht sind“ ist kein Argument auf B2-Niveau."] },
+        { "speaker": "Ana", "text": "Und wer soll das kontrollieren? Die Eltern? Die Plattformen?" },
+        { "speaker": "Du", "text": "…", "options": ["Gute Frage. Ich würde die Plattformen in die Pflicht nehmen – sie haben die Daten und die Technik. Und vielleicht ist das der Kompromiss: keine Strafe für Kinder, sondern eine Pflicht für Anbieter. Könnten wir uns darauf einigen?", "Die Eltern natürlich.", "Das ist nicht mein Problem."],
+          "correctIndex": 0, "feedback": ["Rückfrage anerkennen, konkrete Antwort, dann die Wendung zum Kompromiss mit Einigungsformel.", "Zu kurz, und du übergehst ihre eigentliche Skepsis.", "Diskussionsabbruch."] },
+        { "speaker": "Ana", "text": "Pflicht für Anbieter statt Verbot für Kinder – ja, damit könnte ich leben." }
+      ], "explanation": "Diskussion Teil 2: auf das Argument eingehen, nicht auf das Thema; zum Kompromiss steuern." }
+  ]
+}

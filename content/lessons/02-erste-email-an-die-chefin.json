@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L02", "order": 2, "title": "Die erste E-Mail an die Chefin", "subtitle": "Formell schreiben, höflich bitten, Termine vorschlagen",
+    "theme": "Beruf", "band": "B2_1", "scene": "email", "minutes": 15,
+    "intro": "Sabine ist zwei Wochen im Urlaub, Vertretung ist Herr Krüger aus der Geschäftsleitung – den siezt man. Du brauchst Zugriff auf den Testserver und willst einen Termin für dein Einarbeitungsgespräch. Zeit für die erste richtige Mail.",
+    "story": [
+      { "speaker": "Herr Krüger (Mail)", "text": "Sehr geehrter Herr Micić, willkommen an Bord. Frau Berger hat mir Ihre Einarbeitung übergeben. Bitte melden Sie sich mit Ihren offenen Punkten. Mit freundlichen Grüßen, Thomas Krüger" },
+      { "speaker": "Du (Mail)", "text": "…", "options": ["Sehr geehrter Herr Krüger, vielen Dank für Ihre Nachricht. Ich hätte zwei Anliegen: …", "Hallo Herr Krüger, danke für die Mail! Ich habe zwei Sachen: …", "Sehr geehrter Herr Krüger, ich will zwei Dinge: …"],
+        "correctIndex": 0, "feedback": ["„hätte“ statt „habe“ – der Konjunktiv II macht aus einer Forderung eine höfliche Anfrage. Und das Komma nach der Anrede, danach klein weiter.", "„Hallo“ ist für die Geschäftsleitung zu locker, „Sachen“ zu umgangssprachlich.", "„ich will“ klingt im Deutschen fordernd bis unhöflich. Im Beruf: ich möchte / ich hätte gern / ich würde gern."] },
+      { "speaker": "Du (Mail)", "text": "…", "options": ["Könnten Sie mir bitte Zugriff auf den Testserver einrichten lassen? Ohne ihn kann ich die Importfehler nicht nachstellen.", "Können Sie mir Zugriff auf den Testserver einrichten? Ich brauche das.", "Richten Sie mir bitte Zugriff auf den Testserver ein, ich brauche ihn dringend."],
+        "correctIndex": 0, "feedback": ["Könnten + bitte + Begründung: Bitte plus Grund ist im deutschen Büro der Standard.", "Grammatisch richtig, aber „Können Sie“ ohne Konjunktiv und ohne Grund wirkt knapp. „Ich brauche das“ begründet nichts.", "Imperativ an einen Vorgesetzten – selbst mit „bitte“ zu direkt."] },
+      { "speaker": "Du (Mail)", "text": "…", "options": ["Außerdem würde ich gern einen Termin für mein Einarbeitungsgespräch vereinbaren. Wäre Donnerstag um 10 Uhr für Sie möglich?", "Außerdem ich würde gern einen Termin für mein Einarbeitungsgespräch machen. Donnerstag 10 Uhr?", "Außerdem möchte ich gerne einen Termin für mein Einarbeitungsgespräch. Passt Ihnen Donnerstag um 10 Uhr?"],
+        "correctIndex": 0, "feedback": ["„würde gern … vereinbaren“ + „Wäre … möglich?“ – zwei Konjunktive, ein konkreter Vorschlag. So geht Terminfindung.", "„Außerdem ich würde“ – Verb muss auf Position 2. „Termin machen“ ist umgangssprachlich, „Donnerstag 10 Uhr?“ zu telegrafisch.", "Fast gut; „einen Termin vereinbaren“ fehlt als Verb, „Passt Ihnen …?“ ist etwas informell, aber akzeptabel."] },
+      { "speaker": "Du (Mail)", "text": "…", "options": ["Vielen Dank im Voraus. Mit freundlichen Grüßen, Aleksandar Micić", "Danke und Grüße, Aleksandar", "Ich warte auf Ihre Antwort. Gruß, A. Micić"],
+        "correctIndex": 0, "feedback": ["Der Klassiker – im Voraus großgeschrieben, Gruß ohne Komma, voller Name.", "Für eine Kollegin auf Du-Ebene fein, für die Geschäftsleitung zu knapp.", "„Ich warte auf Ihre Antwort“ klingt fordernd. Besser: „Über eine kurze Rückmeldung würde ich mich freuen.“"] },
+      { "speaker": "Herr Krüger (Mail)", "text": "Sehr geehrter Herr Micić, der Zugriff ist beantragt, die IT meldet sich. Donnerstag 10 Uhr passt. Mit freundlichen Grüßen, Thomas Krüger" }
+    ],
+    "grammar": {
+      "title": "Höflich bitten: Konjunktiv II als Türöffner",
+      "nodeId": "GR.KONJUNKTIV2",
+      "text": "Im Beruf ist der Konjunktiv II das wichtigste Höflichkeitsmittel. Er nimmt der Bitte die Direktheit: „Könnten Sie …?“, „Ich hätte eine Frage“, „Wäre es möglich, …?“, „Ich würde gern …“. Serbisch kennt „bih/biste“ (Da li biste mogli …?) – das Prinzip ist dasselbe, nur nutzt Deutsch es öfter, auch bei einfachen Fragen. Formen: hätte, wäre, könnte, würde + Infinitiv, müsste, sollte, dürfte.",
+      "examples": [
+        { "german": "Könnten Sie mir bitte die Unterlagen schicken?", "serbian": "Da li biste mi, molim Vas, poslali dokumenta?", "note": "könnten + bitte" },
+        { "german": "Ich hätte eine Frage zur Rechnung.", "serbian": "Imao bih jedno pitanje u vezi sa računom.", "note": "hätte statt habe" },
+        { "german": "Wäre es möglich, den Termin zu verschieben?", "serbian": "Da li bi bilo moguće pomeriti termin?", "note": "Wäre es möglich, … zu …?" },
+        { "german": "Ich würde gern einen Termin vereinbaren.", "serbian": "Rado bih zakazao termin.", "note": "würde + gern + Infinitiv" }
+      ]
+    },
+    "steps": ["gr.k2.001", "rm.em.001", "l02.match.001", "gr.k2.002", "rm.em.005", "l02.spot.001", "rm.em.009", "gr.k2.010", "l02.dlg.001", "rm.em.014", "rm.em.007"],
+    "productionExerciseId": "sw.micro.005",
+    "merksatz": "Ein „könnten“ und ein Grund – mehr braucht eine Bitte im Büro nicht.",
+    "nodeIds": ["GR.KONJUNKTIV2", "RM.FORMELLE_EMAIL", "SC.FORMELLE_NACHRICHT"]
+  },
+  "exercises": [
+    { "id": "l02.match.001", "type": "Match", "nodeId": "RM.FORMELLE_EMAIL", "band": "B2_1", "context": "Beruf",
+      "prompt": "Welcher Baustein gehört zu welchem Teil der Mail?",
+      "pairs": [ { "left": "Sehr geehrte Frau Berger,", "right": "Anrede (formell)" }, { "left": "Mit Bezug auf Ihre E-Mail vom 3. Mai …", "right": "Bezug herstellen" }, { "left": "Ich hätte eine Bitte:", "right": "Anliegen einleiten" }, { "left": "Wäre es möglich, …?", "right": "höfliche Frage" }, { "left": "Für Rückfragen stehe ich gern zur Verfügung.", "right": "Angebot vor dem Gruß" }, { "left": "Mit freundlichen Grüßen", "right": "Grußformel" } ],
+      "explanation": "Eine formelle Mail hat fünf feste Stellen: Anrede, Bezug, Anliegen, Abschlussangebot, Gruß." },
+    { "id": "l02.spot.001", "type": "SpotError", "nodeId": "RM.FORMELLE_EMAIL", "band": "B2_1", "context": "Beruf",
+      "prompt": "In dieser Mail-Zeile steckt ein Registerfehler. Tippe auf das Wort, das nicht in eine formelle Mail gehört.",
+      "options": ["Sehr", "geehrter", "Herr", "Krüger,", "ich", "will", "gern", "einen", "Termin", "mit", "Ihnen", "vereinbaren."],
+      "correctIndex": 5, "answers": ["würde"], "explanation": "„ich will“ ist fordernd. Formell: „ich würde gern“ oder „ich möchte gern“." },
+    { "id": "l02.dlg.001", "type": "Dialogue", "nodeId": "GR.KONJUNKTIV2", "band": "B2_1", "context": "Beruf",
+      "prompt": "Telefonat mit der IT-Hotline wegen des Testserver-Zugangs. Wähle die höfliche, klare Version.",
+      "lines": [
+        { "speaker": "IT-Hotline", "text": "IT-Support, Meier, guten Tag." },
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Micić aus dem Entwicklungsteam. Herr Krüger hat für mich Zugriff auf den Testserver beantragt – könnten Sie mir sagen, wie der Stand ist?", "Guten Tag, hier Micić. Ich brauche Zugriff auf den Testserver. Wann?", "Hallo, ich bin neu. Herr Krüger sagt, Sie machen Testserver."],
+          "correctIndex": 0, "feedback": ["Name, Kontext, konkrete Frage im Konjunktiv – der Support weiß sofort, worum es geht.", "Zu abgehackt; „Wann?“ ohne Verb wirkt ungeduldig.", "Unklar und umgangssprachlich („Sie machen Testserver“)."] },
+        { "speaker": "IT-Hotline", "text": "Moment … ja, der Antrag ist da, aber es fehlt die Freigabe der Abteilungsleitung. Frau Berger ist im Urlaub." },
+        { "speaker": "Du", "text": "…", "options": ["Verstehe. Wäre es möglich, dass Herr Krüger die Freigabe als Vertretung erteilt? Ich könnte ihn direkt darum bitten.", "Verstehe. Dann muss Herr Krüger das freigeben. Ich sage ihm das.", "Verstehe. Können Sie das nicht einfach freigeben?"],
+          "correctIndex": 0, "feedback": ["Lösungsvorschlag im Konjunktiv, Verantwortung selbst übernommen – so löst man Blockaden freundlich.", "Inhaltlich richtig, aber „muss“ und „Ich sage ihm das“ klingen nach Anweisung.", "„nicht einfach“ unterstellt Faulheit – ein Support-Klassiker, den man vermeidet."] },
+        { "speaker": "IT-Hotline", "text": "Genau, als Vertretung darf er das. Sobald die Freigabe da ist, richten wir den Zugang innerhalb eines Tages ein." }
+      ], "explanation": "Am Telefon: Name + Kontext, Fragen im Konjunktiv, Lösungen anbieten statt fordern." }
+  ]
+}
