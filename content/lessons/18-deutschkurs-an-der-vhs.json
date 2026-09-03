@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L18", "order": 18, "title": "Deutschkurs an der VHS", "subtitle": "Falsche Freunde, Wortbildung, über Sprache sprechen",
+    "theme": "Alltag", "band": "B1_2", "scene": "exam", "minutes": 15,
+    "intro": "Sabine hat dir einen B2-Kurs an der Volkshochschule bezahlt. Dienstags 18 Uhr, zwölf Leute aus neun Ländern, Kursleiterin Frau Schulz. Heute geht es um Wörter, die man zu kennen glaubt – und um die Kunst, aus einem Wort zehn zu machen.",
+    "story": [
+      { "speaker": "Frau Schulz", "text": "Herr Micić, Sie sagten vorhin, Sie hätten sich auf einen Konkurs beworben. Erzählen Sie mal!" },
+      { "speaker": "Du", "text": "…", "options": ["Oh – ich meine natürlich eine Stellenausschreibung. Auf Serbisch heißt das „konkurs“, deshalb rutscht mir das Wort immer wieder raus. Ein Konkurs wäre ja eine Insolvenz.", "Ja, ein Konkurs bei einer Firma in Hannover. Ich habe die Stelle nicht bekommen.", "Sorry, ich meine Job-Ausschreibung. Konkurs ist serbisch."],
+        "correctIndex": 0, "feedback": ["Fehler erkannt, richtiges Wort, Erklärung der Ursache und sogar die deutsche Bedeutung. So lernt die ganze Gruppe mit.", "Ein „Konkurs“ ist eine Pleite. Sie haben sich also auf eine Insolvenz beworben – Frau Schulz wird schmunzeln.", "„Sorry“ und „Job-Ausschreibung“ – im Kurs bitte Deutsch: Entschuldigung, Stellenausschreibung."] },
+      { "speaker": "Frau Schulz", "text": "Sehr gut erklärt! Das nennt man einen falschen Freund. Wer hat noch einen? Herr Micić, aus Ihrer Sammlung?" },
+      { "speaker": "Du", "text": "…", "options": ["Die Mappe – auf Serbisch „mapa“, die Landkarte. Ich habe einmal im Büro nach einer Mappe von Bremen gefragt und einen Aktenordner bekommen.", "Mappe ist Landkarte auf Serbisch.", "Ich habe keine mehr."],
+        "correctIndex": 0, "feedback": ["Wort, Bedeutung in beiden Sprachen und eine Anekdote – so bleibt es bei allen hängen.", "Genau andersherum: Die deutsche Mappe ist eine Hülle für Papiere; „mapa“ ist die Landkarte.", "Du hast eine ganze Sammlung – das ist genau die Situation, sie zu teilen."] },
+      { "speaker": "Frau Schulz", "text": "Wunderbar. Zweites Thema heute: Wortbildung. Aus „arbeiten“ machen Sie mir bitte ein Nomen, ein Adjektiv und eine Person." },
+      { "speaker": "Du", "text": "…", "options": ["Die Arbeit, arbeitslos oder arbeitsfähig, und der Arbeiter beziehungsweise die Arbeitnehmerin.", "Die Arbeit, arbeitlich, der Arbeitender.", "Arbeit, arbeiten, arbeitet."],
+        "correctIndex": 0, "feedback": ["Nomen, zwei Adjektive mit Suffix, Personen mit -er und Kompositum – mit Artikeln. Vorbildlich.", "„arbeitlich“ gibt es nicht, „der Arbeitender“ ist falsch gebildet (der Arbeitende / der Arbeiter).", "Das sind Verbformen, keine Wortbildung."] },
+      { "speaker": "Frau Schulz", "text": "Sie sind reif für B2, Herr Micić. Hausaufgabe für alle: zehn Wörter aus Ihrem Beruf, jeweils mit Nomen, Adjektiv und Person." }
+    ],
+    "grammar": {
+      "title": "Falsche Freunde und Wortbildung: Zwei Werkzeuge gegen den Wortschatzstau",
+      "nodeId": "WS.FALSCHE_FREUNDE",
+      "text": "Falsche Freunde klingen vertraut und bedeuten etwas anderes – und niemand korrigiert sie, weil der Satz grammatisch stimmt: Konkurs (Insolvenz, nicht Ausschreibung), Mappe (Hülle, nicht Landkarte), Pension (Beamtenruhegeld/Gasthaus, nicht Rente), Magazin (Zeitschrift, nicht Lager), Ambulanz (Notaufnahme, nicht Praxis), Rock (Kleidungsstück, nicht Frist), Kuchen (nicht Küche), Kante (nicht Eimer), Akademiker (jeder mit Hochschulabschluss). Wortbildung ist das Gegenmittel gegen kleinen Wortschatz: aus einem Stamm werden Nomen (-ung, -heit, -keit, -schaft), Adjektive (-lich, -ig, -isch, -bar, -los, -voll), Personen (-er, -in) und Komposita. Wer „arbeiten“ kennt, kennt zehn Wörter.",
+      "examples": [
+        { "german": "die Stellenausschreibung (nicht: der Konkurs)", "serbian": "konkurs", "note": "Konkurs = Insolvenz" },
+        { "german": "die Landkarte (nicht: die Mappe)", "serbian": "mapa", "note": "Mappe = Hülle für Papiere" },
+        { "german": "arbeiten → die Arbeit, arbeitslos, der Arbeiter, die Arbeitszeit", "serbian": "raditi → rad, nezaposlen, radnik, radno vreme", "note": "ein Stamm, viele Wörter" },
+        { "german": "wartbar, lesbar, erreichbar", "serbian": "održiv, čitljiv, dostupan", "note": "-bar = kann … werden" }
+      ]
+    },
+    "steps": ["ws.ff.001", "ws.ff.002", "l18.match.001", "ws.ff.003", "ws.ff.005", "l18.spot.001", "ws.wb.002", "ws.wb.009", "l18.dlg.001", "ws.wb.104", "ws.ff.013"],
+    "productionExerciseId": "sw.t1.004",
+    "merksatz": "Was vertraut klingt, prüfe zweimal – und was du kennst, baue aus.",
+    "nodeIds": ["WS.FALSCHE_FREUNDE", "WS.WORTBILDUNG", "SC.FORUMSBEITRAG"]
+  },
+  "exercises": [
+    { "id": "l18.match.001", "type": "Match", "nodeId": "WS.FALSCHE_FREUNDE", "band": "B1_2", "context": "Alltag",
+      "prompt": "Serbisches Wort → richtiges deutsches Wort. Ordne zu (und lass dich nicht vom ähnlichen Klang täuschen).",
+      "pairs": [ { "left": "konkurs (za posao)", "right": "die Stellenausschreibung" }, { "left": "mapa", "right": "die Landkarte" }, { "left": "penzija (iz firme)", "right": "die Rente" }, { "left": "magacin", "right": "das Lager" }, { "left": "ambulanta", "right": "die Arztpraxis" }, { "left": "rok", "right": "die Frist" } ],
+      "explanation": "Sechs Klassiker, die grammatisch richtige, inhaltlich falsche Sätze erzeugen." },
+    { "id": "l18.spot.001", "type": "SpotError", "nodeId": "WS.FALSCHE_FREUNDE", "band": "B1_2", "context": "Beruf",
+      "prompt": "Ein Kurskollege schreibt über seinen Job. Ein Wort ist ein falscher Freund. Tippe darauf.",
+      "options": ["Ich", "arbeite", "im", "Magazin", "einer", "Möbelfirma", "und", "bin", "für", "die", "Lieferungen", "an", "die", "Kunden", "zuständig."],
+      "correctIndex": 3, "answers": ["Lager"], "explanation": "Magazin = Zeitschrift. Der Ort, an dem Möbel stehen, ist das Lager." },
+    { "id": "l18.dlg.001", "type": "Dialogue", "nodeId": "WS.WORTBILDUNG", "band": "B2_1", "context": "Alltag",
+      "prompt": "Partnerarbeit im Kurs mit Yusuf aus Ankara: Ihr erklärt euch gegenseitig Wörter, ohne zu übersetzen.",
+      "lines": [
+        { "speaker": "Yusuf", "text": "Was bedeutet „wartbar“? Das Wort steht in meiner Stellenbeschreibung." },
+        { "speaker": "Du", "text": "…", "options": ["-bar heißt „kann gemacht werden“: wartbar = kann gewartet werden, also leicht zu pflegen und zu ändern. Wie lesbar – kann gelesen werden, oder erreichbar – kann erreicht werden.", "Wartbar ist, wenn man wartet.", "Keine Ahnung, ist ein IT-Wort."],
+          "correctIndex": 0, "feedback": ["Regel + zwei Beispiele aus derselben Familie. Yusuf kann das Suffix jetzt selbst anwenden.", "Falsch: „warten“ hat zwei Bedeutungen (čekati / održavati); -bar gehört hier zu „warten“ = pflegen.", "Du kennst es aus deinem Alltag – und die Regel dahinter."] },
+        { "speaker": "Yusuf", "text": "Ah! Und „arbeitslos“ – ist das das Gegenteil von arbeitsfähig?" },
+        { "speaker": "Du", "text": "…", "options": ["Nicht ganz. -los heißt „ohne“: arbeitslos = ohne Arbeit. -fähig heißt „in der Lage“: arbeitsfähig = kann arbeiten. Man kann arbeitsfähig und trotzdem arbeitslos sein.", "Ja, genau das Gegenteil.", "Arbeitslos ist schlecht, arbeitsfähig ist gut."],
+          "correctIndex": 0, "feedback": ["Zwei Suffixe präzise erklärt und der Unterschied mit einem Satz gezeigt. B2-Erklärung.", "Nicht das Gegenteil – die Suffixe meinen Verschiedenes (ohne / in der Lage).", "Bewertung statt Bedeutung."] },
+        { "speaker": "Yusuf", "text": "-los ohne, -fähig kann, -bar kann gemacht werden. Drei Suffixe, ich merke sie mir." }
+      ], "explanation": "Wörter erklären statt übersetzen: Suffix benennen, zwei Beispiele, ein Unterschied." }
+  ]
+}

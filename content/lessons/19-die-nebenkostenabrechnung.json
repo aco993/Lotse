@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L19", "order": 19, "title": "Die Nebenkostenabrechnung", "subtitle": "Zahlen prüfen, Widerspruch einlegen, Genitiv im Schriftverkehr",
+    "theme": "Alltag", "band": "B2_1", "scene": "home", "minutes": 15,
+    "intro": "Im Briefkasten: die Nebenkostenabrechnung des letzten Jahres. Nachzahlung 612 Euro. Die Heizkosten haben sich verdoppelt, obwohl ihr drei Wochen in Serbien wart, und die Kosten des Hausmeisters stehen doppelt drin. Du willst Widerspruch einlegen – schriftlich, fristgerecht, im Ton eines Menschen, der weiß, was er tut.",
+    "story": [
+      { "speaker": "Deine Frau", "text": "612 Euro! Die Abrechnung des Vorjahres war 80 Euro Guthaben. Das kann nicht stimmen." },
+      { "speaker": "Du", "text": "…", "options": ["Stimmt wahrscheinlich auch nicht. Die Kosten der Heizung haben sich verdoppelt, und die Position des Hausmeisters taucht zweimal auf. Wir haben zwölf Monate Zeit für den Widerspruch, aber ich schreibe gleich diese Woche.", "Stimmt wahrscheinlich auch nicht. Die Kosten von die Heizung sind doppelt, und die Position von der Hausmeister ist zweimal.", "Egal, zahlen wir. Streit mit der Verwaltung bringt nichts."],
+        "correctIndex": 0, "feedback": ["Genitivattribute (die Kosten der Heizung, die Position des Hausmeisters), Fristwissen, Plan. Ruhig und kompetent.", "„von die Heizung“ – von + Dativ oder besser Genitiv: der Heizung; „von der Hausmeister“ → des Hausmeisters.", "Falsche Abrechnungen sind häufig; wer nicht widerspricht, zahlt."] },
+      { "speaker": "Deine Frau", "text": "Und wie schreibst du das, ohne dass es nach Streit klingt?" },
+      { "speaker": "Du", "text": "…", "options": ["Sachlich: Bezug auf die Abrechnung, dann die zwei Punkte mit Zahlen, dann die Bitte um Prüfung und Korrektur innerhalb einer Frist. Am Ende: „Bis zur Klärung zahle ich unter Vorbehalt.“", "Ich schreibe, dass sie uns betrügen und dass ich einen Anwalt habe.", "Ich rufe einfach an."],
+        "correctIndex": 0, "feedback": ["Der Aufbau eines Widerspruchs: Bezug, Punkte, Bitte, Frist, Vorbehalt. Alles Genitiv-Land: der Abrechnung, innerhalb einer Frist, bis zur Klärung.", "Vorwürfe ohne Beleg bringen dich in die Defensive; „Anwalt“ als Drohung schließt die Tür.", "Am Telefon gibt es keinen Beleg. Widerspruch gegen eine Abrechnung ist immer schriftlich."] },
+      { "speaker": "Hausverwaltung (Antwort nach zwei Wochen)", "text": "Sehr geehrter Herr Micić, nach Prüfung Ihres Widerspruchs bestätigen wir: Die Hausmeisterkosten wurden versehentlich doppelt berechnet. Die Heizkosten entsprechen dem Verbrauch laut Ablesung." },
+      { "speaker": "Du", "text": "…", "options": ["Vielen Dank für die Korrektur der Hausmeisterkosten. Bezüglich der Heizkosten bitte ich um eine Kopie des Ableseprotokolls, da wir während des Abrechnungszeitraums drei Wochen abwesend waren.", "Danke. Und die Heizung? Wir waren drei Wochen weg, das kann nicht sein.", "Okay, dann zahle ich den Rest."],
+        "correctIndex": 0, "feedback": ["Dank, dann der zweite Punkt mit „bezüglich der“, „des Protokolls“, „während des Zeitraums“ – Genitiv, wie das Amt ihn schreibt. Und ein konkreter Beleg wird verlangt.", "Der Punkt ist richtig, die Form für Schriftverkehr zu locker – und ohne die Bitte um das Protokoll kommt keine Antwort.", "Der zweite Punkt war genauso berechtigt; halb widersprochen ist halb bezahlt."] },
+      { "speaker": "Hausverwaltung", "text": "Das Ableseprotokoll liegt bei. Die Ablesung wurde geschätzt, da niemand angetroffen wurde. Wir korrigieren die Heizkosten anhand der tatsächlichen Zählerstände. Neue Nachzahlung: 143 Euro." }
+    ],
+    "grammar": {
+      "title": "Genitiv: Das Deutsch der Briefe, Verträge und Ämter",
+      "nodeId": "GR.GENITIV",
+      "text": "Mündlich weicht der Genitiv oft dem „von + Dativ“ (die Kosten von der Heizung), schriftlich und auf B2 ist er Pflicht: die Kosten der Heizung, die Abrechnung des Vorjahres, die Position des Hausmeisters. Formen: maskulin/neutrum des/eines + -s oder -es (des Jahres, des Hausmeisters; n-Nomen: des Kunden), feminin und Plural der/einer ohne Endung am Nomen. Präpositionen mit Genitiv, die in Briefen ständig vorkommen: wegen, trotz, während, innerhalb, außerhalb, aufgrund, bezüglich, anhand, anlässlich, laut (auch Dativ). Der serbische Genitiv ist häufiger (nach Zahlen, Mengen, Verneinung) – im Deutschen nicht: „fünf Kollegen“, „keine Zeit“ (Akkusativ).",
+      "examples": [
+        { "german": "die Abrechnung des Vorjahres", "serbian": "obračun prošle godine", "note": "des + -es" },
+        { "german": "die Position des Hausmeisters", "serbian": "stavka domara", "note": "des + -s" },
+        { "german": "innerhalb einer Frist von vier Wochen", "serbian": "u roku od četiri nedelje", "note": "innerhalb + Genitiv" },
+        { "german": "während des Abrechnungszeitraums", "serbian": "tokom obračunskog perioda", "note": "während + Genitiv" }
+      ]
+    },
+    "steps": ["gr.gen.001", "gr.gen.003", "l19.match.001", "gr.gen.005", "gr.gen.007", "l19.spot.001", "gr.gen.102", "ws.beh.101", "l19.dlg.001", "gr.gen.105", "rm.bb.005"],
+    "productionExerciseId": "sw.t2.103",
+    "merksatz": "Schriftlich gehört das „von der“ in den Genitiv: der Heizung, des Jahres, innerhalb einer Frist.",
+    "nodeIds": ["GR.GENITIV", "WS.ALLTAG_BEHOERDEN", "RM.BESCHWERDE_BITTE", "SC.FORMELLE_NACHRICHT"]
+  },
+  "exercises": [
+    { "id": "l19.match.001", "type": "Match", "nodeId": "GR.GENITIV", "band": "B2_1", "context": "Alltag",
+      "prompt": "Gesprochen → geschrieben: Ordne die Umgangsform der Genitivform zu.",
+      "pairs": [ { "left": "die Kosten von der Heizung", "right": "die Kosten der Heizung" }, { "left": "die Rechnung von dem Hausmeister", "right": "die Rechnung des Hausmeisters" }, { "left": "wegen dem Umzug", "right": "wegen des Umzugs" }, { "left": "in der Frist von vier Wochen", "right": "innerhalb einer Frist von vier Wochen" }, { "left": "die Zählerstände von den Wohnungen", "right": "die Zählerstände der Wohnungen" } ],
+      "explanation": "Fünfmal derselbe Schritt: von + Dativ (mündlich) → Genitiv (schriftlich)." },
+    { "id": "l19.spot.001", "type": "SpotError", "nodeId": "GR.GENITIV", "band": "B2_1", "context": "Alltag",
+      "prompt": "Dein Widerspruch hat einen Genitivfehler. Tippe auf das falsche Wort.",
+      "options": ["Sehr", "geehrte", "Damen", "und", "Herren,", "gegen", "die", "Nebenkostenabrechnung", "des", "Jahres", "2025", "lege", "ich", "wegen", "der", "doppelten", "Berechnung", "des", "Hausmeisterkosten", "Widerspruch", "ein."],
+      "correctIndex": 17, "answers": ["der"], "explanation": "die Hausmeisterkosten (Plural) → Genitiv Plural: DER Hausmeisterkosten. „des Jahres“ davor ist richtig." },
+    { "id": "l19.dlg.001", "type": "Dialogue", "nodeId": "RM.BESCHWERDE_BITTE", "band": "B2_1", "context": "Alltag",
+      "prompt": "Die Nachbarin Frau Yilmaz hat dieselbe Abrechnung bekommen und fragt dich im Treppenhaus um Rat.",
+      "lines": [
+        { "speaker": "Frau Yilmaz", "text": "Sie haben doch Widerspruch eingelegt, oder? Bei uns sind es 700 Euro. Ich weiß nicht, wo ich anfangen soll." },
+        { "speaker": "Du", "text": "…", "options": ["Ja, und es hat sich gelohnt. Prüfen Sie zuerst die Position des Hausmeisters – die war bei uns doppelt – und dann die Heizkosten anhand des Ableseprotokolls. Ich kann Ihnen meinen Brief als Vorlage geben.", "Ja. Einfach abschreiben, was ich geschrieben habe.", "Ja, aber jede Abrechnung ist anders, da kann ich nicht helfen."],
+          "correctIndex": 0, "feedback": ["Zwei konkrete Prüfpunkte im Genitiv, ein Angebot. Nachbarschaft, wie sie sein soll.", "Eine Vorlage hilft; „einfach abschreiben“ ohne die eigenen Zahlen führt zu einem falschen Widerspruch.", "Stimmt teilweise, aber die zwei Prüfpunkte gelten für alle im Haus."] },
+        { "speaker": "Frau Yilmaz", "text": "Das wäre wunderbar. Und bis wann muss der Widerspruch raus?" },
+        { "speaker": "Du", "text": "…", "options": ["Innerhalb von zwölf Monaten nach Zugang der Abrechnung – Sie haben also Zeit. Trotzdem: Je früher, desto schneller die Korrektur.", "Sofort, sonst ist es zu spät.", "Keine Ahnung."],
+          "correctIndex": 0, "feedback": ["Frist korrekt (innerhalb von … nach Zugang der …), plus ein praktischer Rat mit je … desto.", "Falsch – die Frist ist ein Jahr; Panik hilft niemandem.", "Du weißt es – aus deinem eigenen Brief."] },
+        { "speaker": "Frau Yilmaz", "text": "Zwölf Monate! Dann schreibe ich es dieses Wochenende. Ich bringe Ihnen Baklava vorbei, versprochen." }
+      ], "explanation": "Rat geben: konkrete Punkte, Frist, Angebot – im Genitiv, wo es schriftlich wird." }
+  ]
+}

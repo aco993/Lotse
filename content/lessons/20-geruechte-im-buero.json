@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L20", "order": 20, "title": "Gerüchte im Büro", "subtitle": "Vermutungen ausdrücken: Modalverben subjektiv, „soll“ und „will“, indirekte Rede",
+    "theme": "Beruf", "band": "B2_2", "scene": "meeting", "minutes": 18,
+    "intro": "Die Geschäftsleitung tagt seit drei Tagen hinter verschlossenen Türen. In der Kaffeeküche kursieren Gerüchte: Verkauf? Fusion? Kündigungen? Jeder weiß etwas, niemand weiß es genau. Du willst weder Panik verbreiten noch naiv wirken – und brauchst dafür die Sprache der Vermutung.",
+    "story": [
+      { "speaker": "Jonas", "text": "Hast du gehört? Nordlicht soll an einen Konzern aus Hamburg verkauft werden. Tarek hat es von Frau Kaya." },
+      { "speaker": "Du", "text": "…", "options": ["Das sagt man jetzt überall, aber „soll“ heißt eben nur, dass es jemand behauptet. Dass die Leitung drei Tage tagt, dürfte allerdings etwas Größeres bedeuten.", "Das ist sicher wahr, wir werden alle gekündigt.", "Das muss falsch sein, Sabine hätte es gesagt."],
+        "correctIndex": 0, "feedback": ["Du benennst, was „soll“ bedeutet (Hörensagen), und formulierst deine eigene Vermutung mit „dürfte“ (wahrscheinlich). Das ist die Sprache eines Erwachsenen im Gerüchtesturm.", "„sicher wahr“ aus dritter Hand – genau so entsteht Panik.", "„muss falsch sein“ ist eine starke Schlussfolgerung ohne Grundlage; „könnte falsch sein“ wäre angemessen."] },
+      { "speaker": "Lena", "text": "Ich habe Herrn Krüger heute Morgen mit zwei Fremden im Anzug gesehen. Die kamen aus dem Konferenzraum." },
+      { "speaker": "Du", "text": "…", "options": ["Das könnten Berater sein, Wirtschaftsprüfer oder Käufer – das lässt sich von außen nicht sagen. Ich würde vorschlagen, dass wir Sabine im Stand-up direkt fragen, statt weiter zu raten.", "Das sind bestimmt die Käufer. Dann ist es entschieden.", "Das müssen Berater sein, ganz sicher."],
+        "correctIndex": 0, "feedback": ["„könnten“ für offene Möglichkeiten, und ein Vorschlag, die Quelle zu fragen. Genau richtig.", "Anzüge sind kein Beweis; „bestimmt“ und „entschieden“ machen aus einer Beobachtung ein Urteil.", "„müssen … ganz sicher“ ist ein Widerspruch in sich – Sicherheit hat hier niemand."] },
+      { "speaker": "Sabine (im Stand-up)", "text": "Ich weiß, dass geredet wird. Ich darf noch nichts sagen, aber ich kann sagen: Es geht nicht um Kündigungen. Mehr am Freitag." },
+      { "speaker": "Du", "text": "…", "options": ["Danke, das hilft. Ich fasse für die anderen zusammen: Sabine sagt, es gehe nicht um Kündigungen, und am Freitag erfahren wir mehr. Bis dahin sollten wir aufhören zu spekulieren.", "Sabine sagt, es geht nicht um Kündigungen, aber sie will nichts sagen, also ist es doch schlimm.", "Sabine hat gesagt, dass alles gut ist."],
+        "correctIndex": 0, "feedback": ["Indirekte Rede mit Konjunktiv I (es gehe), neutral wiedergegeben, plus ein Appell an das Team. Du beruhigst, ohne zu beschönigen.", "Schweigen als Beweis für Schlimmes zu deuten ist genau die Logik, die Gerüchte nährt.", "„alles gut“ hat sie nicht gesagt – nur „keine Kündigungen“. Wer übertreibt, verliert Glaubwürdigkeit."] },
+      { "speaker": "Sabine (Freitag)", "text": "Es ist eine Fusion mit einer Hamburger Firma. Wir bleiben in Bremen, alle Stellen bleiben. Ab Januar gibt es ein gemeinsames Produkt – und dafür brauche ich jemanden, der beide Systeme versteht." }
+    ],
+    "grammar": {
+      "title": "Modalverben subjektiv: Wie sicher bin ich?",
+      "nodeId": "GR.MODALVERBEN_SUBJEKTIV",
+      "text": "Modalverben drücken nicht nur Können und Müssen aus, sondern auch, wie sicher der Sprecher ist: müssen (fast sicher: Er muss krank sein), dürfte (wahrscheinlich), könnte/kann (möglich), mag (vielleicht). Zwei Sonderfälle für Gerüchte: „soll“ = andere behaupten es (Nordlicht soll verkauft werden), „will“ = die Person behauptet es selbst (Er will das allein gemacht haben). Für Vergangenes: Modalverb + Partizip II + haben/sein (Er dürfte schon gegangen sein). Wer Vermutungen so abstuft, klingt souverän – wer alles mit „sicher“ und „bestimmt“ sagt, klingt nach Kaffeeküche. Nachrichten und Berichte geben Behauptungen mit Konjunktiv I wieder: Sie sagt, es gehe nicht um Kündigungen.",
+      "examples": [
+        { "german": "Nordlicht soll verkauft werden.", "serbian": "Navodno se Nordlicht prodaje.", "note": "soll = angeblich, Hörensagen" },
+        { "german": "Das dürfte etwas Größeres bedeuten.", "serbian": "To verovatno znači nešto veće.", "note": "dürfte = wahrscheinlich" },
+        { "german": "Das könnten Berater sein.", "serbian": "To bi mogli biti konsultanti.", "note": "könnte = möglich" },
+        { "german": "Sabine sagt, es gehe nicht um Kündigungen.", "serbian": "Sabine kaže da nije reč o otkazima.", "note": "Konjunktiv I: neutrale Wiedergabe" }
+      ]
+    },
+    "steps": ["gr.ms.001", "gr.ms.002", "l20.match.001", "gr.ms.103", "gr.ms.105", "l20.spot.001", "gr.ir.001", "gr.ms.104", "l20.dlg.001", "gr.ir.104", "gr.ms.106"],
+    "productionExerciseId": "sp.disk.101",
+    "merksatz": "muss, dürfte, könnte – drei Stufen der Sicherheit; „soll“ sagt: Das behaupten andere.",
+    "nodeIds": ["GR.MODALVERBEN_SUBJEKTIV", "GR.INDIREKTE_REDE", "RM.DISKUSSION", "SP.DISKUSSION"]
+  },
+  "exercises": [
+    { "id": "l20.match.001", "type": "Match", "nodeId": "GR.MODALVERBEN_SUBJEKTIV", "band": "B2_2", "context": "Beruf",
+      "prompt": "Wie sicher ist der Sprecher? Ordne die Modalverben zu.",
+      "pairs": [ { "left": "Er muss im Meeting sein.", "right": "fast sicher (logischer Schluss)" }, { "left": "Er dürfte im Meeting sein.", "right": "wahrscheinlich" }, { "left": "Er könnte im Meeting sein.", "right": "möglich, unsicher" }, { "left": "Er soll im Meeting sein.", "right": "andere behaupten es" }, { "left": "Er will im Meeting gewesen sein.", "right": "er selbst behauptet es (ich zweifle)" } ],
+      "explanation": "Fünf Modalverben, fünf Grade – die Skala von „muss“ bis „könnte“, daneben soll/will für Behauptungen." },
+    { "id": "l20.spot.001", "type": "SpotError", "nodeId": "GR.MODALVERBEN_SUBJEKTIV", "band": "B2_2", "context": "Beruf",
+      "prompt": "Deine Nachricht an Tarek soll beruhigen, enthält aber ein zu starkes Modalverb. Tippe darauf.",
+      "options": ["Mach", "dir", "keine", "Sorgen:", "Die", "Fremden", "im", "Anzug", "müssen", "Berater", "gewesen", "sein,", "das", "wissen", "wir", "aber", "nicht", "sicher."],
+      "correctIndex": 8, "answers": ["dürften"], "explanation": "„müssen“ = fast sicher – passt nicht zu „das wissen wir nicht sicher“. Konsistent: dürften oder könnten." },
+    { "id": "l20.dlg.001", "type": "Dialogue", "nodeId": "GR.INDIREKTE_REDE", "band": "B2_2", "context": "Beruf",
+      "prompt": "Tarek war beim Stand-up nicht dabei und fragt dich, was Sabine gesagt hat. Gib es neutral wieder.",
+      "lines": [
+        { "speaker": "Tarek", "text": "Was hat Sabine denn genau gesagt? Werde ich gekündigt? Ich bin noch in der Probezeit!" },
+        { "speaker": "Du", "text": "…", "options": ["Sie hat gesagt, sie dürfe noch nichts sagen, es gehe aber ausdrücklich nicht um Kündigungen, und am Freitag erfahre das Team mehr. Also: Deine Probezeit ist nicht das Thema.", "Sie hat gesagt, dass alles gut wird und niemand gekündigt wird, versprochen.", "Sie hat nichts gesagt, also ist es wohl schlimm."],
+          "correctIndex": 0, "feedback": ["Drei Aussagen im Konjunktiv I (dürfe, gehe, erfahre) – Sabines Worte, nicht deine. Dann eine Einordnung für Tarek.", "„versprochen“ hat sie nicht; „alles gut wird“ auch nicht. Du machst aus Sabines Vorsicht ein Versprechen, das sie nicht halten kann.", "Schweigen ist keine Nachricht – und Tarek braucht Fakten, keine Deutung."] },
+        { "speaker": "Tarek", "text": "Und du? Was glaubst du, was es ist?" },
+        { "speaker": "Du", "text": "…", "options": ["Ich vermute eine Fusion oder einen neuen Investor – die Leitung dürfte seit Tagen mit Verträgen beschäftigt sein. Aber das ist meine Vermutung, nicht Wissen.", "Es ist eine Fusion. Hundertprozentig.", "Keine Ahnung, mir egal."],
+          "correctIndex": 0, "feedback": ["Vermutung als Vermutung markiert (vermute, dürfte, nicht Wissen). Ehrlich und trotzdem hilfreich.", "Woher? Wer Vermutungen als Fakten verkauft, verliert beim ersten Irrtum jede Glaubwürdigkeit.", "Als Mentor darfst du eine Einschätzung haben – als Einschätzung."] },
+        { "speaker": "Tarek", "text": "Danke. Vermutung, nicht Wissen – das beruhigt mich mehr als jedes Versprechen." }
+      ], "explanation": "Wiedergeben: Konjunktiv I für fremde Aussagen; eigene Vermutungen mit dürfte/könnte markieren." }
+  ]
+}

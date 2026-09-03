@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L15", "order": 15, "title": "Der Betriebsausflug", "subtitle": "Etwas organisieren, Verben mit Präposition, darauf/worauf",
+    "theme": "Beruf", "band": "B2_1", "scene": "weekend", "minutes": 15,
+    "intro": "Sabine hat dich und Lena zum Orga-Team für den Betriebsausflug gemacht: 40 Leute, ein Tag, 1.500 Euro Budget. Kanutour auf der Wümme oder Museum? Du musst abstimmen lassen, buchen, absagen, umplanen – lauter Verben mit ihren Präpositionen.",
+    "story": [
+      { "speaker": "Lena", "text": "Also, Kanu oder Museum? Ich bin für Kanu. Aber Frau Kaya hat sich schon über die Idee beschwert." },
+      { "speaker": "Du", "text": "…", "options": ["Ich bin auch für Kanu, aber wir sollten uns nicht auf eine Variante festlegen, bevor wir alle gefragt haben. Ich kümmere mich um eine Umfrage, du erkundigst dich beim Kanuverleih nach den Preisen?", "Ich bin auch für Kanu. Ich kümmere mich für eine Umfrage, du erkundigst dich über den Preis beim Kanuverleih?", "Kanu. Frau Kaya kann ja zu Hause bleiben."],
+        "correctIndex": 0, "feedback": ["sich festlegen auf, sich kümmern um, sich erkundigen nach – drei Verben, drei Präpositionen, alle richtig. Und eine faire Aufgabenteilung.", "„sich kümmern UM“, „sich erkundigen NACH“ – die Präposition ist Teil des Verbs, nicht wählbar.", "Wer beim Betriebsausflug Kollegen ausschließt, hat den Sinn des Ausflugs verpasst."] },
+      { "speaker": "Lena", "text": "Deal. Die Umfrage ist übrigens auch gut, weil Jonas darauf besteht, dass wir die Leute fragen." },
+      { "speaker": "Du", "text": "…", "options": ["Recht hat er. Ich schicke sie heute raus und bitte alle, bis Freitag zu antworten. Dann wissen wir, worauf sich die Mehrheit freut.", "Recht hat er. Ich schicke sie heute raus und bitte alle, bis Freitag antworten. Dann wissen wir, auf was die Mehrheit sich freut.", "Recht hat er. Ich schicke sie heute."],
+        "correctIndex": 0, "feedback": ["„bitten … zu antworten“ (zu-Infinitiv) und „worauf sich … freut“ – das Fragewort für Sachen mit Präposition. B2.", "Zwei kleine Fehler: „bitten … ZU antworten“ und „worauf“ statt „auf was“ (das ist umgangssprachlich).", "Ohne Frist antwortet niemand."] },
+      { "speaker": "Lena (eine Woche später)", "text": "Ergebnis: 26 für Kanu, 14 für Museum. Aber der Kanuverleih hat am 20. keine 20 Boote mehr." },
+      { "speaker": "Du", "text": "…", "options": ["Dann hängt alles vom Termin ab. Frag bitte, ob der 27. geht – und ich spreche mit Sabine darüber, ob wir den Tag verschieben dürfen.", "Dann alles hängt ab vom Termin. Frag bitte, ob der 27. geht.", "Dann Museum."],
+        "correctIndex": 0, "feedback": ["abhängen von, sprechen mit … über, „darüber, ob“ – und ein Plan B statt Aufgeben.", "„Dann alles hängt ab“ – Verb an Position 2: „Dann hängt alles … ab“.", "Die Mehrheit hat für Kanu gestimmt; ein Terminproblem ist kein Grund, sie zu übergehen."] },
+      { "speaker": "Lena", "text": "Der 27. geht! 22 Boote, und Sabine ist einverstanden. Ich hätte nie gedacht, dass Organisieren so viele Präpositionen braucht." }
+    ],
+    "grammar": {
+      "title": "Verben mit Präposition: Verb, Präposition und Kasus als Einheit",
+      "nodeId": "GR.VERB_PRAEPOSITION",
+      "text": "Viele deutsche Verben binden eine feste Präposition, und sie stimmt selten mit der serbischen überein: sich kümmern um + Akk. (brinuti se o), sich erkundigen nach + Dat. (raspitati se o), abhängen von + Dat. (zavisiti od), sich freuen auf + Akk. (radovati se + Dat.), bestehen auf + Dat. (insistirati na), sich beschweren über + Akk. (žaliti se na), sich festlegen auf + Akk. Lerne Verb + Präposition + Kasus als ein Wort. Zeigt die Präposition auf einen Satz oder eine Sache, entsteht das Präpositionaladverb: darauf, darüber, davon – als Frage: worauf, worüber, wovon. Personen: auf wen, mit wem.",
+      "examples": [
+        { "german": "Ich kümmere mich um die Umfrage.", "serbian": "Ja ću se pobrinuti za anketu.", "note": "um + Akk." },
+        { "german": "Erkundige dich beim Verleih nach den Preisen.", "serbian": "Raspitaj se kod iznajmljivača o cenama.", "note": "bei + Dat., nach + Dat." },
+        { "german": "Jonas besteht darauf, dass wir alle fragen.", "serbian": "Jonas insistira na tome da sve pitamo.", "note": "darauf, dass …" },
+        { "german": "Worauf freut sich die Mehrheit?", "serbian": "Čemu se većina raduje?", "note": "wo(r) + Präposition" }
+      ]
+    },
+    "steps": ["gr.vp.001", "gr.vp.003", "l15.match.001", "gr.vp.006", "gr.vp.009", "l15.spot.001", "gr.vp.014", "gr.vp.104", "l15.dlg.001", "gr.vp.105", "gr.vp.013"],
+    "productionExerciseId": "sw.micro.104",
+    "merksatz": "Verb, Präposition, Kasus – ein Wort. Wer „kümmern für“ sagt, hat das Verb nur halb gelernt.",
+    "nodeIds": ["GR.VERB_PRAEPOSITION", "GR.INFINITIV_ZU", "RM.MEETING_BERUF"]
+  },
+  "exercises": [
+    { "id": "l15.match.001", "type": "Match", "nodeId": "GR.VERB_PRAEPOSITION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Welche Präposition gehört zum Verb? Ordne zu.",
+      "pairs": [ { "left": "sich kümmern", "right": "um + Akkusativ" }, { "left": "sich erkundigen", "right": "nach + Dativ" }, { "left": "abhängen", "right": "von + Dativ" }, { "left": "bestehen", "right": "auf + Dativ" }, { "left": "sich beschweren", "right": "über + Akkusativ" }, { "left": "sich einigen", "right": "auf + Akkusativ" } ],
+      "explanation": "Sechs Orga-Verben – die Präpositionen unterscheiden sich fast alle vom Serbischen." },
+    { "id": "l15.spot.001", "type": "SpotError", "nodeId": "GR.VERB_PRAEPOSITION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Deine Umfrage-Mail hat einen Präpositionsfehler. Tippe auf das falsche Wort.",
+      "options": ["Liebe", "Kolleginnen", "und", "Kollegen,", "bitte", "stimmt", "bis", "Freitag", "ab,", "worüber", "ihr", "euch", "beim", "Betriebsausflug", "am", "meisten", "freut."],
+      "correctIndex": 9, "answers": ["worauf"], "explanation": "sich freuen auf (Zukunft) → worauf. „worüber“ gehört zu „sich freuen über“ (etwas, das schon da ist)." },
+    { "id": "l15.dlg.001", "type": "Dialogue", "nodeId": "GR.VERB_PRAEPOSITION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Telefonat mit dem Kanuverleih: Reservierung ändern.",
+      "lines": [
+        { "speaker": "Kanuverleih", "text": "Wümme-Kanu, Brandt, hallo?" },
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Micić von der Nordlicht GmbH. Ich hatte mich letzte Woche nach 20 Booten für den 20. erkundigt – wir würden jetzt gern auf den 27. umbuchen. Wäre das möglich?", "Guten Tag, Micić. Ich habe mich letzte Woche über 20 Boote für den 20. erkundigt. Können wir am 27.?", "Hallo, wir wollen 20 Boote am 27. statt 20. Geht das?"],
+          "correctIndex": 0, "feedback": ["sich erkundigen nach, umbuchen auf, Konjunktiv II – und der Bezug zur letzten Anfrage.", "„sich erkundigen NACH“ – nicht „über“. Sonst verständlich.", "Kein Name, kein Bezug, kein Konjunktiv. Für einen Anbieter, bei dem man etwas will, zu ruppig."] },
+        { "speaker": "Kanuverleih", "text": "Der 27. – ja, das passt. Ich brauche dafür eine Anzahlung von 300 Euro, und ich bitte Sie, mir die Teilnehmerzahl bis zum 20. zu bestätigen." },
+        { "speaker": "Du", "text": "…", "options": ["Die Anzahlung überweisen wir diese Woche. Ich verlasse mich darauf, dass 22 Boote reserviert sind – könnten Sie mir das kurz per Mail bestätigen?", "Die Anzahlung überweisen wir diese Woche. Ich verlasse mich auf dass 22 Boote reserviert sind.", "Okay, 300 Euro, 22 Boote, tschüss."],
+          "correctIndex": 0, "feedback": ["sich verlassen auf → „darauf, dass“, plus die Bitte um schriftliche Bestätigung. Sauber und sicher.", "Vor einem dass-Satz braucht die Präposition das Präpositionaladverb: „darauf, dass“.", "Ohne schriftliche Bestätigung steht ihr am 27. vielleicht ohne Boote da."] },
+        { "speaker": "Kanuverleih", "text": "Kommt sofort per Mail. Und bringen Sie gute Laune mit – die Wümme ist im September am schönsten." }
+      ], "explanation": "Organisieren am Telefon: Bezug, Präpositionen richtig, alles schriftlich bestätigen lassen." }
+  ]
+}

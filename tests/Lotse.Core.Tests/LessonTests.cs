@@ -6,11 +6,23 @@ namespace Lotse.Core.Tests;
 public class LessonContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
 {
     [Fact]
-    public void Course_has_twelve_ordered_lessons()
+    public void Course_has_twenty_four_ordered_lessons_in_two_parts()
     {
         var lessons = fx.Catalog.Lessons;
-        Assert.Equal(12, lessons.Count);
-        Assert.Equal(Enumerable.Range(1, 12), lessons.Select(l => l.Order));
+        Assert.Equal(24, lessons.Count);
+        Assert.Equal(Enumerable.Range(1, 24), lessons.Select(l => l.Order));
+        Assert.Equal(12, lessons.Count(l => l.Part == 1));
+        Assert.Equal(12, lessons.Count(l => l.Part == 2));
+    }
+
+    [Fact]
+    public void Course_covers_every_grammar_node_with_a_lesson_explanation()
+    {
+        var explained = fx.Catalog.Lessons.Select(l => l.Grammar.NodeId).ToHashSet();
+        var grammarNodes = fx.Catalog.Nodes.Where(n => n.Id.StartsWith("GR.", StringComparison.Ordinal)).Select(n => n.Id).ToList();
+        var missing = grammarNodes.Where(n => !explained.Contains(n)).ToList();
+        // A handful of small nodes are practised inside other lessons rather than explained on their own.
+        Assert.True(missing.Count <= 6, "Nicht erklärte Grammatikknoten: " + string.Join(", ", missing));
     }
 
     [Fact]

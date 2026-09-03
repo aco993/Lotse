@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L14", "order": 14, "title": "Elternabend in der Kita", "subtitle": "Nebensätze mit dass, ob, weil, wenn – und Familienalltag auf Deutsch",
+    "theme": "Alltag", "band": "B1_2", "scene": "home", "minutes": 15,
+    "intro": "Elternabend in der Kita eures Jüngsten. Zwanzig Eltern auf Kinderstühlen, die Erzieherin Frau Lindner erklärt das Jahr, und du sollst für die Familie sprechen, weil deine Frau Spätschicht hat. Es geht um Eingewöhnung, Sprache und einen Ausflug.",
+    "story": [
+      { "speaker": "Frau Lindner", "text": "Herr Micić, Sie hatten gefragt, wie es mit der Sprache bei Luka läuft. Möchten Sie das hier besprechen oder lieber einzeln?" },
+      { "speaker": "Du", "text": "…", "options": ["Gern hier, das betrifft ja mehrere Familien. Wir haben gemerkt, dass Luka zu Hause immer öfter Deutsch spricht, und fragen uns, ob wir das unterstützen oder bei Serbisch bleiben sollen.", "Gern hier. Luka spricht zu Hause immer öfter Deutsch, wir fragen uns, sollen wir das unterstützen oder bei Serbisch bleiben?", "Gern hier. Wir haben gemerkt, dass Luka spricht zu Hause immer öfter Deutsch."],
+        "correctIndex": 0, "feedback": ["Zwei Nebensätze (dass …, ob …), beide mit dem Verb am Ende, und eine Frage, die viele Eltern haben.", "Inhaltlich gut, aber die indirekte Frage braucht „ob“ und den Nebensatz: „ob wir das unterstützen sollen“.", "„dass Luka spricht zu Hause“ – im dass-Satz wandert das Verb ans Ende: „dass Luka … Deutsch spricht“."] },
+      { "speaker": "Frau Lindner", "text": "Eine wichtige Frage! Unsere Erfahrung: Kinder lernen Deutsch hier von selbst. Was sie von Ihnen brauchen, ist eine starke erste Sprache. Sprechen Sie zu Hause ruhig Serbisch." },
+      { "speaker": "Du", "text": "…", "options": ["Das beruhigt mich. Wir hatten Sorge, dass er Nachteile hat, wenn wir zu Hause nicht Deutsch sprechen.", "Das beruhigt mich. Wir hatten Sorge, dass er hat Nachteile, wenn wir sprechen zu Hause nicht Deutsch.", "Okay. Serbisch dann."],
+        "correctIndex": 0, "feedback": ["dass-Satz und wenn-Satz, beide korrekt gebaut, und du sagst, was dich bewegt hat.", "Beide Nebensätze mit dem Verb an der falschen Stelle: „dass er Nachteile HAT, wenn wir … nicht Deutsch SPRECHEN“.", "Für eine Frage, die dich seit Monaten beschäftigt, etwas knapp."] },
+      { "speaker": "Frau Lindner", "text": "Genau. Noch ein Punkt: der Ausflug in den Tierpark am 14. Wir brauchen zwei Eltern als Begleitung. Wer könnte?" },
+      { "speaker": "Du", "text": "…", "options": ["Ich könnte, wenn ich rechtzeitig Bescheid weiß, weil ich den Tag im Büro freinehmen muss. Bis wann müssten Sie es wissen?", "Ich kann, wenn ich weiß Bescheid rechtzeitig.", "Nein, ich arbeite."],
+        "correctIndex": 0, "feedback": ["Zusage mit Bedingung (wenn), Begründung (weil) und eine präzise Rückfrage. Frau Lindner kann planen.", "„wenn ich weiß Bescheid rechtzeitig“ – Verb ans Ende: „wenn ich rechtzeitig Bescheid weiß“.", "Alle arbeiten; Elternabende leben von denen, die trotzdem fragen, wie es gehen könnte."] },
+      { "speaker": "Frau Lindner", "text": "Bis Ende der Woche wäre wunderbar. Dann trage ich Sie vorläufig ein – vielen Dank, Herr Micić!" }
+    ],
+    "grammar": {
+      "title": "Nebensätze: dass, ob, weil, wenn – das Verb geht ans Ende",
+      "nodeId": "GR.NEBENSATZ_WORTSTELLUNG",
+      "text": "Vier Konjunktionen tragen den halben Alltag: dass (Inhalt: Wir haben gemerkt, dass …), ob (indirekte Ja/Nein-Frage: Wir fragen uns, ob …), weil (Grund), wenn (Bedingung/Zeitpunkt). In allen vier wandert das konjugierte Verb ans Ende des Nebensatzes; bei Modalverben und Perfekt: Infinitiv/Partizip + konjugiertes Verb ganz hinten („… ob wir das unterstützen sollen“, „… dass er Deutsch gelernt hat“). Vorsicht bei „ob“: Serbisch „da li“ wird oft mit „dass“ übersetzt – „dass“ ist keine Frage. Komma vor jedem Nebensatz.",
+      "examples": [
+        { "german": "Wir haben gemerkt, dass Luka immer öfter Deutsch spricht.", "serbian": "Primetili smo da Luka sve češće govori nemački.", "note": "dass + Verb am Ende" },
+        { "german": "Wir fragen uns, ob wir das unterstützen sollen.", "serbian": "Pitamo se da li to treba da podržimo.", "note": "da li → ob (nicht dass!)" },
+        { "german": "Ich könnte, wenn ich rechtzeitig Bescheid weiß.", "serbian": "Mogao bih, ako na vreme budem znao.", "note": "wenn + Verb am Ende" },
+        { "german": "Ich muss den Tag freinehmen, weil ich sonst im Büro bin.", "serbian": "Moram da uzmem slobodan dan, jer sam inače u kancelariji.", "note": "weil – Verb am Ende, Komma!" }
+      ]
+    },
+    "steps": ["gr.ns.001", "gr.ns.005", "l14.match.001", "gr.ns.002", "gr.ns.008", "l14.spot.001", "gr.ns.101", "gr.ns.010", "l14.dlg.001", "ws.beh.106", "gr.ns.006"],
+    "productionExerciseId": "sw.micro.105",
+    "merksatz": "Serbisch „da li“ heißt „ob“, nie „dass“ – und beide schicken das Verb ans Ende.",
+    "nodeIds": ["GR.NEBENSATZ_WORTSTELLUNG", "WS.ALLTAG_BEHOERDEN", "GR.ORTHOGRAFIE"]
+  },
+  "exercises": [
+    { "id": "l14.match.001", "type": "Match", "nodeId": "GR.NEBENSATZ_WORTSTELLUNG", "band": "B1_2", "context": "Alltag",
+      "prompt": "Welche Konjunktion passt zur serbischen Entsprechung?",
+      "pairs": [ { "left": "da (Mislim da …)", "right": "dass" }, { "left": "da li (Pitam se da li …)", "right": "ob" }, { "left": "jer / zato što", "right": "weil" }, { "left": "ako / kad (Bedingung)", "right": "wenn" }, { "left": "iako", "right": "obwohl" } ],
+      "explanation": "Das serbische „da“ deckt dass und Infinitivkonstruktionen ab; „da li“ ist immer „ob“." },
+    { "id": "l14.spot.001", "type": "SpotError", "nodeId": "GR.NEBENSATZ_WORTSTELLUNG", "band": "B1_2", "context": "Alltag",
+      "prompt": "Deine Nachricht an Frau Lindner hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Guten", "Tag,", "ich", "kann", "am", "14.", "begleiten,", "wenn", "ich", "bekomme", "im", "Büro", "frei.", "Bitte", "sagen", "Sie", "mir", "Bescheid."],
+      "correctIndex": 9, "answers": ["im Büro frei bekomme"], "explanation": "Im wenn-Satz steht das Verb am Ende: „wenn ich im Büro frei bekomme“." },
+    { "id": "l14.dlg.001", "type": "Dialogue", "nodeId": "GR.NEBENSATZ_WORTSTELLUNG", "band": "B2_1", "context": "Alltag",
+      "prompt": "Beim Abholen: Frau Lindner berichtet von einem Streit zwischen Luka und einem anderen Kind.",
+      "lines": [
+        { "speaker": "Frau Lindner", "text": "Luka hatte heute Streit mit Emil. Es ging um ein Spielzeugauto. Ich wollte, dass Sie es von mir hören." },
+        { "speaker": "Du", "text": "…", "options": ["Danke, dass Sie es mir sagen. Wissen Sie, ob Luka angefangen hat, oder war es Emil? Ich frage, weil er zu Hause im Moment schnell wütend wird.", "Danke. Wer hat angefangen? Zu Hause er ist auch wütend.", "Das ist bestimmt Emils Schuld."],
+          "correctIndex": 0, "feedback": ["Drei saubere Nebensätze (dass, ob, weil) – und du gibst ihr eine Information, die ihr hilft.", "„Zu Hause er ist“ – Verb an Position 2. Und die Frage ohne „ob“ klingt wie ein Verhör.", "Vorschnell; die Erzieherin hat den Konflikt gesehen, du nicht."] },
+        { "speaker": "Frau Lindner", "text": "Ehrlich gesagt beide. Wir haben es geklärt, und am Ende haben sie zusammen gespielt. Ich erzähle es Ihnen, damit Sie zu Hause anknüpfen können." },
+        { "speaker": "Du", "text": "…", "options": ["Das mache ich. Ich glaube, dass es hilft, wenn wir zu Hause darüber sprechen, wie man sich einigt, statt sich zu streiten.", "Das mache ich. Ich glaube dass es hilft wenn wir zu Hause sprechen wie man sich einigt.", "Okay."],
+          "correctIndex": 0, "feedback": ["Verschachtelte Nebensätze (dass …, wenn …, wie …) korrekt, mit Kommas, und ein Plan.", "Alle Kommas fehlen – vor dass, wenn und wie muss eines stehen. Sonst gut.", "Sie hat sich Mühe gegeben; ein Satz mehr wäre fair."] },
+        { "speaker": "Frau Lindner", "text": "Genau so. Bis morgen, Herr Micić – und grüßen Sie Ihre Frau." }
+      ], "explanation": "Gespräche mit Erzieherinnen und Lehrern: dass/ob/weil richtig gesetzt, Kommas nicht vergessen." }
+  ]
+}

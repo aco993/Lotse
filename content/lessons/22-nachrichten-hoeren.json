@@ -1,0 +1,57 @@
+{
+  "lesson": {
+    "id": "L22", "order": 22, "title": "Nachrichten hören und verstehen", "subtitle": "Hörstrategien, indirekte Rede in den Medien, Zahlen und Ursachen erkennen",
+    "theme": "Pruefung", "band": "B2_2", "scene": "debate", "minutes": 18,
+    "intro": "Sechs Wochen bis zur Prüfung. Hören Teil 2 und 4 – Interview und Radiobeitrag – sind deine schwächsten Teile: Die Sprecher sind schnell, die Zahlen viele, und die Nachrichtensprache hat ihre eigene Grammatik. Ana, deine Lernpartnerin aus dem VHS-Kurs, übt mit dir jeden Abend zwanzig Minuten.",
+    "story": [
+      { "speaker": "Ana", "text": "Ich spiele dir jetzt einen Beitrag vor. Erste Frage vorher: Worauf achtest du beim ersten Hören?" },
+      { "speaker": "Du", "text": "…", "options": ["Beim ersten Hören auf die Struktur: Wer spricht, worum geht es, welche Zahlen fallen. Details und die Fragen zu Ursachen und Folgen beim zweiten Hören.", "Auf alles. Ich schreibe jedes Wort mit.", "Ich höre einfach zu und hoffe."],
+        "correctIndex": 0, "feedback": ["Genau die Strategie für Teil 2 und 4: erst grob, dann gezielt. Wer beim ersten Hören alles will, verliert den Faden.", "Mitschreiben kostet das Hören; man verpasst den Satz, während man den vorherigen notiert.", "Hoffnung ist keine Strategie – dafür gibt es die Aufgaben zum Vorlesen vor dem Hören."] },
+      { "speaker": "Radiobeitrag", "text": "… laut einer Studie der Universität Bremen arbeiteten im vergangenen Jahr rund 38 Prozent der Beschäftigten mindestens einen Tag pro Woche von zu Hause. Der Arbeitgeberverband erklärte, die Produktivität sei dabei nicht gesunken, man sehe allerdings Risiken für die Ausbildung junger Mitarbeiter …" },
+      { "speaker": "Ana", "text": "Stopp. Was sagt der Arbeitgeberverband – und was sagt die Studie?" },
+      { "speaker": "Du", "text": "…", "options": ["Die Studie liefert die Zahl: 38 Prozent mindestens einen Tag pro Woche. Der Verband behauptet, die Produktivität sei nicht gesunken, sieht aber Risiken für die Ausbildung – das „sei“ und „sehe“ zeigen, dass es seine Aussage ist, nicht die des Senders.", "Der Sender sagt, die Produktivität ist nicht gesunken.", "38 Prozent arbeiten zu Hause und die Produktivität sinkt."],
+        "correctIndex": 0, "feedback": ["Du trennst Quelle und Aussage und erkennst den Konjunktiv I als Signal für Wiedergabe. Genau das prüfen die Aufgaben zu „Wer sagt was?“.", "Nein – der Sender gibt nur wieder. Der Konjunktiv I (sei) verrät die Quelle: der Verband.", "„sinkt“ ist das Gegenteil des Gesagten; und „38 Prozent arbeiten zu Hause“ lässt das „mindestens einen Tag“ weg – ein typischer Distraktor."] },
+      { "speaker": "Ana", "text": "Perfekt. Und die Falle bei den Zahlen?" },
+      { "speaker": "Du", "text": "…", "options": ["Dass sie leicht verändert in den falschen Antworten stehen: 38 statt 48, „jeden Tag“ statt „mindestens einen Tag“. Ich höre deshalb beim zweiten Mal nur auf die Zahl und ihren Zusatz.", "Zahlen sind einfach, die höre ich immer.", "Ich rate bei Zahlen."],
+        "correctIndex": 0, "feedback": ["Du kennst die Distraktor-Technik der Prüfung und hast eine Gegenstrategie. Das ist Vorbereitung auf B2-Niveau.", "Genau diese Sicherheit nutzen die Prüfer: Die Zahl stimmt, der Zusatz nicht.", "Raten ist die letzte Option – vorher: Zahl plus Zusatz gezielt hören."] },
+      { "speaker": "Ana", "text": "Morgen Teil 3: drei Leute reden durcheinander. Bring Kopfhörer und Nerven mit." }
+    ],
+    "grammar": {
+      "title": "Indirekte Rede: Wie Nachrichten Aussagen wiedergeben",
+      "nodeId": "GR.INDIREKTE_REDE",
+      "text": "Nachrichten geben fremde Aussagen mit dem Konjunktiv I wieder: „Der Verband erklärte, die Produktivität sei nicht gesunken“ – der Sender sagt damit: Das behauptet der Verband, wir prüfen es nicht. Formen: sei, habe, könne, müsse, wolle, werde; bei anderen Verben Stamm + e (er gehe, sie sehe). Ist der Konjunktiv I mit dem Indikativ identisch (wir haben / sie haben), weicht man auf den Konjunktiv II aus (wir hätten). Für die Prüfung musst du ihn erkennen, nicht bilden: Wo „sei“, „habe“, „werde“ steht, spricht eine Quelle – und die Aufgabe fragt fast immer danach, wer. Im Gespräch reicht „Sabine sagt, es gehe nicht um Kündigungen“ oder einfach ein dass-Satz.",
+      "examples": [
+        { "german": "Der Verband erklärte, die Produktivität sei nicht gesunken.", "serbian": "Udruženje je izjavilo da produktivnost nije opala.", "note": "sei = Wiedergabe" },
+        { "german": "Man sehe allerdings Risiken für die Ausbildung.", "serbian": "Međutim, vide se rizici za obuku.", "note": "sehe = Konj. I von sehen" },
+        { "german": "Laut Studie hätten 38 Prozent zu Hause gearbeitet.", "serbian": "Prema studiji, 38 odsto je radilo od kuće.", "note": "hätten = Ersatzform (haben = Indikativ)" },
+        { "german": "Die Ministerin kündigte an, sie werde das Gesetz ändern.", "serbian": "Ministarka je najavila da će promeniti zakon.", "note": "werde = Zukunft in der Wiedergabe" }
+      ]
+    },
+    "steps": ["gr.ir.001", "gr.ir.102", "l22.match.001", "hv.mc.003", "gr.ir.103", "l22.spot.001", "gr.ir.105", "hv.mc.104", "l22.dlg.001", "hv.d.105", "gr.ir.002"],
+    "productionExerciseId": "sp.disk.004",
+    "merksatz": "Wo „sei“ und „habe“ stehen, spricht eine Quelle – und die Prüfung fragt: welche?",
+    "nodeIds": ["GR.INDIREKTE_REDE", "HV.HOEREN_VORTRAG", "WS.MEINUNG_GESELLSCHAFT", "SP.DISKUSSION"]
+  },
+  "exercises": [
+    { "id": "l22.match.001", "type": "Match", "nodeId": "GR.INDIREKTE_REDE", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Direkte Rede → Wiedergabe in den Nachrichten. Ordne zu.",
+      "pairs": [ { "left": "„Die Lage ist ernst.“", "right": "Er sagte, die Lage sei ernst." }, { "left": "„Wir haben keine Stellen abgebaut.“", "right": "Sie erklärte, man habe keine Stellen abgebaut." }, { "left": "„Ich kann das nicht bestätigen.“", "right": "Er sagte, er könne das nicht bestätigen." }, { "left": "„Wir werden das Gesetz ändern.“", "right": "Sie kündigte an, man werde das Gesetz ändern." }, { "left": "„Die Kosten steigen.“", "right": "Laut Verband stiegen die Kosten." } ],
+      "explanation": "sei, habe, könne, werde – und die Ersatzform Konjunktiv II, wo Konjunktiv I wie Indikativ klingt (stiegen)." },
+    { "id": "l22.spot.001", "type": "SpotError", "nodeId": "GR.INDIREKTE_REDE", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Deine Zusammenfassung des Beitrags hat einen Fehler in der Wiedergabe. Tippe auf das falsche Wort.",
+      "options": ["Der", "Arbeitgeberverband", "erklärte,", "die", "Produktivität", "ist", "nicht", "gesunken,", "man", "sehe", "aber", "Risiken", "für", "die", "Ausbildung."],
+      "correctIndex": 5, "answers": ["sei"], "explanation": "In der Wiedergabe einer fremden Aussage steht Konjunktiv I: die Produktivität SEI nicht gesunken (wie danach „sehe“)." },
+    { "id": "l22.dlg.001", "type": "Dialogue", "nodeId": "HV.HOEREN_VORTRAG", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Ana simuliert Hören Teil 3: drei Stimmen, eine Frage. Entscheide, wer was gesagt hat.",
+      "lines": [
+        { "speaker": "Ana (liest vor)", "text": "Moderatorin: „Frau Berg, Sie sind gegen die Vier-Tage-Woche?“ – Frau Berg: „Nicht grundsätzlich, aber in der Pflege ist sie ohne mehr Personal nicht machbar.“ – Herr Lutz: „In der Verwaltung haben wir sie getestet – die Krankheitstage sind um ein Drittel gesunken.“" },
+        { "speaker": "Ana", "text": "Wer sagt: Die Vier-Tage-Woche ist grundsätzlich möglich, aber nicht überall?" },
+        { "speaker": "Du", "text": "…", "options": ["Frau Berg – sie sagt „nicht grundsätzlich“ dagegen, sieht aber in der Pflege ein Personalproblem.", "Herr Lutz, weil er von Tests spricht.", "Die Moderatorin."],
+          "correctIndex": 0, "feedback": ["Richtig: „nicht grundsätzlich“ = grundsätzlich ja, Einschränkung Pflege. Umschreibung erkannt.", "Herr Lutz berichtet ein Ergebnis, keine Einschränkung.", "Die Moderatorin fragt nur – typische Falle: ihre Frage klingt wie eine Aussage."] },
+        { "speaker": "Ana", "text": "Und wer nennt eine Zahl als Beleg?" },
+        { "speaker": "Du", "text": "…", "options": ["Herr Lutz: Krankheitstage um ein Drittel gesunken – also etwa 33 Prozent, falls die Antwort in Prozent steht.", "Frau Berg, sie spricht von Personal.", "Niemand nennt eine Zahl."],
+          "correctIndex": 0, "feedback": ["Zahl erkannt und gleich in die andere Form übersetzt – „ein Drittel“ taucht in Antworten gern als „33 Prozent“ auf.", "Personal ist keine Zahl.", "„ein Drittel“ ist die Zahl – Bruchzahlen überhört man leicht."] },
+        { "speaker": "Ana", "text": "Ein Drittel gleich 33 Prozent – genau so denken die Aufgabenschreiber. Morgen Teil 1, Ansagen am Bahnhof." }
+      ], "explanation": "Hören Teil 3: Umschreibungen erkennen, Zahlen in beide Formen denken, Fragen der Moderation nicht als Aussage zählen." }
+  ]
+}

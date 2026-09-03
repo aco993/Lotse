@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L23", "order": 23, "title": "Prüfungstag: Lesen", "subtitle": "65 Minuten, fünf Teile, eine Strategie – Lesetechniken für B2",
+    "theme": "Pruefung", "band": "B2_2", "scene": "exam", "minutes": 20,
+    "intro": "Der schriftliche Prüfungstag beginnt mit Lesen: 65 Minuten für fünf Teile und 30 Aufgaben. Die Texte sind nicht schwer – die Zeit ist es. Neben dir sitzt Ana, vor dir eine Prüferin mit Stoppuhr. Diese Lektion ist dein Plan für die 65 Minuten.",
+    "story": [
+      { "speaker": "Prüferin", "text": "Sie haben 65 Minuten für alle fünf Teile. Sie können die Reihenfolge selbst wählen. Bitte beginnen Sie." },
+      { "speaker": "Du (denkt)", "text": "…", "options": ["Erst Teil 5 und Teil 1 – die kurzen Zuordnungen, je zehn Minuten. Dann Teil 3 mit dem langen Artikel, dann Teil 4, Teil 2 zum Schluss, weil die Lückensätze am meisten Zeit fressen.", "Von vorn nach hinten, wie es im Heft steht. Erst Teil 1 ganz genau lesen.", "Erst alle Texte einmal komplett lesen, dann die Aufgaben."],
+        "correctIndex": 0, "feedback": ["Ein Zeitplan, der mit den sicheren Punkten beginnt und die zeitfressende Aufgabe ans Ende legt. Genau so gewinnt man in Lesen die Zeit.", "Die Reihenfolge im Heft ist keine Empfehlung; wer bei Teil 2 hängen bleibt, verliert die leichten Punkte von Teil 5.", "Alle Texte vorab lesen kostet 20 Minuten, die du danach nicht mehr hast."] },
+      { "speaker": "Du (denkt, bei Teil 1)", "text": "…", "options": ["Erst die neun Aussagen lesen und unterstreichen, dann die vier Texte – bei jedem Text die passenden Aussagen abhaken. Wörter, die in Text und Aussage gleich sind, sind verdächtig: Meistens ist die Umschreibung richtig, nicht das gleiche Wort.", "Erst die vier Texte lesen, dann die Aussagen suchen.", "Bei jeder Aussage alle vier Texte noch einmal komplett lesen."],
+        "correctIndex": 0, "feedback": ["Aussagen zuerst, Texte gezielt, und die Distraktor-Regel: gleiches Wort ist meist die Falle. Prüfungstechnik pur.", "Ohne die Aussagen im Kopf liest du die Texte umsonst – und dann ein zweites Mal.", "Neunmal vier Texte = 36 Lesevorgänge. Dafür reicht kein Prüfungstag."] },
+      { "speaker": "Du (denkt, bei Teil 2)", "text": "…", "options": ["Die sechs Sätze zuerst lesen und ihre Verweiswörter markieren – „dieser“, „dabei“, „deshalb“, „das“. Vor jeder Lücke den Satz davor und danach lesen; das Verweiswort muss auf etwas Konkretes davor zeigen.", "Jeden Satz in jede Lücke probieren.", "Die Sätze nach Gefühl einsetzen."],
+        "correctIndex": 0, "feedback": ["Verweiswörter sind der Schlüssel zu Teil 2: Sie verbinden den Lückensatz mit dem Satz davor. Wer das sieht, löst die Lücke in zwanzig Sekunden.", "Sechs Sätze in sechs Lücken sind 36 Kombinationen – Verweiswörter reduzieren sie auf eine.", "Gefühl ist gut, Verweiswörter sind besser."] },
+      { "speaker": "Prüferin", "text": "Noch fünf Minuten." },
+      { "speaker": "Du (denkt)", "text": "…", "options": ["Antwortbogen prüfen: Ist jede Aufgabe übertragen? Offene Lücken jetzt raten – leere Felder geben null Punkte, Raten kostet nichts.", "Teil 2 noch einmal ganz von vorn lesen.", "Aufhören, ich bin fertig."],
+        "correctIndex": 0, "feedback": ["Die letzten Minuten gehören dem Antwortbogen: übertragen, prüfen, nichts leer lassen. Es gibt keine Minuspunkte.", "Fünf Minuten reichen nicht für Teil 2 – aber für den Antwortbogen.", "Wer den Antwortbogen nicht prüft, verschenkt Punkte, die er hat."] }
+    ],
+    "grammar": {
+      "title": "Lesestrategien: Vom Suchen zum Finden",
+      "nodeId": "LS.LESEN_DETAIL",
+      "text": "B2-Lesen misst nicht, ob du jedes Wort kennst, sondern ob du gezielt lesen kannst. Drei Techniken: (1) Aufgaben vor dem Text lesen und wissen, wonach du suchst – global (worum geht es?), selektiv (wo steht die Zahl?), detailliert (was genau meint der Autor?). (2) Umschreibungen erkennen: Die richtige Antwort formuliert den Text um; das wörtlich gleiche Wort in einer Antwort ist oft die Falle. (3) Verweiswörter als Landkarte: dieser, dabei, deshalb, das, allerdings, dennoch zeigen, wie Sätze zusammenhängen – entscheidend in Teil 2. Zeit: 65 Minuten, davon zehn für die Zuordnungen (Teil 1, 5), fünfzehn für Teil 3, zehn für Teil 4, zwanzig für Teil 2, fünf für den Antwortbogen.",
+      "examples": [
+        { "german": "Text: „nach Feierabend nicht mehr erreichbar“ – Aussage: „schaltet abends das Diensthandy aus“", "serbian": "Tekst: „posle posla nedostupan“ – tvrdnja: „uveče isključuje službeni telefon“", "note": "Umschreibung = richtig" },
+        { "german": "Text: „hat Bedenken“ – Antwort: „hat keine Bedenken“", "serbian": "Tekst: „ima sumnje“ – odgovor: „nema sumnje“", "note": "gleiches Wort, Gegenteil = Falle" },
+        { "german": "„… Dabei entstehen hohe Kosten.“ → „dabei“ zeigt auf die Handlung davor", "serbian": "„… Pri tome nastaju visoki troškovi.“ → „pri tome“ upućuje na prethodnu radnju", "note": "Verweiswort, Teil 2" },
+        { "german": "Teil 5: Überschriften an Abschnitten – Schlüsselwörter der Absätze vergleichen", "serbian": "Deo 5: naslovi uz pasuse – uporedi ključne reči", "note": "selektiv lesen" }
+      ]
+    },
+    "steps": ["ls.002", "l23.match.001", "ls.103", "l23.spot.001", "ls.101", "l23.dlg.001", "ls.104", "ls.105", "rm.ma.006"],
+    "productionExerciseId": "sw.t1.006",
+    "merksatz": "Aufgaben zuerst, Umschreibung schlägt gleiches Wort, Verweiswort zeigt die Lücke – und nie ein leeres Feld.",
+    "nodeIds": ["LS.LESEN_DETAIL", "LS.LESEN_GLOBAL_SELEKTIV", "SC.FORUMSBEITRAG"]
+  },
+  "exercises": [
+    { "id": "l23.match.001", "type": "Match", "nodeId": "LS.LESEN_GLOBAL_SELEKTIV", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Welche Lesetechnik passt zu welchem Prüfungsteil?",
+      "pairs": [ { "left": "Teil 1: Aussagen Personen zuordnen", "right": "Aussagen zuerst lesen, Umschreibungen erkennen" }, { "left": "Teil 2: Sätze in Lücken", "right": "Verweiswörter markieren, Satz davor und danach lesen" }, { "left": "Teil 3: Multiple Choice zum Artikel", "right": "Reihenfolge der Fragen folgt dem Text; Distraktoren stehen wörtlich im Text" }, { "left": "Teil 4: Meinungen zuordnen", "right": "Pro/Contra-Signale markieren" }, { "left": "Teil 5: Regelwerk", "right": "Schlüsselwörter der Absätze mit den Fragen abgleichen" } ],
+      "explanation": "Fünf Teile, fünf Techniken – und ein Zeitplan, der mit den leichten beginnt." },
+    { "id": "l23.spot.001", "type": "SpotError", "nodeId": "LS.LESEN_DETAIL", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Dein Merkzettel für den Prüfungstag enthält einen falschen Rat. Tippe auf das Wort, das falsch ist.",
+      "options": ["Aufgaben", "vor", "dem", "Text", "lesen,", "Umschreibungen", "erkennen,", "Verweiswörter", "markieren,", "und", "unsichere", "Felder", "am", "Ende", "leer", "lassen."],
+      "correctIndex": 14, "answers": ["raten"], "explanation": "Es gibt keine Minuspunkte: Unsichere Felder werden geraten, nie leer gelassen." },
+    { "id": "l23.dlg.001", "type": "Dialogue", "nodeId": "LS.LESEN_DETAIL", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Ana und du besprecht eine Teil-3-Aufgabe, bei der ihr verschiedene Antworten habt.",
+      "lines": [
+        { "speaker": "Ana", "text": "Frage 4: „Was empfiehlt die Studie?“ Ich habe A: „die Software abzuschaffen“. Im Text steht doch „abschaffen“!" },
+        { "speaker": "Du", "text": "…", "options": ["Das Wort steht im Text, aber im Satz „Kritiker fordern, die Software abzuschaffen“ – das ist die Position der Kritiker, nicht die Empfehlung der Studie. Die Studie empfiehlt „menschliche Kontrolle und ein Recht auf Erklärung“, das ist B in anderen Worten.", "Dann ist A richtig, wenn es im Text steht.", "Ich habe C, keine Ahnung warum."],
+          "correctIndex": 0, "feedback": ["Du prüfst, WER im Text etwas sagt, und erkennst die Umschreibung in Antwort B. Genau die Teil-3-Technik.", "Das gleiche Wort ist die klassische Falle – die Frage fragt nach der Studie, nicht nach den Kritikern.", "Ohne Begründung lernt ihr beide nichts aus dem Vergleich."] },
+        { "speaker": "Ana", "text": "Stimmt, „Kritiker fordern“. Und Frage 5: „Wie argumentieren die Unternehmen?“ Da habe ich B: „Die Systeme sind fair.“" },
+        { "speaker": "Du", "text": "…", "options": ["Fast – im Text sagt der Sprecher, man arbeite daran, die Systeme fairer zu machen. „Arbeiten daran“ heißt: noch nicht fair. Ihr Argument ist, dass die Flut von Bewerbungen ohne Software nicht zu bewältigen sei – Antwort C.", "Ja, B, sie sagen ja, dass sie fair sind.", "Lass uns raten."],
+          "correctIndex": 0, "feedback": ["Feiner Unterschied erkannt (fairer machen ≠ fair) und das eigentliche Argument gefunden. Das ist Detailverstehen.", "„fairer machen“ bedeutet gerade, dass sie es noch nicht sind. Der Konjunktiv „arbeite“ zeigt außerdem: Das sagt der Sprecher.", "Raten erst, wenn ihr den Text zweimal gelesen habt – hier steht die Antwort drin."] },
+        { "speaker": "Ana", "text": "Wer sagt was, und was ist nur fast dasselbe. Ich glaube, ich habe Teil 3 verstanden." }
+      ], "explanation": "Teil 3: Wer sagt es, und ist die Antwort wirklich dasselbe oder nur fast?" }
+  ]
+}
