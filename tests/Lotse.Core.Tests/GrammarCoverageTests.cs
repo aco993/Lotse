@@ -16,8 +16,11 @@ public class GrammarCoverageTests(CatalogFixture fx) : IClassFixture<CatalogFixt
     private const int MinimumExercisesPerMustItem = 4;
 
     private sealed record ReferenceItem(string Id, string Title, string Priority, string[] Nodes, string? Pattern);
+    /// <summary>Eine Struktur, die die Rubriken der Produktionsaufgaben ausdrücklich verlangen sollen.</summary>
+    private sealed record ProductionDemand(string Name, string Pattern);
 
     private static readonly Lazy<IReadOnlyList<ReferenceItem>> Reference = new(Load);
+    private static readonly Lazy<(int Minimum, IReadOnlyList<ProductionDemand> Structures)> Demands = new(LoadDemands);
 
     [Fact]
     public void Reference_inventory_is_readable_and_points_at_known_nodes()
@@ -41,6 +44,35 @@ public class GrammarCoverageTests(CatalogFixture fx) : IClassFixture<CatalogFixt
             if (count < MinimumExercisesPerMustItem) thin.Add($"{item.Id} ({item.Title}): nur {count} Übungen");
         }
         Assert.True(thin.Count == 0, "Muss-Stellen unter Note 2:\n" + string.Join("\n", thin));
+    }
+
+    [Fact]
+    public void Every_target_structure_is_demanded_by_several_production_tasks()
+    {
+        var (minimum, structures) = Demands.Value;
+        Assert.NotEmpty(structures);
+        var tasks = fx.Catalog.Exercises.Where(e => e.IsProduction).ToList();
+        Assert.True(tasks.Count >= 50, $"nur {tasks.Count} Produktionsaufgaben");
+
+        var thin = new List<string>();
+        foreach (var s in structures)
+        {
+            var count = tasks.Count(t => t.Rubric.Any(r => Regex.IsMatch(r, s.Pattern)));
+            if (count < minimum) thin.Add($"„{s.Name}“ nur in {count} Rubriken (mindestens {minimum})");
+        }
+        Assert.True(thin.Count == 0, "Zu wenig Produktionsdruck:\n" + string.Join("\n", thin));
+    }
+
+    [Fact]
+    public void Every_production_task_names_at_least_one_structure()
+    {
+        var (_, structures) = Demands.Value;
+        var patterns = structures.Select(s => s.Pattern).ToList();
+        var vague = fx.Catalog.Exercises
+            .Where(e => e.IsProduction && !e.Rubric.Any(r => patterns.Any(p => Regex.IsMatch(r, p))))
+            .Select(e => e.Id)
+            .ToList();
+        Assert.True(vague.Count == 0, "Produktionsaufgaben ohne benannte Struktur: " + string.Join(", ", vague));
     }
 
     private static bool Matches(ReferenceItem item, Exercise e)
@@ -90,6 +122,16 @@ public class GrammarCoverageTests(CatalogFixture fx) : IClassFixture<CatalogFixt
             i.GetProperty("priority").GetString()!,
             i.TryGetProperty("nodes", out var n) ? n.EnumerateArray().Select(x => x.GetString()!).ToArray() : [],
             i.TryGetProperty("pattern", out var p) ? p.GetString() : null)).ToList();
+    }
+
+    private static (int, IReadOnlyList<ProductionDemand>) LoadDemands()
+    {
+        using var doc = JsonDocument.Parse(File.ReadAllText(ResolvePath()));
+        var node = doc.RootElement.GetProperty("productionDemands");
+        var structures = node.GetProperty("structures").EnumerateArray()
+            .Select(s => new ProductionDemand(s.GetProperty("name").GetString()!, s.GetProperty("pattern").GetString()!))
+            .ToList();
+        return (node.GetProperty("minTasksPerStructure").GetInt32(), structures);
     }
 
     private static string ResolvePath()

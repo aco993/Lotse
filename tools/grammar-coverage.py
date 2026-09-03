@@ -176,6 +176,24 @@ def score_item(item, exercises, lessons, blobs, lesson_blobs):
     }
 
 
+def production_demands(reference, exercises):
+    """Wie oft verlangt eine Rubrik einer Schreib-/Sprechaufgabe eine Struktur ausdrücklich?
+
+    Bewusst getrennt von der Übungsabdeckung: eine Struktur zu drillen und sie unter
+    Produktionsdruck zu verlangen sind zwei verschiedene Dinge, und der Prüfer sieht nur das zweite.
+    """
+    spec = reference.get("productionDemands")
+    if not spec:
+        return None
+    tasks = [e for e in exercises if e["type"] in ("FreeWrite", "Speak")]
+    rows = []
+    for s in spec["structures"]:
+        pattern = re.compile(s["pattern"])
+        hits = [e["id"] for e in tasks if any(pattern.search(r) for r in e.get("rubric") or [])]
+        rows.append({"name": s["name"], "tasks": len(hits), "exerciseIds": hits})
+    return {"minTasksPerStructure": spec.get("minTasksPerStructure", 0), "totalTasks": len(tasks), "structures": rows}
+
+
 def percentages(rows):
     total = len(rows)
     muss = [r for r in rows if r["priority"] == "Muss"]
@@ -188,7 +206,7 @@ def percentages(rows):
     return {"a_score_ge_2": round(a, 1), "b_muss_score_3": round(b, 1), "c_weighted": round(c, 1)}
 
 
-def render_markdown(reference, rows, pcts, stats, baseline=None, notes=None):
+def render_markdown(reference, rows, pcts, stats, baseline=None, notes=None, demands=None):
     out = []
     w = out.append
     w("# Grammatik-Abdeckung für das Goethe-Zertifikat B2")
@@ -308,6 +326,24 @@ def render_markdown(reference, rows, pcts, stats, baseline=None, notes=None):
         w(f"| {r['id']} | {r['title'][:70]} | {r['priority']} | {r['kinds']['rezeptiv'] + r['kinds']['produktiv']} | {r['bands']['B2_2']} |")
     w("")
 
+    if demands:
+        w("## 6. Produktionsdruck: Was die Rubriken wirklich verlangen")
+        w("")
+        w("Eine Struktur zu drillen und sie unter Produktionsdruck zu verlangen sind zwei")
+        w("verschiedene Dinge – und im Schreiben und Sprechen sieht der Prüfer nur das zweite")
+        w(f"(Kriterien „Korrektheit“ und „Repertoire“). Gezählt wird hier allein der Rubriktext der")
+        w(f"{demands['totalTasks']} Schreib- und Sprechaufgaben, keine Drills.")
+        w("")
+        w("| Struktur | Aufgaben, die sie verlangen |")
+        w("| --- | ---: |")
+        for s in sorted(demands["structures"], key=lambda s: (-s["tasks"], s["name"])):
+            mark = "" if s["tasks"] >= demands["minTasksPerStructure"] else " ⚠"
+            w(f"| {s['name']} | {s['tasks']}{mark} |")
+        w("")
+        w(f"Untergrenze: {demands['minTasksPerStructure']} Aufgaben je Struktur, abgesichert durch")
+        w("`GrammarCoverageTests`.")
+        w("")
+
     if notes:
         w(notes.strip())
         w("")
@@ -335,6 +371,7 @@ def main():
                 raise SystemExit(f"{item['id']}: unbekannter Knoten {n}")
 
     rows = [score_item(i, exercises, lessons, blobs, lesson_blobs) for i in reference["items"]]
+    demands = production_demands(reference, exercises)
     pcts = percentages(rows)
     counts = Counter(r["priority"] for r in rows)
     stats = {
@@ -344,11 +381,17 @@ def main():
 
     failing = [r for r in rows if r["priority"] == "Muss" and r["score"] < 2]
 
+    thin_demands = [s for s in (demands or {}).get("structures", [])
+                    if s["tasks"] < demands["minTasksPerStructure"]]
+
     if args.check:
         for r in failing:
             print(f"FEHLT: {r['id']} ({r['title']}) Note {r['score']} – {', '.join(r['missing'])}")
+        for s in thin_demands:
+            print(f"PRODUKTIONSDRUCK: „{s['name']}“ nur in {s['tasks']} Rubriken "
+                  f"(mindestens {demands['minTasksPerStructure']})")
         print(f"(a) {pcts['a_score_ge_2']} %  (b) {pcts['b_muss_score_3']} %  (c) {pcts['c_weighted']} %")
-        return 1 if failing else 0
+        return 1 if failing or thin_demands else 0
 
     baseline = None
     if args.baseline and os.path.exists(args.baseline):
@@ -359,7 +402,7 @@ def main():
     notes_path = os.path.join(args.root, "tools", "grammar-coverage-notes.md")
     notes = open(notes_path, encoding="utf-8").read() if os.path.exists(notes_path) else None
 
-    payload = {"percentages": pcts, "stats": stats, "items": rows}
+    payload = {"percentages": pcts, "stats": stats, "items": rows, "productionDemands": demands}
     docs = os.path.join(args.root, "docs")
     os.makedirs(docs, exist_ok=True)
     with open(os.path.join(docs, "grammatik-abdeckung.json"), "w", encoding="utf-8") as fh:
@@ -367,7 +410,7 @@ def main():
         fh.write("\n")
     if not args.json_only:
         with open(os.path.join(docs, "GRAMMATIK_ABDECKUNG.md"), "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(render_markdown(reference, rows, pcts, stats, baseline, notes))
+            fh.write(render_markdown(reference, rows, pcts, stats, baseline, notes, demands))
 
     print(f"{len(rows)} Stellen gemessen über {len(exercises)} Übungen.")
     print(f"(a) Note>=2: {pcts['a_score_ge_2']} %   (b) Muss=3: {pcts['b_muss_score_3']} %   (c) gewichtet: {pcts['c_weighted']} %")

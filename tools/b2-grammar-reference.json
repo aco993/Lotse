@@ -484,5 +484,83 @@
       ],
       "explanationPattern": "(?i)negation|verneint|teilnegation"
     }
-  ]
+  ],
+  "productionDemands": {
+    "minTasksPerStructure": 3,
+    "note": "Strukturen, die in den Rubriken der Schreib- und Sprechaufgaben ausdrücklich verlangt werden. Gemessen wird nur der Rubriktext – Drills zählen hier bewusst nicht mit, weil es hier um den Zwang zur eigenen Produktion geht.",
+    "structures": [
+      {
+        "name": "Konjunktiv II (Höflichkeit, Vorschlag, Irreales)",
+        "pattern": "(?i)konjunktiv ii|konjunktiv 2|\\bhätte|\\bwäre|ließe|irreal"
+      },
+      {
+        "name": "Konjunktiv II der Vergangenheit / irreale Bedingung",
+        "pattern": "(?i)konjunktiv ii der vergangenheit|irreale[rn]? (bedingung|rückblick|wunsch)|konditionalsatz|hätte ich|wenn ich [^,]{0,30}hätte"
+      },
+      {
+        "name": "Vorgangspassiv",
+        "pattern": "(?i)\\bpassiv\\b"
+      },
+      {
+        "name": "Passiversatz (lässt sich, -bar, sein + zu)",
+        "pattern": "(?i)passiversatz|lässt sich|ließe sich|\\w+bar\\b|ist zu \\w+en"
+      },
+      {
+        "name": "Nominalstil / Nomen-Verb-Verbindungen",
+        "pattern": "(?i)nominalstil|nominalisierung|nomen-verb"
+      },
+      {
+        "name": "Relativsätze",
+        "pattern": "(?i)relativs[aä]tze?"
+      },
+      {
+        "name": "Genitiv",
+        "pattern": "(?i)genitiv"
+      },
+      {
+        "name": "Indirekte Rede / Redewiedergabe",
+        "pattern": "(?i)wiedergeben|wiedergabe|konjunktiv i\\b|\\bsei\\b|dass-satz"
+      },
+      {
+        "name": "Zweiteilige Konnektoren",
+        "pattern": "(?i)zweiteilig|einerseits|nicht nur|\\bje … desto\\b|weder|entweder|\\bzwar\\b"
+      },
+      {
+        "name": "Partizipialattribut",
+        "pattern": "(?i)partizip(ial)?attribut|partizipien als attribut"
+      },
+      {
+        "name": "Plusquamperfekt / Vorzeitigkeit",
+        "pattern": "(?i)plusquamperfekt|vorzeitigkeit|nachdem"
+      },
+      {
+        "name": "Komparativ / Superlativ",
+        "pattern": "(?i)komparativ|superlativ|\\w+er als\\b"
+      },
+      {
+        "name": "Präpositionaladverbien (da-/wo-)",
+        "pattern": "(?i)präpositionaladverb|\\bdarauf\\b|\\bdaran\\b|\\bdarüber\\b|\\bdazu\\b"
+      },
+      {
+        "name": "Infinitivsätze (um/ohne/statt … zu)",
+        "pattern": "(?i)infinitivsatz|um … zu"
+      },
+      {
+        "name": "Negation: nicht … sondern",
+        "pattern": "(?i)teilnegation|nicht [^,]{0,40}, sondern"
+      },
+      {
+        "name": "Modalverben subjektiv (Vermutung)",
+        "pattern": "(?i)vermutung|\\bdürfte\\b|\\bmüsste\\b"
+      },
+      {
+        "name": "Indirekte Fragesätze",
+        "pattern": "(?i)indirekte frage"
+      },
+      {
+        "name": "Temporale Nebensätze",
+        "pattern": "(?i)temporale[rn]? nebensatz|\\bseitdem\\b|als, nachdem, bevor"
+      }
+    ]
+  }
 }

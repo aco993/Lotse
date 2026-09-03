@@ -2970,5 +2970,229 @@
         "l17.dlg.001"
       ]
     }
-  ]
+  ],
+  "productionDemands": {
+    "minTasksPerStructure": 3,
+    "totalTasks": 60,
+    "structures": [
+      {
+        "name": "Konjunktiv II (Höflichkeit, Vorschlag, Irreales)",
+        "tasks": 19,
+        "exerciseIds": [
+          "sw.micro.101",
+          "sw.t2.101",
+          "sw.t2.102",
+          "sp.alltag.102",
+          "sp.alltag.103",
+          "sp.alltag.104",
+          "sp.vortrag.105",
+          "sp.disk.103",
+          "sw.micro.001",
+          "sw.micro.002",
+          "sw.micro.007",
+          "sw.t2.001",
+          "sw.t2.002",
+          "sw.t1.006",
+          "sp.alltag.002",
+          "sp.vortrag.001",
+          "sp.vortrag.004",
+          "sp.disk.001",
+          "sp.disk.004"
+        ]
+      },
+      {
+        "name": "Konjunktiv II der Vergangenheit / irreale Bedingung",
+        "tasks": 6,
+        "exerciseIds": [
+          "sp.alltag.104",
+          "sp.disk.103",
+          "sw.micro.001",
+          "sw.micro.007",
+          "sw.t2.002",
+          "sp.vortrag.004"
+        ]
+      },
+      {
+        "name": "Vorgangspassiv",
+        "tasks": 10,
+        "exerciseIds": [
+          "sw.micro.101",
+          "sw.t1.102",
+          "sp.alltag.101",
+          "sp.vortrag.105",
+          "sw.micro.003",
+          "sw.micro.008",
+          "sw.t2.003",
+          "sw.t1.003",
+          "sp.vortrag.001",
+          "sp.disk.001"
+        ]
+      },
+      {
+        "name": "Passiversatz (lässt sich, -bar, sein + zu)",
+        "tasks": 6,
+        "exerciseIds": [
+          "sw.micro.101",
+          "sw.t2.102",
+          "sp.vortrag.105",
+          "sw.micro.003",
+          "sw.t1.003",
+          "sp.disk.001"
+        ]
+      },
+      {
+        "name": "Nominalstil / Nomen-Verb-Verbindungen",
+        "tasks": 6,
+        "exerciseIds": [
+          "sw.t2.103",
+          "sw.t1.102",
+          "sp.vortrag.103",
+          "sw.t2.003",
+          "sw.t1.003",
+          "sp.disk.004"
+        ]
+      },
+      {
+        "name": "Relativsätze",
+        "tasks": 8,
+        "exerciseIds": [
+          "sw.micro.103",
+          "sw.t1.101",
+          "sp.alltag.105",
+          "sp.disk.102",
+          "sw.micro.010",
+          "sw.t1.002",
+          "sp.alltag.004",
+          "sp.disk.003"
+        ]
+      },
+      {
+        "name": "Genitiv",
+        "tasks": 7,
+        "exerciseIds": [
+          "sw.t2.101",
+          "sw.t2.103",
+          "sp.disk.105",
+          "sw.micro.004",
+          "sw.t2.004",
+          "sw.t1.005",
+          "sp.disk.003"
+        ]
+      },
+      {
+        "name": "Indirekte Rede / Redewiedergabe",
+        "tasks": 4,
+        "exerciseIds": [
+          "sp.vortrag.101",
+          "sp.disk.104",
+          "sp.vortrag.001",
+          "sp.disk.002"
+        ]
+      },
+      {
+        "name": "Zweiteilige Konnektoren",
+        "tasks": 8,
+        "exerciseIds": [
+          "sw.micro.105",
+          "sp.vortrag.102",
+          "sp.vortrag.104",
+          "sw.micro.009",
+          "sw.t1.001",
+          "sw.t1.004",
+          "sp.vortrag.002",
+          "sp.vortrag.003"
+        ]
+      },
+      {
+        "name": "Partizipialattribut",
+        "tasks": 3,
+        "exerciseIds": [
+          "sw.micro.106",
+          "sw.t1.102",
+          "sw.t1.006"
+        ]
+      },
+      {
+        "name": "Plusquamperfekt / Vorzeitigkeit",
+        "tasks": 7,
+        "exerciseIds": [
+          "sw.micro.102",
+          "sp.alltag.101",
+          "sp.alltag.104",
+          "sw.micro.006",
+          "sw.t2.004",
+          "sp.alltag.003",
+          "sp.alltag.005"
+        ]
+      },
+      {
+        "name": "Komparativ / Superlativ",
+        "tasks": 4,
+        "exerciseIds": [
+          "sp.vortrag.102",
+          "sw.t1.004",
+          "sp.alltag.006",
+          "sp.vortrag.002"
+        ]
+      },
+      {
+        "name": "Präpositionaladverbien (da-/wo-)",
+        "tasks": 4,
+        "exerciseIds": [
+          "sw.micro.104",
+          "sp.alltag.001",
+          "sp.disk.001",
+          "sp.disk.002"
+        ]
+      },
+      {
+        "name": "Infinitivsätze (um/ohne/statt … zu)",
+        "tasks": 4,
+        "exerciseIds": [
+          "sw.micro.005",
+          "sw.t2.002",
+          "sw.t1.005",
+          "sp.disk.003"
+        ]
+      },
+      {
+        "name": "Negation: nicht … sondern",
+        "tasks": 4,
+        "exerciseIds": [
+          "sp.alltag.103",
+          "sp.disk.104",
+          "sw.micro.002",
+          "sw.t2.003"
+        ]
+      },
+      {
+        "name": "Modalverben subjektiv (Vermutung)",
+        "tasks": 4,
+        "exerciseIds": [
+          "sp.vortrag.105",
+          "sp.disk.101",
+          "sw.t1.006",
+          "sp.vortrag.003"
+        ]
+      },
+      {
+        "name": "Indirekte Fragesätze",
+        "tasks": 3,
+        "exerciseIds": [
+          "sp.alltag.102",
+          "sw.t2.001",
+          "sp.alltag.002"
+        ]
+      },
+      {
+        "name": "Temporale Nebensätze",
+        "tasks": 3,
+        "exerciseIds": [
+          "sw.micro.102",
+          "sw.micro.006",
+          "sp.alltag.003"
+        ]
+      }
+    ]
+  }
 }
