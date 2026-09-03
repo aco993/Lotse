@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L10", "order": 10, "title": "Feierabend und Wochenende", "subtitle": "Erzählen, Relativsätze, Smalltalk mit Substanz",
+    "theme": "Alltag", "band": "B2_1", "scene": "weekend", "minutes": 15,
+    "intro": "Donnerstagabend, Teamstammtisch im „Schnoor“. Kein Meeting, keine Agenda – nur Menschen, die sich unterhalten. Für viele Zugezogene die schwerste Situation: Smalltalk, der über „Wie geht’s?“ hinausgeht.",
+    "story": [
+      { "speaker": "Lena", "text": "Aleksandar, du bist doch der, der immer mit dem Rad kommt, oder? Bei dem Wetter!" },
+      { "speaker": "Du", "text": "…", "options": ["Ja, ich bin der Verrückte, der bei Regen radelt. Ich habe letztes Jahr angefangen, weil die Bahn ständig ausgefallen ist – und jetzt will ich nicht mehr zurück.", "Ja, ich bin der Verrückte, der bei Regen radelt. Ich habe letztes Jahr angefangen, weil die Bahn ist ständig ausgefallen – und jetzt will ich nicht mehr zurück.", "Ja. Rad. Immer."],
+        "correctIndex": 0, "feedback": ["Relativsatz mit Selbstironie, weil-Satz mit Verb am Ende, eine kleine Geschichte statt einer Antwort. So entsteht ein Gespräch.", "„weil die Bahn ist ständig ausgefallen“ – im Nebensatz steht das konjugierte Verb am Ende: „… ständig ausgefallen ist“.", "Smalltalk lebt von einem Satz mehr. Ein Wort pro Antwort erstickt jedes Gespräch."] },
+      { "speaker": "Lena", "text": "Ha! Und was macht man in Bremen am Wochenende, wenn man aus Belgrad kommt?" },
+      { "speaker": "Du", "text": "…", "options": ["Ehrlich gesagt vermisse ich die Kafanas – die Lokale, in denen man den ganzen Abend sitzt und niemand die Rechnung bringt. Dafür haben wir hier den Werdersee entdeckt, an dem wir jetzt fast jeden Sonntag grillen.", "Ehrlich gesagt vermisse ich die Kafanas – die Lokale, wo man den ganzen Abend sitzt. Dafür haben wir hier den Werdersee entdeckt, an den wir jetzt fast jeden Sonntag grillen.", "Nichts Besonderes. Einkaufen, aufräumen, schlafen."],
+        "correctIndex": 0, "feedback": ["Zwei Relativsätze mit Präposition (in denen, an dem), ein Vergleich Heimat/Deutschland, ein persönliches Detail – genau das, was Prüfer und Kollegen hören wollen.", "„wo“ ist umgangssprachlich okay; aber „an den wir grillen“ ist falsch: man grillt AN DEM See (Lage, Dativ), nicht an den See.", "Ehrlich, aber gesprächstötend. Ein Detail reicht: Wo, mit wem, warum."] },
+      { "speaker": "Jonas", "text": "Werdersee! Da wollte ich schon lange hin. Ist das der See, den man mit dem Rad gut erreicht?" },
+      { "speaker": "Du", "text": "…", "options": ["Genau der. Zwanzig Minuten von der Innenstadt, und es gibt eine Stelle, an der man ohne Anmeldung grillen darf. Komm doch am Sonntag mit – wir sind ab drei da.", "Genau der. Zwanzig Minuten von die Innenstadt, und es gibt eine Stelle, wo man ohne Anmeldung grillen darf. Komm am Sonntag mit.", "Ja."],
+          "correctIndex": 0, "feedback": ["„von der Innenstadt“ (von + Dativ), „an der man … darf“, und eine echte Einladung mit Uhrzeit. Aus Smalltalk wird ein Sonntag.", "„von die Innenstadt“ – von + Dativ: von der. Die Einladung ohne Zeit ist nett, aber unverbindlich.", "Er hat gerade Interesse gezeigt – das ist der Moment für eine Einladung."] },
+      { "speaker": "Jonas", "text": "Sonntag, drei Uhr, Werdersee. Ich bring die Getränke mit." }
+    ],
+    "grammar": {
+      "title": "Relativsätze: Genus vom Bezugswort, Kasus vom Relativsatz",
+      "nodeId": "GR.RELATIVSATZ",
+      "text": "Ein Relativsatz hängt eine Information an ein Nomen. Das Relativpronomen richtet sich in Genus und Zahl nach dem Bezugswort (der See, die Stelle, die Lokale), im Kasus aber nach seiner Rolle im Relativsatz: Subjekt → Nominativ (der See, der …), Objekt → Akkusativ (der See, den man erreicht), mit Präposition → deren Kasus (die Stelle, an der man grillt; die Lokale, in denen man sitzt). Das serbische „koji/koja/koje“ funktioniert genauso – nur trennt das Deutsche Genus und Kasus strenger. Umgangssprachlich geht „wo“ für Orte; in der Prüfung ist Präposition + Relativpronomen die B2-Form.",
+      "examples": [
+        { "german": "Ich bin der, der bei Regen radelt.", "serbian": "Ja sam onaj koji vozi bicikl po kiši.", "note": "Subjekt → der" },
+        { "german": "Ist das der See, den man mit dem Rad erreicht?", "serbian": "Da li je to jezero koje se dostiže biciklom?", "note": "Akkusativobjekt → den" },
+        { "german": "eine Stelle, an der man grillen darf", "serbian": "mesto na kojem se sme roštiljati", "note": "an + Dativ → an der" },
+        { "german": "die Lokale, in denen man den ganzen Abend sitzt", "serbian": "lokali u kojima se sedi celo veče", "note": "Dativ Plural → denen" }
+      ]
+    },
+    "steps": ["gr.rel.001", "ws.st.001", "l10.match.001", "gr.rel.002", "gr.rel.005", "l10.spot.001", "gr.rel.007", "gr.rel.010", "l10.dlg.001", "gr.rel.009", "ws.st.006"],
+    "productionExerciseId": "sp.alltag.003",
+    "merksatz": "Genus vom Nomen davor, Kasus vom Verb danach – und die Präposition zieht vor das Pronomen.",
+    "nodeIds": ["GR.RELATIVSATZ", "WS.ALLTAG_SMALLTALK", "GR.NEBENSATZ_WORTSTELLUNG", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l10.match.001", "type": "Match", "nodeId": "GR.RELATIVSATZ", "band": "B2_1", "context": "Alltag",
+      "prompt": "Welches Relativpronomen passt? Ordne Satzanfang und Fortsetzung zu.",
+      "pairs": [ { "left": "Das ist der Kollege, …", "right": "der mir beim Umzug geholfen hat." }, { "left": "Das ist die Kollegin, …", "right": "der ich beim Umzug geholfen habe." }, { "left": "Das ist das Café, …", "right": "in dem wir uns kennengelernt haben." }, { "left": "Das sind die Nachbarn, …", "right": "denen wir den Schlüssel geben." }, { "left": "Das ist der Chef, …", "right": "dessen Büro im dritten Stock liegt." } ],
+      "explanation": "Fünfmal dasselbe Prinzip: Genus vom Bezugswort, Kasus aus dem Relativsatz." },
+    { "id": "l10.spot.001", "type": "SpotError", "nodeId": "GR.RELATIVSATZ", "band": "B2_1", "context": "Alltag",
+      "prompt": "Deine Nachricht in der Team-Chatgruppe hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Wer", "kommt", "Sonntag", "mit", "an", "den", "See,", "der", "wir", "letzte", "Woche", "entdeckt", "haben?"],
+      "correctIndex": 7, "answers": ["den"], "explanation": "„entdecken“ + Akkusativ → der See, DEN wir entdeckt haben. Das erste „den“ (an den See = wohin) ist richtig." },
+    { "id": "l10.dlg.001", "type": "Dialogue", "nodeId": "WS.ALLTAG_SMALLTALK", "band": "B2_1", "context": "Alltag",
+      "prompt": "Sonntag am See. Jonas’ Freundin Mira fragt nach deiner Familie. Erzähle – und frage zurück.",
+      "lines": [
+        { "speaker": "Mira", "text": "Jonas sagt, ihr seid vor zwei Jahren hergekommen. Wie war das für deine Kinder?" },
+        { "speaker": "Du", "text": "…", "options": ["Für die Große schwer – sie war elf und hat niemanden verstanden. Nach einem halben Jahr hatte sie eine Freundin, die ihr alles übersetzt hat, und heute korrigiert sie mein Deutsch. Und du, bist du aus Bremen?", "Für die Große schwer – sie hat niemanden verstanden. Jetzt ist okay. Und du, bist du aus Bremen?", "Schwer. Aber jetzt gut."],
+          "correctIndex": 0, "feedback": ["Eine kleine Geschichte mit Wendung, Plusquamperfekt und Relativsatz, dann eine Rückfrage – so hält man ein Gespräch am Laufen.", "„Jetzt ist okay“ – Subjekt fehlt: „Jetzt ist es okay“. Sonst gut, die Rückfrage rettet es.", "Ohne Rückfrage endet das Gespräch hier."] },
+        { "speaker": "Mira", "text": "Nein, aus Leipzig – ich bin für Jonas hergezogen. Bremen ist mir am Anfang zu klein vorgekommen." },
+        { "speaker": "Du", "text": "…", "options": ["Das kenne ich. Belgrad hat zwei Millionen Einwohner, da war Bremen erst mal ein Dorf für mich. Inzwischen mag ich, dass man überall mit dem Rad hinkommt.", "Das kenne ich. Belgrad hat zwei Millionen, Bremen ist ein Dorf. Aber mit Rad ist gut.", "Leipzig kenne ich nicht."],
+          "correctIndex": 0, "feedback": ["Bezug auf ihre Aussage, Vergleich mit Zahl, dass-Satz mit Verb am Ende. Gesprächspartner auf Augenhöhe.", "Artikel fehlt („mit dem Rad“), und „Bremen ist ein Dorf“ ohne „für mich“ klingt abwertend.", "Antwortet nicht auf das, was sie gesagt hat."] },
+        { "speaker": "Mira", "text": "Genau das! Sag mal, ihr grillt hier öfter? Dann bringen wir nächstes Mal Kartoffelsalat mit – ohne den geht in Deutschland nichts." }
+      ], "explanation": "Smalltalk mit Substanz: ein Detail, eine kleine Geschichte, eine Rückfrage." }
+  ]
+}

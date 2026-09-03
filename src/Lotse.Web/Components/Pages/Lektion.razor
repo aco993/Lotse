@@ -1,0 +1,158 @@
+@page "/kurs/{Id}"
+@inject ILearningService Learning
+@inject ContentCatalogProvider CatalogProvider
+@inject NavigationManager Nav
+@inject SpeechService Speech
+
+<PageTitle>@(_lesson?.Title ?? "Lektion") – Lotse</PageTitle>
+
+@if (_lesson is null)
+{
+    <MudAlert Severity="Severity.Warning">Diese Lektion gibt es nicht. <MudLink Href="kurs">Zum Kurs</MudLink></MudAlert>
+}
+else
+{
+    <div class="lesson-hero">
+        <LessonArt Scene="@_lesson.Scene" Theme="_lesson.Theme" />
+        <div class="lesson-hero-text">
+            <MudText Typo="Typo.overline" Style="color:#fff;opacity:.9">Lektion @_lesson.Order · @_lesson.Band.Label() · ~@_lesson.Minutes min</MudText>
+            <MudText Typo="Typo.h5" Style="color:#fff;font-weight:600">@_lesson.Title</MudText>
+            <MudText Typo="Typo.body2" Style="color:#fff;opacity:.9">@_lesson.Subtitle</MudText>
+        </div>
+    </div>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudText Typo="Typo.body1" Style="line-height:1.6">@_lesson.Intro</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">Die Situation</MudText>
+            <MudSpacer />
+            <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="ReadStoryAsync" Disabled="_reading">@(_reading ? "Liest vor …" : "Gespräch anhören")</MudButton>
+        </MudStack>
+        <MudText Typo="Typo.caption" Class="mb-2 d-block" Style="opacity:.7">Bei jeder deiner Repliken: Wähle die beste – jede Option wird erklärt. Das ist der Kern der Lektion.</MudText>
+        <div class="dlg">
+            @for (var i = 0; i < _lesson.Story.Count; i++)
+            {
+                var line = _lesson.Story[i];
+                var idx = i;
+                var isMe = line.Speaker.StartsWith("Du", StringComparison.Ordinal);
+                <div class="@("dlg-line" + (isMe ? " me" : ""))">
+                    <SpeakerAvatar Name="@line.Speaker" />
+                    <div class="dlg-bubble">
+                        <div class="dlg-speaker">@line.Speaker</div>
+                        @if (line.IsLearnerTurn)
+                        {
+                            var chosen = _storyChoices.GetValueOrDefault(idx, -1);
+                            if (chosen < 0)
+                            {
+                                <MudStack Spacing="1">
+                                    @for (var o = 0; o < line.Options!.Count; o++)
+                                    {
+                                        var oi = o;
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-2 dlg-option" OnClick="() => _storyChoices[idx] = oi"><span style="opacity:.55;margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span></MudButton>
+                                    }
+                                </MudStack>
+                            }
+                            else
+                            {
+                                var ok = chosen == line.CorrectIndex;
+                                <div>@line.Options![chosen]</div>
+                                <MudAlert Severity="@(ok ? Severity.Success : Severity.Warning)" Dense="true" Variant="Variant.Text" Class="mt-2">@(line.Feedback is { Count: > 0 } ? line.Feedback[chosen] : "")</MudAlert>
+                                @if (!ok) { <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="opacity:.75">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText> }
+                                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => _storyChoices.Remove(idx)">Andere Antwort probieren</MudButton>
+                            }
+                        }
+                        else
+                        {
+                            <div>@line.Text</div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Erklärung: @_lesson.Grammar.Title</MudText>
+        <MudText Typo="Typo.body2" Class="mb-3" Style="line-height:1.6">@_lesson.Grammar.Text</MudText>
+        <div style="overflow-x:auto">
+            <table class="example-table">
+                <thead><tr><th>Deutsch</th><th>Serbisch</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var ex in _lesson.Grammar.Examples)
+                {
+                    <tr>
+                        <td><b>@ex.German</b> <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" OnClick="async () => await Speech.SpeakAsync(ex.German)" aria-label="Vorlesen" /></td>
+                        <td style="opacity:.85">@ex.Serbian</td>
+                        <td style="opacity:.7;font-size:.85rem">@ex.Note</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block"><MudLink Href="@($"themen")">Mehr zu „{CatalogProvider.Catalog.NodeTitle(_lesson.Grammar.NodeId)}“ unter Themen</MudLink></MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="2" Style="border-left:4px solid var(--mud-palette-secondary)">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
+            <div>
+                <MudText Typo="Typo.subtitle1" Style="font-weight:600">Jetzt üben: @_lesson.Steps.Count Aufgaben + @(_lesson.ProductionExerciseId is null ? "kein Abschluss" : "eine Abschlussaufgabe")</MudText>
+                <MudText Typo="Typo.body2" Style="opacity:.8">Gespräche, Fehler finden, Zuordnen, Lücken, Übersetzen – dann schreibst oder sprichst du selbst.</MudText>
+            </div>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="StartAsync" Disabled="_busy">Lektion starten</MudButton>
+        </MudStack>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Merksatz: „@_lesson.Merksatz“</MudText>
+    </MudPaper>
+
+    <MudStack Row="true" Justify="Justify.SpaceBetween">
+        @if (_prev is not null) { <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="@($"kurs/{_prev.Id}")">Lektion @_prev.Order</MudButton> } else { <span></span> }
+        <MudButton Variant="Variant.Text" Href="kurs">Alle Lektionen</MudButton>
+        @if (_next is not null) { <MudButton Variant="Variant.Text" EndIcon="@Icons.Material.Filled.ArrowForward" Href="@($"kurs/{_next.Id}")">Lektion @_next.Order</MudButton> } else { <span></span> }
+    </MudStack>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    private Lesson? _lesson;
+    private Lesson? _prev;
+    private Lesson? _next;
+    private readonly Dictionary<int, int> _storyChoices = new();
+    private bool _busy;
+    private bool _reading;
+
+    protected override void OnParametersSet()
+    {
+        _lesson = CatalogProvider.Catalog.Lesson(Id);
+        _storyChoices.Clear();
+        if (_lesson is null) return;
+        var all = CatalogProvider.Catalog.Lessons;
+        _prev = all.LastOrDefault(l => l.Order < _lesson.Order);
+        _next = all.FirstOrDefault(l => l.Order > _lesson.Order);
+    }
+
+    private async Task StartAsync()
+    {
+        if (_lesson is null) return;
+        _busy = true;
+        var s = await Learning.StartLessonAsync(_lesson.Id);
+        Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    private async Task ReadStoryAsync()
+    {
+        if (_lesson is null) return;
+        _reading = true;
+        try
+        {
+            foreach (var line in _lesson.Story)
+            {
+                var text = line.IsLearnerTurn ? line.Options![line.CorrectIndex!.Value] : line.Text;
+                await Speech.SpeakAsync($"{line.Speaker.Split('(')[0].Trim()}: {text}");
+            }
+        }
+        finally { _reading = false; }
+    }
+}

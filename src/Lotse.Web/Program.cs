@@ -56,7 +56,7 @@ using (var scope = app.Services.CreateScope())
 {
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<LotseDbContext>>();
     await using var db = await factory.CreateDbContextAsync();
-    await db.Database.EnsureCreatedAsync();
+    foreach (var line in await DatabaseInitializer.InitializeAsync(db, app.Logger)) app.Logger.LogInformation("{Line}", line);
     await scope.ServiceProvider.GetRequiredService<ContentCatalogProvider>().RefreshAsync();
     await scope.ServiceProvider.GetRequiredService<TutorRegistry>().InitializeAsync();
     app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Tutor: {Tutor}", dbPath, scope.ServiceProvider.GetRequiredService<ITutor>().Description);

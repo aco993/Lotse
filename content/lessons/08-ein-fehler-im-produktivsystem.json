@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L08", "order": 8, "title": "Ein Fehler im Produktivsystem", "subtitle": "IT auf Deutsch, Abläufe erklären, Plusquamperfekt und Nebensätze",
+    "theme": "Beruf", "band": "B2_1", "scene": "server", "minutes": 18,
+    "intro": "Freitag, 16:40. Nach der nächtlichen Bereitstellung fehlen bei drei Kunden Datensätze. Sabine ist zurück aus dem Urlaub und will in fünf Minuten wissen, was passiert ist – verständlich, chronologisch, ohne Fachchinesisch. Und der Projektleiter Herr Krüger hört mit.",
+    "story": [
+      { "speaker": "Sabine", "text": "Aleksandar, kurz und klar: Was ist heute Nacht passiert?" },
+      { "speaker": "Du", "text": "…", "options": ["Nachdem die neue Version um zwei Uhr eingespielt worden war, ist der Import bei drei Kunden abgebrochen. Die Ursache war eine Änderung an der Schnittstelle, die nicht in allen Kundenkonfigurationen getestet worden war.", "Nach dem Deploy um zwei ist der Import bei drei Kunden gecrasht. Das Interface-Change war nicht in allen Configs getestet.", "Also, heute Nacht, wir haben deployed, und dann Import ist abgebrochen bei drei Kunden, weil Schnittstelle war anders."],
+        "correctIndex": 0, "feedback": ["Plusquamperfekt für das Frühere, Passiv für den Vorgang, Relativsatz für die Ursache – ein Bericht, den auch der Projektleiter versteht.", "Inhaltlich richtig, sprachlich Denglisch. Vor Nicht-Technikern: einspielen, Schnittstelle, Konfiguration.", "Wortstellung (dann Import ist …, weil Schnittstelle war …) und fehlende Artikel machen den Bericht mühsam."] },
+      { "speaker": "Herr Krüger", "text": "Sind Daten verloren gegangen?" },
+      { "speaker": "Du", "text": "…", "options": ["Nein. Die Datensätze wurden nicht gelöscht, sondern nicht übernommen – sie liegen noch im Eingangsverzeichnis. Sobald die Korrektur eingespielt ist, werden sie automatisch nachgeladen.", "Nein. Die Datensätze wurden nicht gelöscht, sie sind noch im Eingangsverzeichnis. Sobald wir die Korrektur eingespielt haben, sie werden automatisch nachgeladen.", "Nein, nichts verloren, nur nicht importiert, kommt nach Fix automatisch."],
+        "correctIndex": 0, "feedback": ["„nicht …, sondern …“ präzisiert, „Sobald … ist, werden …“ – Nebensatz vorn, Verb sofort danach.", "„Sobald …, sie werden“ – nach einem Nebensatz muss das Verb direkt folgen: „…, werden sie“.", "Für den Chef zu telegrafisch, „Fix“ wieder Denglisch."] },
+      { "speaker": "Sabine", "text": "Gut. Was tun wir, damit das nicht wieder passiert?" },
+      { "speaker": "Du", "text": "…", "options": ["Ich schlage vor, dass Schnittstellenänderungen künftig gegen alle Kundenkonfigurationen getestet werden, bevor sie freigegeben werden. Dafür ergänze ich bis Montag einen automatischen Test.", "Ich schlage vor, dass wir künftig Schnittstellenänderungen gegen alle Kundenkonfigurationen testen, bevor wir sie freigeben. Dafür ich ergänze bis Montag einen automatischen Test.", "Mehr testen halt."],
+          "correctIndex": 0, "feedback": ["Vorschlag mit dass-Satz, Passiv, bevor-Nebensatz, und eine konkrete Zusage mit Termin. Das ist Senior-Niveau.", "Fast; nur „Dafür ich ergänze“ – Verb an Position 2: Dafür ergänze ich.", "Die Chefin will einen Plan, keinen Seufzer."] },
+      { "speaker": "Herr Krüger", "text": "Danke, das war klar. Informieren Sie die drei Kunden noch heute schriftlich – sachlich, ohne Schuldzuweisung." }
+    ],
+    "grammar": {
+      "title": "Reihenfolge klären: nachdem + Plusquamperfekt, sobald/bevor + Nebensatz",
+      "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR",
+      "text": "Wer einen Vorfall erklärt, ordnet Ereignisse in der Zeit. „nachdem“ verlangt Vorzeitigkeit: das Frühere steht im Plusquamperfekt (hatte/war + Partizip II), das Spätere im Präteritum oder Perfekt. „sobald“ und „bevor“ leiten Nebensätze ein – Verb am Ende, und wenn der Nebensatz vorn steht, folgt im Hauptsatz sofort das Verb. Das Serbische kommt oft mit einfachem Perfekt aus („Nakon što smo instalirali …“) – im Deutschen ist das Plusquamperfekt nach „nachdem“ Pflicht.",
+      "examples": [
+        { "german": "Nachdem die Version eingespielt worden war, brach der Import ab.", "serbian": "Nakon što je verzija instalirana, uvoz je prekinut.", "note": "Plusquamperfekt Passiv" },
+        { "german": "Sobald die Korrektur eingespielt ist, werden die Daten nachgeladen.", "serbian": "Čim ispravka bude instalirana, podaci će se učitati.", "note": "sobald + Präsens, Hauptsatz: Verb zuerst" },
+        { "german": "Änderungen werden getestet, bevor sie freigegeben werden.", "serbian": "Izmene se testiraju pre nego što se puste.", "note": "bevor + Nebensatz" },
+        { "german": "Als ich ins Büro kam, hatte das Meeting schon begonnen.", "serbian": "Kad sam došao u kancelariju, sastanak je već bio počeo.", "note": "als + Plusquamperfekt im Hauptsatz" }
+      ]
+    },
+    "steps": ["ws.it.001", "gr.pq.001", "l08.match.001", "gr.pq.004", "ws.it.003", "l08.spot.001", "gr.ns.007", "gr.pq.101", "l08.dlg.001", "ws.it.020", "gr.ns.106"],
+    "productionExerciseId": "sw.micro.008",
+    "merksatz": "Erst „hatte/war + Partizip“, dann die Folge – so erzählt man einen Vorfall, den jeder versteht.",
+    "nodeIds": ["GR.PLUSQUAMPERFEKT_FUTUR", "GR.NEBENSATZ_WORTSTELLUNG", "WS.IT_SOFTWARE", "GR.PASSIV"]
+  },
+  "exercises": [
+    { "id": "l08.match.001", "type": "Match", "nodeId": "WS.IT_SOFTWARE", "band": "B2_1", "context": "Beruf",
+      "prompt": "Denglisch raus: Welches deutsche Wort benutzt du vor Kunden und Vorgesetzten?",
+      "pairs": [ { "left": "deployen", "right": "einspielen / bereitstellen" }, { "left": "der Bug", "right": "der Fehler" }, { "left": "das Interface", "right": "die Schnittstelle" }, { "left": "das Backup", "right": "die Sicherung" }, { "left": "die Requirements", "right": "die Anforderungen" }, { "left": "das Rollback", "right": "das Zurücksetzen auf die vorherige Version" } ],
+      "explanation": "Im Team ist Denglisch normal; vor Kunden, in Berichten und in der Prüfung zählt das deutsche Wort." },
+    { "id": "l08.spot.001", "type": "SpotError", "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR", "band": "B2_1", "context": "Beruf",
+      "prompt": "Dein Vorfallbericht hat einen Tempusfehler. Tippe auf das falsche Wort.",
+      "options": ["Nachdem", "die", "Version", "um", "zwei", "Uhr", "eingespielt", "wurde,", "brach", "der", "Import", "bei", "drei", "Kunden", "ab."],
+      "correctIndex": 7, "answers": ["worden war,"], "explanation": "nachdem + Plusquamperfekt: „eingespielt worden war“ (Passiv) – erst dann „brach … ab“." },
+    { "id": "l08.dlg.001", "type": "Dialogue", "nodeId": "WS.IT_SOFTWARE", "band": "B2_1", "context": "Beruf",
+      "prompt": "Frau Kaya aus der Buchhaltung versteht nichts von IT und fragt, ob ihre Zahlen noch stimmen. Erkläre es ohne Fachwörter.",
+      "lines": [
+        { "speaker": "Frau Kaya", "text": "Herr Micić, ich habe gehört, es gab ein Problem mit dem System. Kann ich die Monatszahlen von heute noch verwenden?" },
+        { "speaker": "Du", "text": "…", "options": ["Für Ihre Zahlen ändert sich nichts: Betroffen waren nur die Importe von drei Kunden, und die werden heute Nacht nachgeholt. Ihre Auswertung von heute Vormittag ist vollständig.", "Der Import-Job ist nach dem Deployment wegen eines Interface-Bugs fehlgeschlagen, aber der Fix ist gemerged, das Rollout läuft nachts.", "Weiß ich nicht, fragen Sie Jonas."],
+          "correctIndex": 0, "feedback": ["Antwort auf ihre eigentliche Frage zuerst, dann die Einordnung – ohne ein einziges Fachwort.", "Alles richtig und alles unverständlich für sie: Deployment, Interface-Bug, gemerged, Rollout.", "Abschieben; du weißt es doch."] },
+        { "speaker": "Frau Kaya", "text": "Und muss ich morgen etwas neu erstellen?" },
+        { "speaker": "Du", "text": "…", "options": ["Nein. Wenn Sie morgen früh die Auswertung öffnen, sind die fehlenden Zahlen automatisch enthalten. Falls etwas nicht stimmt, melden Sie sich bitte direkt bei mir.", "Nein. Wenn Sie morgen früh die Auswertung öffnen, die fehlenden Zahlen sind automatisch enthalten.", "Nein, läuft automatisch."],
+          "correctIndex": 0, "feedback": ["wenn-Satz vorn, dann sofort das Verb; ein Angebot für den Fall der Fälle. Vertrauen aufgebaut.", "„Wenn …, die Zahlen sind“ – nach dem Nebensatz muss das Verb kommen: „…, sind die Zahlen“.", "Richtig, aber kalt; ein Satz Sicherheit kostet nichts."] },
+        { "speaker": "Frau Kaya", "text": "Wunderbar, dass Sie das so erklären können. Die meisten Entwickler reden mit mir wie mit einem Computer." }
+      ], "explanation": "Technik für Nicht-Techniker: Antwort zuerst, kein Jargon, ein Angebot zum Schluss." }
+  ]
+}

@@ -9,7 +9,9 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 
 ## Highlights
 
-- **Skill map, not lessons.** 48 skill nodes (grammar, vocabulary, Redemittel, reading, listening, writing, speaking) on CEFR sub-bands; 54 error codes; contrastive Serbian↔German notes on every interference-prone topic.
+- **A course with a story.** Twelve lessons follow one year at a Bremen software company: the first day in the team, the first formal mail to the boss, a stand-up, an angry customer, the Bürgeramt, the flat and the neighbours, the doctor, a production incident, the home-office debate, weekend small talk, the salary talk, exam day. Each lesson opens with an interactive dialogue in which you choose your own lines and every option is explained, continues with a grammar focus explained through Serbian↔German example pairs (with text-to-speech), and ends with a writing or speaking task.
+- **Interactive exercise types.** Dialogues, spot-the-error (tap the wrong word in a colleague's message), pair matching, gap fill, transformation, translation, word order, vocabulary with article, dictation, free writing, speaking.
+- **Skill map underneath.** 48 skill nodes (grammar, vocabulary, Redemittel, reading, listening, writing, speaking) on CEFR sub-bands; 54 error codes; contrastive Serbian↔German notes on every interference-prone topic.
 - **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
 - **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
 - **Works without any API key.** 749 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
@@ -49,12 +51,12 @@ Keys can also come from environment variables (`GROQ_API_KEY`, `ANTHROPIC_API_KE
 dotnet test
 ```
 
-100 tests: engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, and bUnit component tests for the exercise flow.
+110 tests: lesson and dialogue integrity, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, and bUnit component tests for the exercise flow.
 
 ## Project layout
 
 ```
-content/                 taxonomy.json (nodes + error codes), exercises/*.json (the bank)
+content/                 taxonomy.json (nodes + error codes), exercises/*.json (the bank), lessons/*.json (the course)
 src/Lotse.Core           domain model + learning engine, no dependencies
 src/Lotse.Infrastructure EF Core (SQLite), content loader, Claude tutor, application service
 src/Lotse.Web            Blazor Server UI (MudBlazor), browser speech interop

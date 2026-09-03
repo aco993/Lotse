@@ -80,8 +80,8 @@ public sealed class HealthService(
         try
         {
             await using var db = await dbFactory.CreateDbContextAsync(ct);
-            var created = await db.Database.EnsureCreatedAsync(ct);
-            done.Add(created ? "Datenbank neu angelegt." : "Datenbankschema vorhanden.");
+            var schema = await DatabaseInitializer.InitializeAsync(db, logger, ct);
+            done.AddRange(schema.Count == 0 ? ["Datenbankschema aktuell."] : schema);
             var integrity = await db.Database.SqlQueryRaw<string>("PRAGMA integrity_check").ToListAsync(ct);
             if (integrity.Count != 1 || integrity[0] != "ok")
             {

@@ -1,0 +1,136 @@
+@* Interactive dialogue: story lines appear one by one; at the learner's turn three replies are offered, each with feedback. *@
+@inject ILearningService Learning
+@inject SpeechService Speech
+
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">@Exercise.Prompt</MudText>
+
+<div class="dlg">
+    @for (var i = 0; i <= _visible && i < Exercise.Lines.Count; i++)
+    {
+        var line = Exercise.Lines[i];
+        var idx = i;
+        var isMe = line.Speaker.StartsWith("Du", StringComparison.Ordinal);
+        <div class="@("dlg-line" + (isMe ? " me" : ""))">
+            <SpeakerAvatar Name="@line.Speaker" />
+            <div class="dlg-bubble">
+                <div class="dlg-speaker">@line.Speaker</div>
+                @if (line.IsLearnerTurn)
+                {
+                    var turnNo = TurnNumber(idx);
+                    var chosen = _choices.GetValueOrDefault(idx, -1);
+                    if (chosen < 0)
+                    {
+                        <MudText Typo="Typo.caption" Class="mb-1 d-block" Style="opacity:.7">Deine Antwort – wähle die beste:</MudText>
+                        <MudStack Spacing="1">
+                            @for (var o = 0; o < line.Options!.Count; o++)
+                            {
+                                var oi = o;
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-2 dlg-option" OnClick="() => Choose(idx, oi)">
+                                    <span style="opacity:.55;margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span>
+                                </MudButton>
+                            }
+                        </MudStack>
+                    }
+                    else
+                    {
+                        var ok = chosen == line.CorrectIndex;
+                        <div>@line.Options![chosen]</div>
+                        <MudAlert Severity="@(ok ? Severity.Success : Severity.Warning)" Dense="true" Variant="Variant.Text" Class="mt-2 dlg-feedback">
+                            @(line.Feedback is { Count: > 0 } ? line.Feedback[chosen] : (ok ? "Beste Antwort." : "Nicht die beste Antwort."))
+                        </MudAlert>
+                        @if (!ok)
+                        {
+                            <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="opacity:.75">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText>
+                        }
+                    }
+                }
+                else
+                {
+                    <div>@line.Text</div>
+                    <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" Class="dlg-tts" OnClick="async () => await Speech.SpeakAsync(line.Text)" aria-label="Vorlesen" />
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@if (_result is null)
+{
+    <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Spacing="2">
+        @if (_visible < Exercise.Lines.Count - 1 && !CurrentIsOpenTurn)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowDownward" OnClick="Advance">Weiter im Gespräch</MudButton>
+        }
+        else if (_visible >= Exercise.Lines.Count - 1 && !CurrentIsOpenTurn)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="_busy">Gespräch auswerten</MudButton>
+        }
+        <MudSpacer />
+        <MudText Typo="Typo.caption" Style="opacity:.6">@TurnsDone / @TotalTurns Antworten</MudText>
+    </MudStack>
+}
+else
+{
+    <FeedbackPanel Result="_result" />
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int StepIndex { get; set; }
+    [Parameter] public EventCallback<AnswerResult> OnDone { get; set; }
+
+    private int _visible;
+    private readonly Dictionary<int, int> _choices = new();
+    private AnswerResult? _result;
+    private bool _busy;
+    private DateTime _shownAt = DateTime.UtcNow;
+    private string? _lastId;
+
+    private int TotalTurns => Exercise.Lines.Count(l => l.IsLearnerTurn);
+    private int TurnsDone => _choices.Count;
+    private bool CurrentIsOpenTurn => Exercise.Lines[_visible].IsLearnerTurn && !_choices.ContainsKey(_visible);
+
+    protected override void OnParametersSet()
+    {
+        if (_lastId == Exercise.Id) return;
+        _lastId = Exercise.Id;
+        _visible = 0;
+        _choices.Clear();
+        _result = null;
+        _shownAt = DateTime.UtcNow;
+        // Reveal the opening lines up to (and including) the first learner turn.
+        while (_visible < Exercise.Lines.Count - 1 && !Exercise.Lines[_visible].IsLearnerTurn) _visible++;
+    }
+
+    private int TurnNumber(int lineIndex) => Exercise.Lines.Take(lineIndex + 1).Count(l => l.IsLearnerTurn);
+
+    private void Choose(int lineIndex, int option)
+    {
+        _choices[lineIndex] = option;
+        Advance();
+    }
+
+    /// <summary>Shows the next story lines until the next learner turn (or the end).</summary>
+    private void Advance()
+    {
+        if (_visible >= Exercise.Lines.Count - 1) return;
+        _visible++;
+        while (_visible < Exercise.Lines.Count - 1 && !Exercise.Lines[_visible].IsLearnerTurn) _visible++;
+    }
+
+    private async Task SubmitAsync()
+    {
+        _busy = true;
+        try
+        {
+            var chosen = Exercise.Lines.Select((l, i) => (l, i)).Where(t => t.l.IsLearnerTurn).Select(t => _choices.GetValueOrDefault(t.i, -1)).ToList();
+            var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
+            _result = await Learning.SubmitDialogueAsync(SessionId, StepIndex, Exercise.Id, chosen, ms);
+        }
+        finally { _busy = false; }
+    }
+}

@@ -1,0 +1,104 @@
+@* Pair matching: tap a left item, then its partner on the right. Right side is shuffled deterministically per exercise. *@
+@inject ILearningService Learning
+
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">@Exercise.Prompt</MudText>
+
+<div class="match-grid">
+    <div class="match-col">
+        @for (var i = 0; i < Exercise.Pairs.Count; i++)
+        {
+            var li = i;
+            var cls = "match-item" + (_selectedLeft == li ? " selected" : "") + (_assigned.ContainsKey(li) ? " paired" : "") + StateClass(li);
+            <div class="@cls" @onclick="() => TapLeft(li)" role="button" tabindex="0">
+                <span class="match-badge">@(_assigned.TryGetValue(li, out var r) ? Letter(r) : "")</span>@Exercise.Pairs[li].Left
+            </div>
+        }
+    </div>
+    <div class="match-col">
+        @for (var j = 0; j < _rightOrder.Count; j++)
+        {
+            var rj = j;
+            var pairIndex = _rightOrder[rj];
+            var taken = _assigned.ContainsValue(pairIndex);
+            var cls = "match-item right" + (taken ? " paired" : "") + StateClassRight(pairIndex);
+            <div class="@cls" @onclick="() => TapRight(pairIndex)" role="button" tabindex="0">
+                <span class="match-badge">@Letter(pairIndex)</span>@Exercise.Pairs[pairIndex].Right
+            </div>
+        }
+    </div>
+</div>
+
+@if (_result is null)
+{
+    <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Spacing="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _assigned.Count < Exercise.Pairs.Count)">Prüfen</MudButton>
+        <MudButton Variant="Variant.Text" OnClick="Reset" Disabled="_busy">Zurücksetzen</MudButton>
+        <MudSpacer />
+        <MudText Typo="Typo.caption" Style="opacity:.6">@_assigned.Count / @Exercise.Pairs.Count Paare</MudText>
+    </MudStack>
+}
+else
+{
+    <FeedbackPanel Result="_result" />
+    <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
+    [Parameter] public Guid? SessionId { get; set; }
+    [Parameter] public int StepIndex { get; set; }
+    [Parameter] public EventCallback<AnswerResult> OnDone { get; set; }
+
+    private List<int> _rightOrder = [];
+    private readonly Dictionary<int, int> _assigned = new(); // left index -> pair index chosen on the right
+    private int _selectedLeft = -1;
+    private AnswerResult? _result;
+    private bool _busy;
+    private DateTime _shownAt = DateTime.UtcNow;
+    private string? _lastId;
+
+    protected override void OnParametersSet()
+    {
+        if (_lastId == Exercise.Id) return;
+        _lastId = Exercise.Id;
+        var rng = new Random(Exercise.Id.GetHashCode());
+        _rightOrder = Enumerable.Range(0, Exercise.Pairs.Count).OrderBy(_ => rng.Next()).ToList();
+        Reset();
+    }
+
+    private void Reset() { _assigned.Clear(); _selectedLeft = -1; _result = null; _shownAt = DateTime.UtcNow; }
+
+    private static string Letter(int pairIndex) => ((char)('A' + pairIndex)).ToString();
+
+    private void TapLeft(int li)
+    {
+        if (_result is not null) return;
+        _assigned.Remove(li);
+        _selectedLeft = _selectedLeft == li ? -1 : li;
+    }
+
+    private void TapRight(int pairIndex)
+    {
+        if (_result is not null || _selectedLeft < 0) return;
+        foreach (var k in _assigned.Where(kv => kv.Value == pairIndex).Select(kv => kv.Key).ToList()) _assigned.Remove(k);
+        _assigned[_selectedLeft] = pairIndex;
+        _selectedLeft = -1;
+    }
+
+    private string StateClass(int li) => _result is null || !_assigned.TryGetValue(li, out var r) ? "" : r == li ? " ok" : " wrong";
+    private string StateClassRight(int pairIndex) => _result is null ? "" : _assigned.TryGetValue(pairIndex, out var r) && r == pairIndex ? " ok" : " wrong";
+
+    private async Task SubmitAsync()
+    {
+        _busy = true;
+        try
+        {
+            var chosen = Enumerable.Range(0, Exercise.Pairs.Count).Select(i => _assigned.GetValueOrDefault(i, -1)).ToList();
+            var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
+            _result = await Learning.SubmitMatchAsync(SessionId, StepIndex, Exercise.Id, chosen, ms);
+        }
+        finally { _busy = false; }
+    }
+}

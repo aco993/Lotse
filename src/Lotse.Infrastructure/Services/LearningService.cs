@@ -45,6 +45,14 @@ public sealed record DashboardModel(
     bool TutorAvailable,
     string TutorDescription);
 
+public sealed record LessonCard(Lesson Lesson, LessonProgressEntity? Progress, bool IsRecommended)
+{
+    public bool IsCompleted => Progress?.CompletedUtc is not null;
+    public bool IsStarted => Progress is not null && !IsCompleted;
+}
+
+public sealed record CourseOverview(IReadOnlyList<LessonCard> Lessons, int Completed, LessonCard? Next);
+
 public sealed record ErrorJournalEntry(DateTime Utc, string Code, string Title, string NodeTitle, string? Snippet, string? Correction, bool FromAi, int Severity);
 
 /// <summary>
@@ -219,6 +227,102 @@ public sealed class LearningService(
         db.Sessions.Add(session);
         await db.SaveChangesAsync(ct);
         return session;
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Course (lessons)
+    // ------------------------------------------------------------------------------------------
+
+    public async Task<CourseOverview> GetCourseAsync(CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var progress = await db.LessonProgress.AsNoTracking().ToDictionaryAsync(p => p.LessonId, ct);
+        var lessons = Catalog.Lessons;
+        // Recommended: the first unfinished lesson in order (a started one first, then the next new one).
+        var next = lessons.FirstOrDefault(l => progress.TryGetValue(l.Id, out var p) && p.CompletedUtc is null)
+                   ?? lessons.FirstOrDefault(l => !progress.ContainsKey(l.Id));
+        var cards = lessons.Select(l => new LessonCard(l, progress.GetValueOrDefault(l.Id), l.Id == next?.Id)).ToList();
+        return new CourseOverview(cards, cards.Count(c => c.IsCompleted), cards.FirstOrDefault(c => c.IsRecommended));
+    }
+
+    /// <summary>Starts (or restarts) a lesson as a session with the lesson's steps in order and the production task last.</summary>
+    public async Task<SessionEntity> StartLessonAsync(string lessonId, CancellationToken ct = default)
+    {
+        var lesson = Catalog.Lesson(lessonId) ?? throw new KeyNotFoundException(lessonId);
+        var steps = lesson.AllExerciseIds
+            .Select(id => Catalog.Exercise(id))
+            .Where(e => e is not null)
+            .Select(e => new StepRecord
+            {
+                Kind = e!.IsProduction ? StepKind.Production : StepKind.Focus,
+                ExerciseId = e.Id,
+                Reason = e.IsProduction ? $"Zum Abschluss der Lektion „{lesson.Title}“: Jetzt selbst formulieren." : $"Lektion {lesson.Order}: {lesson.Title}",
+            }).ToList();
+
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var session = new SessionEntity
+        {
+            Id = Guid.NewGuid(), Kind = SessionKind.Lesson, LessonId = lesson.Id, PlannedMinutes = lesson.Minutes, StartedUtc = Now,
+            PlanJson = JsonSerializer.Serialize(steps), StepsTotal = steps.Count, Summary = $"Lektion {lesson.Order}: {lesson.Title}",
+        };
+        db.Sessions.Add(session);
+        var progress = await db.LessonProgress.FindAsync([lesson.Id], ct);
+        if (progress is null) db.LessonProgress.Add(new LessonProgressEntity { LessonId = lesson.Id, StartedUtc = Now, LastSessionId = session.Id });
+        else { progress.LastSessionId = session.Id; if (progress.CompletedUtc is not null) { progress.CompletedUtc = null; } }
+        await db.SaveChangesAsync(ct);
+        return session;
+    }
+
+    private async Task CompleteLessonAsync(LotseDbContext db, SessionEntity session, IReadOnlyList<StepRecord> steps, CancellationToken ct)
+    {
+        if (session.LessonId is null) return;
+        var progress = await db.LessonProgress.FindAsync([session.LessonId], ct)
+                       ?? db.LessonProgress.Add(new LessonProgressEntity { LessonId = session.LessonId, StartedUtc = session.StartedUtc }).Entity;
+        progress.CompletedUtc = Now;
+        progress.Score = steps.Count == 0 ? 0 : steps.Average(s => s.Score ?? 0);
+        progress.TimesCompleted++;
+        progress.LastSessionId = session.Id;
+    }
+
+    /// <summary>Dialogue: one choice per learner turn (in order). Score = share of best replies.</summary>
+    public async Task<AnswerResult> SubmitDialogueAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default)
+    {
+        var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
+        var turns = exercise.Lines.Where(l => l.IsLearnerTurn).ToList();
+        var correct = turns.Select((t, i) => i < chosen.Count && chosen[i] == t.CorrectIndex ? 1 : 0).Sum();
+        return await SubmitCompositeAsync(sessionId, stepIndex, exercise, correct, turns.Count, durationMs, string.Join(",", chosen),
+            correct == turns.Count ? "Jede Antwort saß." : "Lies die Begründungen – dort steckt die Lektion.", ct);
+    }
+
+    /// <summary>Match: for each left item the index of the chosen right item. Score = share of correct pairs.</summary>
+    public async Task<AnswerResult> SubmitMatchAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosenRight, int durationMs, CancellationToken ct = default)
+    {
+        var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
+        var correct = exercise.Pairs.Select((p, i) => i < chosenRight.Count && chosenRight[i] == i ? 1 : 0).Sum();
+        return await SubmitCompositeAsync(sessionId, stepIndex, exercise, correct, exercise.Pairs.Count, durationMs, string.Join(",", chosenRight),
+            correct == exercise.Pairs.Count ? "Alle Paare richtig." : "Die falschen Paare sind markiert.", ct);
+    }
+
+    private async Task<AnswerResult> SubmitCompositeAsync(Guid? sessionId, int stepIndex, Exercise exercise, int correct, int total, int durationMs, string answerText, string feedback, CancellationToken ct)
+    {
+        var score = total == 0 ? 0 : (double)correct / total;
+        var outcome = score >= 0.999 ? Outcome.Correct : score >= 0.6 ? Outcome.AlmostCorrect : Outcome.Incorrect;
+        var now = Now;
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var attempt = new AttemptEntity { SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score, DurationMs = durationMs, Utc = now, AnswerText = answerText };
+        db.Attempts.Add(attempt);
+        await db.SaveChangesAsync(ct);
+        if (score < 0.6)
+        {
+            var primary = Catalog.ErrorTypes.FirstOrDefault(e => e.NodeId == exercise.NodeId)?.Code;
+            if (primary is not null) db.ErrorEvents.Add(new ErrorEventEntity { AttemptId = attempt.Id, Code = primary, NodeId = exercise.NodeId, Utc = now, Snippet = exercise.Prompt, FromAi = false });
+        }
+        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        LearnerAnalysis.ApplyAttempt(state, exercise, score, now);
+        var complete = sessionId is null ? false : await MarkStepDoneAsync(db, sessionId.Value, stepIndex, score, ct);
+        await db.SaveChangesAsync(ct);
+        var check = new CheckResult(outcome, $"{correct} von {total} richtig", [], feedback);
+        return new AnswerResult(check, exercise, Catalog.Node(exercise.NodeId), state.Mastery, null, complete);
     }
 
     /// <summary>A free session on one exercise (used by the Schreiben/Sprechen/Prüfung pages).</summary>
@@ -423,6 +527,7 @@ public sealed class LearningService(
         {
             session.EndedUtc = Now;
             if (session.Kind == SessionKind.Placement) await MarkPlacementCompletedAsync(db, ct);
+            if (session.Kind == SessionKind.Lesson) await CompleteLessonAsync(db, session, steps, ct);
         }
         return complete;
     }
@@ -654,7 +759,11 @@ public sealed class LearningService(
     public async Task ResetAllDataAsync(CancellationToken ct = default)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
+        // Wipe learning data but keep settings (tutor configuration) – a reset should not cost the learner their key.
+        var settings = await db.Settings.AsNoTracking().ToListAsync(ct);
         await db.Database.EnsureDeletedAsync(ct);
-        await db.Database.EnsureCreatedAsync(ct);
+        await db.Database.MigrateAsync(ct);
+        db.Settings.AddRange(settings.Select(s => new SettingEntity { Key = s.Key, Value = s.Value }));
+        await db.SaveChangesAsync(ct);
     }
 }

@@ -239,8 +239,11 @@ public sealed class SessionPlanner
         ExerciseType.Transform => 0,
         ExerciseType.Cloze => 1,
         ExerciseType.WordOrder => 1,
+        ExerciseType.Dialogue => 1,
+        ExerciseType.SpotError => 1,
         ExerciseType.Dictation => 2,
         ExerciseType.Vocab => 2,
+        ExerciseType.Match => 2,
         ExerciseType.MultipleChoice => 3,
         _ => 4,
     };

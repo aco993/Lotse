@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 – 2026-09-03
+
+- **The course**: 12 lessons telling one story (first year at a Bremen software company: team, first formal mail, stand-up, angry customer, Bürgeramt, flat and neighbours, doctor, production incident, home-office debate, weekend small talk, salary talk, exam day). Each lesson: intro, interactive story dialogue (choose your line, every option explained), grammar explanation with Serbian contrast table and TTS, 10–11 mixed interactive steps, a production task, a Merksatz.
+- **Three new exercise types**: interactive dialogue, spot-the-error (tap the wrong word), pair matching. 36 new lesson exercises; planner uses them as drills too.
+- Course page with illustrated lesson cards (inline SVG scenes), progress, recommendation of the next lesson; lesson detail page; next-lesson card on Heute; Merksatz on lesson completion; bottom navigation gained "Kurs".
+- **EF Core migrations** replace `EnsureCreated`: baseline `InitialCreate` + `AddLessons`; databases created by earlier versions are baselined automatically on start (no data loss). `dotnet-ef` as local tool.
+- Tests: 110 (lesson content integrity, dialogue/match scoring, lesson flow, bUnit dialogue component).
+
 ## 0.4.0 – 2026-09-03
 
 - In-app tutor configuration: provider presets (Groq recommended as free default, Claude, OpenRouter, Ollama, LM Studio, Mistral, DeepSeek, OpenAI, custom), model suggestions, connection test with latency, API key encrypted at rest with ASP.NET Data Protection, runtime switch without restart (`TutorRegistry`).

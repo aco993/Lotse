@@ -19,6 +19,8 @@ public static class ContentLoader
 
     private sealed record TaxonomyFile(List<SkillNode> Nodes, List<ErrorType> ErrorTypes);
     private sealed record ExerciseFile(List<Exercise> Exercises);
+    /// <summary>A lesson file carries the lesson and the exercises written specifically for it.</summary>
+    private sealed record LessonFile(Lesson Lesson, List<Exercise>? Exercises);
 
     public static ContentCatalog Load(string contentDirectory)
     {
@@ -41,11 +43,24 @@ public static class ContentLoader
             }
         }
 
+        var lessons = new List<Lesson>();
+        var lessonDir = Path.Combine(contentDirectory, "lessons");
+        if (Directory.Exists(lessonDir))
+        {
+            foreach (var file in Directory.EnumerateFiles(lessonDir, "*.json").OrderBy(f => f, StringComparer.Ordinal))
+            {
+                var parsed = JsonSerializer.Deserialize<LessonFile>(File.ReadAllText(file), Options)
+                             ?? throw new InvalidDataException($"{file} ist leer.");
+                lessons.Add(parsed.Lesson);
+                if (parsed.Exercises is not null) exercises.AddRange(parsed.Exercises);
+            }
+        }
+
         var duplicates = exercises.GroupBy(e => e.Id).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         if (duplicates.Count > 0)
             throw new InvalidDataException($"Doppelte Übungs-IDs: {string.Join(", ", duplicates)}");
 
-        var catalog = new ContentCatalog(taxonomy.Nodes, taxonomy.ErrorTypes, exercises);
+        var catalog = new ContentCatalog(taxonomy.Nodes, taxonomy.ErrorTypes, exercises, lessons);
         var problems = catalog.Validate();
         if (problems.Count > 0)
             throw new InvalidDataException("Ungültiger Content:\n" + string.Join("\n", problems));

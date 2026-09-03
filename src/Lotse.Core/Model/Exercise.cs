@@ -22,6 +22,12 @@ public enum ExerciseType
     Speak,
     /// <summary>Reading text with comprehension questions.</summary>
     Reading,
+    /// <summary>Interactive dialogue: the learner plays one role and picks the best line at each of their turns.</summary>
+    Dialogue,
+    /// <summary>A sentence with exactly one wrong word; the learner taps it and sees the correction.</summary>
+    SpotError,
+    /// <summary>Pairs to match (word ↔ meaning, Serbian ↔ German, phrase ↔ situation).</summary>
+    Match,
 }
 
 /// <summary>Context the exercise is embedded in. Used to balance everyday, professional and exam-specific language.</summary>
@@ -40,6 +46,22 @@ public enum ExerciseSource
 
 /// <summary>A comprehension question attached to a <see cref="ExerciseType.Reading"/> exercise.</summary>
 public sealed record ReadingQuestion(string Question, IReadOnlyList<string> Options, int CorrectIndex);
+
+/// <summary>
+/// One line of a dialogue. Lines without <see cref="Options"/> are spoken by the story; lines with options are the
+/// learner's turn: exactly one option is the best reply, <see cref="Feedback"/> explains each option.
+/// </summary>
+public sealed record DialogueLine(
+    string Speaker,
+    string Text,
+    IReadOnlyList<string>? Options = null,
+    int? CorrectIndex = null,
+    IReadOnlyList<string>? Feedback = null)
+{
+    public bool IsLearnerTurn => Options is { Count: > 0 };
+}
+
+public sealed record MatchPair(string Left, string Right);
 
 /// <summary>
 /// One exercise ("Aufgabe"). A single flat shape for all types keeps the JSON content files and the database simple;
@@ -91,11 +113,17 @@ public sealed record Exercise
     public bool AudioOnly { get; init; }
     public IReadOnlyList<ReadingQuestion> Questions { get; init; } = [];
 
+    // Dialogue / Match
+    public IReadOnlyList<DialogueLine> Lines { get; init; } = [];
+    public IReadOnlyList<MatchPair> Pairs { get; init; } = [];
+
     /// <summary>Free-form tags (e.g. "email", "beschwerde", "smalltalk") used for variety and later filtering.</summary>
     public IReadOnlyList<string> Tags { get; init; } = [];
 
     public bool IsProduction => Type is ExerciseType.FreeWrite or ExerciseType.Speak;
     public bool IsReceptive => Type is ExerciseType.Reading or ExerciseType.Dictation;
+    /// <summary>Multi-part tasks scored as a fraction rather than right/wrong.</summary>
+    public bool IsComposite => Type is ExerciseType.Reading or ExerciseType.Dialogue or ExerciseType.Match;
 
     /// <summary>Rough time the exercise takes, used by the session planner to fill a time budget.</summary>
     public int EstimatedSeconds => Type switch
@@ -108,6 +136,9 @@ public sealed record Exercise
         ExerciseType.Translate => 45,
         ExerciseType.Dictation => 40,
         ExerciseType.Reading => 300,
+        ExerciseType.Dialogue => 30 + 25 * Lines.Count(l => l.IsLearnerTurn),
+        ExerciseType.SpotError => 30,
+        ExerciseType.Match => 15 + 8 * Pairs.Count,
         ExerciseType.Speak => TargetSeconds is > 0 ? TargetSeconds.Value + 60 : 180,
         ExerciseType.FreeWrite => MinWords is > 0 ? Math.Clamp(MinWords.Value * 4, 120, 900) : 300,
         _ => 30,
@@ -151,6 +182,24 @@ public static class ExerciseValidator
                 break;
             case ExerciseType.Speak:
                 if (e.Rubric.Count == 0) problems.Add($"{e.Id}: Rubric fehlt");
+                break;
+            case ExerciseType.Dialogue:
+                if (e.Lines.Count < 2) problems.Add($"{e.Id}: Dialog braucht mindestens 2 Zeilen");
+                if (!e.Lines.Any(l => l.IsLearnerTurn)) problems.Add($"{e.Id}: Dialog ohne Lerner-Zug");
+                foreach (var l in e.Lines.Where(l => l.IsLearnerTurn))
+                {
+                    if (l.CorrectIndex is null || l.CorrectIndex < 0 || l.CorrectIndex >= l.Options!.Count) problems.Add($"{e.Id}: Dialogzug „{l.Text}“ hat keinen gültigen CorrectIndex");
+                    if (l.Feedback is not null && l.Feedback.Count != l.Options!.Count) problems.Add($"{e.Id}: Feedback-Anzahl passt nicht zu den Optionen");
+                }
+                break;
+            case ExerciseType.SpotError:
+                if (e.Options.Count < 3) problems.Add($"{e.Id}: SpotError braucht die Satzwörter als Options");
+                if (e.CorrectIndex is null || e.CorrectIndex < 0 || e.CorrectIndex >= e.Options.Count) problems.Add($"{e.Id}: CorrectIndex (falsches Wort) ungültig");
+                if (e.Answers.Count == 0) problems.Add($"{e.Id}: Answers (korrigiertes Wort) fehlen");
+                break;
+            case ExerciseType.Match:
+                if (e.Pairs.Count < 3) problems.Add($"{e.Id}: Match braucht mindestens 3 Paare");
+                if (e.Pairs.Select(p => p.Right).Distinct().Count() != e.Pairs.Count) problems.Add($"{e.Id}: rechte Seiten müssen eindeutig sein");
                 break;
             case ExerciseType.Reading:
                 if (string.IsNullOrWhiteSpace(e.Text)) problems.Add($"{e.Id}: Text fehlt");

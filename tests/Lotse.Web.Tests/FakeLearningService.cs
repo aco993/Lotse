@@ -38,6 +38,19 @@ public sealed class FakeLearningService : ILearningService
     public Task AbandonSessionAsync(Guid id, CancellationToken ct = default) => throw Unexpected();
     public Task SkipStepAsync(Guid sessionId, int stepIndex, CancellationToken ct = default) => throw Unexpected();
     public Task<AnswerResult> SubmitReadingAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default) => throw Unexpected();
+    public List<IReadOnlyList<int>> DialogueChoices { get; } = [];
+    public Task<AnswerResult> SubmitDialogueAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default)
+    {
+        DialogueChoices.Add(chosen);
+        var ex = Exercises[exerciseId];
+        var turns = ex.Lines.Where(l => l.IsLearnerTurn).ToList();
+        var correct = turns.Select((t, i) => i < chosen.Count && chosen[i] == t.CorrectIndex ? 1 : 0).Sum();
+        var check = new CheckResult(correct == turns.Count ? Outcome.Correct : Outcome.AlmostCorrect, $"{correct} von {turns.Count} richtig", [], "ok");
+        return Task.FromResult(new AnswerResult(check, ex, null, 0.5, null, false));
+    }
+    public Task<AnswerResult> SubmitMatchAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosenRight, int durationMs, CancellationToken ct = default) => throw Unexpected();
+    public Task<CourseOverview> GetCourseAsync(CancellationToken ct = default) => throw Unexpected();
+    public Task<SessionEntity> StartLessonAsync(string lessonId, CancellationToken ct = default) => throw Unexpected();
     public Task<LearnerContext> BuildLearnerContextAsync(CancellationToken ct = default) => throw Unexpected();
     public Task<ProductionResult> SubmitProductionAsync(Guid? sessionId, int stepIndex, string exerciseId, string text, bool speaking, CancellationToken ct = default) => throw Unexpected();
     public Task<double> SubmitSelfCheckAsync(long productionId, Guid? sessionId, int stepIndex, IReadOnlyList<bool> checks, CancellationToken ct = default) => throw Unexpected();

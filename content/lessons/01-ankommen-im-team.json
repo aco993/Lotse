@@ -1,0 +1,67 @@
+{
+  "lesson": {
+    "id": "L01", "order": 1, "title": "Ankommen im Team", "subtitle": "Sich vorstellen, Smalltalk, über Vergangenes erzählen",
+    "theme": "Beruf", "band": "B1_2", "scene": "team", "minutes": 15,
+    "intro": "Erster Tag bei der Nordlicht GmbH in Bremen. Teamleiterin Sabine Berger stellt dir das Team vor, Kollege Jonas holt Kaffee. Du willst einen guten Eindruck machen – ohne dich zu verstellen.",
+    "story": [
+      { "speaker": "Sabine Berger", "text": "Guten Morgen! Sie müssen Aleksandar sein. Herzlich willkommen bei uns." },
+      { "speaker": "Du", "text": "…", "options": ["Guten Morgen, Frau Berger. Ja, ich bin Aleksandar. Freut mich sehr, Sie kennenzulernen.", "Hallo Sabine! Ja, das bin ich. Cool, endlich da.", "Morgen. Ich bin Aleksandar Micić, Softwareentwickler, 34 Jahre, aus Serbien."],
+        "correctIndex": 0, "feedback": ["Genau richtig: Sie-Form, Nachname, eine warme Formel. So beginnt man in Deutschland mit einer Vorgesetzten.", "Zu vertraut für den ersten Kontakt mit der Chefin. Duzen bietet meist die andere Seite an – warte darauf.", "Zu viel auf einmal und ohne Gruß zurück. Ein Lebenslauf ist keine Begrüßung."] },
+      { "speaker": "Sabine Berger", "text": "Das ist Jonas, er wird Sie in den ersten Wochen begleiten. Bei uns duzen sich übrigens alle im Team – ich bin Sabine." },
+      { "speaker": "Jonas", "text": "Hi! Kaffee? Und erzähl mal: Wo hast du vorher gearbeitet?" },
+      { "speaker": "Du", "text": "…", "options": ["Gern! Ich habe vier Jahre in Belgrad bei einer Softwarefirma gearbeitet, vor allem mit C# und Datenbanken.", "Gern! Ich arbeite vier Jahre in Belgrad bei Softwarefirma, mit C# und Datenbanken.", "Gern! Ich bin vier Jahre in Belgrad bei einer Softwarefirma gearbeitet, mit C# und Datenbanken."],
+        "correctIndex": 0, "feedback": ["Perfekt mit „haben“, Artikel „einer“, Zeitangabe vorn – so klingt das natürlich.", "Präsens für Abgeschlossenes und der fehlende Artikel („bei Softwarefirma“) sind die zwei typischsten Fehler serbischer Muttersprachler.", "„arbeiten“ bildet das Perfekt mit „haben“, nicht mit „sein“ – anders als im Serbischen (radio sam)."] },
+      { "speaker": "Jonas", "text": "Belgrad – da war ich mal im Urlaub, tolle Stadt. Und wie bist du nach Bremen gekommen?" },
+      { "speaker": "Du", "text": "…", "options": ["Meine Frau hat hier eine Stelle bekommen, deshalb sind wir vor zwei Jahren umgezogen.", "Meine Frau hat hier eine Stelle bekommen, deshalb wir sind vor zwei Jahren umgezogen.", "Meine Frau hat hier eine Stelle bekommen, deshalb haben wir vor zwei Jahren umgezogen."],
+        "correctIndex": 0, "feedback": ["Nach „deshalb“ kommt sofort das Verb, und „umziehen“ nimmt „sein“. Beides richtig.", "„deshalb wir sind“ – nach einem Adverb auf Position 1 muss das Verb auf Position 2 stehen: deshalb SIND wir.", "„umziehen“ ist ein Ortswechsel → Perfekt mit „sein“: wir sind umgezogen."] },
+      { "speaker": "Jonas", "text": "Schön. Dann zeig ich dir jetzt mal den Kaffeeautomaten – der wichtigste Ort im Haus." }
+    ],
+    "grammar": {
+      "title": "Über Vergangenes erzählen: Perfekt mit haben oder sein",
+      "nodeId": "GR.PERFEKT_PRAETERITUM",
+      "text": "Im Gespräch erzählt man Vergangenes im Perfekt. Serbisch bildet das Perfekt immer mit „biti“ (ja sam radio, ja sam došao) – Deutsch unterscheidet: Verben der Bewegung von A nach B und des Zustandswechsels (kommen, fahren, umziehen, aufstehen, einschlafen, werden, bleiben, sein) nehmen „sein“, alle anderen „haben“. Das Partizip II steht am Satzende – die Satzklammer.",
+      "examples": [
+        { "german": "Ich habe vier Jahre in Belgrad gearbeitet.", "serbian": "Radio sam četiri godine u Beogradu.", "note": "arbeiten → haben" },
+        { "german": "Wir sind vor zwei Jahren nach Bremen umgezogen.", "serbian": "Preselili smo se u Bremen pre dve godine.", "note": "umziehen = Ortswechsel → sein" },
+        { "german": "Ich bin um sechs aufgestanden und habe dann E-Mails gelesen.", "serbian": "Ustao sam u šest i onda sam čitao mejlove.", "note": "sein + haben im selben Satz" },
+        { "german": "Gestern war ich im Büro. (nicht: bin gewesen)", "serbian": "Juče sam bio u kancelariji.", "note": "sein/haben meist im Präteritum" }
+      ]
+    },
+    "steps": ["l01.dlg.001", "gr.pf.001", "gr.pf.003", "l01.match.001", "gr.pf.006", "l01.spot.001", "gr.v2.003", "l01.dlg.002", "gr.pf.011", "ws.st.001"],
+    "productionExerciseId": "sp.alltag.105",
+    "merksatz": "Bewegung und Veränderung reisen mit „sein“ – alles andere mit „haben“.",
+    "nodeIds": ["GR.PERFEKT_PRAETERITUM", "GR.HAUPTSATZ_V2", "WS.ALLTAG_SMALLTALK", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l01.dlg.001", "type": "Dialogue", "nodeId": "SP.ALLTAG_BERUF", "band": "B1_2", "context": "Beruf",
+      "prompt": "In der Kaffeeküche: Eine Kollegin aus der Buchhaltung spricht dich an. Wähle jeweils die beste Antwort.",
+      "lines": [
+        { "speaker": "Frau Kaya", "text": "Sie sind neu hier, oder? Ich bin Frau Kaya aus der Buchhaltung." },
+        { "speaker": "Du", "text": "…", "options": ["Ja, seit heute. Aleksandar Micić, ich bin im Entwicklungsteam bei Sabine.", "Ja, ich bin neu. Und Sie?", "Ja. Neu."],
+          "correctIndex": 0, "feedback": ["Name, Abteilung, Bezug zur Chefin – genau die drei Informationen, die ein Kollege braucht.", "„Und Sie?“ passt nicht – sie hat sich gerade vorgestellt.", "Zu knapp; wirkt abweisend."] },
+        { "speaker": "Frau Kaya", "text": "Ah, bei Sabine! Dann sehen wir uns öfter, ich schicke Ihnen die Rechnungsdaten. Woher kommen Sie denn?" },
+        { "speaker": "Du", "text": "…", "options": ["Aus Serbien, aus Belgrad. Ich lebe aber schon seit zwei Jahren in Bremen.", "Aus Serbien, aus Belgrad. Ich lebe aber schon zwei Jahre vor in Bremen.", "Aus Serbien, aus Belgrad. Ich habe aber schon seit zwei Jahren in Bremen gelebt."],
+          "correctIndex": 0, "feedback": ["„seit + Dativ“ und Präsens: etwas, das begonnen hat und noch andauert.", "„zwei Jahre vor“ gibt es nicht – „vor zwei Jahren“ (Zeitpunkt) oder „seit zwei Jahren“ (Dauer bis jetzt).", "Perfekt würde bedeuten, dass du nicht mehr in Bremen lebst. Für andauernde Zustände: seit + Präsens."] },
+        { "speaker": "Frau Kaya", "text": "Zwei Jahre schon! Dann kennen Sie ja die Stadt. Ich muss weiter – bis später!" }
+      ], "explanation": "Vorstellung im Beruf: Name, Abteilung, Bezug – und bei Dauer bis jetzt „seit“ + Präsens." },
+    { "id": "l01.match.001", "type": "Match", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B1_2", "context": "Alltag",
+      "prompt": "Welches Hilfsverb? Ordne die Verben zu.",
+      "pairs": [ { "left": "umziehen", "right": "sein – Ortswechsel" }, { "left": "arbeiten", "right": "haben – Tätigkeit" }, { "left": "einschlafen", "right": "sein – Zustandswechsel" }, { "left": "bleiben", "right": "sein – Ausnahme ohne Bewegung" }, { "left": "anrufen", "right": "haben – mit Akkusativobjekt" } ],
+      "explanation": "sein: Bewegung von A nach B, Zustandswechsel, plus bleiben/sein/werden/passieren. Alles andere: haben." },
+    { "id": "l01.spot.001", "type": "SpotError", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B1_2", "context": "Beruf",
+      "prompt": "Jonas’ Nachricht an das Team hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Aleksandar", "hat", "heute", "bei", "uns", "angefangen", "und", "hat", "gestern", "schon", "nach", "Bremen", "umgezogen."],
+      "correctIndex": 7, "answers": ["ist"], "explanation": "umziehen → sein: „… und ist gestern schon nach Bremen umgezogen“." },
+    { "id": "l01.dlg.002", "type": "Dialogue", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B2_1", "context": "Alltag",
+      "prompt": "Montagmorgen, Jonas fragt nach dem Wochenende. Erzähle im Perfekt – wähle die korrekte Version.",
+      "lines": [
+        { "speaker": "Jonas", "text": "Und, wie war dein erstes Wochenende in Bremen?" },
+        { "speaker": "Du", "text": "…", "options": ["Gut! Am Samstag sind wir an die Weser gefahren und haben dort gegrillt.", "Gut! Am Samstag wir sind an die Weser gefahren und dort gegrillt haben.", "Gut! Am Samstag haben wir an die Weser gefahren und dort gegrillt."],
+          "correctIndex": 0, "feedback": ["fahren → sein, grillen → haben, Verb auf Position 2 nach „Am Samstag“.", "Zwei Wortstellungsfehler: nach „Am Samstag“ muss das Verb kommen, und das Partizip steht am Ende, nicht vor „haben“.", "fahren (Bewegung) → sein: wir SIND gefahren."] },
+        { "speaker": "Jonas", "text": "Klingt entspannt. Und am Sonntag?" },
+        { "speaker": "Du", "text": "…", "options": ["Am Sonntag habe ich ausgeschlafen und bin dann mit dem Rad zum Bürgerpark gefahren.", "Am Sonntag bin ich ausgeschlafen und habe dann mit dem Rad zum Bürgerpark gefahren.", "Am Sonntag habe ich ausgeschlafen und habe dann mit dem Rad zum Bürgerpark gefahren."],
+          "correctIndex": 0, "feedback": ["ausschlafen → haben (keine Bewegung), fahren → sein. Genau so.", "Genau vertauscht: ausschlafen nimmt „haben“, fahren nimmt „sein“.", "„haben … gefahren“ – Bewegung zum Bürgerpark braucht „sein“."] },
+        { "speaker": "Jonas", "text": "Der Bürgerpark ist super. Nächstes Mal zeig ich dir den Werdersee." }
+      ], "explanation": "Erzählen im Perfekt: haben/sein wechselt innerhalb eines Satzes je nach Verb." }
+  ]
+}

@@ -73,7 +73,7 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     [Fact]
     public void Seed_answers_check_as_correct_against_themselves()
     {
-        foreach (var e in fx.Catalog.Exercises.Where(e => e.Answers.Count > 0 && e.Type != ExerciseType.WordOrder))
+        foreach (var e in fx.Catalog.Exercises.Where(e => e.Answers.Count > 0 && e.Type is not (ExerciseType.WordOrder or ExerciseType.SpotError)))
             foreach (var a in e.Answers)
                 Assert.Equal(Outcome.Correct, AnswerChecker.Check(e, a).Outcome);
     }

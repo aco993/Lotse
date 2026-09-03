@@ -65,6 +65,19 @@ else
         </MudCardContent>
     </MudCard>
 
+    @if (_course?.Next is { } lesson)
+    {
+        <a class="lesson-card compact mb-4" href="@($"kurs/{lesson.Lesson.Id}")">
+            <div class="lesson-art-wrap"><LessonArt Scene="@lesson.Lesson.Scene" Theme="lesson.Lesson.Theme" /></div>
+            <div class="lesson-body">
+                <div class="lesson-meta"><span class="lesson-no">Kurs · Lektion @lesson.Lesson.Order von @_course.Lessons.Count</span><span class="lesson-chip">~@lesson.Lesson.Minutes min</span></div>
+                <div class="lesson-title">@lesson.Lesson.Title</div>
+                <div class="lesson-sub">@lesson.Lesson.Subtitle</div>
+                <div class="lesson-state"><MudIcon Icon="@Icons.Material.Filled.PlayCircle" Size="Size.Small" Color="Color.Primary" /> <span>@(lesson.IsStarted ? "Weitermachen" : "Nächste Lektion")</span></div>
+            </div>
+        </a>
+    }
+
     <MudGrid Spacing="3">
         <MudItem xs="12" md="7">
             <MudPaper Class="pa-4" Elevation="1">
@@ -122,9 +135,14 @@ else
 
 @code {
     private DashboardModel? _m;
+    private CourseOverview? _course;
     private bool _busy;
 
-    protected override async Task OnInitializedAsync() => _m = await Learning.GetDashboardAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        _m = await Learning.GetDashboardAsync();
+        _course = await Learning.GetCourseAsync();
+    }
 
     private async Task StartAsync(int minutes)
     {

@@ -11,6 +11,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MudBlazor" />
+    <!-- Design-time only: `dotnet ef migrations add ... -p src/Lotse.Infrastructure -s src/Lotse.Web` -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <!-- Learning content ships next to the app so a fresh clone runs with a full item bank. -->

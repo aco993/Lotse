@@ -144,6 +144,50 @@ public class ClosedExerciseTests : LotseComponentTest
     }
 }
 
+public class DialogueExerciseTests : LotseComponentTest
+{
+    private static Exercise Dialogue() => new()
+    {
+        Id = "d1", Type = ExerciseType.Dialogue, NodeId = "SP.ALLTAG_BERUF", Band = CefrBand.B1_2, Prompt = "Kaffeeküche",
+        Lines =
+        [
+            new DialogueLine("Jonas", "Hi! Neu hier?"),
+            new DialogueLine("Du", "…", ["Ja, seit heute.", "Ja. Neu.", "Ich neu."], 0, ["Gut.", "Knapp.", "Fehler."]),
+            new DialogueLine("Jonas", "Willkommen!"),
+            new DialogueLine("Du", "…", ["Danke dir!", "Danke Ihnen!", "Danke."], 0, ["Passend.", "Zu formell.", "Kurz."]),
+        ],
+    };
+
+    [Fact]
+    public void Reveals_lines_up_to_the_first_turn_and_shows_feedback_after_a_choice()
+    {
+        var ex = Dialogue();
+        Learning.Exercises[ex.Id] = ex;
+        var cut = Render<DialogueExercise>(p => p.Add(x => x.Exercise, ex));
+
+        Assert.Contains("Hi! Neu hier?", cut.Markup);
+        Assert.DoesNotContain("Willkommen!", cut.Markup);
+
+        cut.FindAll("button.dlg-option")[1].Click(); // the "Knapp." option
+        Assert.Contains("Knapp.", cut.Markup);
+        Assert.Contains("Besser:", cut.Markup);
+        Assert.Contains("Willkommen!", cut.Markup); // story continued to the next turn
+    }
+
+    [Fact]
+    public void Submits_one_choice_per_turn_in_order()
+    {
+        var ex = Dialogue();
+        Learning.Exercises[ex.Id] = ex;
+        var cut = Render<DialogueExercise>(p => p.Add(x => x.Exercise, ex));
+        cut.FindAll("button.dlg-option")[0].Click();
+        cut.FindAll("button.dlg-option")[2].Click();
+        cut.FindAll("button").First(b => b.TextContent.Contains("auswerten")).Click();
+        cut.WaitForAssertion(() => Assert.Contains("1 von 2", cut.Markup));
+        Assert.Equal([0, 2], Learning.DialogueChoices[0]);
+    }
+}
+
 public class ExerciseRunnerTests : LotseComponentTest
 {
     [Theory]
