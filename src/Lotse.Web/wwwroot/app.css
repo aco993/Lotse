@@ -118,6 +118,56 @@ html, body { height: 100%; }
 /* Keyboard hints make no sense on touch screens */
 @media (hover: none) and (pointer: coarse) { .kbd-hint { display: none; } }
 
+/* Signed-in learner chip + logout, top of the nav drawer */
+.nav-account { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px; }
+.nav-account-email { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; opacity: .85; }
+.nav-account form { margin: 0; }
+.nav-account-logout {
+    display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer;
+    color: var(--mud-palette-text-secondary); font-size: .72rem; padding: 4px 6px; border-radius: 8px; font-family: inherit;
+}
+.nav-account-logout:hover { background: var(--mud-palette-background-gray); color: var(--mud-palette-error); }
+.nav-account-logout span { display: none; }
+@media (min-width: 960px) { .nav-account-logout span { display: inline; } }
+
+/* Account pages (Login/Register/ForgotPassword/ResetPassword/Manage) render standalone via AccountLayout, no
+   MudBlazor theme available there (static SSR, see each page's doc comment) - colours are hand-picked to match
+   MainLayout's palette (Primary #1F5F8B, Secondary #E07A1F, Tertiary #2E8B57, error #C44536). */
+.account-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: #F6F7F9; }
+.account-card { width: 100%; max-width: 420px; background: #fff; border-radius: 16px; padding: 30px 28px; box-shadow: 0 16px 40px rgba(31,95,139,.12); }
+.account-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; color: #1F5F8B; margin-bottom: 20px; }
+.account-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 6px; color: #16324A; }
+.account-sub { opacity: .7; font-size: .9rem; margin: 0 0 22px; line-height: 1.5; }
+.account-field { margin-bottom: 15px; }
+.account-field label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: 5px; opacity: .8; }
+.account-field input {
+    /* Blazor's <InputText> renders a bare <input> with no type="..." attribute at all (the browser defaults it to
+       text) - an input[type="text"] selector never matches it, so this targets every input in the form directly. */
+    width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 9px; border: 1px solid #d8dce1; font-size: .95rem; font-family: inherit;
+}
+.account-field input:focus { outline: none; border-color: #1F5F8B; box-shadow: 0 0 0 3px rgba(31,95,139,.16); }
+.account-error { display: block; color: #C44536; font-size: .78rem; margin-top: 4px; }
+.account-submit {
+    width: 100%; padding: 12px; border-radius: 9px; border: none; background: #E07A1F; color: #fff;
+    font-weight: 700; font-size: .95rem; cursor: pointer; margin-top: 8px; transition: background .15s;
+}
+.account-submit:hover { background: #c8690f; }
+.account-links { margin-top: 18px; font-size: .87rem; text-align: center; opacity: .9; }
+.account-links a { color: #1F5F8B; text-decoration: none; font-weight: 600; }
+.account-links a:hover { text-decoration: underline; }
+.account-alert { border-radius: 9px; padding: 11px 13px; font-size: .85rem; margin-bottom: 18px; line-height: 1.4; }
+.account-alert.error { background: rgba(196,69,54,.10); color: #C44536; border: 1px solid rgba(196,69,54,.22); }
+.account-alert.success { background: rgba(46,139,87,.10); color: #2E8B57; border: 1px solid rgba(46,139,87,.22); }
+@media (prefers-color-scheme: dark) {
+    .account-shell { background: #111820; }
+    .account-card { background: #1A2430; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+    .account-brand, .account-title { color: #E8EDF2; }
+    .account-field input {
+        background: #16202B; border-color: #2a3644; color: #E8EDF2;
+    }
+    .account-field label { color: #cfd8e0; }
+}
+
 /* Course parts (Teil 1 / Teil 2) */
 .course-part { margin-bottom: 28px; }
 .course-part-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--mud-palette-lines-default); }

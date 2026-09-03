@@ -152,6 +152,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        // Must happen before reading Tutors.Settings below: MainLayout also refreshes this Scoped instance, but
+        // only in its own OnAfterRenderAsync, which runs after this page's first render - too late for this page's
+        // own initial read of Tutors.Settings to reflect it (see TutorRegistry.EnsureCurrentAsync's doc comment).
+        await Tutors.EnsureCurrentAsync();
         _p = await Learning.GetProfileAsync();
         _examDate = _p.TargetExamDate?.ToDateTime(TimeOnly.MinValue);
         var s = Tutors.Settings;

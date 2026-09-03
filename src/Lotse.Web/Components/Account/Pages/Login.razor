@@ -1,0 +1,89 @@
+@page "/Account/Login"
+@layout AccountLayout
+@attribute [AllowAnonymous]
+
+@using Lotse.Infrastructure.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityRedirectManager RedirectManager
+
+@* Static SSR by design – see Register.razor's doc comment for why. *@
+
+<PageTitle>Anmelden – Lotse</PageTitle>
+
+<h1 class="account-title">Anmelden</h1>
+<p class="account-sub">Weiter bei deinem eigenen Lernstand.</p>
+
+@if (_errorMessage is not null)
+{
+    <div class="account-alert error">@_errorMessage</div>
+}
+@if (StatusMessage is { } status)
+{
+    <div class="account-alert success">@status</div>
+}
+
+<EditForm Model="Input" method="post" OnValidSubmit="LoginUserAsync" FormName="login">
+    <DataAnnotationsValidator />
+    <div class="account-field">
+        <label for="email">E-Mail</label>
+        <InputText id="email" @bind-Value="Input.Email" autocomplete="username" placeholder="name@beispiel.de" />
+        <ValidationMessage For="() => Input.Email" class="account-error" />
+    </div>
+    <div class="account-field">
+        <label for="password">Passwort</label>
+        <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="current-password" />
+        <ValidationMessage For="() => Input.Password" class="account-error" />
+    </div>
+    <div class="account-field" style="display:flex;align-items:center;gap:8px">
+        <InputCheckbox id="remember" @bind-Value="Input.RememberMe" style="width:auto" />
+        <label for="remember" style="margin:0;font-weight:400">Angemeldet bleiben</label>
+    </div>
+    <button type="submit" class="account-submit">Anmelden</button>
+</EditForm>
+
+<div class="account-links">
+    <a href="Account/ForgotPassword">Passwort vergessen?</a>
+    &nbsp;·&nbsp;
+    Neu hier? <a href="@RegisterUrl">Konto erstellen</a>
+</div>
+
+@code {
+    private string? _errorMessage;
+
+#pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+#pragma warning restore BL0008
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    private string RegisterUrl => "Account/Register" + (string.IsNullOrEmpty(ReturnUrl) ? "" : $"?returnUrl={Uri.EscapeDataString(ReturnUrl)}");
+
+    private string? StatusMessage
+    {
+        get
+        {
+            if (!HttpContext.Request.Cookies.TryGetValue(IdentityRedirectManager.StatusCookieName, out var message)) return null;
+            HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+            return message;
+        }
+    }
+
+    public async Task LoginUserAsync()
+    {
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if (result.Succeeded) RedirectManager.RedirectTo(ReturnUrl ?? "");
+        else _errorMessage = "Anmeldung fehlgeschlagen. E-Mail oder Passwort falsch.";
+    }
+
+    private sealed class InputModel
+    {
+        [Required(ErrorMessage = "E-Mail erforderlich.")]
+        [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Passwort erforderlich.")]
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+    }
+}

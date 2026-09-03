@@ -3,6 +3,7 @@
 @inject ContentCatalogProvider CatalogProvider
 @inject NavigationManager Nav
 @inject SpeechService Speech
+@inject TutorRegistry Tutors
 @implements IDisposable
 
 <PageTitle>Sprechen – Lotse</PageTitle>
@@ -88,6 +89,10 @@
     private bool _partnerThinking;
     private bool _recording;
     private bool _subscribed;
+
+    // See TutorRegistry.EnsureCurrentAsync's doc comment: without this, a fresh circuit's first render here could
+    // show "Diskussionspartner nicht verfügbar" even though the signed-in learner has a Tutor configured.
+    protected override async Task OnInitializedAsync() => await Tutors.EnsureCurrentAsync();
 
     private async Task StartAsync(Exercise ex)
     {

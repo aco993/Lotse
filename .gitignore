@@ -11,4 +11,9 @@ artifacts/
 .idea/
 *.swp
 appsettings.Local.json
-data/
+
+# Runtime SQLite + DataProtection keys only - NOT src/Lotse.Infrastructure/Data/ (EF Core source: DbContext,
+# migrations). An earlier unanchored "data/" pattern matched that folder too on Windows (git's default
+# core.ignorecase=true makes "data/" match "Data/"), so it was never committed - fixed here, source force-added
+# once alongside this change. See CHANGELOG 0.7.0.
+/src/Lotse.Web/data/

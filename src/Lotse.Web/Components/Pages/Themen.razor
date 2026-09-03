@@ -3,6 +3,7 @@
 @inject ContentCatalogProvider CatalogProvider
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
+@inject TutorRegistry Tutors
 
 <PageTitle>Themen – Lotse</PageTitle>
 
@@ -69,7 +70,13 @@
     private string? _generating;
     private IReadOnlyDictionary<string, SkillState>? _states;
 
-    protected override async Task OnInitializedAsync() => _states = await Learning.GetSkillStatesAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        // See TutorRegistry.EnsureCurrentAsync's doc comment: without this, a fresh circuit's first render here
+        // could show "kein Tutor" even though the signed-in learner has one configured.
+        await Tutors.EnsureCurrentAsync();
+        _states = await Learning.GetSkillStatesAsync();
+    }
 
     private bool Matches(SkillNode n) => string.IsNullOrWhiteSpace(_search)
         || n.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)

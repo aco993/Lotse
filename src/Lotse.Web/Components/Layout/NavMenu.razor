@@ -1,3 +1,22 @@
+@inject NavigationManager Nav
+
+<AuthorizeView>
+    <Authorized>
+        <div class="nav-account">
+            <div class="nav-account-email" title="@context.User.Identity?.Name">@context.User.Identity?.Name</div>
+            <form action="Account/Logout" method="post">
+                <AntiforgeryToken />
+                <input type="hidden" name="ReturnUrl" value="@Nav.ToBaseRelativePath(Nav.Uri)" />
+                <button type="submit" class="nav-account-logout" title="Abmelden">
+                    <MudIcon Icon="@Icons.Material.Filled.Logout" Size="Size.Small" />
+                    <span>Abmelden</span>
+                </button>
+            </form>
+        </div>
+        <MudDivider Class="mb-2" />
+    </Authorized>
+</AuthorizeView>
+
 <MudNavMenu Bordered="false" Rounded="true" Margin="Margin.Dense" Class="pa-2">
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Today">Heute</MudNavLink>
     <MudNavLink Href="kurs" Icon="@Icons.Material.Filled.MenuBook">Kurs</MudNavLink>

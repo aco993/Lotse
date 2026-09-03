@@ -3,6 +3,7 @@ using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Content;
+using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -58,6 +59,14 @@ public sealed record ErrorJournalEntry(DateTime Utc, string Code, string Title, 
 /// <summary>
 /// Application service: the only place that talks to both the database and the engine. Blazor pages call this,
 /// never the DbContext directly. Every public method opens its own short-lived DbContext (safe for Blazor Server).
+///
+/// Every method scopes its queries and inserts to <see cref="ICurrentUserAccessor"/>'s learner — that is the one
+/// seam accounts enter the persistence layer through, so <see cref="ILearningService"/>'s public shape stays
+/// exactly what it was before accounts existed (no <c>userId</c> parameter anywhere in the interface; Blazor
+/// Server's DI scope is one circuit = one signed-in learner, so a Scoped accessor is enough). <see cref="SkillState"/>
+/// and <see cref="ReviewState"/> stay pure Core domain objects with no UserId property of their own; their scoping
+/// lives as an EF Core shadow property on <see cref="LotseDbContext"/> instead, read/written here via
+/// <c>EF.Property&lt;string&gt;</c> — the learning engine and its unit tests never need to know accounts exist.
 /// </summary>
 public sealed class LearningService(
     IDbContextFactory<LotseDbContext> dbFactory,
@@ -65,11 +74,14 @@ public sealed class LearningService(
     ITutor tutor,
     SessionPlanner planner,
     TimeProvider clock,
+    ICurrentUserAccessor currentUser,
     ILogger<LearningService> logger) : ILearningService
 {
     private ContentCatalog Catalog => catalogProvider.Catalog;
     private DateTime Now => clock.GetUtcNow().UtcDateTime;
     public ITutor Tutor => tutor;
+
+    private Task<string> UserIdAsync() => currentUser.GetUserIdAsync();
 
     // ------------------------------------------------------------------------------------------
     // Profile & dashboard
@@ -77,11 +89,12 @@ public sealed class LearningService(
 
     public async Task<LearnerProfile> GetProfileAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var profile = await db.Profiles.FindAsync([1], ct);
+        var profile = await db.Profiles.FindAsync([userId], ct);
         if (profile is not null) return profile;
 
-        profile = new LearnerProfile { Id = 1, CreatedUtc = Now };
+        profile = new LearnerProfile { UserId = userId, CreatedUtc = Now };
         db.Profiles.Add(profile);
         try
         {
@@ -90,9 +103,9 @@ public sealed class LearningService(
         }
         catch (DbUpdateException)
         {
-            // Two circuits raced to create the single profile row; the other one won.
+            // Two circuits raced to create this learner's profile row; the other one won.
             db.Entry(profile).State = EntityState.Detached;
-            return await db.Profiles.AsNoTracking().FirstAsync(p => p.Id == 1, ct);
+            return await db.Profiles.AsNoTracking().FirstAsync(p => p.UserId == userId, ct);
         }
     }
 
@@ -106,36 +119,37 @@ public sealed class LearningService(
     public async Task<DashboardModel> GetDashboardAsync(CancellationToken ct = default)
     {
         var profile = await GetProfileAsync(ct);
+        var userId = profile.UserId;
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var now = Now;
-        var states = await db.SkillStates.AsNoTracking().ToDictionaryAsync(s => s.NodeId, ct);
-        var errors = await RecentErrorsAsync(db, 30, ct);
-        var due = await db.ReviewStates.CountAsync(r => r.DueUtc <= now, ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
+        var errors = await RecentErrorsAsync(db, userId, 30, ct);
+        var due = await db.ReviewStates.CountAsync(r => EF.Property<string>(r, "UserId") == userId && r.DueUtc <= now, ct);
         var rechecks = states.Values.Count(s => s.RecheckDueUtc is not null && s.RecheckDueUtc <= now);
 
         var since7 = now.AddDays(-7);
-        var sessions7 = await db.Sessions.CountAsync(s => s.EndedUtc != null && s.EndedUtc >= since7, ct);
+        var sessions7 = await db.Sessions.CountAsync(s => s.UserId == userId && s.EndedUtc != null && s.EndedUtc >= since7, ct);
         var todayStart = now.Date;
-        var todaySessions = await db.Sessions.Where(s => s.StartedUtc >= todayStart).ToListAsync(ct);
+        var todaySessions = await db.Sessions.Where(s => s.UserId == userId && s.StartedUtc >= todayStart).ToListAsync(ct);
         // Only finished sessions count; an open tab left overnight must not inflate the number.
         var minutesToday = (int)todaySessions.Where(s => s.EndedUtc != null).Sum(s => Math.Min(60, (s.EndedUtc!.Value - s.StartedUtc).TotalMinutes));
-        var open = await db.Sessions.Where(s => s.EndedUtc == null && s.StartedUtc >= now.AddHours(-12)).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
-        var totalAttempts = await db.Attempts.CountAsync(ct);
+        var open = await db.Sessions.Where(s => s.UserId == userId && s.EndedUtc == null && s.StartedUtc >= now.AddHours(-12)).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
+        var totalAttempts = await db.Attempts.CountAsync(a => a.UserId == userId, ct);
 
-        var streak = await ComputeStreakAsync(db, now, ct);
+        var streak = await ComputeStreakAsync(db, userId, now, ct);
         var readiness = LearnerAnalysis.Readiness(Catalog, states);
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, now);
         var topErrors = LearnerAnalysis.TopErrorCodes(Catalog, errors, now);
 
-        var input = await BuildPlannerInputAsync(db, profile.DailyMinutes, null, ct);
+        var input = await BuildPlannerInputAsync(db, userId, profile.DailyMinutes, null, ct);
         var preview = planner.Plan(input with { Seed = now.DayOfYear }).Summary;
 
         return new DashboardModel(profile, readiness, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, tutor.IsAvailable, tutor.Description);
     }
 
-    private static async Task<int> ComputeStreakAsync(LotseDbContext db, DateTime now, CancellationToken ct)
+    private static async Task<int> ComputeStreakAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
     {
-        var days = await db.Sessions.Where(s => s.EndedUtc != null).Select(s => s.EndedUtc!.Value.Date).Distinct().ToListAsync(ct);
+        var days = await db.Sessions.Where(s => s.UserId == userId && s.EndedUtc != null).Select(s => s.EndedUtc!.Value.Date).Distinct().ToListAsync(ct);
         var set = days.ToHashSet();
         var day = now.Date;
         if (!set.Contains(day)) day = day.AddDays(-1); // today not done yet does not break the streak
@@ -144,30 +158,30 @@ public sealed class LearningService(
         return streak;
     }
 
-    private async Task<List<ErrorEvent>> RecentErrorsAsync(LotseDbContext db, int days, CancellationToken ct)
+    private async Task<List<ErrorEvent>> RecentErrorsAsync(LotseDbContext db, string userId, int days, CancellationToken ct)
     {
         var since = Now.AddDays(-days);
-        return (await db.ErrorEvents.AsNoTracking().Where(e => e.Utc >= since).ToListAsync(ct)).Select(e => e.ToModel()).ToList();
+        return (await db.ErrorEvents.AsNoTracking().Where(e => e.UserId == userId && e.Utc >= since).ToListAsync(ct)).Select(e => e.ToModel()).ToList();
     }
 
     // ------------------------------------------------------------------------------------------
     // Sessions
     // ------------------------------------------------------------------------------------------
 
-    private async Task<PlannerInput> BuildPlannerInputAsync(LotseDbContext db, int minutes, string? requestedNode, CancellationToken ct)
+    private async Task<PlannerInput> BuildPlannerInputAsync(LotseDbContext db, string userId, int minutes, string? requestedNode, CancellationToken ct)
     {
         var now = Now;
-        var states = await db.SkillStates.AsNoTracking().ToDictionaryAsync(s => s.NodeId, ct);
-        var due = await db.ReviewStates.AsNoTracking().Where(r => r.DueUtc <= now).ToListAsync(ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
+        var due = await db.ReviewStates.AsNoTracking().Where(r => EF.Property<string>(r, "UserId") == userId && r.DueUtc <= now).ToListAsync(ct);
         var recentSince = now.AddDays(-4);
-        var recent = (await db.Attempts.AsNoTracking().Where(a => a.Utc >= recentSince).Select(a => a.ExerciseId).ToListAsync(ct)).ToHashSet();
-        var recentProd = (await db.Productions.AsNoTracking().Where(p => p.Utc >= recentSince).Select(p => p.ExerciseId).ToListAsync(ct));
+        var recent = (await db.Attempts.AsNoTracking().Where(a => a.UserId == userId && a.Utc >= recentSince).Select(a => a.ExerciseId).ToListAsync(ct)).ToHashSet();
+        var recentProd = (await db.Productions.AsNoTracking().Where(p => p.UserId == userId && p.Utc >= recentSince).Select(p => p.ExerciseId).ToListAsync(ct));
         foreach (var id in recentProd) recent.Add(id);
-        var errors = await RecentErrorsAsync(db, 30, ct);
-        var sessions = await db.Sessions.CountAsync(s => s.EndedUtc != null && s.Kind == SessionKind.Daily, ct);
-        var lastProduction = await db.Productions.OrderByDescending(p => p.Utc).Select(p => (DateTime?)p.Utc).FirstOrDefaultAsync(ct);
+        var errors = await RecentErrorsAsync(db, userId, 30, ct);
+        var sessions = await db.Sessions.CountAsync(s => s.UserId == userId && s.EndedUtc != null && s.Kind == SessionKind.Daily, ct);
+        var lastProduction = await db.Productions.Where(p => p.UserId == userId).OrderByDescending(p => p.Utc).Select(p => (DateTime?)p.Utc).FirstOrDefaultAsync(ct);
         var receptiveIds = Catalog.Exercises.Where(e => e.IsReceptive).Select(e => e.Id).ToList();
-        var lastInput = await db.Attempts.Where(a => receptiveIds.Contains(a.ExerciseId))
+        var lastInput = await db.Attempts.Where(a => a.UserId == userId && receptiveIds.Contains(a.ExerciseId))
             .OrderByDescending(a => a.Utc).Select(a => (DateTime?)a.Utc).FirstOrDefaultAsync(ct);
 
         return new PlannerInput
@@ -189,13 +203,15 @@ public sealed class LearningService(
 
     public async Task<SessionEntity> StartSessionAsync(int minutes, string? requestedNode = null, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var input = await BuildPlannerInputAsync(db, minutes, requestedNode, ct);
+        var input = await BuildPlannerInputAsync(db, userId, minutes, requestedNode, ct);
         var plan = planner.Plan(input);
         var steps = plan.Steps.Select(s => new StepRecord { Kind = s.Kind, ExerciseId = s.Exercise.Id, Reason = s.Reason }).ToList();
         var session = new SessionEntity
         {
             Id = Guid.NewGuid(),
+            UserId = userId,
             Kind = SessionKind.Daily,
             PlannedMinutes = minutes,
             StartedUtc = Now,
@@ -211,12 +227,14 @@ public sealed class LearningService(
 
     public async Task<SessionEntity> StartPlacementAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var items = PlacementTest.Build(Catalog, seed: Random.Shared.Next());
         var steps = items.Select(e => new StepRecord { Kind = StepKind.Explore, ExerciseId = e.Id, Reason = "Einstufung: " + Catalog.NodeTitle(e.NodeId) }).ToList();
         var session = new SessionEntity
         {
             Id = Guid.NewGuid(),
+            UserId = userId,
             Kind = SessionKind.Placement,
             PlannedMinutes = 20,
             StartedUtc = Now,
@@ -235,8 +253,9 @@ public sealed class LearningService(
 
     public async Task<CourseOverview> GetCourseAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var progress = await db.LessonProgress.AsNoTracking().ToDictionaryAsync(p => p.LessonId, ct);
+        var progress = await db.LessonProgress.AsNoTracking().Where(p => p.UserId == userId).ToDictionaryAsync(p => p.LessonId, ct);
         var lessons = Catalog.Lessons;
         // Recommended: the first unfinished lesson in order (a started one first, then the next new one).
         var next = lessons.FirstOrDefault(l => progress.TryGetValue(l.Id, out var p) && p.CompletedUtc is null)
@@ -259,15 +278,16 @@ public sealed class LearningService(
                 Reason = e.IsProduction ? $"Zum Abschluss der Lektion „{lesson.Title}“: Jetzt selbst formulieren." : $"Lektion {lesson.Order}: {lesson.Title}",
             }).ToList();
 
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var session = new SessionEntity
         {
-            Id = Guid.NewGuid(), Kind = SessionKind.Lesson, LessonId = lesson.Id, PlannedMinutes = lesson.Minutes, StartedUtc = Now,
+            Id = Guid.NewGuid(), UserId = userId, Kind = SessionKind.Lesson, LessonId = lesson.Id, PlannedMinutes = lesson.Minutes, StartedUtc = Now,
             PlanJson = JsonSerializer.Serialize(steps), StepsTotal = steps.Count, Summary = $"Lektion {lesson.Order}: {lesson.Title}",
         };
         db.Sessions.Add(session);
-        var progress = await db.LessonProgress.FindAsync([lesson.Id], ct);
-        if (progress is null) db.LessonProgress.Add(new LessonProgressEntity { LessonId = lesson.Id, StartedUtc = Now, LastSessionId = session.Id });
+        var progress = await db.LessonProgress.FindAsync([userId, lesson.Id], ct);
+        if (progress is null) db.LessonProgress.Add(new LessonProgressEntity { UserId = userId, LessonId = lesson.Id, StartedUtc = Now, LastSessionId = session.Id });
         else { progress.LastSessionId = session.Id; if (progress.CompletedUtc is not null) { progress.CompletedUtc = null; } }
         await db.SaveChangesAsync(ct);
         return session;
@@ -276,8 +296,8 @@ public sealed class LearningService(
     private async Task CompleteLessonAsync(LotseDbContext db, SessionEntity session, IReadOnlyList<StepRecord> steps, CancellationToken ct)
     {
         if (session.LessonId is null) return;
-        var progress = await db.LessonProgress.FindAsync([session.LessonId], ct)
-                       ?? db.LessonProgress.Add(new LessonProgressEntity { LessonId = session.LessonId, StartedUtc = session.StartedUtc }).Entity;
+        var progress = await db.LessonProgress.FindAsync([session.UserId, session.LessonId], ct)
+                       ?? db.LessonProgress.Add(new LessonProgressEntity { UserId = session.UserId, LessonId = session.LessonId, StartedUtc = session.StartedUtc }).Entity;
         progress.CompletedUtc = Now;
         progress.Score = steps.Count == 0 ? 0 : steps.Average(s => s.Score ?? 0);
         progress.TimesCompleted++;
@@ -308,18 +328,19 @@ public sealed class LearningService(
         var score = total == 0 ? 0 : (double)correct / total;
         var outcome = score >= 0.999 ? Outcome.Correct : score >= 0.6 ? Outcome.AlmostCorrect : Outcome.Incorrect;
         var now = Now;
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var attempt = new AttemptEntity { SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score, DurationMs = durationMs, Utc = now, AnswerText = answerText };
+        var attempt = new AttemptEntity { UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score, DurationMs = durationMs, Utc = now, AnswerText = answerText };
         db.Attempts.Add(attempt);
         await db.SaveChangesAsync(ct);
         if (score < 0.6)
         {
             var primary = Catalog.ErrorTypes.FirstOrDefault(e => e.NodeId == exercise.NodeId)?.Code;
-            if (primary is not null) db.ErrorEvents.Add(new ErrorEventEntity { AttemptId = attempt.Id, Code = primary, NodeId = exercise.NodeId, Utc = now, Snippet = exercise.Prompt, FromAi = false });
+            if (primary is not null) db.ErrorEvents.Add(new ErrorEventEntity { UserId = userId, AttemptId = attempt.Id, Code = primary, NodeId = exercise.NodeId, Utc = now, Snippet = exercise.Prompt, FromAi = false });
         }
-        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, score, now);
-        var complete = sessionId is null ? false : await MarkStepDoneAsync(db, sessionId.Value, stepIndex, score, ct);
+        var complete = sessionId is null ? false : await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, score, ct);
         await db.SaveChangesAsync(ct);
         var check = new CheckResult(outcome, $"{correct} von {total} richtig", [], feedback);
         return new AnswerResult(check, exercise, Catalog.Node(exercise.NodeId), state.Mastery, null, complete);
@@ -328,12 +349,13 @@ public sealed class LearningService(
     /// <summary>A free session on one exercise (used by the Schreiben/Sprechen/Prüfung pages).</summary>
     public async Task<SessionEntity> StartSingleAsync(string exerciseId, SessionKind kind, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var ex = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
         var steps = new List<StepRecord> { new() { Kind = ex.IsProduction ? StepKind.Production : StepKind.Focus, ExerciseId = ex.Id, Reason = "Freie Übung" } };
         var session = new SessionEntity
         {
-            Id = Guid.NewGuid(), Kind = kind, PlannedMinutes = ex.EstimatedSeconds / 60 + 1, StartedUtc = Now,
+            Id = Guid.NewGuid(), UserId = userId, Kind = kind, PlannedMinutes = ex.EstimatedSeconds / 60 + 1, StartedUtc = Now,
             PlanJson = JsonSerializer.Serialize(steps), StepsTotal = 1, Summary = Catalog.NodeTitle(ex.NodeId),
         };
         db.Sessions.Add(session);
@@ -343,8 +365,9 @@ public sealed class LearningService(
 
     public async Task<SessionView?> GetSessionAsync(Guid id, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id, ct);
+        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId, ct);
         if (session is null) return null;
         var steps = JsonSerializer.Deserialize<List<StepRecord>>(session.PlanJson) ?? [];
         var exercises = steps.Select(s => Catalog.Exercise(s.ExerciseId)).Where(e => e is not null).Select(e => e!).ToList();
@@ -357,38 +380,41 @@ public sealed class LearningService(
 
     public async Task<SessionEntity?> GetOpenSessionAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var since = Now.AddHours(-12);
-        return await db.Sessions.AsNoTracking().Where(s => s.EndedUtc == null && s.StartedUtc >= since).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
+        return await db.Sessions.AsNoTracking().Where(s => s.UserId == userId && s.EndedUtc == null && s.StartedUtc >= since).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
     }
 
     public async Task<IReadOnlyList<SessionEntity>> RecentSessionsAsync(int take = 20, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        return await db.Sessions.AsNoTracking().OrderByDescending(s => s.StartedUtc).Take(take).ToListAsync(ct);
+        return await db.Sessions.AsNoTracking().Where(s => s.UserId == userId).OrderByDescending(s => s.StartedUtc).Take(take).ToListAsync(ct);
     }
 
     public async Task<SessionEntity> FinishSessionAsync(Guid id, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var session = await db.Sessions.FirstAsync(s => s.Id == id, ct);
+        var session = await db.Sessions.FirstAsync(s => s.Id == id && s.UserId == userId, ct);
         if (session.EndedUtc is null)
         {
             session.EndedUtc = Now;
             // An abandoned placement (less than 70 % answered) does not calibrate anything; the banner stays.
             if (session.Kind == SessionKind.Placement && session.StepsDone >= session.StepsTotal * 0.7)
-                await MarkPlacementCompletedAsync(db, ct);
+                await MarkPlacementCompletedAsync(db, userId, ct);
             await db.SaveChangesAsync(ct);
         }
         return session;
     }
 
-    private async Task MarkPlacementCompletedAsync(LotseDbContext db, CancellationToken ct)
+    private async Task MarkPlacementCompletedAsync(LotseDbContext db, string userId, CancellationToken ct)
     {
-        var profile = await db.Profiles.FindAsync([1], ct);
+        var profile = await db.Profiles.FindAsync([userId], ct);
         if (profile is null)
         {
-            profile = new LearnerProfile { Id = 1, CreatedUtc = Now };
+            profile = new LearnerProfile { UserId = userId, CreatedUtc = Now };
             db.Profiles.Add(profile);
         }
         profile.PlacementCompletedUtc = Now;
@@ -396,8 +422,9 @@ public sealed class LearningService(
 
     public async Task AbandonSessionAsync(Guid id, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == id, ct);
+        var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId, ct);
         if (session is null) return;
         if (session.StepsDone == 0) db.Sessions.Remove(session);
         else session.EndedUtc ??= Now;
@@ -413,11 +440,12 @@ public sealed class LearningService(
         var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
         var check = AnswerChecker.Check(exercise, answer);
         var now = Now;
+        var userId = await UserIdAsync();
 
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var attempt = new AttemptEntity
         {
-            SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = check.Outcome, Score = check.Score,
+            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = check.Outcome, Score = check.Score,
             DurationMs = durationMs, HintUsed = hintUsed, Utc = now, AnswerText = answer,
         };
         db.Attempts.Add(attempt);
@@ -435,34 +463,37 @@ public sealed class LearningService(
             var et = Catalog.Error(code);
             db.ErrorEvents.Add(new ErrorEventEntity
             {
-                AttemptId = attempt.Id, Code = code, NodeId = et?.NodeId ?? exercise.NodeId, Utc = now,
+                UserId = userId, AttemptId = attempt.Id, Code = code, NodeId = et?.NodeId ?? exercise.NodeId, Utc = now,
                 Snippet = answer, Correction = check.Expected, FromAi = false,
             });
         }
 
         // skill state (the exercise's node, plus slip nodes when they differ)
-        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, check.Score, now);
         foreach (var code in check.SlipCodes)
         {
             var slipNode = Catalog.Error(code)?.NodeId;
             if (slipNode is null || slipNode == exercise.NodeId) continue;
-            var slipState = await GetOrCreateStateAsync(db, slipNode, ct);
+            var slipState = await GetOrCreateStateAsync(db, userId, slipNode, ct);
             LearnerAnalysis.ApplyAttempt(slipState, exercise with { Band = CefrBand.B1_2 }, 0.3, now);
         }
 
         // spaced repetition
-        var review = await db.ReviewStates.FindAsync([exercise.Id], ct);
+        var review = await db.ReviewStates.FindAsync([userId, exercise.Id], ct);
         if (review is null)
         {
             review = new ReviewState { ExerciseId = exercise.Id, NodeId = exercise.NodeId, DueUtc = now };
-            db.ReviewStates.Add(review);
+            // Same shadow-key ordering as GetOrCreateStateAsync above.
+            var entry = db.Entry(review);
+            entry.Property("UserId").CurrentValue = userId;
+            entry.State = EntityState.Added;
         }
         ReviewScheduler.Apply(review, ReviewScheduler.GradeFor(check.Outcome, hintUsed, durationMs, exercise.EstimatedSeconds), now);
 
         var complete = false;
         if (sessionId is not null)
-            complete = await MarkStepDoneAsync(db, sessionId.Value, stepIndex, check.Score, ct);
+            complete = await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, check.Score, ct);
 
         await db.SaveChangesAsync(ct);
 
@@ -482,36 +513,41 @@ public sealed class LearningService(
         var score = exercise.Questions.Count == 0 ? 0 : (double)correct / exercise.Questions.Count;
         var outcome = score >= 0.999 ? Outcome.Correct : score >= 0.6 ? Outcome.AlmostCorrect : Outcome.Incorrect;
         var now = Now;
+        var userId = await UserIdAsync();
 
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         db.Attempts.Add(new AttemptEntity
         {
-            SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score,
+            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score,
             DurationMs = durationMs, Utc = now, AnswerText = string.Join(",", chosen),
         });
-        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, score, now);
-        var complete = sessionId is null ? false : await MarkStepDoneAsync(db, sessionId.Value, stepIndex, score, ct);
+        var complete = sessionId is null ? false : await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, score, ct);
         await db.SaveChangesAsync(ct);
 
         var check = new CheckResult(outcome, $"{correct} von {exercise.Questions.Count} richtig", [], score >= 0.6 ? "Gut gelesen." : "Noch einmal in Ruhe lesen – achte auf Umschreibungen.");
         return new AnswerResult(check, exercise, Catalog.Node(exercise.NodeId), state.Mastery, null, complete);
     }
 
-    private static async Task<SkillState> GetOrCreateStateAsync(LotseDbContext db, string nodeId, CancellationToken ct)
+    private static async Task<SkillState> GetOrCreateStateAsync(LotseDbContext db, string userId, string nodeId, CancellationToken ct)
     {
-        var state = await db.SkillStates.FindAsync([nodeId], ct);
+        var state = await db.SkillStates.FindAsync([userId, nodeId], ct);
         if (state is null)
         {
             state = new SkillState { NodeId = nodeId, Theta = -0.2 };
-            db.SkillStates.Add(state);
+            // UserId is a shadow property AND part of the key, so it must be set before the entity is marked
+            // Added (Add() itself would try to build the identity-map key immediately, while it is still null).
+            var entry = db.Entry(state);
+            entry.Property("UserId").CurrentValue = userId;
+            entry.State = EntityState.Added;
         }
         return state;
     }
 
-    private async Task<bool> MarkStepDoneAsync(LotseDbContext db, Guid sessionId, int stepIndex, double score, CancellationToken ct)
+    private async Task<bool> MarkStepDoneAsync(LotseDbContext db, string userId, Guid sessionId, int stepIndex, double score, CancellationToken ct)
     {
-        var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId, ct);
+        var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId, ct);
         if (session is null) return false;
         var steps = JsonSerializer.Deserialize<List<StepRecord>>(session.PlanJson) ?? [];
         if (stepIndex >= 0 && stepIndex < steps.Count && !steps[stepIndex].Done)
@@ -526,7 +562,7 @@ public sealed class LearningService(
         if (complete && session.EndedUtc is null)
         {
             session.EndedUtc = Now;
-            if (session.Kind == SessionKind.Placement) await MarkPlacementCompletedAsync(db, ct);
+            if (session.Kind == SessionKind.Placement) await MarkPlacementCompletedAsync(db, userId, ct);
             if (session.Kind == SessionKind.Lesson) await CompleteLessonAsync(db, session, steps, ct);
         }
         return complete;
@@ -534,8 +570,9 @@ public sealed class LearningService(
 
     public async Task SkipStepAsync(Guid sessionId, int stepIndex, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        await MarkStepDoneAsync(db, sessionId, stepIndex, 0, ct);
+        await MarkStepDoneAsync(db, userId, sessionId, stepIndex, 0, ct);
         await db.SaveChangesAsync(ct);
     }
 
@@ -547,8 +584,8 @@ public sealed class LearningService(
     {
         var profile = await GetProfileAsync(ct);
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var states = await db.SkillStates.AsNoTracking().ToDictionaryAsync(s => s.NodeId, ct);
-        var errors = await RecentErrorsAsync(db, 30, ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == profile.UserId).ToDictionaryAsync(s => s.NodeId, ct);
+        var errors = await RecentErrorsAsync(db, profile.UserId, 30, ct);
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, Now, take: 5).Select(w => w.Title).ToList();
         var codes = errors.GroupBy(e => e.Code).OrderByDescending(g => g.Count()).Take(8).Select(g => g.Key).ToList();
         return new LearnerContext(profile.NativeLanguage, weak, codes, Catalog.ErrorTypes.ToList(), profile.Occupation);
@@ -559,6 +596,7 @@ public sealed class LearningService(
         var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
         var words = AnswerChecker.CountWords(text);
         var now = Now;
+        var userId = await UserIdAsync();
 
         ProductionEvaluation? evaluation = null;
         string? tutorError = null;
@@ -579,7 +617,7 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var entity = new ProductionEntity
         {
-            SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, IsSpeaking = speaking, Text = text, WordCount = words, Utc = now,
+            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, IsSpeaking = speaking, Text = text, WordCount = words, Utc = now,
             Score = evaluation?.OverallScore, EstimatedLevel = evaluation?.EstimatedLevel,
             EvaluationJson = evaluation is null ? null : JsonSerializer.Serialize(evaluation), EvaluatedByAi = evaluation is not null,
         };
@@ -588,22 +626,22 @@ public sealed class LearningService(
 
         if (evaluation is not null)
         {
-            await ApplyEvaluationAsync(db, exercise, evaluation, now, ct);
-            if (sessionId is not null) await MarkStepDoneAsync(db, sessionId.Value, stepIndex, evaluation.OverallScore, ct);
+            await ApplyEvaluationAsync(db, userId, exercise, evaluation, now, ct);
+            if (sessionId is not null) await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, evaluation.OverallScore, ct);
             await db.SaveChangesAsync(ct);
         }
 
         return new ProductionResult(entity.Id, evaluation, exercise.Rubric, exercise.ModelAnswer, words, exercise.MinWords, tutorError);
     }
 
-    private async Task ApplyEvaluationAsync(LotseDbContext db, Exercise exercise, ProductionEvaluation evaluation, DateTime now, CancellationToken ct)
+    private async Task ApplyEvaluationAsync(LotseDbContext db, string userId, Exercise exercise, ProductionEvaluation evaluation, DateTime now, CancellationToken ct)
     {
-        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, evaluation.OverallScore, now);
 
         db.Attempts.Add(new AttemptEntity
         {
-            ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = evaluation.OverallScore, Utc = now,
+            UserId = userId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = evaluation.OverallScore, Utc = now,
         });
 
         // Every tagged error is evidence on its node: a small negative observation at B2.1 difficulty.
@@ -612,10 +650,10 @@ public sealed class LearningService(
         {
             var et = Catalog.Error(err.Code);
             if (et is null) continue;
-            db.ErrorEvents.Add(new ErrorEventEntity { Code = err.Code, NodeId = et.NodeId, Utc = now, Snippet = err.Snippet, Correction = err.Correction, FromAi = true });
+            db.ErrorEvents.Add(new ErrorEventEntity { UserId = userId, Code = err.Code, NodeId = et.NodeId, Utc = now, Snippet = err.Snippet, Correction = err.Correction, FromAi = true });
             if (!touched.TryGetValue(et.NodeId, out var s))
             {
-                s = await GetOrCreateStateAsync(db, et.NodeId, ct);
+                s = await GetOrCreateStateAsync(db, userId, et.NodeId, ct);
                 touched[et.NodeId] = s;
             }
             LearnerAnalysis.ApplyAttempt(s, exercise with { Band = CefrBand.B2_1 }, et.Severity >= 3 ? 0.0 : 0.3, now);
@@ -625,26 +663,28 @@ public sealed class LearningService(
     /// <summary>Self-check when no tutor is configured: the learner ticks the rubric; the fraction becomes the score.</summary>
     public async Task<double> SubmitSelfCheckAsync(long productionId, Guid? sessionId, int stepIndex, IReadOnlyList<bool> checks, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var entity = await db.Productions.FirstAsync(p => p.Id == productionId, ct);
+        var entity = await db.Productions.FirstAsync(p => p.Id == productionId && p.UserId == userId, ct);
         var exercise = Catalog.Exercise(entity.ExerciseId) ?? throw new KeyNotFoundException(entity.ExerciseId);
         var score = checks.Count == 0 ? 0 : (double)checks.Count(c => c) / checks.Count;
         if (exercise.MinWords is { } min && entity.WordCount < min * 0.8) score *= 0.7; // too short cannot be fully "erfüllt"
         entity.Score = score;
         entity.EvaluationJson = JsonSerializer.Serialize(new { selfCheck = checks });
         var now = Now;
-        var state = await GetOrCreateStateAsync(db, exercise.NodeId, ct);
+        var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, score, now);
-        db.Attempts.Add(new AttemptEntity { SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score, Utc = now });
-        if (sessionId is not null) await MarkStepDoneAsync(db, sessionId.Value, stepIndex, score, ct);
+        db.Attempts.Add(new AttemptEntity { UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score, Utc = now });
+        if (sessionId is not null) await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, score, ct);
         await db.SaveChangesAsync(ct);
         return score;
     }
 
     public async Task<IReadOnlyList<ProductionEntity>> RecentProductionsAsync(int take = 20, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        return await db.Productions.AsNoTracking().OrderByDescending(p => p.Utc).Take(take).ToListAsync(ct);
+        return await db.Productions.AsNoTracking().Where(p => p.UserId == userId).OrderByDescending(p => p.Utc).Take(take).ToListAsync(ct);
     }
 
     // ------------------------------------------------------------------------------------------
@@ -653,20 +693,22 @@ public sealed class LearningService(
 
     public async Task<IReadOnlyDictionary<string, SkillState>> GetSkillStatesAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        return await db.SkillStates.AsNoTracking().ToDictionaryAsync(s => s.NodeId, ct);
+        return await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
     }
 
     /// <summary>Errors made during one session (deterministic ones via attempts, AI ones via productions), grouped for the summary screen.</summary>
     public async Task<IReadOnlyList<(string Code, string Title, string NodeTitle, int Count)>> GetSessionErrorsAsync(Guid sessionId, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var attemptIds = await db.Attempts.Where(a => a.SessionId == sessionId).Select(a => a.Id).ToListAsync(ct);
-        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == sessionId, ct);
+        var attemptIds = await db.Attempts.Where(a => a.UserId == userId && a.SessionId == sessionId).Select(a => a.Id).ToListAsync(ct);
+        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId, ct);
         var from = session?.StartedUtc ?? DateTime.MinValue;
         var to = session?.EndedUtc ?? Now;
         var rows = await db.ErrorEvents.AsNoTracking()
-            .Where(e => (e.AttemptId != null && attemptIds.Contains(e.AttemptId.Value)) || (e.FromAi && e.Utc >= from && e.Utc <= to))
+            .Where(e => e.UserId == userId && ((e.AttemptId != null && attemptIds.Contains(e.AttemptId.Value)) || (e.FromAi && e.Utc >= from && e.Utc <= to)))
             .ToListAsync(ct);
         return rows.GroupBy(r => r.Code)
             .Select(g => (g.Key, Catalog.Error(g.Key)?.Title ?? g.Key, Catalog.NodeTitle(Catalog.Error(g.Key)?.NodeId ?? g.First().NodeId), g.Count()))
@@ -675,9 +717,10 @@ public sealed class LearningService(
 
     public async Task<IReadOnlyList<ErrorJournalEntry>> GetErrorJournalAsync(int days = 30, int take = 100, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var since = Now.AddDays(-days);
-        var rows = await db.ErrorEvents.AsNoTracking().Where(e => e.Utc >= since).OrderByDescending(e => e.Utc).Take(take).ToListAsync(ct);
+        var rows = await db.ErrorEvents.AsNoTracking().Where(e => e.UserId == userId && e.Utc >= since).OrderByDescending(e => e.Utc).Take(take).ToListAsync(ct);
         return rows.Select(r =>
         {
             var et = Catalog.Error(r.Code);
@@ -687,9 +730,10 @@ public sealed class LearningService(
 
     public async Task<IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)>> GetDailyHistoryAsync(int days = 30, CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var since = Now.Date.AddDays(-days);
-        var rows = await db.Attempts.AsNoTracking().Where(a => a.Utc >= since).Select(a => new { a.Utc, a.Score }).ToListAsync(ct);
+        var rows = await db.Attempts.AsNoTracking().Where(a => a.UserId == userId && a.Utc >= since).Select(a => new { a.Utc, a.Score }).ToListAsync(ct);
         return rows.GroupBy(r => r.Utc.Date).OrderBy(g => g.Key).Select(g => (g.Key, g.Count(), g.Average(r => r.Score))).ToList();
     }
 
@@ -706,6 +750,7 @@ public sealed class LearningService(
         var generated = await tutor.GenerateExercisesAsync(node, band, count, ExerciseContext.Beruf, context, examples, ct);
         if (generated.Count == 0) return [];
 
+        // Shared/global bank (see GeneratedExerciseEntity) – not scoped to this learner.
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         foreach (var ex in generated)
             db.GeneratedExercises.Add(new GeneratedExerciseEntity { Id = ex.Id, NodeId = ex.NodeId, Json = ContentLoader.Serialize(ex), CreatedUtc = Now });
@@ -739,10 +784,11 @@ public sealed class LearningService(
     public async Task<IReadOnlyList<(string NodeTitle, int Count)>> FillWeakestAsync(int nodes = 3, int perNode = 6, CancellationToken ct = default)
     {
         if (!tutor.IsAvailable) return [];
+        var userId = await UserIdAsync();
         var states = await GetSkillStatesAsync(ct);
         await using (var db = await dbFactory.CreateDbContextAsync(ct))
         {
-            var errors = await RecentErrorsAsync(db, 30, ct);
+            var errors = await RecentErrorsAsync(db, userId, 30, ct);
             var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, Now, take: 20)
                 .Where(w => w.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
                 .Take(nodes).ToList();
@@ -756,14 +802,22 @@ public sealed class LearningService(
         }
     }
 
+    /// <summary>
+    /// Wipes only the signed-in learner's own data — never the database file, never any other account's rows.
+    /// The tutor configuration (API key) is deliberately left untouched: a reset should not cost the learner
+    /// their provider setup, and it already lives in its own per-user <see cref="SettingEntity"/> row.
+    /// </summary>
     public async Task ResetAllDataAsync(CancellationToken ct = default)
     {
+        var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        // Wipe learning data but keep settings (tutor configuration) – a reset should not cost the learner their key.
-        var settings = await db.Settings.AsNoTracking().ToListAsync(ct);
-        await db.Database.EnsureDeletedAsync(ct);
-        await db.Database.MigrateAsync(ct);
-        db.Settings.AddRange(settings.Select(s => new SettingEntity { Key = s.Key, Value = s.Value }));
-        await db.SaveChangesAsync(ct);
+        await db.SkillStates.Where(s => EF.Property<string>(s, "UserId") == userId).ExecuteDeleteAsync(ct);
+        await db.ReviewStates.Where(r => EF.Property<string>(r, "UserId") == userId).ExecuteDeleteAsync(ct);
+        await db.ErrorEvents.Where(e => e.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.Attempts.Where(a => a.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.Productions.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.LessonProgress.Where(l => l.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.Sessions.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.Profiles.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
     }
 }

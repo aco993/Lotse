@@ -1,0 +1,34 @@
+@page "/Account/Manage"
+@layout AccountLayout
+@attribute [Authorize]
+
+@using Lotse.Infrastructure.Data
+@inject IdentityUserAccessor UserAccessor
+@inject UserManager<ApplicationUser> UserManager
+
+@* Static SSR, same reasoning as Register.razor: kept in the small Account shell (not the interactive MainLayout)
+   so ChangePassword's re-sign-in on the linked page can set the auth cookie from a real HTTP response. *@
+
+<PageTitle>Konto – Lotse</PageTitle>
+
+<h1 class="account-title">Dein Konto</h1>
+
+<div class="account-field">
+    <label>E-Mail</label>
+    <div>@_email</div>
+</div>
+
+<div class="account-links" style="margin-top:20px"><a href="Account/Manage/ChangePassword">Passwort ändern</a></div>
+<div class="account-links"><a href="einstellungen">← Zurück zu den Einstellungen</a></div>
+
+@code {
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    private string? _email;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (user is null) return;
+        _email = await UserManager.GetEmailAsync(user);
+    }
+}

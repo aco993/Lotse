@@ -1,0 +1,92 @@
+@page "/Account/Register"
+@layout AccountLayout
+@attribute [AllowAnonymous]
+
+@using Lotse.Infrastructure.Data
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityRedirectManager RedirectManager
+
+@* Static SSR by design (no @@rendermode line): setting the auth cookie via SignInManager.SignInAsync needs a
+   real HTTP response, which a live Blazor Server circuit no longer has. The rest of Lotse renders interactively
+   via the ambient mode on <Routes>; a routed page can opt out of that by simply declaring none of its own -
+   Blazor's router honours the matched page's own render mode, not the ancestor's, exactly so Identity pages can
+   do this inside an otherwise-interactive app. *@
+
+<PageTitle>Registrieren – Lotse</PageTitle>
+
+<h1 class="account-title">Konto erstellen</h1>
+<p class="account-sub">Dein eigener Lernstand, komplett getrennt von jedem anderen Konto.</p>
+
+@if (_identityErrors is { } errors)
+{
+    <div class="account-alert error">
+        @foreach (var error in errors) { <div>@error</div> }
+    </div>
+}
+
+<EditForm Model="Input" method="post" OnValidSubmit="RegisterUserAsync" FormName="register">
+    <DataAnnotationsValidator />
+    <div class="account-field">
+        <label for="email">E-Mail</label>
+        <InputText id="email" @bind-Value="Input.Email" autocomplete="username" placeholder="name@beispiel.de" />
+        <ValidationMessage For="() => Input.Email" class="account-error" />
+    </div>
+    <div class="account-field">
+        <label for="password">Passwort</label>
+        <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="new-password" placeholder="mindestens 8 Zeichen" />
+        <ValidationMessage For="() => Input.Password" class="account-error" />
+    </div>
+    <div class="account-field">
+        <label for="confirm">Passwort bestätigen</label>
+        <InputText id="confirm" type="password" @bind-Value="Input.ConfirmPassword" autocomplete="new-password" />
+        <ValidationMessage For="() => Input.ConfirmPassword" class="account-error" />
+    </div>
+    <button type="submit" class="account-submit">Registrieren</button>
+</EditForm>
+
+<div class="account-links">Schon ein Konto? <a href="Account/Login">Anmelden</a></div>
+
+@code {
+    private IReadOnlyList<string>? _identityErrors;
+
+#pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+#pragma warning restore BL0008
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+
+    public async Task RegisterUserAsync()
+    {
+        var user = Activator.CreateInstance<ApplicationUser>();
+        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        var emailStore = (IUserEmailStore<ApplicationUser>)UserStore;
+        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        var result = await UserManager.CreateAsync(user, Input.Password);
+
+        if (!result.Succeeded)
+        {
+            _identityErrors = result.Errors.Select(e => e.Description).ToList();
+            return;
+        }
+
+        // No email confirmation is configured (see IdentityNoOpEmailSender / README) – sign the learner in right away.
+        await SignInManager.SignInAsync(user, isPersistent: false);
+        RedirectManager.RedirectTo(ReturnUrl ?? "");
+    }
+
+    private sealed class InputModel
+    {
+        [Required(ErrorMessage = "E-Mail erforderlich.")]
+        [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Passwort erforderlich.")]
+        [StringLength(100, ErrorMessage = "Das Passwort muss mindestens {2} Zeichen haben.", MinimumLength = 8)]
+        public string Password { get; set; } = "";
+
+        [Required(ErrorMessage = "Bitte bestätigen.")]
+        [Compare(nameof(Password), ErrorMessage = "Die Passwörter stimmen nicht überein.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+}

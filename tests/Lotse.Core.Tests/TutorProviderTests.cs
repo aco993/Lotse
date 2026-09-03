@@ -128,6 +128,8 @@ public sealed class TutorRegistryTests : IAsyncLifetime
         public LotseDbContext CreateDbContext() => new(new DbContextOptionsBuilder<LotseDbContext>().UseSqlite($"Data Source={path}").Options);
     }
 
+    private const string UserId = "test-user";
+
     private string _path = "";
     private TestDbFactory _factory = default!;
 
@@ -137,6 +139,9 @@ public sealed class TutorRegistryTests : IAsyncLifetime
         _factory = new TestDbFactory(_path);
         await using var db = _factory.CreateDbContext();
         await db.Database.EnsureCreatedAsync();
+        // Settings has a real FK to AspNetUsers – seed the one identity FakeCurrentUserAccessor claims.
+        db.Users.Add(new ApplicationUser { Id = UserId, UserName = UserId });
+        await db.SaveChangesAsync();
     }
 
     public async ValueTask DisposeAsync()
@@ -146,7 +151,7 @@ public sealed class TutorRegistryTests : IAsyncLifetime
     }
 
     // No environment fallback: the machine running the tests may well have real keys set.
-    private TutorRegistry NewRegistry(IDataProtectionProvider dp) => new(_factory, dp, NullLoggerFactory.Instance, env: _ => null);
+    private TutorRegistry NewRegistry(IDataProtectionProvider dp) => new(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserId), env: _ => null);
 
     [Fact]
     public void Default_is_groq_without_key_and_explains_what_is_missing()

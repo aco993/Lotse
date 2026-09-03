@@ -21,6 +21,14 @@ dotnet run --project src/Lotse.Web --launch-profile lan
 
 pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfig`). Za govor i na telefonu koristi Chrome. U Chrome meniju „Zum Startbildschirm hinzufügen" – aplikacija se instalira kao PWA sa svojom ikonom, donjom navigacijom i bez adresne trake.
 
+## 1a. Nalog
+
+Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 karaktera), nema potvrde mejlom, odmah si ulogovan/a. Svaki sledeći nalog (npr. na drugom uređaju, ili neko drugi ko proba app) dobija potpuno svoj, prazan napredak – ništa se ne meša sa tvojim. Podaci ostaju samo na ovom računaru (lokalna SQLite baza), nikuda se ne šalju.
+
+Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
+
+„Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, generisane vežbe) – ne i tvoj nalog, ne i tuđe naloge, i ne Tutor-podešavanja (ključ ostaje).
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.
