@@ -1,4 +1,6 @@
 @inherits LayoutComponentBase
+@inject SpeechService Speech
+@inject NavigationManager Nav
 
 <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
 <MudPopoverProvider />
@@ -7,37 +9,68 @@
 
 <MudLayout>
     <MudAppBar Elevation="0" Dense="true" Class="lotse-appbar">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" aria-label="Menü" />
         <MudText Typo="Typo.h6" Class="ml-1" Style="font-weight:600; letter-spacing:.3px">Lotse</MudText>
         <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.75">Dein Kurs auf B2</MudText>
         <MudSpacer />
         <MudTooltip Text="@(_dark ? "Helles Design" : "Dunkles Design")">
-            <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" />
+            <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" aria-label="Design wechseln" />
         </MudTooltip>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Md" ClipMode="DrawerClipMode.Always">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent>
+    <MudMainContent Class="lotse-main">
         <MudContainer MaxWidth="MaxWidth.Medium" Class="py-4 px-3 px-sm-6">
-            @Body
+            <ErrorBoundary @ref="_errors">
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent Context="ex">
+                    @* Friendly recovery instead of the yellow bar: the circuit stays alive, the learner keeps their session. *@
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mt-2">
+                        <MudText Typo="Typo.subtitle1" Style="font-weight:600">Das hat gerade nicht geklappt.</MudText>
+                        <MudText Typo="Typo.body2" Class="mb-2">Dein Lernstand ist gespeichert. Versuch es noch einmal – wenn es wieder passiert, hilft „Reparieren“ in den Einstellungen.</MudText>
+                        <MudText Typo="Typo.caption" Class="mono d-block mb-2" Style="opacity:.7">@ex.GetType().Name: @ex.Message</MudText>
+                        <MudStack Row="true" Spacing="2">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Recover">Noch einmal</MudButton>
+                            <MudButton Variant="Variant.Text" Href="einstellungen">Einstellungen</MudButton>
+                        </MudStack>
+                    </MudAlert>
+                </ErrorContent>
+            </ErrorBoundary>
         </MudContainer>
     </MudMainContent>
+    <BottomNav />
 </MudLayout>
 
 @code {
     [Inject] private IBrowserViewportService Viewport { get; set; } = default!;
 
-    // Closed until we know the viewport: on phones the drawer is an overlay and must start closed.
     private bool _drawerOpen;
     private bool _dark;
+    private ErrorBoundary? _errors;
+
+    protected override void OnInitialized()
+    {
+        // A navigation clears a previous error so the next page renders normally.
+        Nav.LocationChanged += (_, _) => { _errors?.Recover(); };
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         var bp = await Viewport.GetCurrentBreakpointAsync();
         _drawerOpen = bp >= Breakpoint.Md;
+        // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
+        try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
         StateHasChanged();
+    }
+
+    private void Recover()
+    {
+        _errors?.Recover();
+        Nav.NavigateTo(Nav.Uri, forceLoad: false);
     }
 
     private readonly MudTheme _theme = new()

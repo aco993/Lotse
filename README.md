@@ -13,7 +13,9 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 - **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
 - **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
 - **Works without any API key.** 749 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
-- **AI tutor (optional), provider-agnostic.** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise and reading/listening generation, a discussion partner for the oral exam. Claude via the official Anthropic SDK with JSON-schema output, or any OpenAI-compatible endpoint (Ollama and LM Studio locally for free, OpenRouter, Groq, Mistral, DeepSeek, OpenAI) with graceful fallback from `json_schema` to `json_object` to plain text.
+- **AI tutor (optional), provider-agnostic, configured in the app.** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise and reading/listening generation, a discussion partner for the oral exam. Pick a provider on the settings page: Groq (free, fast, the default suggestion), Claude via the official Anthropic SDK, OpenRouter, Ollama or LM Studio locally, Mistral, DeepSeek, OpenAI or any OpenAI-compatible server. Connection test, encrypted key storage (ASP.NET Data Protection), switch at runtime, graceful fallback from `json_schema` to `json_object` to plain text, retries with backoff.
+- **Self-diagnosis and self-repair.** Health panel (content, database integrity, tutor) with one-click repair, `/health` endpoint, error boundary with friendly recovery, provider errors translated into actionable sentences.
+- **Mobile-first details.** Bottom navigation on phones, installable PWA, system dark mode, keyboard shortcuts on desktop (Enter, digits) hidden on touch.
 - **Exam realism.** Goethe B2 blueprint as data, writing/speaking tasks in exact exam formats, reading and audio-only listening tasks in exam part formats, readiness report against the 60 % rule.
 
 ## Screens
@@ -35,31 +37,11 @@ dotnet run --project src/Lotse.Web
 
 Open http://localhost:5178 (or the port printed in the console). Data lives in `src/Lotse.Web/data/lotse.db` (SQLite, created on first start).
 
-### Optional: enable the Claude tutor
+### Optional: enable the AI tutor
 
-Set an API key **outside the repository** – either as environment variable or as a .NET user secret:
+Open **Einstellungen → KI-Tutor**, pick a provider, paste a key, press *Verbindung testen*, then *Speichern & aktivieren*. The key is stored encrypted on this machine only. Groq offers a free tier (https://console.groq.com/keys) and answers in seconds; Claude gives the best exam-grade feedback; Ollama runs fully offline.
 
-```bash
-setx ANTHROPIC_API_KEY "sk-ant-..."
-```
-
-```bash
-cd src/Lotse.Web
-dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."
-```
-
-Model and effort are configured in `appsettings.json` under `Lotse:Tutor` (default `claude-opus-5`, effort `medium`). Without a key every feature except AI evaluation, generation and the discussion partner is available.
-
-### Optional: use a free or local model instead
-
-Any OpenAI-compatible server works. Ollama, for example:
-
-```bash
-ollama pull qwen2.5:7b
-dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tutor:BaseUrl=http://localhost:11434/v1 --Lotse:Tutor:Model=qwen2.5:7b
-```
-
-For OpenRouter (free-tier models), Groq, Mistral, DeepSeek or OpenAI set `BaseUrl` to their `/v1` endpoint and `OPENAI_API_KEY`. See `appsettings.Ollama.json` and [docs/UPUTSTVO.md](docs/UPUTSTVO.md) §6 for a comparison table.
+Keys can also come from environment variables (`GROQ_API_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `OPENAI_API_KEY`, …) or from configuration defaults in `appsettings.json` → `Lotse:Tutor` (`Preset`, `Model`, `BaseUrl`). See `appsettings.Ollama.json` and [docs/UPUTSTVO.md](docs/UPUTSTVO.md) §6 for a provider comparison. Without a tutor every feature except AI evaluation, generation and the discussion partner is available.
 
 ### Tests
 
@@ -67,7 +49,7 @@ For OpenRouter (free-tier models), Groq, Mistral, DeepSeek or OpenAI set `BaseUr
 dotnet test
 ```
 
-46 tests cover the engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour) and content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker, word-order chunks consistent).
+100 tests: engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, and bUnit component tests for the exercise flow.
 
 ## Project layout
 
@@ -76,7 +58,8 @@ content/                 taxonomy.json (nodes + error codes), exercises/*.json (
 src/Lotse.Core           domain model + learning engine, no dependencies
 src/Lotse.Infrastructure EF Core (SQLite), content loader, Claude tutor, application service
 src/Lotse.Web            Blazor Server UI (MudBlazor), browser speech interop
-tests/Lotse.Core.Tests   xUnit v3 (Microsoft.Testing.Platform)
+tests/Lotse.Core.Tests   xUnit v3 (Microsoft.Testing.Platform): engine, content, service, providers
+tests/Lotse.Web.Tests    bUnit component tests
 docs/                    concept, plan, architecture
 ```
 

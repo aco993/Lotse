@@ -63,11 +63,11 @@ public interface ITutor
     Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default);
 }
 
-/// <summary>Used when no API key is configured. Never throws; the UI falls back to self-checks.</summary>
-public sealed class NullTutor : ITutor
+/// <summary>Used when no provider is configured. Evaluation calls throw a clear message; the UI falls back to self-checks.</summary>
+public sealed class NullTutor(string? description = null) : ITutor
 {
     public bool IsAvailable => false;
-    public string Description => "Kein KI-Tutor konfiguriert (ANTHROPIC_API_KEY fehlt). Schreiben/Sprechen werden per Selbstcheck bewertet.";
+    public string Description => description ?? "Kein KI-Tutor konfiguriert. Schreiben/Sprechen werden per Selbstcheck bewertet.";
 
     public Task<ProductionEvaluation> EvaluateAsync(Exercise exercise, string learnerText, ProductionMode mode, LearnerContext context, CancellationToken ct = default)
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");

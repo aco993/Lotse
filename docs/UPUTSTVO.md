@@ -19,7 +19,7 @@ Otvori http://localhost:5178 (port piše u konzoli). Baza `src/Lotse.Web/data/lo
 dotnet run --project src/Lotse.Web --launch-profile lan
 ```
 
-pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfig`). Za govor i na telefonu koristi Chrome.
+pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfig`). Za govor i na telefonu koristi Chrome. U Chrome meniju „Zum Startbildschirm hinzufügen" – aplikacija se instalira kao PWA sa svojom ikonom, donjom navigacijom i bez adresne trake.
 
 ## 2. Prvi dan: Einstufung
 
@@ -53,7 +53,13 @@ Kako se ocenjuje: velika/mala slova, ä→ae, ß→ss, jedna slovna greška u du
 
 ## 6. KI-tutor (opciono): Claude ili bilo koji drugi model
 
-Tutor ocenjuje pisanje i govor, igra partnera u diskusiji i generiše zadatke. Ključevi se nikad ne čuvaju u aplikaciji ni u repou.
+Tutor ocenjuje pisanje i govor, igra partnera u diskusiji i generiše zadatke.
+
+**Najlakše: u samoj aplikaciji.** *Einstellungen → KI-Tutor*: izaberi provajdera iz liste (Groq je preporučen: besplatan i brz), nalepi ključ, klikni **Verbindung testen** (vidiš latenciju i odgovor), pa **Speichern & aktivieren**. Ključ se čuva šifrovano na tvom računaru (ASP.NET Data Protection) i ne ide nigde osim ka provajderu. Promena važi odmah, bez restarta. Ako nešto ne štima, poruka ti kaže tačno šta (npr. „Schlüssel abgelehnt (401)", „Modell nicht gefunden – ollama pull").
+
+Groq ključ: https://console.groq.com/keys (besplatan nalog, model `llama-3.3-70b-versatile`).
+
+Ispod su alternative preko okruženja/konfiguracije, za one koji to više vole.
 
 **A) Claude (najbolji kvalitet, plaća se po potrošnji, oko 4 centa po oceni teksta sa Opus, petina sa Sonnet):**
 
@@ -94,6 +100,8 @@ Za razgovor, dubinske ispravke i coaching koristi prompt iz `docs/CLAUDE_CHAT_PR
 
 ## 9. Ako nešto ne radi
 
+- Prvo: *Einstellungen → Zustand der App → Prüfen*. Vidiš stanje sadržaja, baze i tutora; **Reparieren** sam sređuje šta može (tabele, integritet, zaostale sesije, neispravne generisane zadatke) i kaže šta je uradio. Isto maštinski: http://localhost:5178/health.
+- Ako se stranica „sruši", aplikacija pokazuje prijateljsku poruku sa dugmetom „Noch einmal" – tvoj napredak je već sačuvan.
 - Aplikacija se ne pokreće: proveri `dotnet --version` (treba 10.x) i da port 5178 nije zauzet (`--urls http://localhost:5311`).
 - Mikrofon ne radi: samo Chrome/Edge; dozvoli mikrofon u pregledaču; možeš i da kucaš transkript.
 - Nema zvuka pri diktatu: pregledač bez nemačkog glasa – Windows: Einstellungen → Zeit und Sprache → Sprache → Deutsch dodati.

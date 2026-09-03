@@ -18,11 +18,13 @@ public sealed class OpenAiCompatibleTutor : TutorBase
     private readonly HttpClient _http;
     private bool _schemaFormatUnsupported;
 
-    public OpenAiCompatibleTutor(TutorOptions options, ILogger<OpenAiCompatibleTutor> logger) : base(logger)
+    public OpenAiCompatibleTutor(TutorOptions options, ILogger<OpenAiCompatibleTutor> logger, HttpMessageHandler? handler = null) : base(logger)
     {
         _options = options;
         var baseUrl = (options.BaseUrl ?? "").TrimEnd('/') + "/";
-        _http = new HttpClient { BaseAddress = new Uri(baseUrl), Timeout = TimeSpan.FromSeconds(Math.Max(30, options.TimeoutSeconds)) };
+        _http = handler is null ? new HttpClient() : new HttpClient(handler);
+        _http.BaseAddress = new Uri(baseUrl);
+        _http.Timeout = TimeSpan.FromSeconds(Math.Max(30, options.TimeoutSeconds));
         if (!string.IsNullOrWhiteSpace(options.ResolvedApiKey))
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.ResolvedApiKey);
         // OpenRouter likes to know who calls; harmless elsewhere.
@@ -113,19 +115,46 @@ public sealed class OpenAiCompatibleTutor : TutorBase
 
     private static readonly JsonSerializerOptions Wire = new() { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
+    /// <summary>One call with a small retry budget for the transient cases (429, 5xx, connection blips) – free tiers hit these often.</summary>
     private async Task<string?> SendAsync(JsonObject body, CancellationToken ct)
     {
-        using var response = await _http.PostAsJsonAsync("chat/completions", body, ct);
-        var text = await response.Content.ReadAsStringAsync(ct);
-        if (!response.IsSuccessStatusCode)
+        const int maxAttempts = 3;
+        for (var attempt = 1; ; attempt++)
         {
-            Logger.LogWarning("{Provider} antwortete {Status}: {Body}", ProviderName, (int)response.StatusCode, text[..Math.Min(text.Length, 400)]);
-            throw new HttpRequestException($"{ProviderName}: HTTP {(int)response.StatusCode} – {Trim(text)}", null, response.StatusCode);
+            HttpResponseMessage response;
+            try
+            {
+                response = await _http.PostAsJsonAsync("chat/completions", body, ct);
+            }
+            catch (HttpRequestException e) when (attempt < maxAttempts && e.StatusCode is null)
+            {
+                Logger.LogWarning("{Provider} nicht erreichbar (Versuch {Attempt}): {Message}", ProviderName, attempt, e.Message);
+                await Task.Delay(TimeSpan.FromSeconds(attempt * 2), ct);
+                continue;
+            }
+
+            using (response)
+            {
+                var text = await response.Content.ReadAsStringAsync(ct);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var transient = response.StatusCode == System.Net.HttpStatusCode.TooManyRequests || (int)response.StatusCode >= 500;
+                    if (transient && attempt < maxAttempts)
+                    {
+                        var wait = response.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(attempt * 3);
+                        Logger.LogWarning("{Provider} antwortete {Status}, neuer Versuch in {Wait}s", ProviderName, (int)response.StatusCode, wait.TotalSeconds);
+                        await Task.Delay(wait, ct);
+                        continue;
+                    }
+                    Logger.LogWarning("{Provider} antwortete {Status}: {Body}", ProviderName, (int)response.StatusCode, text[..Math.Min(text.Length, 400)]);
+                    throw new HttpRequestException($"{ProviderName}: HTTP {(int)response.StatusCode} – {Trim(text)}", null, response.StatusCode);
+                }
+                var parsed = JsonSerializer.Deserialize<ChatResponse>(text, Wire);
+                if (parsed?.Error?.Message is { } err) throw new InvalidOperationException($"{ProviderName}: {err}");
+                var content = parsed?.Choices?.FirstOrDefault()?.Message?.Content;
+                return string.IsNullOrWhiteSpace(content) ? null : content;
+            }
         }
-        var parsed = JsonSerializer.Deserialize<ChatResponse>(text, Wire);
-        if (parsed?.Error?.Message is { } err) throw new InvalidOperationException($"{ProviderName}: {err}");
-        var content = parsed?.Choices?.FirstOrDefault()?.Message?.Content;
-        return string.IsNullOrWhiteSpace(content) ? null : content;
     }
 
     private static string Trim(string s)

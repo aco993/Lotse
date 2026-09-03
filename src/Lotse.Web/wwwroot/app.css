@@ -46,3 +46,16 @@ html, body { height: 100%; }
 .preline { white-space: pre-line; }
 
 #blazor-error-ui { display: none; }
+
+/* Bottom navigation (phones) */
+.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1200; display: flex; justify-content: space-around;
+  background: var(--mud-palette-surface); border-top: 1px solid var(--mud-palette-lines-default);
+  padding: 4px 0 calc(4px + env(safe-area-inset-bottom)); }
+.bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; font-size: .7rem;
+  color: var(--mud-palette-text-secondary); text-decoration: none; }
+.bottom-nav-item.active { color: var(--mud-palette-primary); font-weight: 600; }
+@media (max-width: 959px) { .lotse-main { padding-bottom: 72px; } }
+@media (min-width: 960px) { .bottom-nav { display: none !important; } }
+
+/* Keyboard hints make no sense on touch screens */
+@media (hover: none) and (pointer: coarse) { .kbd-hint { display: none; } }

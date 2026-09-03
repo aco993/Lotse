@@ -34,6 +34,8 @@ public sealed class SpeechService(IJSRuntime js) : IAsyncDisposable
 
     public async ValueTask FocusAsync(string elementId) => await (await ModuleAsync()).InvokeVoidAsync("focusElement", elementId);
 
+    public async ValueTask<bool> PrefersDarkAsync() => await (await ModuleAsync()).InvokeAsync<bool>("prefersDark");
+
     public event Action<string>? GlobalKey;
 
     /// <summary>Document-level shortcuts (Enter, digits) outside of text fields.</summary>
