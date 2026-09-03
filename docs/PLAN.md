@@ -24,6 +24,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ✅ Interleave placement items across nodes (easy pass, then harder pass).
 - ✅ Session summary shows the error codes of that session; dashboard counts down to the exam date.
 - ✅ Service integration tests against a temporary SQLite database (74 tests total); CI workflow; MIT license.
+- ✅ Provider-agnostic tutor: Claude (Anthropic SDK) or any OpenAI-compatible endpoint (Ollama/LM Studio locally, OpenRouter, Groq, Mistral, DeepSeek, OpenAI); verified against local Ollama. 78 tests.
 - ⬜ Persist review state also for production exercises so the same prompt is not repeated too soon (currently handled by the recent-ids window only).
 - ⬜ EF Core migrations instead of `EnsureCreated` once the schema settles.
 

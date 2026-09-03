@@ -38,12 +38,13 @@ else
             <MudIcon Icon="@(Learning.Tutor.IsAvailable ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)" Color="@(Learning.Tutor.IsAvailable ? Color.Tertiary : Color.Default)" />
             <MudText Typo="Typo.body2">@Learning.Tutor.Description</MudText>
         </MudStack>
-        <MudText Typo="Typo.body2" Class="mb-2">Der Schlüssel wird bewusst nicht in der App gespeichert. Hinterlege ihn einmalig außerhalb des Repos – dann bewertet Claude deine Texte und Aufnahmen nach den Prüfungskriterien, markiert Fehler mit Code und spielt den Diskussionspartner.</MudText>
-        <MudText Typo="Typo.caption" Class="d-block">Variante A – Umgebungsvariable (dauerhaft, dann App neu starten):</MudText>
-        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">setx ANTHROPIC_API_KEY "sk-ant-…"</pre>
-        <MudText Typo="Typo.caption" Class="d-block">Variante B – .NET User Secrets im Projektordner src/Lotse.Web:</MudText>
-        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-…"</pre>
-        <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.7">Modell und Aufwand: appsettings.json → Lotse:Tutor (Standard claude-opus-5, Aufwand medium). Ohne Schlüssel funktioniert alles außer KI-Bewertung, Diskussionspartner und Übungsgenerierung.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Der Tutor bewertet Texte und Aufnahmen nach den Prüfungskriterien, markiert Fehler mit Code, spielt den Diskussionspartner und erzeugt neue Aufgaben. Zwei Wege, Schlüssel niemals in der App oder im Repo:</MudText>
+        <MudText Typo="Typo.subtitle2">A – Claude (beste Qualität, kostenpflichtig)</MudText>
+        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">setx ANTHROPIC_API_KEY "sk-ant-…"        (oder: dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-…")</pre>
+        <MudText Typo="Typo.subtitle2" Class="mt-2">B – beliebiges OpenAI-kompatibles Modell (Ollama lokal & kostenlos, LM Studio, OpenRouter, Groq, Mistral, DeepSeek, OpenAI)</MudText>
+        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">ollama pull qwen2.5:7b
+dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tutor:BaseUrl=http://localhost:11434/v1 --Lotse:Tutor:Model=qwen2.5:7b</pre>
+        <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.75">Dauerhaft: dieselben Werte in appsettings.Local.json (Lotse:Tutor). Für Cloud-Anbieter zusätzlich OPENAI_API_KEY setzen. Kleine lokale Modelle (3B) bewerten ungenau – ab 7B (qwen2.5, gemma3, mistral) wird es brauchbar, Claude bleibt der Maßstab. Ohne Tutor funktioniert alles außer KI-Bewertung, Diskussionspartner und Generierung.</MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 mb-3" Elevation="1">

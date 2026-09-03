@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 – 2026-09-03
+
+- Tutor is provider-agnostic: `TutorBase` holds prompts, schemas and mapping; `ClaudeTutor` (Anthropic SDK) and `OpenAiCompatibleTutor` (Ollama, LM Studio, OpenRouter, Groq, Mistral, DeepSeek, OpenAI) implement the transport. Configure with `Lotse:Tutor:Provider`, `BaseUrl`, `Model`.
+- Verified end to end against a local Ollama model.
+- Service uses the injected clock everywhere (a streak test caught one system-clock call).
+- 78 tests.
+
 ## 0.2.0 – 2026-09-02
 
 - Content bank grown to 749 exercises: thin grammar topics filled, exam-format reading (Teil 1–5) and listening (Teil 1–4) tasks, more writing and speaking tasks, exam vocabulary.

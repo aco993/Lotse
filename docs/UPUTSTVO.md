@@ -51,21 +51,38 @@ Kako se ocenjuje: velika/mala slova, ä→ae, ß→ss, jedna slovna greška u du
 - **Fehlerjournal**: svaka greška sa kodom, iz vežbi i iz ocena tutora. Ono što se gomila ide u sledeće sesije.
 - **Themen**: kad hoćeš baš određenu temu (pre sastanka, na primer) – **Fokus-Session**. Sa ključem: **Auffüllen** puni banku za 3 najslabije teme; kod tema čitanja/slušanja generiše nove tekstove u ispitnom formatu.
 
-## 6. KI-tutor (opciono)
+## 6. KI-tutor (opciono): Claude ili bilo koji drugi model
 
-Ključ se ne čuva u aplikaciji. Jednom:
+Tutor ocenjuje pisanje i govor, igra partnera u diskusiji i generiše zadatke. Ključevi se nikad ne čuvaju u aplikaciji ni u repou.
+
+**A) Claude (najbolji kvalitet, plaća se po potrošnji, oko 4 centa po oceni teksta sa Opus, petina sa Sonnet):**
 
 ```bash
 setx ANTHROPIC_API_KEY "sk-ant-..."
 ```
 
-ili u folderu `src/Lotse.Web`:
+ili `dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."` u folderu `src/Lotse.Web`. Model u `appsettings.json` → `Lotse:Tutor:Model` (`claude-opus-5` ili jeftiniji `claude-sonnet-5`).
+
+**B) Bilo koji OpenAI-kompatibilni model.** Provajder `OpenAi` radi sa svakim serverom koji govori `chat/completions`:
+
+| Gde | BaseUrl | Ključ | Napomena |
+|---|---|---|---|
+| Ollama (lokalno, besplatno) | `http://localhost:11434/v1` | ne treba | `ollama pull qwen2.5:7b`; na CPU sporo (minuti po oceni), sa GPU brzo |
+| LM Studio (lokalno) | `http://localhost:1234/v1` | ne treba | učitaj model u LM Studio, uključi server |
+| OpenRouter (cloud, ima besplatne modele) | `https://openrouter.ai/api/v1` | `OPENAI_API_KEY` | modeli sa `:free` sufiksom, npr. `meta-llama/llama-3.3-70b-instruct:free` |
+| Groq (cloud, besplatna kvota, vrlo brzo) | `https://api.groq.com/openai/v1` | `OPENAI_API_KEY` | npr. `llama-3.3-70b-versatile` |
+| Mistral / DeepSeek / OpenAI | njihov `/v1` URL | `OPENAI_API_KEY` | |
+
+Primer pokretanja sa Ollamom:
 
 ```bash
-dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."
+ollama pull qwen2.5:7b
+dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tutor:BaseUrl=http://localhost:11434/v1 --Lotse:Tutor:Model=qwen2.5:7b
 ```
 
-Restartuj aplikaciju. Model i „napor" se podešavaju u `appsettings.json` pod `Lotse:Tutor` (podrazumevano `claude-opus-5`, `medium`).
+Trajno: iste vrednosti u `src/Lotse.Web/appsettings.Local.json` (fajl je u `.gitignore`), primer je `appsettings.Ollama.json`. Ključ za cloud provajdere: `setx OPENAI_API_KEY "..."`.
+
+Iskreno o kvalitetu: modeli od 3B parametara greše u nemačkoj gramatici i ponekad izmišljaju kodove grešaka (nepoznati kodovi se odbacuju, ne kvare tvoj model). Od 7B (qwen2.5, gemma3, mistral) ocena je upotrebljiva; 70B preko Groq/OpenRouter je blizu Claude Sonnet-u. Za ispitnu pripremu Claude ostaje merilo.
 
 ## 7. Podešavanja i reset
 

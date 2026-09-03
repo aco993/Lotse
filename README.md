@@ -13,7 +13,7 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 - **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
 - **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
 - **Works without any API key.** 749 hand-authored exercises, self-check rubrics with model answers, browser speech (TTS/STT).
-- **Claude as tutor (optional).** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise generation for weak topics, a discussion partner for the oral exam. Structured JSON-schema output, official Anthropic .NET SDK.
+- **AI tutor (optional), provider-agnostic.** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise and reading/listening generation, a discussion partner for the oral exam. Claude via the official Anthropic SDK with JSON-schema output, or any OpenAI-compatible endpoint (Ollama and LM Studio locally for free, OpenRouter, Groq, Mistral, DeepSeek, OpenAI) with graceful fallback from `json_schema` to `json_object` to plain text.
 - **Exam realism.** Goethe B2 blueprint as data, writing/speaking tasks in exact exam formats, reading and audio-only listening tasks in exam part formats, readiness report against the 60 % rule.
 
 ## Screens
@@ -49,6 +49,17 @@ dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."
 ```
 
 Model and effort are configured in `appsettings.json` under `Lotse:Tutor` (default `claude-opus-5`, effort `medium`). Without a key every feature except AI evaluation, generation and the discussion partner is available.
+
+### Optional: use a free or local model instead
+
+Any OpenAI-compatible server works. Ollama, for example:
+
+```bash
+ollama pull qwen2.5:7b
+dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tutor:BaseUrl=http://localhost:11434/v1 --Lotse:Tutor:Model=qwen2.5:7b
+```
+
+For OpenRouter (free-tier models), Groq, Mistral, DeepSeek or OpenAI set `BaseUrl` to their `/v1` endpoint and `OPENAI_API_KEY`. See `appsettings.Ollama.json` and [docs/UPUTSTVO.md](docs/UPUTSTVO.md) §6 for a comparison table.
 
 ### Tests
 
