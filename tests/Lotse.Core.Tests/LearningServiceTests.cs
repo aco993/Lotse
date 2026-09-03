@@ -9,9 +9,13 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Lotse.Core.Tests;
 
-/// <summary>Integration tests of the application service against a real (temporary) SQLite file.</summary>
+/// <summary>Integration tests of the application service against a real (temporary) SQLite file, all as one fixed
+/// test learner (<see cref="UserId"/>) via <see cref="FakeCurrentUserAccessor"/>. Cross-account isolation itself
+/// is <see cref="MultiUserIsolationTests"/>'s job, not this file's.</summary>
 public sealed class LearningServiceTests : IAsyncLifetime
 {
+    private const string UserId = "test-user";
+
     private sealed class TestDbFactory(string path) : IDbContextFactory<LotseDbContext>
     {
         public LotseDbContext CreateDbContext()
@@ -67,10 +71,16 @@ public sealed class LearningServiceTests : IAsyncLifetime
     {
         _dbPath = Path.Combine(Path.GetTempPath(), $"lotse-test-{Guid.NewGuid():N}.db");
         _factory = new TestDbFactory(_dbPath);
-        await using (var db = _factory.CreateDbContext()) await db.Database.EnsureCreatedAsync();
+        await using (var db = _factory.CreateDbContext())
+        {
+            await db.Database.EnsureCreatedAsync();
+            // Every per-learner row has a real FK to AspNetUsers – seed the one identity FakeCurrentUserAccessor claims.
+            db.Users.Add(new ApplicationUser { Id = UserId, UserName = UserId });
+            await db.SaveChangesAsync();
+        }
         _provider = new ContentCatalogProvider(ContentLoader.ResolveContentDirectory(), _factory, NullLogger<ContentCatalogProvider>.Instance);
         await _provider.RefreshAsync();
-        _svc = new LearningService(_factory, _provider, _tutor, new SessionPlanner(), _clock, NullLogger<LearningService>.Instance);
+        _svc = new LearningService(_factory, _provider, _tutor, new SessionPlanner(), _clock, new FakeCurrentUserAccessor(UserId), NullLogger<LearningService>.Instance);
     }
 
     public async ValueTask DisposeAsync()
@@ -86,7 +96,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
     {
         var a = await _svc.GetProfileAsync();
         var b = await _svc.GetProfileAsync();
-        Assert.Equal(a.Id, b.Id);
+        Assert.Equal(a.UserId, b.UserId);
         Assert.Equal(10, a.DailyMinutes);
     }
 
@@ -118,7 +128,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
         Assert.True(states[ex.NodeId].Theta > -0.2);
 
         await using var db = _factory.CreateDbContext();
-        var review = await db.ReviewStates.FindAsync(ex.Id);
+        var review = await db.ReviewStates.FindAsync(UserId, ex.Id);
         Assert.NotNull(review);
         Assert.True(review!.DueUtc > _clock.Now.UtcDateTime.AddHours(12));
         var updated = await db.Sessions.FirstAsync(s => s.Id == session.Id);
@@ -233,7 +243,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
     [Fact]
     public async Task Self_check_scores_the_rubric_fraction_and_penalises_short_texts()
     {
-        var quiet = new LearningService(_factory, _provider, new NullTutor(), new SessionPlanner(), _clock, NullLogger<LearningService>.Instance);
+        var quiet = new LearningService(_factory, _provider, new NullTutor(), new SessionPlanner(), _clock, new FakeCurrentUserAccessor(UserId), NullLogger<LearningService>.Instance);
         var ex = First(e => e.Type == ExerciseType.FreeWrite && e.MinWords >= 100);
         var result = await quiet.SubmitProductionAsync(null, 0, ex.Id, "Nur zehn Wörter sind hier, das ist viel zu wenig Text.", speaking: false);
         Assert.Null(result.Evaluation);

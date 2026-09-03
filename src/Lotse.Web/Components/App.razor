@@ -19,11 +19,26 @@
     <meta name="apple-mobile-web-app-title" content="Lotse" />
     <link rel="apple-touch-icon" href="icon-192.svg" />
     <title>Lotse</title>
-    <HeadOutlet @rendermode="NoPrerender" />
+    <HeadOutlet @rendermode="@PageRenderMode" />
 </head>
 
 <body>
-    <Routes @rendermode="NoPrerender" />
+    <!-- @@rendermode has to be applied HERE, on <Routes> itself, computed per-request from HttpContext - not lower
+         down (not on AuthorizeRouteView, not on MainLayout, not on individual pages). Both of those were tried and
+         both fail the same way: a render-mode boundary can only wrap components that receive nothing but
+         serializable parameters from their OWN parent, and every level below <Routes> receives a RenderFragment
+         from its parent (AuthorizeRouteView gets NotAuthorized from Routes.razor; MainLayout gets Body from
+         AuthorizeRouteView) - RenderFragment is arbitrary code, so ASP.NET Core throws
+         "...cannot be serialized" the moment @@rendermode is declared on the receiving component. <Routes/> is the
+         one point with no such parameter (App.razor passes it nothing), so the whole Layout+Page tree that
+         AuthorizeRouteView builds underneath it becomes ONE interactive island together - which is also why a
+         layout does not need (and must not have) its own @@rendermode: it inherits this one.
+         Account/* pages are the one exception (see their own doc comments: setting the auth cookie needs a real
+         HTTP response, which a live circuit no longer has) - PageRenderMode below picks per-request, the same
+         pattern the official template uses via HttpContext.AcceptsInteractiveRouting(), keyed on Lotse's actual
+         Account-vs-regular route split instead. HeadOutlet gets the same value so its interactivity never outlives
+         (or falls short of) whatever <Routes/> resolved to for this request. -->
+    <Routes @rendermode="@PageRenderMode" />
     <ReconnectModal />
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="@Assets["_framework/blazor.web.js"]"></script>
@@ -32,6 +47,10 @@
 </html>
 
 @code {
-    // Local single-user tool: skip prerendering so every page initialises exactly once (no double DB hits, no flicker).
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
     private static readonly InteractiveServerRenderMode NoPrerender = new(prerender: false);
+
+    private IComponentRenderMode? PageRenderMode =>
+        HttpContext.Request.Path.StartsWithSegments("/Account") ? null : NoPrerender;
 }

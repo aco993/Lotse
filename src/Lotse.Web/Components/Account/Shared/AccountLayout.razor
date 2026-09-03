@@ -1,0 +1,15 @@
+@inherits LayoutComponentBase
+
+@* Deliberately minimal and MudBlazor-free: Login/Register/reset pages render as static SSR (see each page's
+   doc comment) so the auth cookie can be set from a real HTTP response - the full app shell in MainLayout is
+   InteractiveServer and would either fail to render correctly here or drag the whole page into static mode with
+   it. Styling lives in wwwroot/app.css under ".account-*". *@
+<div class="account-shell">
+    <div class="account-card">
+        <div class="account-brand">
+            <img src="favicon.svg" alt="" width="26" height="26" />
+            <span>Lotse</span>
+        </div>
+        @Body
+    </div>
+</div>

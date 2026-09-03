@@ -1,0 +1,13 @@
+@inject NavigationManager Nav
+
+@* Rendered inside AuthorizeRouteView's NotAuthorized template on the app's normal interactive circuit - a plain
+   client-triggered full navigation to the static-SSR Login page (not IdentityRedirectManager, which is only for
+   use during static rendering itself; see Account/Pages/Login.razor's doc comment). *@
+
+@code {
+    protected override void OnInitialized()
+    {
+        var returnUrl = Nav.ToBaseRelativePath(Nav.Uri);
+        Nav.NavigateTo($"Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}", forceLoad: true);
+    }
+}

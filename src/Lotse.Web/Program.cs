@@ -2,10 +2,16 @@ using Lotse.Core.Engine;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Ai;
 using Lotse.Infrastructure.Content;
+using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
 using Lotse.Infrastructure.Services;
 using Lotse.Web.Components;
+using Lotse.Web.Components.Account.Shared;
+using Lotse.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
@@ -21,17 +27,52 @@ builder.Services.AddDbContextFactory<LotseDbContext>(o => o.UseSqlite($"Data Sou
 var contentDir = ContentLoader.ResolveContentDirectory(builder.Configuration["Lotse:ContentDirectory"]);
 builder.Services.AddSingleton(sp => new ContentCatalogProvider(contentDir, sp.GetRequiredService<IDbContextFactory<LotseDbContext>>(), sp.GetRequiredService<ILogger<ContentCatalogProvider>>()));
 
-// ---- Tutor: configurable at runtime from the settings page; API key encrypted at rest --------------------------------
+// ---- Accounts: ASP.NET Core Identity, cookie auth -----------------------------------------------------------------
+// Identity Core/Cookies/Authorization ship in the ASP.NET Core shared framework (Microsoft.NET.Sdk.Web already
+// references it) - only the EF Core store is a separate package. Registration follows the shape of the official
+// `dotnet new blazor -au Individual` template, trimmed to what Lotse actually uses (no external logins, no 2FA).
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddScoped<ICurrentUserAccessor, WebCurrentUserAccessor>();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+}).AddIdentityCookies();
+
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+{
+    // No email sender is configured on this machine (see IdentityNoOpEmailSender) - requiring confirmation would
+    // lock every new registration out immediately, so registration signs the learner in right away instead.
+    options.SignIn.RequireConfirmedAccount = false;
+})
+    .AddEntityFrameworkStores<LotseDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+// Secure by default: every page requires a signed-in learner unless explicitly marked [AllowAnonymous]
+// (the /Account/* pages, /Error, /not-found).
+builder.Services.AddAuthorization(o => o.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+// ---- Tutor: configurable at runtime from the settings page; API key encrypted at rest, one row per learner -----------
 builder.Services.AddDataProtection()
     .SetApplicationName("Lotse")
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataDir, "keys")));
 var tutorDefaults = builder.Configuration.GetSection("Lotse:Tutor").Get<TutorDefaultsConfig>() ?? new TutorDefaultsConfig();
-builder.Services.AddSingleton(sp => new TutorRegistry(
+// Scoped, not Singleton: one instance per circuit/learner, otherwise one account's saved settings (incl. API key)
+// would overwrite the in-memory tutor for every other signed-in learner. See TutorRegistry's own doc comment.
+builder.Services.AddScoped<TutorRegistry>(sp => new TutorRegistry(
     sp.GetRequiredService<IDbContextFactory<LotseDbContext>>(),
     sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
     sp.GetRequiredService<ILoggerFactory>(),
+    sp.GetRequiredService<ICurrentUserAccessor>(),
     tutorDefaults.ToSettings()));
-builder.Services.AddSingleton<ITutor>(sp => sp.GetRequiredService<TutorRegistry>());
+builder.Services.AddScoped<ITutor>(sp => sp.GetRequiredService<TutorRegistry>());
 
 // ---- Engine + application service ------------------------------------------------------------------------------------
 builder.Services.AddSingleton(TimeProvider.System);
@@ -52,14 +93,15 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 var app = builder.Build();
 
 // ---- Schema + generated content on startup -----------------------------------------------------------------------------
+// No learner is signed in yet at boot, so nothing tutor-specific is initialised here anymore (that now happens
+// per circuit, once per signed-in learner - see MainLayout.razor's OnAfterRenderAsync).
 using (var scope = app.Services.CreateScope())
 {
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<LotseDbContext>>();
     await using var db = await factory.CreateDbContextAsync();
     foreach (var line in await DatabaseInitializer.InitializeAsync(db, app.Logger)) app.Logger.LogInformation("{Line}", line);
     await scope.ServiceProvider.GetRequiredService<ContentCatalogProvider>().RefreshAsync();
-    await scope.ServiceProvider.GetRequiredService<TutorRegistry>().InitializeAsync();
-    app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Tutor: {Tutor}", dbPath, scope.ServiceProvider.GetRequiredService<ITutor>().Description);
+    app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Konten: ASP.NET Core Identity (Registrierung offen).", dbPath);
 }
 
 if (!app.Environment.IsDevelopment())
@@ -69,10 +111,13 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 app.MapStaticAssets();
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health").AllowAnonymous(); // infra probe, not a learner-facing page
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.MapAdditionalIdentityEndpoints();
 
 app.Run();
 

@@ -1,6 +1,8 @@
 @inherits LayoutComponentBase
 @inject SpeechService Speech
 @inject NavigationManager Nav
+@inject Lotse.Infrastructure.Ai.TutorRegistry Tutors
+@inject Lotse.Infrastructure.CurrentUser.ICurrentUserAccessor CurrentUser
 
 <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
 <MudPopoverProvider />
@@ -57,14 +59,35 @@
         Nav.LocationChanged += (_, _) => { _errors?.Recover(); };
     }
 
+    private string? _tutorsInitializedForUserId;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
-        var bp = await Viewport.GetCurrentBreakpointAsync();
-        _drawerOpen = bp >= Breakpoint.Md;
-        // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
-        try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
-        StateHasChanged();
+        if (firstRender)
+        {
+            var bp = await Viewport.GetCurrentBreakpointAsync();
+            _drawerOpen = bp >= Breakpoint.Md;
+            // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
+            try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
+        }
+        // Loads THIS learner's tutor settings (incl. API key). TutorRegistry is Scoped so this never touches
+        // another account's configuration in principle - but a Scoped instance is per *circuit*, and a circuit can
+        // outlive a logout/login round-trip (observed with Blazor's enhanced navigation reusing one instead of
+        // establishing a fresh one). Re-checking on every render (not just firstRender) instead of trusting a single
+        // first-load call means this banner/settings display never shows a previous learner's stale Tutor state on
+        // a reused circuit; TutorRegistry's own EnsureCurrentAsync is the matching guard on the functional side
+        // (every provider call), so a real request never runs under the wrong account's key even if this were skipped.
+        var userId = await CurrentUser.GetUserIdAsync();
+        if (_tutorsInitializedForUserId != userId)
+        {
+            await Tutors.InitializeAsync();
+            _tutorsInitializedForUserId = userId;
+            StateHasChanged();
+        }
+        else if (firstRender)
+        {
+            StateHasChanged();
+        }
     }
 
     private void Recover()

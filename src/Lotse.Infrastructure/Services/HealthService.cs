@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Content;
+using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -29,10 +30,12 @@ public sealed class HealthService(
     IDbContextFactory<LotseDbContext> dbFactory,
     ContentCatalogProvider catalog,
     ITutor tutor,
+    ICurrentUserAccessor currentUser,
     ILogger<HealthService> logger)
 {
     public async Task<HealthReport> CheckAsync(CancellationToken ct = default)
     {
+        var userId = await currentUser.GetUserIdAsync();
         var items = new List<HealthItem>();
 
         // Content
@@ -56,8 +59,8 @@ public sealed class HealthService(
             {
                 var integrity = await db.Database.SqlQueryRaw<string>("PRAGMA integrity_check").ToListAsync(ct);
                 var ok = integrity.Count == 1 && integrity[0] == "ok";
-                var attempts = await db.Attempts.CountAsync(ct);
-                var sessions = await db.Sessions.CountAsync(ct);
+                var attempts = await db.Attempts.CountAsync(a => a.UserId == userId, ct);
+                var sessions = await db.Sessions.CountAsync(s => s.UserId == userId, ct);
                 items.Add(ok
                     ? new HealthItem("Datenbank", HealthState.Ok, $"{sessions} Sessions, {attempts} Antworten, Prüfung {sw.ElapsedMilliseconds} ms")
                     : new HealthItem("Datenbank", HealthState.Error, "Integritätsprüfung fehlgeschlagen", "Reparieren versucht VACUUM; Backup der Datei empfohlen."));
@@ -76,6 +79,7 @@ public sealed class HealthService(
     /// <summary>Applies every safe automatic fix and returns what was done.</summary>
     public async Task<IReadOnlyList<string>> RepairAsync(CancellationToken ct = default)
     {
+        var userId = await currentUser.GetUserIdAsync();
         var done = new List<string>();
         try
         {
@@ -88,9 +92,10 @@ public sealed class HealthService(
                 await db.Database.ExecuteSqlRawAsync("VACUUM", ct);
                 done.Add("VACUUM ausgeführt.");
             }
-            // Orphans: sessions that were never finished and are older than a day are closed so the dashboard stays clean.
+            // Orphans: this learner's sessions that were never finished and are older than a day are closed so
+            // their dashboard stays clean. Scoped to the current account – repair must never touch anyone else's data.
             var stale = DateTime.UtcNow.AddDays(-1);
-            var orphans = await db.Sessions.Where(s => s.EndedUtc == null && s.StartedUtc < stale).ToListAsync(ct);
+            var orphans = await db.Sessions.Where(s => s.UserId == userId && s.EndedUtc == null && s.StartedUtc < stale).ToListAsync(ct);
             foreach (var s in orphans)
             {
                 if (s.StepsDone == 0) db.Sessions.Remove(s); else s.EndedUtc = s.StartedUtc.AddMinutes(s.PlannedMinutes);
@@ -98,6 +103,7 @@ public sealed class HealthService(
             if (orphans.Count > 0) { await db.SaveChangesAsync(ct); done.Add($"{orphans.Count} verwaiste Session(s) aufgeräumt."); }
 
             // Generated exercises that no longer validate are removed (content contract may have tightened).
+            // Unscoped by design – GeneratedExerciseEntity is the one shared/global table (see its own doc comment).
             var rows = await db.GeneratedExercises.ToListAsync(ct);
             var nodeIds = catalog.Catalog.Nodes.Select(n => n.Id).ToHashSet();
             var removed = 0;

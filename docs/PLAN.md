@@ -29,6 +29,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ⬜ Persist review state also for production exercises so the same prompt is not repeated too soon (currently handled by the recent-ids window only).
 - ✅ EF Core migrations (`InitialCreate` baseline + `AddLessons`), automatic baselining of pre-migration databases.
 - ✅ Course: 24 story lessons in two parts (Teil 1: first year, Teil 2: second year), interactive dialogue / spot-the-error / matching exercise types, course page with illustrated cards grouped by part, lesson page, progress tracking. 111 tests.
+- ✅ Login, registration, separate accounts: ASP.NET Core Identity, every learning table (incl. the Tutor's encrypted API key) scoped per account, `MultiUserIsolationTests` proving the isolation directly. See CHANGELOG 0.7.0 and `docs/ARCHITEKTUR.md` for the render-mode subtlety this required. 120 tests.
 
 ## Phase 2 – Speaking and listening depth ⬜
 

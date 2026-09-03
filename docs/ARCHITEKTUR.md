@@ -5,17 +5,27 @@
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ Lotse.Web  (Blazor Server, MudBlazor)                            │
+│   Account/*: Login · Register · ForgotPassword · ResetPassword · │
+│              Manage (ASP.NET Core Identity, static SSR)          │
 │   Pages: Heute · Session · Schreiben · Sprechen · Prüfung ·      │
 │          Fortschritt · Fehler · Themen · Einstellungen           │
+│          (all behind the login, InteractiveServer)               │
 │   Components: ExerciseRunner → Closed / Reading / Production     │
 │   SpeechService (JS interop: Web Speech API TTS + STT)           │
+│   WebCurrentUserAccessor : ICurrentUserAccessor                  │
 ├──────────────────────────────────────────────────────────────────┤
 │ Lotse.Infrastructure                                             │
 │   LearningService  (application service, the only DB+engine     │
-│                     coordinator; short-lived DbContexts)         │
-│   ContentLoader / ContentCatalogProvider (seed + generated)      │
-│   LotseDbContext (EF Core, SQLite)                               │
-│   ClaudeTutor : ITutor  (official Anthropic .NET SDK)            │
+│                     coordinator; short-lived DbContexts;         │
+│                     every query/insert scoped by ICurrentUser-   │
+│                     Accessor's UserId)                           │
+│   ContentLoader / ContentCatalogProvider (seed + generated,      │
+│                     generated exercises are shared across all    │
+│                     accounts - see "Multi-user accounts" below)  │
+│   LotseDbContext : IdentityDbContext<ApplicationUser> (EF Core,  │
+│                     SQLite)                                      │
+│   TutorRegistry : ITutor  (per-account settings + API key)       │
+│   ClaudeTutor / OpenAiCompatibleTutor (transport)                │
 ├──────────────────────────────────────────────────────────────────┤
 │ Lotse.Core  (no dependencies)                                    │
 │   Model:  SkillNode, ErrorType, Exercise, SkillState,            │
@@ -27,7 +37,7 @@
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-Dependencies point downwards only. The engine has no reference to EF Core, Blazor or the Anthropic SDK, which is what makes it unit-testable in milliseconds and reusable behind another host.
+Dependencies point downwards only. The engine has no reference to EF Core, Blazor or the Anthropic SDK, which is what makes it unit-testable in milliseconds and reusable behind another host. `ICurrentUserAccessor` is the one seam through which "which account is this?" enters Infrastructure: a plain interface there, implemented in Web against `AuthenticationStateProvider`, so Infrastructure still has no ASP.NET Core Identity dependency of its own beyond the `IdentityDbContext` base class.
 
 ## The daily loop
 
@@ -62,8 +72,10 @@ Session page ◀─────┘  renders step i via ExerciseRunner
 | Planner with fixed slot order and reasons | Pure priority queue | Predictable sessions, explicit pedagogy (re-check → review → production → focus → input), transparent to the learner. |
 | Deterministic core + optional AI | AI-only chat tutor | Works offline and for free every day; AI adds what only AI can (judging free text). Structured output keeps AI results machine-readable. |
 | Flat `Exercise` record with per-type validation | Class hierarchy per type | JSON content files and DB storage stay trivial; `ExerciseValidator` enforces the per-type contract. |
-| Blazor Server, no prerender | Blazor WASM, MVC | Single process, single language, no API layer for a personal tool; no prerender because a local app gains nothing from it and would double-initialise pages. |
-| SQLite via `EnsureCreated` (for now) | Migrations from day one | Schema is still moving in Phase 1; migrations are planned once it settles (see PLAN.md). |
+| Blazor Server, no prerender | Blazor WASM, MVC | Single process, single language, no API layer for a personal tool; no prerender because a local app gains nothing from it and would double-initialise pages. Account/* pages are the one exception: they need genuine static SSR to set the auth cookie from a real HTTP response, so `@rendermode` is applied once, at `<Routes>` in `App.razor`, computed per-request from the path — not lower down, since a render-mode boundary can only wrap a component whose *own* parent gives it nothing but serializable parameters (a layout's `Body`, or `AuthorizeRouteView`'s `NotAuthorized`, are `RenderFragment`s and fail that check with an explicit framework error if you try). See `App.razor`'s own comment for the full reasoning - this was the hardest part of the accounts feature to get right. |
+| Scoped `ICurrentUserAccessor`, not a `UserId` parameter threaded through `ILearningService` | Add `UserId` to every one of ~30 method signatures | Blazor Server DI scope = one SignalR circuit = one signed-in learner, which makes a Scoped accessor the idiomatic seam; `ILearningService`'s public surface (and every UI call site) stays untouched. `TutorRegistry` is the one place this needs care beyond "resolve fresh per call": it caches a built `ITutor` instance, so it re-checks the signed-in learner before every provider call (`EnsureCurrentAsync`) rather than trusting a single load at circuit start - a circuit can, in practice, outlive a logout/login round-trip. |
+| SQLite via EF Core migrations, `IdentityDbContext<ApplicationUser>` | Custom membership table, external auth provider | ASP.NET Core Identity ships in the shared framework already (only the EF Core store is a separate package); `SkillState`/`ReviewState` keep their Core-only shape via EF Core *shadow* `UserId` properties instead of gaining a Web/Identity dependency of their own. `GeneratedExercisesEntity` is the one table that stays global/shared across accounts - `ContentCatalogProvider` is a process-wide singleton merging one catalog for everyone, and making that per-user would be a materially bigger change than "add accounts"; documented here as a conscious trade-off, not an oversight. |
+| No email sender configured | Wire up SMTP/SendGrid for a personal project | `IdentityNoOpEmailSender` logs the confirmation/reset link instead of emailing it (same fallback the official template uses without SMTP configured). `RequireConfirmedAccount = false`, so registration signs the learner in immediately rather than blocking on a mail that won't arrive. The reset-password flow is still fully wired and tested end to end (link read from the server log) - swapping in a real sender later is a one-line registration change, not a redesign. |
 
 ## Content model
 
@@ -85,9 +97,13 @@ The test suite loads the real content and rejects any item that violates this co
 
 ## Persistence
 
-SQLite file `data/lotse.db`. Tables: Profiles (1 row), SkillStates (per node), ReviewStates (per exercise), Attempts, ErrorEvents, Sessions (plan as JSON), Productions (text + evaluation JSON), GeneratedExercises (JSON), Settings.
+SQLite file `data/lotse.db`. `LotseDbContext : IdentityDbContext<ApplicationUser>` - the Identity tables (`AspNetUsers` and friends) alongside Lotse's own: LearnerProfiles (one per account), SkillStates (per account+node), ReviewStates (per account+exercise), Attempts, ErrorEvents, Sessions (plan as JSON), Productions (text + evaluation JSON), Settings (per account+key - this is where the Tutor's encrypted API key lives, never readable from another account), and the one shared table, GeneratedExercises (JSON, no `UserId` - see the trade-off table above).
 
-`SkillState` and `ReviewState` are Core types mapped directly by EF Core – no duplicate entity classes; computed members are ignored in the model.
+`SkillState` and `ReviewState` are Core types mapped directly by EF Core – no duplicate entity classes; computed members are ignored in the model. Their `UserId` is an EF Core *shadow* property (set via `Entry(x).Property("UserId")`, never a real field on the Core type) for the same reason: `Lotse.Core` stays free of any notion of "account".
+
+## Multi-user accounts
+
+Every account is fully isolated: separate skill state, sessions, error journal, productions, and Tutor settings (provider, model, encrypted API key). `MultiUserIsolationTests` (`tests/Lotse.Core.Tests`) asserts this directly rather than by inspection - it registers two learners, has each save different Tutor settings and answer different exercises, and checks neither can see the other's rows, including through `TutorRegistry`'s in-memory cache. "Alle Lerndaten löschen" on the settings page deletes only the signed-in account's rows (scoped `ExecuteDeleteAsync` per table) - never the whole database, which is what an earlier, single-user version of this reset did.
 
 ## AI integration
 
