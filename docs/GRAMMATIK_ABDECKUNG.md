@@ -172,7 +172,38 @@ folgenden Stellen stehen genau auf dieser Schwelle und sind die ersten Kandidate
 | V03 | Futur I: Zukunft und Vermutung (wohl) | Soll | 10 | 4 |
 | V06 | Konjunktiv II Vergangenheit (hätte/wäre + Partizip II) | Muss | 10 | 5 |
 
-## 6. Qualitative Einschätzung
+## 6. Produktionsdruck: Was die Rubriken wirklich verlangen
+
+Eine Struktur zu drillen und sie unter Produktionsdruck zu verlangen sind zwei
+verschiedene Dinge – und im Schreiben und Sprechen sieht der Prüfer nur das zweite
+(Kriterien „Korrektheit“ und „Repertoire“). Gezählt wird hier allein der Rubriktext der
+60 Schreib- und Sprechaufgaben, keine Drills.
+
+| Struktur | Aufgaben, die sie verlangen |
+| --- | ---: |
+| Konjunktiv II (Höflichkeit, Vorschlag, Irreales) | 19 |
+| Vorgangspassiv | 10 |
+| Relativsätze | 8 |
+| Zweiteilige Konnektoren | 8 |
+| Genitiv | 7 |
+| Plusquamperfekt / Vorzeitigkeit | 7 |
+| Konjunktiv II der Vergangenheit / irreale Bedingung | 6 |
+| Nominalstil / Nomen-Verb-Verbindungen | 6 |
+| Passiversatz (lässt sich, -bar, sein + zu) | 6 |
+| Indirekte Rede / Redewiedergabe | 4 |
+| Infinitivsätze (um/ohne/statt … zu) | 4 |
+| Komparativ / Superlativ | 4 |
+| Modalverben subjektiv (Vermutung) | 4 |
+| Negation: nicht … sondern | 4 |
+| Präpositionaladverbien (da-/wo-) | 4 |
+| Indirekte Fragesätze | 3 |
+| Partizipialattribut | 3 |
+| Temporale Nebensätze | 3 |
+
+Untergrenze: 3 Aufgaben je Struktur, abgesichert durch
+`GrammarCoverageTests`.
+
+## 7. Qualitative Einschätzung
 
 Dieser Abschnitt wird von Hand gepflegt (`tools/grammar-coverage-notes.md`) und vom Skript ans
 Ende des Berichts gehängt. Stand: 03.09.2026.
@@ -197,13 +228,15 @@ es eine feste Präposition ist; und in L17 bleibt der lohnende Kontrast „mich 
 gegen „smeta mi“ (Dativ) ungenutzt. Nur die zweite Stelle ist eine Vereinfachung, die später
 Rückfragen provoziert.
 
-**Produktion.** Hier liegt die deutlichste Schwäche. Von 60 Schreib- und Sprechaufgaben verlangt
-die Rubrik in 12 den Konjunktiv II, in 10 Konnektoren und in 7 das Passiv – Relativsätze, Genitiv,
-indirekte Rede und Passiversatz fordert keine einzige ein. Die Strukturen werden also geübt, aber
-selten unter Produktionsdruck abverlangt, und genau dorthin schaut der Prüfer (Kriterien
-„Korrektheit“ und „Repertoire“). Die Drills tragen bis zur sicheren Wiedererkennung; der Sprung
-zur freien Verwendung bleibt weitgehend dem KI-Tutor überlassen, der auf dieser Maschine mangels
-API-Schlüssel nicht läuft.
+**Produktion.** Hier lag die deutlichste Schwäche, und sie ist geschlossen. Vorher verlangte die
+Rubrik in 12 von 60 Schreib- und Sprechaufgaben den Konjunktiv II, in 10 Konnektoren und in 7 das
+Passiv – Relativsätze, Genitiv, indirekte Rede und Passiversatz forderte keine einzige ein. Jetzt
+trägt jede der 60 Aufgaben mindestens eine benannte Strukturforderung, und alle 18 geprüften
+Strukturen werden von mindestens drei Aufgaben verlangt (Abschnitt 6). Die Forderung ist jeweils
+an die Situation gebunden – Genitiv in der Kündigung, indirekte Rede beim Wiedergeben von Studien,
+Passiversatz im Statusbericht an den Kunden – und nicht mechanisch verteilt. Damit landet die
+Struktur dort, wo der Prüfer sie sieht; was bleibt, ist die Bewertung: ohne API-Schlüssel prüft nur
+der Selbstcheck ab, ob die verlangte Struktur wirklich vorkam.
 
 **Zu den 100 %.** Dass alle drei Kennzahlen nach der Nacharbeit auf 100 % stehen, heißt nicht
 „fertig“: Note 3 ist eine Anwesenheitsschwelle (Abschnitt 5), und ein Dutzend Stellen erreicht sie
