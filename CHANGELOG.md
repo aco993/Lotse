@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.1 – 2026-09-03
+
+- **Grammar coverage is now measured, not assumed.** `tools/b2-grammar-reference.json` holds a 51-item reference inventory of B2 grammar (compiled from Profile Deutsch, the common ground of Aspekte neu B2 / Sicher! B2 / Erkundungen B2, and the Goethe rating criteria for Korrektheit and Repertoire), each item marked Muss/Soll/Kann. `tools/grammar-coverage.py` scores every item against taxonomy, exercise bank and lessons and writes [docs/GRAMMATIK_ABDECKUNG.md](docs/GRAMMATIK_ABDECKUNG.md) plus a machine-readable JSON.
+- **Gaps found and closed.** Before: 84.3 % of the inventory at grade ≥ 2, 69.2 % of the Muss items at grade 3, weighted score 82.5 %. Missing entirely were irrealer Vergleich/Wunsch (als ob), the correlate „es“, and ß/ss–umlaut spelling; barely present were the Perfekt of modal verbs (double infinitive), Zustandspassiv, Mittelfeld/TeKaMoLo, Futur II, Passiversatz and compounds. 89 new exercises in `content/exercises/grammatik-d.json`, ten lessons gained the missing explanation in their grammar block. After: 100 % / 100 % / 100 %.
+- New skill node `GR.N_DEKLINATION` with error code and seven drills — the classic „mit dem Kollege“ trap, which no node covered before (49 nodes, 55 error codes, 838 bank exercises).
+- Tests: 113. `GrammarCoverageTests` reads the same reference inventory and fails if any Muss item drops below four exercises.
+
 ## 0.6.0 – 2026-09-03
 
 - **Course part 2**: lessons 13–24 continue the story into the second year (mentoring Tarek, Kita parents' evening, company outing, customer presentation, team conflict, VHS course, utility-bill dispute, merger rumours, internal application, news listening, exam days Lesen and Schreiben). Every remaining core grammar node now has its own lesson explanation with Serbian contrast (Artikel/Genus, Nebensätze, Verben mit Präposition, Adjektivdeklination, Reflexive Verben, Genitiv, Modalverben subjektiv, Partizipialattribut, Indirekte Rede, Infinitiv mit zu) plus falsche Freunde/Wortbildung and reading/listening strategy lessons. 36 new lesson exercises.

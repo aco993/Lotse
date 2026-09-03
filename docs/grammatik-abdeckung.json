@@ -1,0 +1,2974 @@
+{
+  "percentages": {
+    "a_score_ge_2": 100.0,
+    "b_muss_score_3": 100.0,
+    "c_weighted": 100.0
+  },
+  "stats": {
+    "exercises": 911,
+    "lessons": 24,
+    "nodes": 49,
+    "muss": 26,
+    "soll": 21,
+    "kann": 4
+  },
+  "items": [
+    {
+      "id": "V01",
+      "group": "Verb / Tempus / Modus",
+      "title": "Präsens, Perfekt, Präteritum: Formen und Gebrauch (haben/sein)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.VERBFORMEN"
+      ],
+      "usedNodes": [
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.VERBFORMEN"
+      ],
+      "total": 41,
+      "bands": {
+        "B1_1": 2,
+        "B1_2": 12,
+        "B2_1": 22,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 31,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L01"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.vf.001",
+        "gr.vf.002",
+        "gr.vf.003",
+        "gr.vf.004",
+        "gr.vf.005",
+        "gr.vf.006",
+        "gr.vf.007",
+        "gr.vf.008",
+        "gr.pf.001",
+        "gr.pf.002",
+        "gr.pf.003",
+        "gr.pf.004",
+        "gr.pf.005",
+        "gr.pf.006",
+        "gr.pf.007",
+        "gr.pf.008",
+        "gr.pf.009",
+        "gr.pf.010",
+        "gr.pf.011",
+        "gr.pf.101",
+        "gr.pf.102",
+        "gr.pf.103",
+        "gr.pf.104",
+        "gr.pf.105",
+        "gr.pf.106",
+        "gr.vf.101",
+        "gr.vf.102",
+        "gr.vf.103",
+        "gr.vf.104",
+        "gr.vf.105",
+        "gr.vf.106",
+        "gd.pf.001",
+        "gd.pf.002",
+        "gd.pf.003",
+        "gd.pf.004",
+        "gd.pf.005",
+        "gd.pf.006",
+        "sw.micro.006",
+        "l01.match.001",
+        "l01.spot.001",
+        "l01.dlg.002"
+      ]
+    },
+    {
+      "id": "V02",
+      "group": "Verb / Tempus / Modus",
+      "title": "Plusquamperfekt und Vorzeitigkeit (nachdem)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "usedNodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "total": 8,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 6,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 1,
+        "produktiv": 7,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L08"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pq.001",
+        "gr.pq.002",
+        "gr.pq.004",
+        "gr.pq.005",
+        "gr.pq.101",
+        "gr.pq.102",
+        "gr.pq.106",
+        "l08.spot.001"
+      ]
+    },
+    {
+      "id": "V03",
+      "group": "Verb / Tempus / Modus",
+      "title": "Futur I: Zukunft und Vermutung (wohl)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "usedNodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "total": 10,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 6,
+        "B2_2": 4,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 7,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L08"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pq.003",
+        "gr.pq.103",
+        "gr.pq.104",
+        "gr.pq.105",
+        "gd.pq.001",
+        "gd.pq.002",
+        "gd.pq.003",
+        "gd.pq.004",
+        "gd.pq.005",
+        "gd.pq.006"
+      ]
+    },
+    {
+      "id": "V04",
+      "group": "Verb / Tempus / Modus",
+      "title": "Futur II: Vermutung über Vergangenes",
+      "priority": "Kann",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "total": 6,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 2,
+        "B2_2": 4,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 3,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L08"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pq.105",
+        "gd.pq.001",
+        "gd.pq.002",
+        "gd.pq.003",
+        "gd.pq.005",
+        "gd.pq.006"
+      ]
+    },
+    {
+      "id": "V05",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv II Gegenwart: Höflichkeit, Irreales, würde vs. Originalform",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "usedNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "total": 32,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 20,
+        "B2_2": 10,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 8,
+        "produktiv": 23,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L02",
+        "L07"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.k2.000",
+        "gr.k2.001",
+        "gr.k2.002",
+        "gr.k2.003",
+        "gr.k2.004",
+        "gr.k2.005",
+        "gr.k2.006",
+        "gr.k2.007",
+        "gr.k2.008",
+        "gr.k2.009",
+        "gr.k2.010",
+        "gr.k2.011",
+        "gr.k2.012",
+        "gr.k2.101",
+        "gr.k2.102",
+        "gr.k2.103",
+        "gr.k2.104",
+        "gr.k2.105",
+        "gr.k2.106",
+        "gr.k2.107",
+        "gd.k2.001",
+        "gd.k2.002",
+        "gd.k2.003",
+        "gd.k2.004",
+        "gd.k2.005",
+        "gd.k2.006",
+        "gd.k2.007",
+        "gd.k2.008",
+        "sw.micro.007",
+        "l02.dlg.001",
+        "l07.match.001",
+        "l07.spot.001"
+      ]
+    },
+    {
+      "id": "V06",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv II Vergangenheit (hätte/wäre + Partizip II)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "usedNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 5,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 8,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L07"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.k2.000",
+        "gr.k2.003",
+        "gr.k2.005",
+        "gr.k2.008",
+        "gr.k2.104",
+        "gr.k2.106",
+        "gd.k2.003",
+        "gd.k2.006",
+        "gd.k2.008",
+        "sw.micro.007",
+        "l07.spot.001"
+      ]
+    },
+    {
+      "id": "V07",
+      "group": "Verb / Tempus / Modus",
+      "title": "Irreale Bedingungssätze (wenn + Konjunktiv II, auch ohne wenn)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "usedNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "total": 19,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 12,
+        "B2_2": 7,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 15,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L07"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.k2.004",
+        "gr.k2.005",
+        "gr.k2.006",
+        "gr.k2.008",
+        "gr.k2.011",
+        "gr.k2.102",
+        "gr.k2.104",
+        "gr.k2.105",
+        "gr.k2.106",
+        "gr.k2.107",
+        "gd.k2.001",
+        "gd.k2.002",
+        "gd.k2.003",
+        "gd.k2.004",
+        "gd.k2.005",
+        "gd.k2.006",
+        "gd.k2.008",
+        "sw.micro.007",
+        "l07.spot.001"
+      ]
+    },
+    {
+      "id": "V08",
+      "group": "Verb / Tempus / Modus",
+      "title": "Irrealer Vergleich (als ob) und irrealer Wunsch (wenn … nur/doch)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "total": 8,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 3,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 6,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L07"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gd.k2.001",
+        "gd.k2.002",
+        "gd.k2.003",
+        "gd.k2.004",
+        "gd.k2.005",
+        "gd.k2.006",
+        "gd.k2.007",
+        "gd.k2.008"
+      ]
+    },
+    {
+      "id": "V09",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv I und indirekte Rede (Redewiedergabe, Ersatzformen)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.INDIREKTE_REDE"
+      ],
+      "usedNodes": [
+        "GR.INDIREKTE_REDE"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 0,
+        "B2_2": 11,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 6,
+        "produktiv": 5,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L22"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ir.001",
+        "gr.ir.002",
+        "gr.ir.003",
+        "gr.ir.101",
+        "gr.ir.102",
+        "gr.ir.103",
+        "gr.ir.104",
+        "gr.ir.105",
+        "l20.dlg.001",
+        "l22.match.001",
+        "l22.spot.001"
+      ]
+    },
+    {
+      "id": "V10",
+      "group": "Verb / Tempus / Modus",
+      "title": "Modalverben: Formen und Bedeutungen (auch Präteritum)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ADJEKTIVDEKLINATION",
+        "GR.GENITIV",
+        "GR.HAUPTSATZ_V2",
+        "GR.INDIREKTE_REDE",
+        "GR.INFINITIV_ZU",
+        "GR.KASUS_PRAEPOSITIONEN",
+        "GR.KASUS_VERBOBJEKTE",
+        "GR.KONJUNKTIV2",
+        "GR.KONNEKTOREN",
+        "GR.MODALVERBEN_SUBJEKTIV",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.NEGATION",
+        "GR.NOMINALISIERUNG",
+        "GR.ORTHOGRAFIE",
+        "GR.PASSIV",
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.PLUSQUAMPERFEKT_FUTUR",
+        "GR.REFLEXIVE_VERBEN",
+        "GR.RELATIVSATZ",
+        "GR.TRENNBARE_VERBEN",
+        "GR.VERB_PRAEPOSITION",
+        "HV.HOEREN_ALLTAG",
+        "LS.LESEN_GLOBAL_SELEKTIV",
+        "RM.BESCHWERDE_BITTE",
+        "RM.DISKUSSION",
+        "RM.FORMELLE_EMAIL",
+        "RM.MEETING_BERUF",
+        "RM.MEINUNG_ARGUMENTATION",
+        "RM.VORTRAG_STRUKTUR",
+        "SC.FORMELLE_NACHRICHT",
+        "SC.FORUMSBEITRAG",
+        "SP.ALLTAG_BERUF",
+        "SP.DISKUSSION",
+        "SP.VORTRAG",
+        "WS.ALLTAG_BEHOERDEN",
+        "WS.ALLTAG_SMALLTALK",
+        "WS.BERUF_BUERO",
+        "WS.FALSCHE_FREUNDE",
+        "WS.IT_SOFTWARE",
+        "WS.MEINUNG_GESELLSCHAFT",
+        "WS.NOMEN_VERB_VERBINDUNGEN",
+        "WS.WORTBILDUNG"
+      ],
+      "total": 172,
+      "bands": {
+        "B1_1": 1,
+        "B1_2": 12,
+        "B2_1": 109,
+        "B2_2": 50,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 51,
+        "produktiv": 96,
+        "frei": 25
+      },
+      "explainedIn": [
+        "L01",
+        "L04",
+        "L14",
+        "L20",
+        "L24"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.001",
+        "gr.v2.005",
+        "gr.v2.008",
+        "gr.tv.005",
+        "gr.kp.011",
+        "gr.ns.001",
+        "gr.pf.004",
+        "gr.pq.001",
+        "gr.k2.001",
+        "gr.k2.002",
+        "gr.k2.009",
+        "gr.k2.012",
+        "gr.pas.004",
+        "gr.pas.007",
+        "gr.pas.008",
+        "gr.kon.007",
+        "gr.rel.006",
+        "gr.inf.005",
+        "gr.inf.006",
+        "gr.ref.001",
+        "gr.ref.003",
+        "gr.ref.004",
+        "gr.ref.007",
+        "gr.gen.007",
+        "gr.nom.001",
+        "gr.ms.001",
+        "gr.ms.002",
+        "gr.ms.003",
+        "gr.ir.003",
+        "gr.ort.005",
+        "gr.ms.101",
+        "gr.ms.102",
+        "gr.ms.103",
+        "gr.ms.104",
+        "gr.ir.105",
+        "gr.v2.102",
+        "gr.tv.105",
+        "gr.ns.104",
+        "gr.ns.105",
+        "gr.pas.103",
+        "gr.pas.106",
+        "gr.inf.106",
+        "gr.ref.104",
+        "gd.pf.001",
+        "gd.pf.002",
+        "gd.pf.003",
+        "gd.pf.004",
+        "gd.pf.005",
+        "gd.pf.006",
+        "gd.pas.005",
+        "gd.pas.007",
+        "gd.pas.008",
+        "gd.pas.009",
+        "gd.pas.010",
+        "gd.pas.011",
+        "gd.pas.012",
+        "gd.pas.013",
+        "gd.ns.006",
+        "gd.ort.004",
+        "gd.ort.006",
+        "gd.ort.008",
+        "gd.kvo.002",
+        "gd.rel.002",
+        "gd.ref.001",
+        "gd.adj.002",
+        "gd.kon.001",
+        "ls.104",
+        "hv.d.107",
+        "ls.002",
+        "sw.t2.101",
+        "sw.t1.101",
+        "sw.t1.102",
+        "sp.alltag.102",
+        "sp.alltag.103",
+        "sp.alltag.105",
+        "sp.vortrag.101",
+        "sp.vortrag.103",
+        "sp.vortrag.105",
+        "sp.disk.101",
+        "sp.disk.102",
+        "sp.disk.103",
+        "sp.disk.104",
+        "sp.disk.105",
+        "sw.micro.001",
+        "sw.micro.004",
+        "sw.micro.010",
+        "sw.t2.001",
+        "sw.t1.001",
+        "sw.t1.002",
+        "sw.t1.005",
+        "sp.disk.001",
+        "sp.disk.002",
+        "sp.disk.003",
+        "sp.disk.004",
+        "rm.em.003",
+        "rm.em.004",
+        "rm.em.010",
+        "rm.em.014",
+        "rm.ma.001",
+        "rm.ma.012",
+        "rm.di.003",
+        "rm.vs.001",
+        "rm.vs.008",
+        "rm.bb.001",
+        "rm.bb.005",
+        "rm.mb.003",
+        "rm.mb.009",
+        "rm.mb.011",
+        "ws.mg.104",
+        "ws.mg.108",
+        "ws.mg.116",
+        "ws.mg.117",
+        "ws.mg.118",
+        "ws.mg.119",
+        "ws.bb.108",
+        "ws.nvv.107",
+        "ws.beh.101",
+        "rm.ma.102",
+        "rm.em.104",
+        "ws.bb.003",
+        "ws.bb.009",
+        "ws.bb.014",
+        "ws.bb.017",
+        "ws.bb.018",
+        "ws.bb.022",
+        "ws.it.012",
+        "ws.it.014",
+        "ws.beh.009",
+        "ws.beh.010",
+        "ws.beh.011",
+        "ws.beh.012",
+        "ws.beh.017",
+        "ws.beh.018",
+        "ws.st.007",
+        "ws.mg.017",
+        "ws.mg.020",
+        "ws.mg.022",
+        "ws.ff.013",
+        "ws.nvv.001",
+        "ws.nvv.005",
+        "ws.nvv.011",
+        "ws.nvv.015",
+        "l01.dlg.001",
+        "l01.dlg.002",
+        "l02.spot.001",
+        "l02.dlg.001",
+        "l03.match.001",
+        "l03.spot.001",
+        "l03.dlg.001",
+        "l04.match.001",
+        "l05.dlg.001",
+        "l07.dlg.001",
+        "l08.dlg.001",
+        "l09.dlg.001",
+        "l11.dlg.001",
+        "l12.match.001",
+        "l12.dlg.001",
+        "l14.spot.001",
+        "l14.dlg.001",
+        "l15.dlg.001",
+        "l16.dlg.001",
+        "l17.dlg.001",
+        "l18.dlg.001",
+        "l19.dlg.001",
+        "l20.match.001",
+        "l20.spot.001",
+        "l20.dlg.001",
+        "l21.dlg.001",
+        "l22.match.001",
+        "l24.match.001",
+        "l24.spot.001",
+        "l24.dlg.001"
+      ]
+    },
+    {
+      "id": "V11",
+      "group": "Verb / Tempus / Modus",
+      "title": "Perfekt der Modalverben und doppelter Infinitiv (hat … machen müssen)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ORTHOGRAFIE",
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.RELATIVSATZ",
+        "SC.FORMELLE_NACHRICHT"
+      ],
+      "total": 8,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 4,
+        "B2_2": 4,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 1,
+        "produktiv": 6,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L01"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gd.pf.001",
+        "gd.pf.002",
+        "gd.pf.003",
+        "gd.pf.004",
+        "gd.pf.005",
+        "gd.ort.008",
+        "gd.rel.002",
+        "sw.t2.101"
+      ]
+    },
+    {
+      "id": "V12",
+      "group": "Verb / Tempus / Modus",
+      "title": "Modalverben subjektiv: Vermutung und Distanz (müsste, dürfte, soll, will)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.MODALVERBEN_SUBJEKTIV"
+      ],
+      "usedNodes": [
+        "GR.MODALVERBEN_SUBJEKTIV"
+      ],
+      "total": 12,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 0,
+        "B2_2": 12,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 5,
+        "produktiv": 7,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L20"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ms.001",
+        "gr.ms.002",
+        "gr.ms.003",
+        "gr.ms.004",
+        "gr.ms.101",
+        "gr.ms.102",
+        "gr.ms.103",
+        "gr.ms.104",
+        "gr.ms.105",
+        "gr.ms.106",
+        "l20.match.001",
+        "l20.spot.001"
+      ]
+    },
+    {
+      "id": "P01",
+      "group": "Passiv und Passiversatz",
+      "title": "Vorgangspassiv in allen Zeiten (von/durch)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.PASSIV"
+      ],
+      "usedNodes": [
+        "GR.PASSIV"
+      ],
+      "total": 35,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 19,
+        "B2_2": 15,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 25,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L04"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pas.000",
+        "gr.pas.001",
+        "gr.pas.002",
+        "gr.pas.003",
+        "gr.pas.004",
+        "gr.pas.005",
+        "gr.pas.006",
+        "gr.pas.007",
+        "gr.pas.008",
+        "gr.pas.009",
+        "gr.pas.010",
+        "gr.pas.011",
+        "gr.pas.101",
+        "gr.pas.102",
+        "gr.pas.103",
+        "gr.pas.104",
+        "gr.pas.105",
+        "gr.pas.106",
+        "gr.pas.107",
+        "gd.pas.001",
+        "gd.pas.002",
+        "gd.pas.003",
+        "gd.pas.004",
+        "gd.pas.005",
+        "gd.pas.006",
+        "gd.pas.007",
+        "gd.pas.008",
+        "gd.pas.009",
+        "gd.pas.010",
+        "gd.pas.011",
+        "gd.pas.012",
+        "gd.pas.013",
+        "sw.micro.008",
+        "l04.match.001",
+        "l04.spot.001"
+      ]
+    },
+    {
+      "id": "P02",
+      "group": "Passiv und Passiversatz",
+      "title": "Zustandspassiv (sein + Partizip II)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.PASSIV"
+      ],
+      "total": 8,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 5,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 5,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L04"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pas.005",
+        "gr.pas.107",
+        "gd.pas.001",
+        "gd.pas.002",
+        "gd.pas.003",
+        "gd.pas.004",
+        "gd.pas.005",
+        "gd.pas.006"
+      ]
+    },
+    {
+      "id": "P03",
+      "group": "Passiv und Passiversatz",
+      "title": "Passiv mit Modalverben (muss … werden)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.PASSIV"
+      ],
+      "usedNodes": [
+        "GR.PASSIV"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 2,
+        "B2_2": 9,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 9,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L04"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pas.007",
+        "gr.pas.008",
+        "gr.pas.103",
+        "gr.pas.106",
+        "gd.pas.008",
+        "gd.pas.009",
+        "gd.pas.010",
+        "gd.pas.011",
+        "gd.pas.012",
+        "gd.pas.013",
+        "l04.match.001"
+      ]
+    },
+    {
+      "id": "P04",
+      "group": "Passiv und Passiversatz",
+      "title": "Passiversatz: sich lassen, sein + zu, -bar, man",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.INDIREKTE_REDE",
+        "GR.PASSIV",
+        "RM.MEINUNG_ARGUMENTATION",
+        "RM.VORTRAG_STRUKTUR"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 3,
+        "B2_2": 8,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 8,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L04"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pas.008",
+        "gr.ir.101",
+        "gd.pas.009",
+        "gd.pas.010",
+        "gd.pas.011",
+        "gd.pas.012",
+        "gd.pas.013",
+        "rm.ma.006",
+        "rm.ma.010",
+        "l12.match.001",
+        "l22.match.001"
+      ]
+    },
+    {
+      "id": "S01",
+      "group": "Satzbau und Konnektoren",
+      "title": "Hauptsatz: Verb an Position 2, Inversion",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.HAUPTSATZ_V2"
+      ],
+      "usedNodes": [
+        "GR.HAUPTSATZ_V2"
+      ],
+      "total": 21,
+      "bands": {
+        "B1_1": 2,
+        "B1_2": 4,
+        "B2_1": 10,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 17,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L03",
+        "L09"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.001",
+        "gr.v2.002",
+        "gr.v2.003",
+        "gr.v2.004",
+        "gr.v2.005",
+        "gr.v2.006",
+        "gr.v2.007",
+        "gr.v2.008",
+        "gr.v2.009",
+        "gr.v2.101",
+        "gr.v2.102",
+        "gr.v2.103",
+        "gr.v2.104",
+        "gr.v2.105",
+        "gd.v2.001",
+        "gd.v2.002",
+        "gd.v2.003",
+        "gd.v2.004",
+        "gd.v2.005",
+        "gd.v2.006",
+        "gd.v2.007"
+      ]
+    },
+    {
+      "id": "S02",
+      "group": "Satzbau und Konnektoren",
+      "title": "Nebensatz: Verb am Ende; Satzklammer bei trennbaren Verben",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.TRENNBARE_VERBEN"
+      ],
+      "usedNodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.TRENNBARE_VERBEN"
+      ],
+      "total": 39,
+      "bands": {
+        "B1_1": 2,
+        "B1_2": 11,
+        "B2_1": 21,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 29,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L03",
+        "L14"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.tv.001",
+        "gr.tv.002",
+        "gr.tv.003",
+        "gr.tv.004",
+        "gr.tv.005",
+        "gr.tv.006",
+        "gr.tv.007",
+        "gr.ns.001",
+        "gr.ns.002",
+        "gr.ns.003",
+        "gr.ns.004",
+        "gr.ns.005",
+        "gr.ns.006",
+        "gr.ns.007",
+        "gr.ns.008",
+        "gr.ns.009",
+        "gr.ns.010",
+        "gr.tv.101",
+        "gr.tv.102",
+        "gr.tv.103",
+        "gr.tv.104",
+        "gr.tv.105",
+        "gr.ns.101",
+        "gr.ns.102",
+        "gr.ns.103",
+        "gr.ns.104",
+        "gr.ns.105",
+        "gr.ns.106",
+        "gd.ns.001",
+        "gd.ns.002",
+        "gd.ns.003",
+        "gd.ns.004",
+        "gd.ns.005",
+        "gd.ns.006",
+        "sw.micro.105",
+        "l03.spot.001",
+        "l14.match.001",
+        "l14.spot.001",
+        "l14.dlg.001"
+      ]
+    },
+    {
+      "id": "S03",
+      "group": "Satzbau und Konnektoren",
+      "title": "Kausal, konzessiv, konsekutiv, final (weil, obwohl, sodass, damit)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.HAUPTSATZ_V2",
+        "GR.INDIREKTE_REDE",
+        "GR.INFINITIV_ZU",
+        "GR.KONJUNKTIV2",
+        "GR.KONNEKTOREN",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.NEGATION",
+        "GR.NOMINALISIERUNG",
+        "GR.ORTHOGRAFIE",
+        "GR.PASSIV",
+        "GR.PERFEKT_PRAETERITUM",
+        "HV.HOEREN_VORTRAG",
+        "RM.BESCHWERDE_BITTE",
+        "RM.DISKUSSION",
+        "RM.MEETING_BERUF",
+        "RM.MEINUNG_ARGUMENTATION",
+        "RM.VORTRAG_STRUKTUR",
+        "SC.FORMELLE_NACHRICHT",
+        "SC.FORUMSBEITRAG",
+        "SP.ALLTAG_BERUF",
+        "WS.ALLTAG_BEHOERDEN",
+        "WS.ALLTAG_SMALLTALK",
+        "WS.BERUF_BUERO",
+        "WS.WORTBILDUNG"
+      ],
+      "total": 75,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 10,
+        "B2_1": 42,
+        "B2_2": 23,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 36,
+        "produktiv": 33,
+        "frei": 6
+      },
+      "explainedIn": [
+        "L01",
+        "L03",
+        "L04",
+        "L07",
+        "L09",
+        "L11",
+        "L12",
+        "L13",
+        "L14",
+        "L18",
+        "L22",
+        "L23",
+        "L24"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.005",
+        "gr.ns.001",
+        "gr.ns.003",
+        "gr.ns.004",
+        "gr.ns.008",
+        "gr.ns.009",
+        "gr.kon.000",
+        "gr.nom.000",
+        "gr.k2.004",
+        "gr.k2.008",
+        "gr.kon.001",
+        "gr.kon.002",
+        "gr.kon.003",
+        "gr.kon.007",
+        "gr.kon.008",
+        "gr.kon.009",
+        "gr.kon.011",
+        "gr.kon.012",
+        "gr.inf.002",
+        "gr.inf.005",
+        "gr.nom.001",
+        "gr.nom.003",
+        "gr.ort.006",
+        "gr.v2.104",
+        "gr.ns.102",
+        "gr.ns.104",
+        "gr.pf.103",
+        "gr.k2.104",
+        "gr.kon.101",
+        "gr.kon.104",
+        "gr.kon.105",
+        "gr.kon.107",
+        "gr.kon.108",
+        "gr.nom.102",
+        "gr.nom.104",
+        "gr.nom.105",
+        "gd.pf.004",
+        "gd.pas.006",
+        "gd.v2.007",
+        "gd.ort.006",
+        "gd.kon.002",
+        "hv.d.009",
+        "sw.micro.105",
+        "sw.t2.101",
+        "sw.t2.103",
+        "sw.t1.102",
+        "sp.alltag.103",
+        "sw.micro.009",
+        "rm.ma.009",
+        "rm.di.004",
+        "rm.di.010",
+        "rm.vs.005",
+        "rm.di.102",
+        "ws.wb.005",
+        "l01.dlg.001",
+        "l03.dlg.001",
+        "l06.match.001",
+        "l07.dlg.001",
+        "l09.match.001",
+        "l09.spot.001",
+        "l09.dlg.001",
+        "l11.match.001",
+        "l11.dlg.001",
+        "l12.match.001",
+        "l12.dlg.001",
+        "l14.match.001",
+        "l14.dlg.001",
+        "l16.dlg.001",
+        "l17.dlg.001",
+        "l18.dlg.001",
+        "l19.dlg.001",
+        "l20.dlg.001",
+        "l22.dlg.001",
+        "l24.match.001",
+        "l24.spot.001"
+      ]
+    },
+    {
+      "id": "S04",
+      "group": "Satzbau und Konnektoren",
+      "title": "Temporale Nebensätze (nachdem, bevor, seit(dem), bis, sobald, während, solange)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.GENITIV",
+        "GR.HAUPTSATZ_V2",
+        "GR.KASUS_PRAEPOSITIONEN",
+        "GR.KONJUNKTIV2",
+        "GR.KONNEKTOREN",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.NOMINALISIERUNG",
+        "GR.PASSIV",
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.PLUSQUAMPERFEKT_FUTUR",
+        "HV.HOEREN_ALLTAG",
+        "HV.HOEREN_VORTRAG",
+        "WS.BERUF_BUERO",
+        "WS.FALSCHE_FREUNDE"
+      ],
+      "total": 34,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 19,
+        "B2_2": 13,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 11,
+        "produktiv": 22,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L05",
+        "L08",
+        "L09",
+        "L11",
+        "L19"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.004",
+        "gr.kp.003",
+        "gr.kp.007",
+        "gr.pf.008",
+        "gr.pq.001",
+        "gr.pq.002",
+        "gr.pq.004",
+        "gr.pq.005",
+        "gr.pas.005",
+        "gr.nom.002",
+        "gr.nom.004",
+        "gr.pq.102",
+        "gr.pq.104",
+        "gr.pq.106",
+        "gr.kp.104",
+        "gr.ns.103",
+        "gr.ns.106",
+        "gr.kon.106",
+        "gr.gen.104",
+        "gr.nom.101",
+        "gr.nom.105",
+        "gr.nom.106",
+        "gd.ns.001",
+        "hv.d.008",
+        "hv.d.012",
+        "sw.micro.009",
+        "ws.bb.004",
+        "ws.bb.021",
+        "ws.ff.009",
+        "l02.dlg.001",
+        "l08.spot.001",
+        "l11.match.001",
+        "l11.dlg.001",
+        "l21.dlg.001"
+      ]
+    },
+    {
+      "id": "S05",
+      "group": "Satzbau und Konnektoren",
+      "title": "Konnektorklassen und Wortstellung (Adverb vs. Subjunktion vs. Konjunktion)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KONNEKTOREN"
+      ],
+      "usedNodes": [
+        "GR.KONNEKTOREN"
+      ],
+      "total": 28,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 19,
+        "B2_2": 8,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 18,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L09"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kon.000",
+        "gr.kon.001",
+        "gr.kon.002",
+        "gr.kon.003",
+        "gr.kon.004",
+        "gr.kon.005",
+        "gr.kon.006",
+        "gr.kon.007",
+        "gr.kon.008",
+        "gr.kon.009",
+        "gr.kon.010",
+        "gr.kon.011",
+        "gr.kon.012",
+        "gr.kon.101",
+        "gr.kon.102",
+        "gr.kon.103",
+        "gr.kon.104",
+        "gr.kon.105",
+        "gr.kon.106",
+        "gr.kon.107",
+        "gr.kon.108",
+        "gd.kon.001",
+        "gd.kon.002",
+        "gd.kon.003",
+        "gd.kon.004",
+        "sw.micro.009",
+        "l09.match.001",
+        "l09.spot.001"
+      ]
+    },
+    {
+      "id": "S06",
+      "group": "Satzbau und Konnektoren",
+      "title": "Zweiteilige Konnektoren (nicht nur … sondern auch, je … desto, zwar … aber, entweder … oder, weder … noch, sowohl … als auch)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ADJEKTIVDEKLINATION",
+        "GR.KONNEKTOREN",
+        "GR.REFLEXIVE_VERBEN",
+        "RM.BESCHWERDE_BITTE",
+        "RM.MEINUNG_ARGUMENTATION"
+      ],
+      "total": 12,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 6,
+        "B2_2": 6,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 9,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L09"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kon.004",
+        "gr.kon.005",
+        "gr.kon.006",
+        "gr.kon.010",
+        "gd.ref.002",
+        "gd.adj.003",
+        "gd.kon.001",
+        "gd.kon.002",
+        "gd.kon.003",
+        "gd.kon.004",
+        "rm.ma.008",
+        "l19.dlg.001"
+      ]
+    },
+    {
+      "id": "S07",
+      "group": "Satzbau und Konnektoren",
+      "title": "Konnektor ↔ Präposition (wegen/trotz/während/aufgrund/infolge ↔ weil/obwohl/während)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.GENITIV",
+        "GR.HAUPTSATZ_V2",
+        "GR.KASUS_PRAEPOSITIONEN",
+        "GR.KONJUNKTIV2",
+        "GR.NOMINALISIERUNG",
+        "GR.N_DEKLINATION",
+        "GR.VERB_PRAEPOSITION",
+        "HV.HOEREN_ALLTAG",
+        "RM.BESCHWERDE_BITTE",
+        "SP.ALLTAG_BERUF",
+        "WS.IT_SOFTWARE",
+        "WS.MEINUNG_GESELLSCHAFT"
+      ],
+      "total": 21,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 15,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 11,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L03",
+        "L05",
+        "L09",
+        "L11",
+        "L19"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.006",
+        "gr.nom.000",
+        "gr.gen.004",
+        "gr.nom.001",
+        "gr.nom.003",
+        "gr.v2.102",
+        "gr.kp.104",
+        "gr.vp.107",
+        "gr.gen.103",
+        "gr.nom.104",
+        "gd.v2.001",
+        "gd.nd.007",
+        "hv.d.003",
+        "sp.alltag.104",
+        "ws.mg.013",
+        "l02.dlg.001",
+        "l06.dlg.001",
+        "l08.dlg.001",
+        "l11.match.001",
+        "l19.match.001",
+        "l19.spot.001"
+      ]
+    },
+    {
+      "id": "S08",
+      "group": "Satzbau und Konnektoren",
+      "title": "Relativsätze: Nominativ, Akkusativ, Dativ",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.RELATIVSATZ"
+      ],
+      "usedNodes": [
+        "GR.RELATIVSATZ"
+      ],
+      "total": 21,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 13,
+        "B2_2": 6,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 18,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L10"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.rel.001",
+        "gr.rel.002",
+        "gr.rel.003",
+        "gr.rel.004",
+        "gr.rel.005",
+        "gr.rel.006",
+        "gr.rel.007",
+        "gr.rel.008",
+        "gr.rel.009",
+        "gr.rel.010",
+        "gr.rel.101",
+        "gr.rel.102",
+        "gr.rel.103",
+        "gr.rel.104",
+        "gr.rel.105",
+        "gr.rel.106",
+        "gd.rel.001",
+        "gd.rel.002",
+        "gd.rel.003",
+        "l10.match.001",
+        "l10.spot.001"
+      ]
+    },
+    {
+      "id": "S09",
+      "group": "Satzbau und Konnektoren",
+      "title": "Relativsätze fortgeschritten: mit Präposition, dessen/deren, was/wo-",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.RELATIVSATZ"
+      ],
+      "usedNodes": [
+        "GR.RELATIVSATZ"
+      ],
+      "total": 8,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 6,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 6,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L10"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.rel.004",
+        "gr.rel.010",
+        "gr.rel.102",
+        "gr.rel.103",
+        "gr.rel.106",
+        "gd.rel.001",
+        "gd.rel.002",
+        "l10.match.001"
+      ]
+    },
+    {
+      "id": "S10",
+      "group": "Satzbau und Konnektoren",
+      "title": "Infinitivsätze: zu, um … zu, ohne … zu, (an)statt … zu",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.INFINITIV_ZU"
+      ],
+      "usedNodes": [
+        "GR.INFINITIV_ZU"
+      ],
+      "total": 16,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 3,
+        "B2_1": 12,
+        "B2_2": 1,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 12,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L24"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.inf.001",
+        "gr.inf.002",
+        "gr.inf.003",
+        "gr.inf.004",
+        "gr.inf.005",
+        "gr.inf.006",
+        "gr.inf.007",
+        "gr.inf.008",
+        "gr.inf.101",
+        "gr.inf.102",
+        "gr.inf.103",
+        "gr.inf.104",
+        "gr.inf.105",
+        "gr.inf.106",
+        "l24.match.001",
+        "l24.spot.001"
+      ]
+    },
+    {
+      "id": "S11",
+      "group": "Satzbau und Konnektoren",
+      "title": "Indirekte Fragesätze (ob / W-Wort)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.INDIREKTE_REDE",
+        "GR.KONJUNKTIV2",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.ORTHOGRAFIE",
+        "GR.VERBFORMEN",
+        "HV.HOEREN_VORTRAG",
+        "RM.BESCHWERDE_BITTE",
+        "SC.FORMELLE_NACHRICHT",
+        "SP.ALLTAG_BERUF",
+        "WS.ALLTAG_SMALLTALK",
+        "WS.IT_SOFTWARE"
+      ],
+      "total": 19,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 15,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 11,
+        "produktiv": 5,
+        "frei": 3
+      },
+      "explainedIn": [
+        "L07",
+        "L12",
+        "L14",
+        "L23"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.vf.008",
+        "gr.ns.005",
+        "gr.ort.005",
+        "gr.ns.101",
+        "gr.ns.105",
+        "gr.vf.101",
+        "gd.ort.003",
+        "sw.t2.101",
+        "sw.micro.003",
+        "sp.alltag.004",
+        "l02.dlg.001",
+        "l06.dlg.001",
+        "l07.dlg.001",
+        "l08.dlg.001",
+        "l10.dlg.001",
+        "l14.dlg.001",
+        "l19.dlg.001",
+        "l20.dlg.001",
+        "l22.dlg.001"
+      ]
+    },
+    {
+      "id": "S12",
+      "group": "Satzbau und Konnektoren",
+      "title": "Mittelfeld: TeKaMoLo und Pronomenstellung",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.HAUPTSATZ_V2",
+        "GR.NEGATION"
+      ],
+      "total": 7,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 4,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 5,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L03"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.002",
+        "gr.v2.006",
+        "gr.v2.105",
+        "gd.v2.001",
+        "gd.v2.002",
+        "gd.v2.003",
+        "gd.neg.002"
+      ]
+    },
+    {
+      "id": "N01",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Artikel, Genus, Plural",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.ARTIKEL_GENUS"
+      ],
+      "usedNodes": [
+        "GR.ARTIKEL_GENUS"
+      ],
+      "total": 23,
+      "bands": {
+        "B1_1": 4,
+        "B1_2": 9,
+        "B2_1": 8,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 10,
+        "produktiv": 13,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L13"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.art.001",
+        "gr.art.002",
+        "gr.art.003",
+        "gr.art.004",
+        "gr.art.005",
+        "gr.art.006",
+        "gr.art.007",
+        "gr.art.008",
+        "gr.art.009",
+        "gr.art.010",
+        "gr.art.011",
+        "gr.art.012",
+        "gr.art.101",
+        "gr.art.102",
+        "gr.art.103",
+        "gr.art.104",
+        "gr.art.105",
+        "gr.art.106",
+        "gd.art.001",
+        "gd.art.002",
+        "l13.match.001",
+        "l13.spot.001",
+        "l13.dlg.001"
+      ]
+    },
+    {
+      "id": "N02",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Kasus nach Verben (Akkusativ-/Dativobjekt, Dativverben)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KASUS_VERBOBJEKTE"
+      ],
+      "usedNodes": [
+        "GR.KASUS_VERBOBJEKTE"
+      ],
+      "total": 16,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 4,
+        "B2_1": 10,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 13,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L10",
+        "L17"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kvo.001",
+        "gr.kvo.002",
+        "gr.kvo.003",
+        "gr.kvo.004",
+        "gr.kvo.005",
+        "gr.kvo.006",
+        "gr.kvo.007",
+        "gr.kvo.008",
+        "gr.kvo.009",
+        "gr.kvo.101",
+        "gr.kvo.102",
+        "gr.kvo.103",
+        "gr.kvo.104",
+        "gr.kvo.105",
+        "gd.kvo.001",
+        "gd.kvo.002"
+      ]
+    },
+    {
+      "id": "N03",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Präpositionen mit festem Kasus",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.KASUS_PRAEPOSITIONEN"
+      ],
+      "usedNodes": [
+        "GR.KASUS_PRAEPOSITIONEN"
+      ],
+      "total": 18,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 7,
+        "B2_1": 10,
+        "B2_2": 1,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 15,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L05"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kp.001",
+        "gr.kp.002",
+        "gr.kp.003",
+        "gr.kp.004",
+        "gr.kp.005",
+        "gr.kp.006",
+        "gr.kp.007",
+        "gr.kp.008",
+        "gr.kp.009",
+        "gr.kp.010",
+        "gr.kp.011",
+        "gr.kp.101",
+        "gr.kp.102",
+        "gr.kp.103",
+        "gr.kp.104",
+        "gr.kp.105",
+        "gr.kp.106",
+        "l05.spot.001"
+      ]
+    },
+    {
+      "id": "N04",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Wechselpräpositionen (wo? / wohin?)",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.WECHSELPRAEPOSITIONEN"
+      ],
+      "usedNodes": [
+        "GR.WECHSELPRAEPOSITIONEN"
+      ],
+      "total": 19,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 5,
+        "B2_1": 12,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 15,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L06"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.wp.001",
+        "gr.wp.002",
+        "gr.wp.003",
+        "gr.wp.004",
+        "gr.wp.005",
+        "gr.wp.006",
+        "gr.wp.007",
+        "gr.wp.008",
+        "gr.wp.009",
+        "gr.wp.010",
+        "gr.wp.011",
+        "gr.wp.012",
+        "gr.wp.101",
+        "gr.wp.102",
+        "gr.wp.103",
+        "gr.wp.104",
+        "gr.wp.105",
+        "gr.wp.106",
+        "l06.spot.001"
+      ]
+    },
+    {
+      "id": "N05",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Adjektivdeklination nach bestimmtem/unbestimmtem/Nullartikel",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.ADJEKTIVDEKLINATION"
+      ],
+      "usedNodes": [
+        "GR.ADJEKTIVDEKLINATION"
+      ],
+      "total": 26,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 17,
+        "B2_2": 8,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 5,
+        "produktiv": 20,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L16"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.adj.001",
+        "gr.adj.002",
+        "gr.adj.003",
+        "gr.adj.004",
+        "gr.adj.005",
+        "gr.adj.006",
+        "gr.adj.007",
+        "gr.adj.008",
+        "gr.adj.009",
+        "gr.adj.010",
+        "gr.adj.011",
+        "gr.adj.012",
+        "gr.adj.013",
+        "gr.adj.101",
+        "gr.adj.102",
+        "gr.adj.103",
+        "gr.adj.104",
+        "gr.adj.105",
+        "gr.adj.106",
+        "gd.adj.001",
+        "gd.adj.002",
+        "gd.adj.003",
+        "gd.adj.004",
+        "sw.micro.106",
+        "l16.match.001",
+        "l16.spot.001"
+      ]
+    },
+    {
+      "id": "N06",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Adjektivdeklination nach Zahl- und Mengenwörtern (viele, einige, mehrere, andere)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ADJEKTIVDEKLINATION",
+        "GR.HAUPTSATZ_V2",
+        "GR.INFINITIV_ZU",
+        "GR.KONJUNKTIV2",
+        "GR.KONNEKTOREN",
+        "GR.MODALVERBEN_SUBJEKTIV",
+        "GR.PARTIZIPIALATTRIBUT",
+        "GR.PASSIV",
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.WECHSELPRAEPOSITIONEN",
+        "HV.HOEREN_VORTRAG",
+        "LS.LESEN_DETAIL",
+        "RM.DISKUSSION",
+        "RM.MEINUNG_ARGUMENTATION",
+        "SP.VORTRAG",
+        "WS.ALLTAG_BEHOERDEN",
+        "WS.MEINUNG_GESELLSCHAFT"
+      ],
+      "total": 40,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 24,
+        "B2_2": 15,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 9,
+        "produktiv": 28,
+        "frei": 3
+      },
+      "explainedIn": [
+        "L13",
+        "L16"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.v2.009",
+        "gr.wp.009",
+        "gr.adj.003",
+        "gr.pf.004",
+        "gr.k2.005",
+        "gr.kon.008",
+        "gr.kon.012",
+        "gr.ms.103",
+        "gr.adj.106",
+        "gd.k2.002",
+        "gd.pf.004",
+        "gd.pas.013",
+        "gd.v2.004",
+        "gd.kon.001",
+        "gd.kon.002",
+        "gd.kon.003",
+        "sp.vortrag.101",
+        "sp.vortrag.102",
+        "sp.vortrag.002",
+        "rm.ma.004",
+        "rm.ma.012",
+        "rm.di.005",
+        "ws.mg.104",
+        "ws.mg.107",
+        "ws.mg.115",
+        "ws.mg.118",
+        "ws.mg.121",
+        "ws.mg.124",
+        "ws.mg.125",
+        "ws.beh.108",
+        "rm.ma.102",
+        "rm.di.102",
+        "ws.mg.004",
+        "ws.mg.007",
+        "l07.match.001",
+        "l20.match.001",
+        "l21.spot.001",
+        "l22.dlg.001",
+        "l23.dlg.001",
+        "l24.spot.001"
+      ]
+    },
+    {
+      "id": "N07",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Genitiv: Nomen und Präpositionen mit Genitiv",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.GENITIV"
+      ],
+      "usedNodes": [
+        "GR.GENITIV"
+      ],
+      "total": 14,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 11,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 10,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L19"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.gen.001",
+        "gr.gen.002",
+        "gr.gen.003",
+        "gr.gen.004",
+        "gr.gen.005",
+        "gr.gen.006",
+        "gr.gen.007",
+        "gr.gen.101",
+        "gr.gen.102",
+        "gr.gen.103",
+        "gr.gen.104",
+        "gr.gen.105",
+        "l19.match.001",
+        "l19.spot.001"
+      ]
+    },
+    {
+      "id": "N08",
+      "group": "Nominalgruppe und Kasus",
+      "title": "n-Deklination (der Kollege – dem Kollegen, der Kunde, der Name)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ARTIKEL_GENUS",
+        "GR.GENITIV",
+        "GR.HAUPTSATZ_V2",
+        "GR.KASUS_PRAEPOSITIONEN",
+        "GR.KASUS_VERBOBJEKTE",
+        "GR.KONNEKTOREN",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.N_DEKLINATION",
+        "GR.ORTHOGRAFIE",
+        "GR.PASSIV",
+        "GR.REFLEXIVE_VERBEN",
+        "GR.RELATIVSATZ",
+        "GR.TRENNBARE_VERBEN",
+        "HV.HOEREN_ALLTAG",
+        "RM.FORMELLE_EMAIL",
+        "RM.VORTRAG_STRUKTUR",
+        "SC.FORMELLE_NACHRICHT",
+        "WS.BERUF_BUERO",
+        "WS.IT_SOFTWARE",
+        "WS.NOMEN_VERB_VERBINDUNGEN"
+      ],
+      "total": 35,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 9,
+        "B2_1": 21,
+        "B2_2": 5,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 11,
+        "produktiv": 23,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L13",
+        "L19"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kvo.001",
+        "gr.kvo.003",
+        "gr.kp.002",
+        "gr.pas.003",
+        "gr.rel.007",
+        "gr.ref.001",
+        "gr.ort.102",
+        "gr.v2.101",
+        "gr.kvo.101",
+        "gr.kvo.105",
+        "gr.kp.101",
+        "gr.pas.105",
+        "gr.kon.103",
+        "gr.gen.101",
+        "gr.gen.105",
+        "gd.ns.006",
+        "gd.nd.001",
+        "gd.nd.002",
+        "gd.nd.003",
+        "gd.nd.004",
+        "gd.nd.005",
+        "gd.nd.006",
+        "gd.nd.007",
+        "gd.kvo.001",
+        "hv.mc.002",
+        "sw.micro.005",
+        "rm.em.005",
+        "ws.bb.006",
+        "ws.bb.024",
+        "ws.it.005",
+        "ws.nvv.007",
+        "l03.spot.001",
+        "l11.dlg.001",
+        "l13.spot.001",
+        "l16.dlg.001"
+      ]
+    },
+    {
+      "id": "N09",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Komparativ und Superlativ (auch attributiv, so … wie / als)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ADJEKTIVDEKLINATION",
+        "GR.NEGATION",
+        "GR.PASSIV",
+        "GR.VERB_PRAEPOSITION",
+        "RM.BESCHWERDE_BITTE",
+        "RM.MEINUNG_ARGUMENTATION",
+        "WS.IT_SOFTWARE"
+      ],
+      "total": 12,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 9,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 5,
+        "produktiv": 7,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L16"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.vp.006",
+        "gd.pas.013",
+        "gd.adj.001",
+        "gd.adj.002",
+        "gd.adj.003",
+        "gd.adj.004",
+        "rm.ma.009",
+        "rm.bb.006",
+        "ws.it.015",
+        "l15.spot.001",
+        "l15.dlg.001",
+        "l17.dlg.001"
+      ]
+    },
+    {
+      "id": "N10",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Reflexive Verben (Akkusativ/Dativ, reziprok)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.REFLEXIVE_VERBEN"
+      ],
+      "usedNodes": [
+        "GR.REFLEXIVE_VERBEN"
+      ],
+      "total": 16,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 12,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 13,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L17"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ref.001",
+        "gr.ref.002",
+        "gr.ref.003",
+        "gr.ref.004",
+        "gr.ref.005",
+        "gr.ref.006",
+        "gr.ref.007",
+        "gr.ref.101",
+        "gr.ref.102",
+        "gr.ref.103",
+        "gr.ref.104",
+        "gr.ref.105",
+        "gd.ref.001",
+        "gd.ref.002",
+        "l17.match.001",
+        "l17.spot.001"
+      ]
+    },
+    {
+      "id": "N11",
+      "group": "Nominalgruppe und Kasus",
+      "title": "„es“ als Korrelat und Platzhalter (Es ist wichtig, dass …)",
+      "priority": "Kann",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG"
+      ],
+      "total": 6,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 3,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 4,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L14"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gd.ns.001",
+        "gd.ns.002",
+        "gd.ns.003",
+        "gd.ns.004",
+        "gd.ns.005",
+        "gd.ns.006"
+      ]
+    },
+    {
+      "id": "NS1",
+      "group": "Nominalstil und Attribute",
+      "title": "Nominalisierung ↔ Verbalisierung (Nebensatz ↔ Präpositionalausdruck)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.NOMINALISIERUNG"
+      ],
+      "usedNodes": [
+        "GR.NOMINALISIERUNG"
+      ],
+      "total": 15,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 0,
+        "B2_2": 14,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 11,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L11"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.nom.000",
+        "gr.nom.001",
+        "gr.nom.002",
+        "gr.nom.003",
+        "gr.nom.004",
+        "gr.nom.005",
+        "gr.nom.006",
+        "gr.nom.101",
+        "gr.nom.102",
+        "gr.nom.103",
+        "gr.nom.104",
+        "gr.nom.105",
+        "gr.nom.106",
+        "l11.match.001",
+        "l11.spot.001"
+      ]
+    },
+    {
+      "id": "NS2",
+      "group": "Nominalstil und Attribute",
+      "title": "Nomen-Verb-Verbindungen / Funktionsverbgefüge (zur Verfügung stellen, in Frage stellen)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "WS.NOMEN_VERB_VERBINDUNGEN"
+      ],
+      "usedNodes": [
+        "WS.NOMEN_VERB_VERBINDUNGEN"
+      ],
+      "total": 24,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 2,
+        "B2_2": 22,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 0,
+        "produktiv": 24,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L11"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "ws.nvv.101",
+        "ws.nvv.102",
+        "ws.nvv.103",
+        "ws.nvv.104",
+        "ws.nvv.105",
+        "ws.nvv.106",
+        "ws.nvv.107",
+        "ws.nvv.108",
+        "ws.nvv.001",
+        "ws.nvv.002",
+        "ws.nvv.003",
+        "ws.nvv.004",
+        "ws.nvv.005",
+        "ws.nvv.006",
+        "ws.nvv.007",
+        "ws.nvv.008",
+        "ws.nvv.009",
+        "ws.nvv.010",
+        "ws.nvv.011",
+        "ws.nvv.012",
+        "ws.nvv.013",
+        "ws.nvv.014",
+        "ws.nvv.015",
+        "ws.nvv.016"
+      ]
+    },
+    {
+      "id": "NS3",
+      "group": "Nominalstil und Attribute",
+      "title": "Partizipialattribute: Partizip I/II als Adjektiv, erweitertes Attribut ↔ Relativsatz",
+      "priority": "Soll",
+      "declaredNodes": [
+        "GR.PARTIZIPIALATTRIBUT"
+      ],
+      "usedNodes": [
+        "GR.PARTIZIPIALATTRIBUT"
+      ],
+      "total": 13,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 0,
+        "B2_2": 13,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 3,
+        "produktiv": 10,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L21"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.pa.001",
+        "gr.pa.002",
+        "gr.pa.003",
+        "gr.pa.004",
+        "gr.pa.005",
+        "gr.pa.101",
+        "gr.pa.102",
+        "gr.pa.103",
+        "gr.pa.104",
+        "gr.pa.105",
+        "gr.pa.106",
+        "l21.match.001",
+        "l21.spot.001"
+      ]
+    },
+    {
+      "id": "PR1",
+      "group": "Präpositionen",
+      "title": "Verben, Nomen und Adjektive mit fester Präposition",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.VERB_PRAEPOSITION"
+      ],
+      "usedNodes": [
+        "GR.VERB_PRAEPOSITION"
+      ],
+      "total": 30,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 25,
+        "B2_2": 4,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 25,
+        "frei": 1
+      },
+      "explainedIn": [
+        "L15"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.vp.000",
+        "gr.vp.001",
+        "gr.vp.002",
+        "gr.vp.003",
+        "gr.vp.004",
+        "gr.vp.005",
+        "gr.vp.006",
+        "gr.vp.007",
+        "gr.vp.008",
+        "gr.vp.009",
+        "gr.vp.010",
+        "gr.vp.011",
+        "gr.vp.012",
+        "gr.vp.013",
+        "gr.vp.014",
+        "gr.vp.015",
+        "gr.vp.101",
+        "gr.vp.102",
+        "gr.vp.103",
+        "gr.vp.104",
+        "gr.vp.105",
+        "gr.vp.106",
+        "gr.vp.107",
+        "gr.vp.108",
+        "gr.vp.109",
+        "gr.vp.110",
+        "sw.micro.104",
+        "l15.match.001",
+        "l15.spot.001",
+        "l15.dlg.001"
+      ]
+    },
+    {
+      "id": "PR2",
+      "group": "Präpositionen",
+      "title": "Präpositionaladverbien (darauf, worauf) und da-/wo- + dass-Satz",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ARTIKEL_GENUS",
+        "GR.KASUS_PRAEPOSITIONEN",
+        "GR.KONJUNKTIV2",
+        "GR.KONNEKTOREN",
+        "GR.MODALVERBEN_SUBJEKTIV",
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.NEGATION",
+        "GR.NOMINALISIERUNG",
+        "GR.N_DEKLINATION",
+        "GR.PARTIZIPIALATTRIBUT",
+        "GR.PASSIV",
+        "GR.PLUSQUAMPERFEKT_FUTUR",
+        "GR.REFLEXIVE_VERBEN",
+        "GR.RELATIVSATZ",
+        "GR.VERB_PRAEPOSITION",
+        "HV.HOEREN_VORTRAG",
+        "LS.LESEN_DETAIL",
+        "RM.BESCHWERDE_BITTE",
+        "RM.DISKUSSION",
+        "RM.MEINUNG_ARGUMENTATION",
+        "SP.ALLTAG_BERUF",
+        "WS.ALLTAG_BEHOERDEN",
+        "WS.ALLTAG_SMALLTALK",
+        "WS.BERUF_BUERO",
+        "WS.FALSCHE_FREUNDE",
+        "WS.MEINUNG_GESELLSCHAFT",
+        "WS.WORTBILDUNG"
+      ],
+      "total": 39,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 4,
+        "B2_1": 23,
+        "B2_2": 12,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 19,
+        "produktiv": 18,
+        "frei": 2
+      },
+      "explainedIn": [
+        "L12",
+        "L15"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.vp.006",
+        "gr.vp.009",
+        "gr.vp.013",
+        "gr.rel.006",
+        "gr.kp.101",
+        "gr.vp.105",
+        "gr.vp.106",
+        "gr.nom.102",
+        "gd.pas.012",
+        "gd.pq.002",
+        "gd.nd.006",
+        "gd.ref.001",
+        "gd.wb.005",
+        "sp.alltag.001",
+        "sp.alltag.006",
+        "rm.ma.002",
+        "rm.ma.003",
+        "rm.ma.005",
+        "rm.di.005",
+        "ws.mg.112",
+        "rm.ma.101",
+        "l02.dlg.001",
+        "l05.dlg.001",
+        "l06.dlg.001",
+        "l07.dlg.001",
+        "l09.spot.001",
+        "l09.dlg.001",
+        "l11.dlg.001",
+        "l12.dlg.001",
+        "l13.dlg.001",
+        "l14.dlg.001",
+        "l15.spot.001",
+        "l15.dlg.001",
+        "l17.dlg.001",
+        "l18.spot.001",
+        "l20.spot.001",
+        "l21.spot.001",
+        "l22.dlg.001",
+        "l23.dlg.001"
+      ]
+    },
+    {
+      "id": "W01",
+      "group": "Wortbildung",
+      "title": "Wortbildung: Präfixe und Suffixe (-ung, -heit, -keit, un-, -los, -bar, ver-/be-/ent-)",
+      "priority": "Soll",
+      "declaredNodes": [
+        "WS.WORTBILDUNG"
+      ],
+      "usedNodes": [
+        "WS.WORTBILDUNG"
+      ],
+      "total": 26,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 0,
+        "B2_1": 20,
+        "B2_2": 6,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 7,
+        "produktiv": 19,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L03",
+        "L13",
+        "L18"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gd.wb.001",
+        "gd.wb.002",
+        "gd.wb.003",
+        "gd.wb.004",
+        "gd.wb.005",
+        "gd.wb.006",
+        "ws.wb.101",
+        "ws.wb.102",
+        "ws.wb.103",
+        "ws.wb.104",
+        "ws.wb.105",
+        "ws.wb.106",
+        "ws.wb.107",
+        "ws.wb.001",
+        "ws.wb.002",
+        "ws.wb.003",
+        "ws.wb.004",
+        "ws.wb.005",
+        "ws.wb.006",
+        "ws.wb.007",
+        "ws.wb.008",
+        "ws.wb.009",
+        "ws.wb.010",
+        "ws.wb.011",
+        "ws.wb.012",
+        "l18.dlg.001"
+      ]
+    },
+    {
+      "id": "W02",
+      "group": "Wortbildung",
+      "title": "Komposita und Wortfamilien",
+      "priority": "Kann",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ARTIKEL_GENUS",
+        "GR.ORTHOGRAFIE",
+        "WS.WORTBILDUNG"
+      ],
+      "total": 10,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 1,
+        "B2_1": 6,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 4,
+        "produktiv": 6,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L13",
+        "L18"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gd.ort.003",
+        "gd.wb.001",
+        "gd.wb.002",
+        "gd.wb.003",
+        "gd.wb.004",
+        "gd.wb.005",
+        "gd.wb.006",
+        "ws.wb.007",
+        "ws.wb.010",
+        "l13.match.001"
+      ]
+    },
+    {
+      "id": "O01",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "Kommaregeln (Nebensatz, Infinitivsatz mit zu, Aufzählung, Relativsatz)",
+      "priority": "Muss",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.ORTHOGRAFIE",
+        "RM.FORMELLE_EMAIL",
+        "RM.MEINUNG_ARGUMENTATION"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 3,
+        "B2_1": 5,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 5,
+        "produktiv": 6,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L14",
+        "L24"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ns.002",
+        "gr.ort.006",
+        "gr.ort.104",
+        "gd.ns.003",
+        "gd.ns.005",
+        "gd.ort.007",
+        "gd.ort.008",
+        "rm.em.001",
+        "rm.em.002",
+        "rm.ma.007",
+        "l14.dlg.001"
+      ]
+    },
+    {
+      "id": "O02",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "Groß-/Kleinschreibung inkl. Nominalisierung (das Wichtigste, beim Arbeiten)",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.KASUS_VERBOBJEKTE",
+        "GR.ORTHOGRAFIE",
+        "RM.FORMELLE_EMAIL"
+      ],
+      "total": 9,
+      "bands": {
+        "B1_1": 1,
+        "B1_2": 3,
+        "B2_1": 2,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 2,
+        "produktiv": 7,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L11"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.kvo.002",
+        "gr.ort.001",
+        "gr.ort.004",
+        "gr.ort.102",
+        "gr.ort.105",
+        "gd.ort.009",
+        "gd.ort.010",
+        "gd.ort.011",
+        "rm.em.007"
+      ]
+    },
+    {
+      "id": "O03",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "das / dass unterscheiden",
+      "priority": "Soll",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.ORTHOGRAFIE",
+        "GR.RELATIVSATZ",
+        "GR.VERB_PRAEPOSITION",
+        "WS.ALLTAG_SMALLTALK"
+      ],
+      "total": 11,
+      "bands": {
+        "B1_1": 0,
+        "B1_2": 2,
+        "B2_1": 6,
+        "B2_2": 3,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 6,
+        "produktiv": 5,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L14",
+        "L21",
+        "L22"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ns.002",
+        "gr.vp.009",
+        "gr.ort.006",
+        "gr.ort.101",
+        "gd.ns.001",
+        "gd.ns.002",
+        "gd.ns.003",
+        "gd.ns.006",
+        "gd.rel.003",
+        "l10.dlg.001",
+        "l15.dlg.001"
+      ]
+    },
+    {
+      "id": "O04",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "ß/ss-Schreibung und Umlaute",
+      "priority": "Kann",
+      "declaredNodes": [],
+      "usedNodes": [
+        "GR.ORTHOGRAFIE"
+      ],
+      "total": 7,
+      "bands": {
+        "B1_1": 1,
+        "B1_2": 0,
+        "B2_1": 5,
+        "B2_2": 1,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 5,
+        "produktiv": 2,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L18"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.ort.002",
+        "gd.ort.001",
+        "gd.ort.002",
+        "gd.ort.003",
+        "gd.ort.004",
+        "gd.ort.005",
+        "gd.ort.006"
+      ]
+    },
+    {
+      "id": "NG1",
+      "group": "Negation",
+      "title": "Negation: nicht/kein, Stellung von nicht, nicht … sondern",
+      "priority": "Muss",
+      "declaredNodes": [
+        "GR.NEGATION"
+      ],
+      "usedNodes": [
+        "GR.NEGATION"
+      ],
+      "total": 14,
+      "bands": {
+        "B1_1": 2,
+        "B1_2": 3,
+        "B2_1": 7,
+        "B2_2": 2,
+        "C1": 0
+      },
+      "kinds": {
+        "rezeptiv": 6,
+        "produktiv": 8,
+        "frei": 0
+      },
+      "explainedIn": [
+        "L17"
+      ],
+      "score": 3,
+      "missing": [],
+      "exerciseIds": [
+        "gr.neg.001",
+        "gr.neg.002",
+        "gr.neg.003",
+        "gr.neg.004",
+        "gr.neg.005",
+        "gr.neg.006",
+        "gr.neg.007",
+        "gr.neg.101",
+        "gr.neg.102",
+        "gr.neg.103",
+        "gr.neg.104",
+        "gd.neg.001",
+        "gd.neg.002",
+        "l17.dlg.001"
+      ]
+    }
+  ]
+}

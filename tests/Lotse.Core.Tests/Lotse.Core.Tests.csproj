@@ -20,5 +20,7 @@
     <Using Include="Xunit" />
     <!-- Tests validate the shipped content files too. -->
     <Content Include="..\..\content\**\*.json" Link="content\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Referenzinventar der B2-Grammatik, gegen das GrammarCoverageTests die Abdeckung prüft. -->
+    <Content Include="..\..\tools\b2-grammar-reference.json" Link="tools\b2-grammar-reference.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
