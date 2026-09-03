@@ -57,7 +57,7 @@ public sealed class LearningService(
     ITutor tutor,
     SessionPlanner planner,
     TimeProvider clock,
-    ILogger<LearningService> logger)
+    ILogger<LearningService> logger) : ILearningService
 {
     private ContentCatalog Catalog => catalogProvider.Catalog;
     private DateTime Now => clock.GetUtcNow().UtcDateTime;

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lotse.Core\Lotse.Core.csproj" />

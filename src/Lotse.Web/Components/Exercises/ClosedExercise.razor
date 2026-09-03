@@ -1,5 +1,5 @@
 @* Typed answer, multiple choice or word order. Checks deterministically, shows feedback, then hands over with "Weiter". *@
-@inject LearningService Learning
+@inject ILearningService Learning
 @inject SpeechService Speech
 @implements IDisposable
 
@@ -82,7 +82,7 @@ else
 {
     <FeedbackPanel Result="_result" />
     <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
-        <MudText Typo="Typo.caption" Style="opacity:.6">Enter = weiter</MudText>
+        <MudText Typo="Typo.caption" Class="kbd-hint" Style="opacity:.6">Enter = weiter</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
     </MudStack>
 }

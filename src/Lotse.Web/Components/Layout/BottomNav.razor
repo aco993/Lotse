@@ -1,0 +1,34 @@
+@* Phone-only bottom navigation with the five daily destinations; the drawer keeps the full menu. *@
+@inject NavigationManager Nav
+
+<nav class="bottom-nav d-md-none" aria-label="Hauptnavigation">
+    @foreach (var item in Items)
+    {
+        var active = IsActive(item.Href);
+        <a href="@item.Href" class="@("bottom-nav-item" + (active ? " active" : ""))" aria-current="@(active ? "page" : null)">
+            <MudIcon Icon="@item.Icon" Size="Size.Medium" />
+            <span>@item.Label</span>
+        </a>
+    }
+</nav>
+
+@code {
+    private sealed record Item(string Href, string Icon, string Label);
+
+    private static readonly Item[] Items =
+    [
+        new("", Icons.Material.Filled.Today, "Heute"),
+        new("schreiben", Icons.Material.Filled.Edit, "Schreiben"),
+        new("sprechen", Icons.Material.Filled.Mic, "Sprechen"),
+        new("fortschritt", Icons.Material.Filled.Insights, "Fortschritt"),
+        new("themen", Icons.Material.Filled.AccountTree, "Themen"),
+    ];
+
+    private bool IsActive(string href)
+    {
+        var path = Nav.ToBaseRelativePath(Nav.Uri).TrimEnd('/');
+        return href == "" ? path == "" || path.StartsWith("session", StringComparison.Ordinal) : path.StartsWith(href, StringComparison.Ordinal);
+    }
+
+    protected override void OnInitialized() => Nav.LocationChanged += (_, _) => InvokeAsync(StateHasChanged);
+}

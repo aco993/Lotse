@@ -1,6 +1,8 @@
 @page "/einstellungen"
-@inject LearningService Learning
+@inject ILearningService Learning
 @inject ContentCatalogProvider CatalogProvider
+@inject TutorRegistry Tutors
+@inject HealthService Health
 @inject ISnackbar Snackbar
 
 <PageTitle>Einstellungen – Lotse</PageTitle>
@@ -32,29 +34,88 @@ else
         }
     </MudPaper>
 
-    <MudPaper Class="pa-4 mb-3" Elevation="1">
+    <MudPaper Class="pa-4 mb-3" Elevation="1" id="tutor">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">KI-Tutor</MudText>
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-2">
-            <MudIcon Icon="@(Learning.Tutor.IsAvailable ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)" Color="@(Learning.Tutor.IsAvailable ? Color.Tertiary : Color.Default)" />
-            <MudText Typo="Typo.body2">@Learning.Tutor.Description</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-3">
+            <MudIcon Icon="@(Tutors.IsAvailable ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Info)" Color="@(Tutors.IsAvailable ? Color.Tertiary : Color.Warning)" />
+            <MudText Typo="Typo.body2">@Tutors.Description</MudText>
         </MudStack>
-        <MudText Typo="Typo.body2" Class="mb-2">Der Tutor bewertet Texte und Aufnahmen nach den Prüfungskriterien, markiert Fehler mit Code, spielt den Diskussionspartner und erzeugt neue Aufgaben. Zwei Wege, Schlüssel niemals in der App oder im Repo:</MudText>
-        <MudText Typo="Typo.subtitle2">A – Claude (beste Qualität, kostenpflichtig)</MudText>
-        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">setx ANTHROPIC_API_KEY "sk-ant-…"        (oder: dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-…")</pre>
-        <MudText Typo="Typo.subtitle2" Class="mt-2">B – beliebiges OpenAI-kompatibles Modell (Ollama lokal & kostenlos, LM Studio, OpenRouter, Groq, Mistral, DeepSeek, OpenAI)</MudText>
-        <pre class="mono" style="font-size:.85rem;white-space:pre-wrap">ollama pull qwen2.5:7b
-dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tutor:BaseUrl=http://localhost:11434/v1 --Lotse:Tutor:Model=qwen2.5:7b</pre>
-        <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.75">Dauerhaft: dieselben Werte in appsettings.Local.json (Lotse:Tutor). Für Cloud-Anbieter zusätzlich OPENAI_API_KEY setzen. Kleine lokale Modelle (3B) bewerten ungenau – ab 7B (qwen2.5, gemma3, mistral) wird es brauchbar, Claude bleibt der Maßstab. Ohne Tutor funktioniert alles außer KI-Bewertung, Diskussionspartner und Generierung.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-3">Der Tutor bewertet Texte und Aufnahmen nach den Prüfungskriterien, spielt den Diskussionspartner und erzeugt neue Aufgaben. Wähle einen Anbieter – Groq ist kostenlos und schnell. Der Schlüssel wird verschlüsselt auf diesem Rechner gespeichert und verlässt ihn nur Richtung Anbieter.</MudText>
+
+        <MudGrid Spacing="2">
+            <MudItem xs="12" md="6">
+                <MudSelect T="string" Value="_presetId" ValueChanged="OnPresetChanged" Label="Anbieter" Variant="Variant.Outlined">
+                    @foreach (var p in TutorPresets.All) { <MudSelectItem T="string" Value="@p.Id">@p.Name</MudSelectItem> }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudAutocomplete T="string" @bind-Value="_model" Label="Modell" Variant="Variant.Outlined" CoerceText="false" CoerceValue="true"
+                                 SearchFunc="SearchModels" HelperText="@("Vorschläge des Anbieters; eigener Name möglich")" />
+            </MudItem>
+            @if (Preset.NeedsKey || Preset.Id == "custom")
+            {
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="_apiKey" Label="@(Preset.NeedsKey ? "API-Schlüssel" : "API-Schlüssel (optional)")" Variant="Variant.Outlined" InputType="@(_showKey ? InputType.Text : InputType.Password)"
+                                  Adornment="Adornment.End" AdornmentIcon="@(_showKey ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)" OnAdornmentClick="() => _showKey = !_showKey"
+                                  HelperText="@KeyHelp" />
+                </MudItem>
+            }
+            @if (Preset.Id == "custom" || Preset.BaseUrl is null && Preset.Provider == TutorProvider.OpenAi)
+            {
+                <MudItem xs="12" md="6"><MudTextField @bind-Value="_baseUrl" Label="Server-URL (mit /v1)" Variant="Variant.Outlined" Placeholder="http://localhost:8080/v1" /></MudItem>
+            }
+            else if (Preset.BaseUrl is not null)
+            {
+                <MudItem xs="12" md="6"><MudTextField @bind-Value="_baseUrl" Label="Server-URL" Variant="Variant.Outlined" Placeholder="@Preset.BaseUrl" HelperText="Leer = Standard des Anbieters" /></MudItem>
+            }
+        </MudGrid>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.8">@Preset.Note @(Preset.SignupUrl is null ? "" : "Schlüssel: ")@if (Preset.SignupUrl is not null) { <MudLink Href="@Preset.SignupUrl" Target="_blank">@Preset.SignupUrl</MudLink> }</MudText>
+
+        <MudStack Row="true" Spacing="2" Class="mt-3" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ProbeAsync" Disabled="_probing" StartIcon="@Icons.Material.Filled.NetworkCheck">@(_probing ? "Teste …" : "Verbindung testen")</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTutorAsync" Disabled="_probing">Speichern & aktivieren</MudButton>
+            <MudButton Variant="Variant.Text" OnClick="ClearTutorAsync" Disabled="_probing">Zurück auf Standard</MudButton>
+            @if (_probing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+        </MudStack>
+        @if (_probe is not null)
+        {
+            <MudAlert Severity="@(_probe.Ok ? Severity.Success : Severity.Error)" Dense="true" Class="mt-2" Variant="Variant.Text">
+                @_probe.Message @(_probe.Ok ? $"· {_probe.LatencyMs} ms" : "")
+                @if (_probe.Sample is not null) { <span style="opacity:.7"> · Antwort: „@_probe.Sample“</span> }
+            </MudAlert>
+        }
     </MudPaper>
 
     <MudPaper Class="pa-4 mb-3" Elevation="1">
-        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Inhalte</MudText>
-        <MudText Typo="Typo.body2">@CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen aus den Content-Dateien · @CatalogProvider.GeneratedExerciseCount vom Tutor erzeugt</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">Zustand der App</MudText>
+            <MudSpacer />
+            <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="CheckHealthAsync" Disabled="_checking">Prüfen</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary" OnClick="RepairAsync" Disabled="_checking" StartIcon="@Icons.Material.Filled.Build">Reparieren</MudButton>
+        </MudStack>
+        @if (_health is null) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch nicht geprüft.</MudText> }
+        else
+        {
+            @foreach (var item in _health.Items)
+            {
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
+                    <MudIcon Size="Size.Small" Icon="@StateIcon(item.State)" Color="@StateColor(item.State)" />
+                    <MudText Typo="Typo.body2" Style="width:110px;font-weight:500">@item.Name</MudText>
+                    <MudText Typo="Typo.body2">@item.Detail</MudText>
+                    @if (item.Fix is not null) { <MudText Typo="Typo.caption" Style="opacity:.7">– @item.Fix</MudText> }
+                </MudStack>
+            }
+            @if (_repairLog.Count > 0)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Text" Class="mt-2">@string.Join(" ", _repairLog)</MudAlert>
+            }
+        }
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4" Elevation="1" Style="border:1px solid var(--mud-palette-error)">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Zurücksetzen</MudText>
-        <MudText Typo="Typo.body2" Class="mb-2">Löscht Lernstand, Sessions, Fehlerjournal und generierte Übungen. Die Content-Dateien bleiben.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Löscht Lernstand, Sessions, Fehlerjournal und generierte Übungen. Inhalte und Tutor-Einstellungen bleiben.</MudText>
         @if (!_confirmReset)
         {
             <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _confirmReset = true">Alle Lerndaten löschen</MudButton>
@@ -73,11 +134,69 @@ dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tuto
 @code {
     private LearnerProfile? _p;
     private DateTime? _examDate;
+    private bool _confirmReset;
+
+    private string _presetId = "groq";
+    private string _model = "";
+    private string? _apiKey;
+    private string? _baseUrl;
+    private bool _showKey;
+    private bool _probing;
+    private TutorProbe? _probe;
+    private TutorPreset Preset => TutorPresets.Get(_presetId);
+    private string KeyHelp => Preset.KeyEnvVar is { } env ? $"Leer lassen, um {env} aus der Umgebung zu nutzen" : "";
+
+    private HealthReport? _health;
+    private bool _checking;
+    private List<string> _repairLog = [];
 
     protected override async Task OnInitializedAsync()
     {
         _p = await Learning.GetProfileAsync();
         _examDate = _p.TargetExamDate?.ToDateTime(TimeOnly.MinValue);
+        var s = Tutors.Settings;
+        _presetId = s.PresetId;
+        _model = s.Model;
+        _apiKey = s.ApiKey;
+        _baseUrl = s.BaseUrl;
+    }
+
+    private void OnPresetChanged(string id)
+    {
+        _presetId = id;
+        _model = Preset.DefaultModel;
+        _baseUrl = null;
+        _probe = null;
+    }
+
+    private Task<IEnumerable<string>> SearchModels(string? value, CancellationToken ct)
+    {
+        var list = Preset.SuggestedModels.Where(m => string.IsNullOrWhiteSpace(value) || m.Contains(value, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (!string.IsNullOrWhiteSpace(value) && !list.Contains(value)) list.Insert(0, value);
+        return Task.FromResult<IEnumerable<string>>(list);
+    }
+
+    private TutorSettings Draft() => new(_presetId, string.IsNullOrWhiteSpace(_baseUrl) ? null : _baseUrl.Trim(), (_model ?? "").Trim(), string.IsNullOrWhiteSpace(_apiKey) ? null : _apiKey.Trim());
+
+    private async Task ProbeAsync()
+    {
+        _probing = true; _probe = null;
+        try { _probe = await Tutors.ProbeAsync(Draft()); }
+        finally { _probing = false; }
+    }
+
+    private async Task SaveTutorAsync()
+    {
+        await Tutors.SaveAsync(Draft());
+        Snackbar.Add(Tutors.IsAvailable ? "Tutor aktiviert: " + Tutors.Description : Tutors.Description, Tutors.IsAvailable ? Severity.Success : Severity.Warning);
+    }
+
+    private async Task ClearTutorAsync()
+    {
+        await Tutors.ClearAsync();
+        var s = Tutors.Settings;
+        _presetId = s.PresetId; _model = s.Model; _apiKey = s.ApiKey; _baseUrl = s.BaseUrl; _probe = null;
+        Snackbar.Add("Tutor-Einstellungen zurückgesetzt.", Severity.Info);
     }
 
     private async Task SaveAsync()
@@ -88,7 +207,23 @@ dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tuto
         Snackbar.Add("Gespeichert.", Severity.Success);
     }
 
-    private bool _confirmReset;
+    private async Task CheckHealthAsync()
+    {
+        _checking = true;
+        try { _health = await Health.CheckAsync(); }
+        finally { _checking = false; }
+    }
+
+    private async Task RepairAsync()
+    {
+        _checking = true;
+        try
+        {
+            _repairLog = (await Health.RepairAsync()).ToList();
+            _health = await Health.CheckAsync();
+        }
+        finally { _checking = false; }
+    }
 
     private async Task ResetAsync()
     {
@@ -98,4 +233,7 @@ dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tuto
         _p = await Learning.GetProfileAsync();
         Snackbar.Add("Lerndaten gelöscht.", Severity.Info);
     }
+
+    private static string StateIcon(HealthState s) => s switch { HealthState.Ok => Icons.Material.Filled.CheckCircle, HealthState.Warning => Icons.Material.Filled.Warning, _ => Icons.Material.Filled.Error };
+    private static Color StateColor(HealthState s) => s switch { HealthState.Ok => Color.Tertiary, HealthState.Warning => Color.Warning, _ => Color.Error };
 }
