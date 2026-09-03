@@ -82,7 +82,7 @@ dotnet run --project src/Lotse.Web -- --Lotse:Tutor:Provider=OpenAi --Lotse:Tuto
 
 Trajno: iste vrednosti u `src/Lotse.Web/appsettings.Local.json` (fajl je u `.gitignore`), primer je `appsettings.Ollama.json`. Ključ za cloud provajdere: `setx OPENAI_API_KEY "..."`.
 
-Iskreno o kvalitetu: modeli od 3B parametara greše u nemačkoj gramatici i ponekad izmišljaju kodove grešaka (nepoznati kodovi se odbacuju, ne kvare tvoj model). Od 7B (qwen2.5, gemma3, mistral) ocena je upotrebljiva; 70B preko Groq/OpenRouter je blizu Claude Sonnet-u. Za ispitnu pripremu Claude ostaje merilo.
+Iskreno o kvalitetu: modeli od 3B parametara greše u nemačkoj gramatici i ponekad izmišljaju kodove grešaka (nepoznati kodovi se odbacuju, ne kvare tvoj model). Izmereno na ovom računaru bez GPU-a: `llama3.2` (3B) daje ocenu za 8–9 minuta i ocenio je tekst sa očiglednim greškama sa 100 % – tehnički radi, pedagoški ne vredi. Od 7B (qwen2.5, gemma3, mistral) ocena je upotrebljiva; 70B preko Groq/OpenRouter je blizu Claude Sonnet-u. Za ispitnu pripremu Claude ostaje merilo.
 
 ## 7. Podešavanja i reset
 
