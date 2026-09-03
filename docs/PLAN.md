@@ -28,7 +28,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ✅ In-app provider configuration with presets, connection test, encrypted key storage, runtime switch. Health panel + repair, `/health`, error boundary, retries. Bottom navigation, PWA manifest, system dark mode. `ILearningService` + bUnit component tests. 100 tests.
 - ⬜ Persist review state also for production exercises so the same prompt is not repeated too soon (currently handled by the recent-ids window only).
 - ✅ EF Core migrations (`InitialCreate` baseline + `AddLessons`), automatic baselining of pre-migration databases.
-- ✅ Course: 12 story lessons, interactive dialogue / spot-the-error / matching exercise types, course page with illustrated cards, lesson page, progress tracking. 110 tests.
+- ✅ Course: 24 story lessons in two parts (Teil 1: first year, Teil 2: second year), interactive dialogue / spot-the-error / matching exercise types, course page with illustrated cards grouped by part, lesson page, progress tracking. 111 tests.
 
 ## Phase 2 – Speaking and listening depth ⬜
 

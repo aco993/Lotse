@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L16", "order": 16, "title": "Die Präsentation beim Kunden", "subtitle": "Überzeugend beschreiben: Adjektivdeklination, Struktur, Rückfragen",
+    "theme": "Beruf", "band": "B2_1", "scene": "customer", "minutes": 18,
+    "intro": "Hansa Logistik will die neue Version sehen, bevor sie verlängern. Herr Wagner und seine Chefin, Frau Ostermann, sitzen im Besprechungsraum. Sabine hat gesagt: „Du kennst das System am besten – du präsentierst.“ Zwanzig Minuten, dann Fragen.",
+    "story": [
+      { "speaker": "Frau Ostermann", "text": "Herr Micić, wir haben wenig Zeit. Was ist in der neuen Version wirklich anders?" },
+      { "speaker": "Du", "text": "…", "options": ["Drei Dinge. Erstens ein neuer, deutlich schnellerer Import, zweitens eine überarbeitete Rechnungsübersicht mit allen offenen Positionen, drittens ein automatischer Test, der jede Änderung vor der Auslieferung prüft.", "Drei Dinge. Erstens ein neu, schneller Import, zweitens eine überarbeitete Rechnungsübersicht mit alle offene Positionen, drittens ein automatisch Test.", "Es gibt viele Verbesserungen, ich zeige Ihnen einfach alles."],
+        "correctIndex": 0, "feedback": ["Drei Punkte, jeder mit korrekt deklinierten Adjektiven (ein neuer, schnellerer Import; mit allen offenen Positionen; ein automatischer Test). Frau Ostermann hat die Struktur nach zehn Sekunden.", "Adjektive ohne Endung („ein neu Import“, „automatisch Test“) und „mit alle offene“ statt „mit allen offenen“: Dativ Plural bekommt -en.", "„Ich zeige einfach alles“ ist das Gegenteil von Struktur – und von wenig Zeit."] },
+      { "speaker": "Herr Wagner", "text": "Der Import – ist das derselbe, der uns im Frühjahr die Rechnungen kaputt gemacht hat?" },
+      { "speaker": "Du", "text": "…", "options": ["Ja, und genau deshalb haben wir ihn komplett überarbeitet. Der damalige Fehler lag in der Schnittstelle; die neue Version wird gegen jede einzelne Kundenkonfiguration getestet, bevor sie ausgeliefert wird.", "Ja, aber das war ein alter Fehler, jetzt ist alles gut.", "Nein, das war ein anderes Problem."],
+        "correctIndex": 0, "feedback": ["Ehrlich, dann die Lösung – mit „der damalige Fehler“, „die neue Version“, „jede einzelne Kundenkonfiguration“: Adjektive tragen die Botschaft.", "„jetzt ist alles gut“ ohne Beleg – genau das, was ein Kunde nach einem Vorfall nicht glaubt.", "Unwahr, und Herr Wagner weiß es. Vertrauen weg."] },
+      { "speaker": "Frau Ostermann", "text": "Gut. Und was kostet uns das? Ich sehe hier keine Zahl." },
+      { "speaker": "Du", "text": "…", "options": ["Die neue Version ist im bestehenden Wartungsvertrag enthalten. Zusätzliche Kosten entstehen nur, wenn Sie das optionale Reporting-Modul möchten – dazu schicke ich Ihnen ein separates Angebot.", "Die neue Version ist im bestehende Wartungsvertrag enthalten. Zusätzlich Kosten nur für optionales Reporting-Modul.", "Das weiß ich nicht, das macht der Vertrieb."],
+        "correctIndex": 0, "feedback": ["„im bestehenden Wartungsvertrag“ (Dativ nach bestimmtem Artikel: -en), „zusätzliche Kosten“ (Nom. Pl. ohne Artikel: -e), „das optionale Modul“ – und eine klare Antwort auf die Geldfrage.", "„im bestehende“ → bestehenden; „Zusätzlich Kosten“ → zusätzliche Kosten. Bei Geld muss jede Endung sitzen.", "Wer präsentiert, muss die Preisfrage zumindest einordnen können."] },
+      { "speaker": "Frau Ostermann", "text": "Das war klar und ehrlich. Schicken Sie das Angebot – und die Verlängerung unterschreiben wir diese Woche." }
+    ],
+    "grammar": {
+      "title": "Adjektivdeklination: Die Endung hängt vom Artikel ab",
+      "nodeId": "GR.ADJEKTIVDEKLINATION",
+      "text": "Serbische Adjektive tragen selbst alle Information (dobrog čoveka). Deutsche Adjektive teilen sie sich mit dem Artikel: Zeigt der Artikel Kasus und Genus schon (der, die, das, dem, den, des), bekommt das Adjektiv nur -e oder -en. Nach dem unbestimmten Artikel (ein, eine, einem …) muss das Adjektiv im Nominativ/Akkusativ zeigen, was „ein“ nicht zeigt: ein neuer Import, ein neues Modul, eine neue Version. Ohne Artikel trägt das Adjektiv die Artikelendung: zusätzliche Kosten (die), mit allen offenen Positionen (Dativ Plural immer -en). Faustregel: nach bestimmtem Artikel fast immer -e/-en; ohne Artikel wie der Artikel selbst.",
+      "examples": [
+        { "german": "ein neuer, deutlich schnellerer Import", "serbian": "novi, znatno brži uvoz", "note": "ein + maskulin Nom. → -er" },
+        { "german": "mit allen offenen Positionen", "serbian": "sa svim otvorenim stavkama", "note": "Dativ Plural → -en" },
+        { "german": "der damalige Fehler, die neue Version", "serbian": "tadašnja greška, nova verzija", "note": "nach der/die → -e" },
+        { "german": "Zusätzliche Kosten entstehen nur, wenn …", "serbian": "Dodatni troškovi nastaju samo ako …", "note": "ohne Artikel: -e wie „die“" }
+      ]
+    },
+    "steps": ["gr.adj.001", "gr.adj.005", "l16.match.001", "gr.adj.003", "gr.adj.007", "l16.spot.001", "gr.adj.101", "gr.adj.106", "l16.dlg.001", "gr.adj.104", "rm.vs.002"],
+    "productionExerciseId": "sp.vortrag.003",
+    "merksatz": "Zeigt der Artikel den Fall, ruht das Adjektiv (-e/-en). Zeigt er ihn nicht, arbeitet das Adjektiv.",
+    "nodeIds": ["GR.ADJEKTIVDEKLINATION", "RM.VORTRAG_STRUKTUR", "SP.VORTRAG", "WS.IT_SOFTWARE"]
+  },
+  "exercises": [
+    { "id": "l16.match.001", "type": "Match", "nodeId": "GR.ADJEKTIVDEKLINATION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Welche Endung? Ordne die Wortgruppen aus der Präsentation der Regel zu.",
+      "pairs": [ { "left": "ein neu__ Import (maskulin)", "right": "-er: ein zeigt Nominativ maskulin nicht" }, { "left": "ein neu__ Modul (neutrum)", "right": "-es: ein zeigt Nominativ neutrum nicht" }, { "left": "die neu__ Version", "right": "-e: die zeigt alles" }, { "left": "mit dem alt__ System", "right": "-en: Dativ nach bestimmtem Artikel" }, { "left": "zusätzlich__ Kosten (ohne Artikel)", "right": "-e: wie der Artikel „die“" } ],
+      "explanation": "Fünf Fälle, eine Frage: Zeigt der Artikel den Kasus schon oder nicht?" },
+    { "id": "l16.spot.001", "type": "SpotError", "nodeId": "GR.ADJEKTIVDEKLINATION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Auf deiner Folie steckt ein Fehler. Tippe auf das falsche Wort.",
+      "options": ["Die", "neue", "Version", "bietet", "einen", "schnelleren", "Import,", "eine", "übersichtliche", "Rechnungsansicht", "und", "ein", "automatischer", "Test", "vor", "jeder", "Auslieferung."],
+      "correctIndex": 12, "answers": ["automatischen"], "explanation": "bietet + Akkusativ: einen … Import, eine … Ansicht, einEN automatischEN Test (der Test → Akk. maskulin)." },
+    { "id": "l16.dlg.001", "type": "Dialogue", "nodeId": "RM.VORTRAG_STRUKTUR", "band": "B2_1", "context": "Beruf",
+      "prompt": "Fragerunde nach der Präsentation. Antworte strukturiert und ehrlich.",
+      "lines": [
+        { "speaker": "Herr Wagner", "text": "Was passiert, wenn der Import trotzdem einmal fehlschlägt? Ich will nicht wieder drei falsche Rechnungen haben." },
+        { "speaker": "Du", "text": "…", "options": ["Berechtigte Frage. Erstens bricht der neue Import bei einem Fehler sofort ab, statt fehlerhafte Daten zu übernehmen. Zweitens bekommen Sie und wir automatisch eine Benachrichtigung. Drittens können die betroffenen Datensätze nachträglich einzeln importiert werden.", "Das passiert nicht mehr.", "Berechtigte Frage. Der Import bricht ab und Sie kriegen eine Mail."],
+          "correctIndex": 0, "feedback": ["Frage anerkennen, dann drei nummerierte Schutzmechanismen – mit Adjektiven, die sitzen (fehlerhafte Daten, die betroffenen Datensätze).", "Versprechen ohne Mechanismus. Techniker, die „nie wieder“ sagen, verlieren beim nächsten Fehler alles.", "Inhaltlich richtig, aber „kriegen“ ist zu umgangssprachlich für die Geschäftsführung, und der dritte Punkt fehlt."] },
+        { "speaker": "Frau Ostermann", "text": "Und wie lange dauert die Umstellung bei uns?" },
+        { "speaker": "Du", "text": "…", "options": ["Nach unserer Erfahrung mit vergleichbaren Kunden etwa zwei Wochen: eine Woche Vorbereitung durch uns, dann ein gemeinsamer Test, danach die eigentliche Umstellung an einem Wochenende, damit Ihr laufender Betrieb nicht gestört wird.", "Zwei Wochen ungefähr.", "Das kommt drauf an."],
+          "correctIndex": 0, "feedback": ["Zahl mit Begründung, Ablauf in drei Phasen, Rücksicht auf den Kunden (laufender Betrieb) – so klingt Kompetenz.", "Stimmt vielleicht, aber ohne Ablauf wirkt es geschätzt.", "Die ehrliche Antwort auf jede Frage – und trotzdem die schwächste."] },
+        { "speaker": "Frau Ostermann", "text": "Zwei Wochen, Wochenende, keine Störung. Damit kann ich in meiner Geschäftsführung arbeiten. Danke." }
+      ], "explanation": "Rückfragen nach einer Präsentation: anerkennen, nummerieren, mit Ablauf antworten." }
+  ]
+}

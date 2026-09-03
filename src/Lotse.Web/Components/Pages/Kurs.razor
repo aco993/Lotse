@@ -5,7 +5,7 @@
 <PageTitle>Kurs – Lotse</PageTitle>
 
 <MudText Typo="Typo.h5" Class="mb-1">Der Kurs</MudText>
-<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">Zwölf Lektionen, eine Geschichte: dein erstes Jahr bei der Nordlicht GmbH in Bremen – vom ersten Tag bis zur Prüfung. Jede Lektion: eine Situation als Gespräch, ein Grammatikthema mit serbischem Kontrast, interaktive Aufgaben, zum Schluss selbst schreiben oder sprechen.</MudText>
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">24 Lektionen in zwei Teilen, eine Geschichte: zwei Jahre bei der Nordlicht GmbH in Bremen – vom ersten Tag im Team bis zur bestandenen B2-Prüfung. Jede Lektion: eine Situation als Gespräch, ein Grammatikthema mit serbischem Kontrast, interaktive Aufgaben, zum Schluss selbst schreiben oder sprechen.</MudText>
 
 @if (_course is null) { <MudSkeleton Height="300px" /> }
 else
@@ -32,31 +32,44 @@ else
         </MudStack>
     </MudPaper>
 
-    <div class="course-path">
-        @foreach (var card in _course.Lessons)
-        {
-            var c = card;
-            <a class="@("lesson-card" + (c.IsRecommended ? " recommended" : "") + (c.IsCompleted ? " done" : ""))" href="@($"kurs/{c.Lesson.Id}")">
-                <div class="lesson-art-wrap"><LessonArt Scene="@c.Lesson.Scene" Theme="c.Lesson.Theme" /></div>
-                <div class="lesson-body">
-                    <div class="lesson-meta">
-                        <span class="lesson-no">Lektion @c.Lesson.Order</span>
-                        <span class="lesson-chip">@ThemeLabel(c.Lesson.Theme)</span>
-                        <span class="lesson-chip">@c.Lesson.Band.Label()</span>
-                        <span class="lesson-chip">~@c.Lesson.Minutes min</span>
-                    </div>
-                    <div class="lesson-title">@c.Lesson.Title</div>
-                    <div class="lesson-sub">@c.Lesson.Subtitle</div>
-                    <div class="lesson-state">
-                        @if (c.IsCompleted) { <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Tertiary" /> <span>Abgeschlossen @(c.Progress?.Score is { } s ? $"· {s:P0}" : "")@(c.Progress?.TimesCompleted > 1 ? $" · {c.Progress.TimesCompleted}×" : "")</span> }
-                        else if (c.IsStarted) { <MudIcon Icon="@Icons.Material.Filled.PlayCircle" Size="Size.Small" Color="Color.Secondary" /> <span>Begonnen</span> }
-                        else if (c.IsRecommended) { <MudIcon Icon="@Icons.Material.Filled.Explore" Size="Size.Small" Color="Color.Primary" /> <span>Als Nächstes</span> }
-                        else { <span style="opacity:.6">Offen</span> }
-                    </div>
+    @foreach (var part in _course.Lessons.GroupBy(l => l.Lesson.Part).OrderBy(g => g.Key))
+    {
+        var done = part.Count(x => x.IsCompleted);
+        <section class="course-part" id="@($"teil-{part.Key}")">
+            <div class="course-part-head">
+                <div>
+                    <MudText Typo="Typo.h6">@Lesson.PartTitle(part.Key)</MudText>
+                    <MudText Typo="Typo.body2" Style="opacity:.75">@Lesson.PartSubtitle(part.Key)</MudText>
                 </div>
-            </a>
-        }
-    </div>
+                <span class="lesson-chip course-part-count">@done / @part.Count()</span>
+            </div>
+            <div class="course-path">
+                @foreach (var card in part)
+                {
+                    var c = card;
+                    <a class="@("lesson-card" + (c.IsRecommended ? " recommended" : "") + (c.IsCompleted ? " done" : ""))" href="@($"kurs/{c.Lesson.Id}")">
+                        <div class="lesson-art-wrap"><LessonArt Scene="@c.Lesson.Scene" Theme="c.Lesson.Theme" /></div>
+                        <div class="lesson-body">
+                            <div class="lesson-meta">
+                                <span class="lesson-no">Lektion @c.Lesson.Order</span>
+                                <span class="lesson-chip">@ThemeLabel(c.Lesson.Theme)</span>
+                                <span class="lesson-chip">@c.Lesson.Band.Label()</span>
+                                <span class="lesson-chip">~@c.Lesson.Minutes min</span>
+                            </div>
+                            <div class="lesson-title">@c.Lesson.Title</div>
+                            <div class="lesson-sub">@c.Lesson.Subtitle</div>
+                            <div class="lesson-state">
+                                @if (c.IsCompleted) { <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Tertiary" /> <span>Abgeschlossen @(c.Progress?.Score is { } s ? $"· {s:P0}" : "")@(c.Progress?.TimesCompleted > 1 ? $" · {c.Progress.TimesCompleted}×" : "")</span> }
+                                else if (c.IsStarted) { <MudIcon Icon="@Icons.Material.Filled.PlayCircle" Size="Size.Small" Color="Color.Secondary" /> <span>Begonnen</span> }
+                                else if (c.IsRecommended) { <MudIcon Icon="@Icons.Material.Filled.Explore" Size="Size.Small" Color="Color.Primary" /> <span>Als Nächstes</span> }
+                                else { <span style="opacity:.6">Offen</span> }
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </section>
+    }
 }
 
 @code {

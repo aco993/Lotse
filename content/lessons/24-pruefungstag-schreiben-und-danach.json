@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L24", "order": 24, "title": "Prüfungstag: Schreiben – und danach", "subtitle": "Zwei Texte in 75 Minuten, Ziele formulieren mit um … zu, und ein Blick nach vorn",
+    "theme": "Pruefung", "band": "B2_2", "scene": "exam", "minutes": 20,
+    "intro": "Der letzte Teil des Prüfungstags: 75 Minuten für einen Forumsbeitrag und eine formelle Nachricht. Danach – das Warten auf das Ergebnis, das neue Büro in Hamburg, ein Team, das dich braucht. Zwei Jahre Deutsch in Deutschland, zusammengefasst in einer Lektion.",
+    "story": [
+      { "speaker": "Prüferin", "text": "Schreiben, 75 Minuten. Teil 1: Forumsbeitrag, etwa 150 Wörter, vier Punkte. Teil 2: formelle Nachricht, etwa 100 Wörter. Sie dürfen die Zeit frei einteilen." },
+      { "speaker": "Du (denkt)", "text": "…", "options": ["Fünfzig Minuten für den Forumsbeitrag, davon fünf für einen Plan mit den vier Punkten; zwanzig Minuten für die Nachricht; fünf Minuten am Ende, um beide Texte auf Artikel, Verbstellung und Kommas zu prüfen – meine drei Klassiker.", "Erst die kurze Nachricht in zehn Minuten, dann so lange wie möglich am Forumsbeitrag schreiben.", "Einfach anfangen zu schreiben, die Zeit wird schon reichen."],
+        "correctIndex": 0, "feedback": ["Zeitplan mit Planungsphase und Korrekturphase – und du weißt, welche drei Fehler du bei dir suchen musst. Das ist die Summe aus zwei Jahren.", "Ohne Plan und ohne Korrekturzeit; und wer „so lange wie möglich“ schreibt, prüft am Ende nichts.", "Die Zeit reicht nur mit Einteilung."] },
+      { "speaker": "Du (denkt, Teil 1)", "text": "…", "options": ["Um alle vier Punkte sicher zu treffen, mache ich aus jedem Punkt einen Absatz, beginne mit einem Satz zum Thema und schließe mit meiner Meinung. Um die Kohärenz zu sichern, setze ich in jeden Absatz mindestens einen Konnektor.", "Ich schreibe alles in einem Absatz, das spart Zeit.", "Ich schreibe nur über den Punkt, zu dem ich am meisten weiß."],
+        "correctIndex": 0, "feedback": ["Zwei um-zu-Sätze, die genau die zwei Bewertungskriterien adressieren, an denen die meisten Punkte verlieren: Erfüllung und Kohärenz.", "Ein Absatz für vier Punkte kostet bei „Kohärenz und Aufbau“ die halbe Punktzahl.", "Ein ausgelassener Leitpunkt ist der teuerste Fehler in Teil 1."] },
+      { "speaker": "Prüferin", "text": "Die Zeit ist um. Bitte legen Sie die Stifte weg." },
+      { "speaker": "Ana (draußen)", "text": "Geschafft. Und jetzt? Warum hast du das alles eigentlich gemacht – die Prüfung braucht deine Firma doch gar nicht." },
+      { "speaker": "Du", "text": "…", "options": ["Nicht wegen der Firma. Ich habe Deutsch gelernt, um in diesem Land nicht Gast zu bleiben – um mit dem Vermieter zu streiten, mit der Erzieherin zu reden, meinen Kindern nicht die Übersetzung zu überlassen. Die Prüfung war nur die Frist, die ich mir gesetzt habe.", "Um mehr Geld zu verdienen.", "Keine Ahnung, war halt so."],
+        "correctIndex": 0, "feedback": ["Drei um-zu-Sätze, ein Relativsatz, ein Gedanke, der zwei Jahre zusammenfasst. Das ist B2 – und mehr.", "Auch ein Grund, aber nach zwei Jahren Kita-Elternabenden und Nebenkostenabrechnungen ein sehr kleiner.", "Nach 24 Lektionen weißt du es besser."] },
+      { "speaker": "Ana", "text": "Die Frist, die du dir selbst gesetzt hast. Das schreibe ich mir auf. Komm, Kaffee – der Lotse hat Feierabend." }
+    ],
+    "grammar": {
+      "title": "Ziele und Absichten: um … zu, damit, Infinitiv mit zu",
+      "nodeId": "GR.INFINITIV_ZU",
+      "text": "Serbisch drückt Absichten mit „da“ + Präsens aus („Učim da položim ispit“). Deutsch hat drei Wege: um … zu + Infinitiv, wenn das Subjekt gleich bleibt (Ich lerne, um die Prüfung zu bestehen); damit + Nebensatz, wenn es wechselt (Ich lerne, damit meine Kinder nicht übersetzen müssen); und der einfache zu-Infinitiv nach Verben wie vorhaben, versuchen, anfangen, aufhören, sich entscheiden, sowie nach Nomen und Adjektiven (die Möglichkeit zu …, es ist wichtig zu …). Bei trennbaren Verben rutscht „zu“ in die Mitte: anzufangen, nachzuholen. Modalverben stehen nie mit zu. Vor der Infinitivgruppe steht ein Komma, wenn sie mit um/ohne/statt beginnt oder von einem Nomen oder Hinweiswort abhängt.",
+      "examples": [
+        { "german": "Ich habe Deutsch gelernt, um in diesem Land nicht Gast zu bleiben.", "serbian": "Naučio sam nemački da u ovoj zemlji ne ostanem gost.", "note": "um … zu, gleiches Subjekt" },
+        { "german": "Ich lerne, damit meine Kinder nicht übersetzen müssen.", "serbian": "Učim da moja deca ne moraju da prevode.", "note": "damit, anderes Subjekt" },
+        { "german": "Ich habe vor, im Januar in Hamburg anzufangen.", "serbian": "Planiram da u januaru počnem u Hamburgu.", "note": "trennbar: anzufangen" },
+        { "german": "Es ist wichtig, alle vier Punkte zu behandeln.", "serbian": "Važno je obraditi sve četiri tačke.", "note": "es ist + Adjektiv + zu" }
+      ]
+    },
+    "steps": ["gr.inf.001", "gr.inf.002", "l24.match.001", "gr.inf.004", "gr.inf.005", "l24.spot.001", "gr.inf.007", "gr.inf.106", "l24.dlg.001", "rm.ma.010", "gr.inf.104"],
+    "productionExerciseId": "sw.t1.003",
+    "merksatz": "Gleiches Subjekt: um … zu. Anderes Subjekt: damit. Und die Prüfung ist nur die Frist, die du dir setzt.",
+    "nodeIds": ["GR.INFINITIV_ZU", "SC.FORUMSBEITRAG", "SC.FORMELLE_NACHRICHT", "RM.MEINUNG_ARGUMENTATION"]
+  },
+  "exercises": [
+    { "id": "l24.match.001", "type": "Match", "nodeId": "GR.INFINITIV_ZU", "band": "B2_1", "context": "Pruefung",
+      "prompt": "um … zu oder damit? Ordne die Satzanfänge der richtigen Fortsetzung zu.",
+      "pairs": [ { "left": "Ich lerne jeden Tag, …", "right": "um die Prüfung zu bestehen." }, { "left": "Ich lerne jeden Tag, …", "right": "damit meine Kinder stolz auf mich sind." }, { "left": "Ich habe vor, …", "right": "im Januar in Hamburg anzufangen." }, { "left": "Sie ging nach Hause, …", "right": "ohne sich zu verabschieden." }, { "left": "Statt …", "right": "sich zu beschweren, sollte er eine Lösung vorschlagen." } ],
+      "explanation": "um/ohne/statt … zu bei gleichem Subjekt; damit bei Subjektwechsel; „zu“ bei trennbaren Verben in der Mitte." },
+    { "id": "l24.spot.001", "type": "SpotError", "nodeId": "GR.INFINITIV_ZU", "band": "B2_1", "context": "Pruefung",
+      "prompt": "Ein Satz aus deinem Forumsbeitrag hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Viele", "Menschen", "lernen", "die", "Sprache", "ihres", "neuen", "Landes,", "um", "sie", "sich", "besser", "integrieren", "können."],
+      "correctIndex": 9, "answers": ["–"], "explanation": "um … zu hat kein eigenes Subjekt: „um sich besser integrieren zu können“ (ohne „sie“, und mit „zu“ vor „können“). Bei Subjektwechsel: „damit sie sich … integrieren können“." },
+    { "id": "l24.dlg.001", "type": "Dialogue", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_2", "context": "Pruefung",
+      "prompt": "Vier Wochen später: Das Ergebnis ist da. Du schreibst Sabine – und antwortest Tarek, der jetzt dieselbe Prüfung machen will.",
+      "lines": [
+        { "speaker": "Sabine (Nachricht)", "text": "Und?? Ich warte seit einer Woche auf deine Nachricht!" },
+        { "speaker": "Du", "text": "…", "options": ["Bestanden – 82 Prozent, Sprechen sogar 91. Danke, dass du mir den Kurs bezahlt und den Rücken freigehalten hast. Ohne das hätte ich es nicht bis Dezember geschafft.", "Bestanden.", "Ich habe bestanden, aber nur 82 Prozent, Sprechen 91."],
+          "correctIndex": 0, "feedback": ["Ergebnis, Dank mit zwei konkreten Gründen, irreale Vergangenheit („hätte … nicht geschafft“). Eine Nachricht, die Sabine gern liest.", "Nach zwei Jahren Unterstützung verdient sie mehr als ein Wort.", "„nur 82 Prozent“ – bei 60 Prozent Bestehensgrenze ist das ein gutes Ergebnis. Nicht kleinreden."] },
+        { "speaker": "Tarek (Nachricht)", "text": "Glückwunsch, Mentor! Ich will das auch machen. Was ist dein wichtigster Tipp, um B2 zu schaffen?" },
+        { "speaker": "Du", "text": "…", "options": ["Jeden Tag etwas produzieren – schreiben oder sprechen, auch nur fünf Minuten – und die Fehler sammeln, statt sie zu vergessen. Um die Grammatik zu verstehen, reicht ein Buch; um sie zu benutzen, braucht es Wiederholung. Und: Setz dir eine Frist.", "Viel lernen.", "Mach einfach die App, die ich benutzt habe."],
+          "correctIndex": 0, "feedback": ["Der Rat, den die ganze App verkörpert: produzieren, Fehler sammeln, wiederholen, Frist setzen – mit um-zu-Sätzen, wie es die Lektion verlangt.", "Wahr und nutzlos.", "Die App hilft – aber der Rat dahinter ist das, was Tarek braucht."] },
+        { "speaker": "Tarek", "text": "Produzieren, Fehler sammeln, Frist setzen. Ich fange heute an. Dein Import ist übrigens immer noch wartbar." }
+      ], "explanation": "Ergebnisse teilen, Dank konkret machen, Rat mit Absicht formulieren (um … zu)." }
+  ]
+}

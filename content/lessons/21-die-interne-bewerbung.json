@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L21", "order": 21, "title": "Die interne Bewerbung", "subtitle": "Lebenslauf und Anschreiben: Partizipien als Adjektive, Nominalstil, Stärken benennen",
+    "theme": "Beruf", "band": "B2_2", "scene": "salary", "minutes": 18,
+    "intro": "Nach der Fusion wird eine Stelle ausgeschrieben: „Technische Leitung Integration“ – jemand, der beide Systeme kennt. Sabine ermutigt dich, dich zu bewerben. Interne Bewerbung heißt: kurzes Anschreiben, aktueller Lebenslauf, Gespräch mit Herrn Krüger und der Hamburger Geschäftsführerin Frau Ahrens.",
+    "story": [
+      { "speaker": "Sabine", "text": "Du solltest dich bewerben. Aber schreib das Anschreiben nicht wie eine Mail an mich – Frau Ahrens kennt dich nicht." },
+      { "speaker": "Du", "text": "…", "options": ["Verstanden. Ich beschreibe die drei Ergebnisse aus zwei Jahren: den stabilisierten Import, die eingeführten automatischen Tests und die erfolgreich abgeschlossene Umstellung bei Hansa Logistik.", "Verstanden. Ich schreibe, dass ich den Import stabilisiert habe, dass ich Tests eingeführt habe und dass ich die Umstellung bei Hansa gemacht habe.", "Verstanden. Ich schreibe, dass ich fleißig und teamfähig bin."],
+        "correctIndex": 0, "feedback": ["Drei Partizipialattribute (der stabilisierte Import, die eingeführten Tests, die abgeschlossene Umstellung) – so verdichtet ein Anschreiben Ergebnisse.", "Inhaltlich dasselbe, aber drei dass-Sätze hintereinander lesen sich wie ein Protokoll. Für ein Anschreiben: Partizipien und Nomen.", "Floskeln, die in jedem Anschreiben stehen. Frau Ahrens will Ergebnisse."] },
+      { "speaker": "Frau Ahrens (im Gespräch)", "text": "Herr Micić, Sie wären verantwortlich für zwei Teams, die sich noch nicht kennen. Was qualifiziert Sie dafür – außer Technik?" },
+      { "speaker": "Du", "text": "…", "options": ["Zwei Dinge. Erstens habe ich selbst erlebt, wie es ist, in ein bestehendes Team zu kommen – als Zugezogener und als Neuer. Zweitens habe ich in diesem Jahr einen Kollegen eingearbeitet und einen Konflikt im Team gelöst, der die Zusammenarbeit blockiert hatte.", "Ich bin gut mit Menschen und ich kann Deutsch und Serbisch.", "Technik ist doch das Wichtigste."],
+        "correctIndex": 0, "feedback": ["Zwei Beispiele statt Eigenschaften, ein Relativsatz mit Plusquamperfekt („der … blockiert hatte“) – Erfahrung, die man glaubt.", "„gut mit Menschen“ ist eine Behauptung; Frau Ahrens fragt nach Belegen.", "Sie hat „außer Technik“ gesagt – die Frage ignorieren ist die schlechteste Antwort."] },
+      { "speaker": "Herr Krüger", "text": "Und Ihr Deutsch? Die Hamburger Kollegen kommunizieren viel schriftlich mit Kunden." },
+      { "speaker": "Du", "text": "…", "options": ["Ich bereite mich gerade auf die B2-Prüfung vor und lege sie im Dezember ab. Schriftlich arbeite ich täglich mit Kunden – die Rückmeldungen von Hansa Logistik nach der Umstellung waren durchweg positiv, auch zur Kommunikation.", "Mein Deutsch ist perfekt.", "Ich lerne noch, aber Englisch geht ja auch."],
+        "correctIndex": 0, "feedback": ["Ehrlich (Prüfung im Dezember), belegt (tägliche Kundenkommunikation, positive Rückmeldungen) – und im Nominalstil, der zum Gespräch passt.", "Niemand glaubt „perfekt“, und es ist unnötig: B2 mit Belegen reicht.", "„Englisch geht ja auch“ signalisiert, dass du das Deutsche nicht ernst nimmst – bei Kundenkontakt ein Ausschlusskriterium."] },
+      { "speaker": "Frau Ahrens", "text": "Ehrlich und konkret – das mag ich. Sie hören bis Ende der Woche von uns." }
+    ],
+    "grammar": {
+      "title": "Partizipien als Adjektive: Ergebnisse in ein Wort packen",
+      "nodeId": "GR.PARTIZIPIALATTRIBUT",
+      "text": "Aus einem Relativsatz wird ein Wort: „der Import, der stabilisiert wurde“ → „der stabilisierte Import“ (Partizip II, passiv/abgeschlossen); „die Kosten, die steigen“ → „die steigenden Kosten“ (Partizip I, aktiv/gleichzeitig). Das Partizip wird wie ein Adjektiv dekliniert: der stabilisierte Import, die eingeführten Tests, mit dem abgeschlossenen Projekt. Erweitert: „die im letzten Jahr eingeführten Tests“ – alles zwischen Artikel und Partizip gehört dazu. In Lebensläufen, Anschreiben und Berichten ersetzt das die dass-Satz-Ketten. Serbisch kennt beides (stabilizovani uvoz, rastući troškovi) – die Deklination ist das Neue.",
+      "examples": [
+        { "german": "der stabilisierte Import", "serbian": "stabilizovani uvoz", "note": "Partizip II = abgeschlossen" },
+        { "german": "die steigenden Anforderungen", "serbian": "rastući zahtevi", "note": "Partizip I = gleichzeitig" },
+        { "german": "die im letzten Jahr eingeführten Tests", "serbian": "testovi uvedeni prošle godine", "note": "erweitertes Attribut" },
+        { "german": "eine erfolgreich abgeschlossene Umstellung", "serbian": "uspešno završena migracija", "note": "nach „eine“: -e" }
+      ]
+    },
+    "steps": ["gr.pa.001", "gr.pa.002", "l21.match.001", "gr.pa.004", "gr.pa.104", "l21.spot.001", "gr.pa.106", "gr.nom.101", "l21.dlg.001", "ws.bb.103", "gr.pa.105"],
+    "productionExerciseId": "sp.alltag.105",
+    "merksatz": "Was getan wurde: Partizip II. Was gerade geschieht: Partizip I. Beides dekliniert wie ein Adjektiv.",
+    "nodeIds": ["GR.PARTIZIPIALATTRIBUT", "GR.NOMINALISIERUNG", "WS.BERUF_BUERO", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l21.match.001", "type": "Match", "nodeId": "GR.PARTIZIPIALATTRIBUT", "band": "B2_2", "context": "Beruf",
+      "prompt": "Relativsatz → Partizipialattribut. Ordne zu.",
+      "pairs": [ { "left": "der Import, der stabilisiert wurde", "right": "der stabilisierte Import" }, { "left": "die Tests, die eingeführt wurden", "right": "die eingeführten Tests" }, { "left": "die Kosten, die steigen", "right": "die steigenden Kosten" }, { "left": "die Kunden, die warten", "right": "die wartenden Kunden" }, { "left": "das Projekt, das abgeschlossen wurde", "right": "das abgeschlossene Projekt" } ],
+      "explanation": "Passiv/abgeschlossen → Partizip II; aktiv/gleichzeitig → Partizip I." },
+    { "id": "l21.spot.001", "type": "SpotError", "nodeId": "GR.PARTIZIPIALATTRIBUT", "band": "B2_2", "context": "Beruf",
+      "prompt": "Ein Satz aus deinem Anschreiben hat ein falsches Partizip. Tippe darauf.",
+      "options": ["Nach", "der", "Fusion", "wachsen", "die", "Anforderungen", "an", "die", "Integration", "der", "beiden", "bestehende", "Systeme", "deutlich."],
+      "correctIndex": 11, "answers": ["bestehenden"], "explanation": "Genitiv Plural nach „der beiden“: der beiden bestehendEN Systeme." },
+    { "id": "l21.dlg.001", "type": "Dialogue", "nodeId": "WS.BERUF_BUERO", "band": "B2_2", "context": "Beruf",
+      "prompt": "Frau Ahrens ruft an: Du bekommst die Stelle – unter einer Bedingung. Verhandle klar und dankbar.",
+      "lines": [
+        { "speaker": "Frau Ahrens", "text": "Herr Micić, wir möchten Ihnen die Stelle anbieten. Eine Bedingung: Sie wären zwei Tage pro Woche in Hamburg. Ist das für Sie machbar?" },
+        { "speaker": "Du", "text": "…", "options": ["Vielen Dank, das freut mich sehr. Zwei Tage Hamburg sind machbar, wenn sie planbar sind – ich habe zwei Kinder in der Kita. Könnten wir feste Tage vereinbaren, etwa Dienstag und Mittwoch?", "Ja, klar, kein Problem. (denkst: Wie soll ich das mit der Kita machen?)", "Zwei Tage? Das ist zu viel. Einen Tag maximal."],
+          "correctIndex": 0, "feedback": ["Dank, Zusage mit Bedingung, Grund, konkreter Vorschlag – die Bedingung wird verhandelbar, ohne dass die Stelle wackelt.", "Zusagen, was zu Hause nicht geklärt ist, rächt sich in Woche drei.", "Gegenforderung ohne Begründung, bevor du dich bedankt hast."] },
+        { "speaker": "Frau Ahrens", "text": "Feste Tage sind sinnvoll, Dienstag und Mittwoch passen. Das Gehalt hat Herr Krüger Ihnen genannt?" },
+        { "speaker": "Du", "text": "…", "options": ["Ja, die genannte Spanne ist für mich in Ordnung. Ich würde gern die schriftliche Zusage abwarten und dann in Ruhe mit meiner Familie sprechen – ich melde mich bis Montag.", "Ja, passt. Ich fange morgen an.", "Das Gehalt ist zu niedrig."],
+          "correctIndex": 0, "feedback": ["„die genannte Spanne“ (Partizipialattribut), Bitte um Schriftform, Bedenkzeit mit Termin – professionell bis zum Schluss.", "Etwas zu schnell für eine Entscheidung, die die Familie betrifft; und ohne schriftliche Zusage.", "Das gehörte, wenn überhaupt, ins Gespräch mit Herrn Krüger – mit Begründung."] },
+        { "speaker": "Frau Ahrens", "text": "Bis Montag, gern. Die schriftliche Zusage geht heute raus. Herzlichen Glückwunsch, Herr Micić." }
+      ], "explanation": "Angebot annehmen: danken, Bedingung begründen, Vorschlag machen, Schriftform und Bedenkzeit erbitten." }
+  ]
+}

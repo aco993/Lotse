@@ -292,7 +292,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
     public async Task Lesson_flow_marks_progress_and_recommends_the_next_one()
     {
         var course = await _svc.GetCourseAsync();
-        Assert.Equal(12, course.Lessons.Count);
+        Assert.Equal(24, course.Lessons.Count);
         Assert.Equal("L01", course.Next!.Lesson.Id);
 
         var session = await _svc.StartLessonAsync("L01");

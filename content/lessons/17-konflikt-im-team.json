@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L17", "order": 17, "title": "Konflikt im Team", "subtitle": "Sich entschuldigen, Grenzen setzen, reflexive Verben und Negation",
+    "theme": "Beruf", "band": "B2_1", "scene": "meeting", "minutes": 15,
+    "intro": "Lena hat im Stand-up vor allen gesagt, dein Code sei „nicht wartbar“. Du hast dich geärgert und ihr eine scharfe Nachricht geschrieben. Jetzt ist die Stimmung im Team eisig, und Sabine will, dass ihr das klärt – unter euch, ohne sie.",
+    "story": [
+      { "speaker": "Lena", "text": "Du wolltest reden. Also – deine Nachricht gestern war ziemlich heftig." },
+      { "speaker": "Du", "text": "…", "options": ["Ja, und dafür möchte ich mich entschuldigen. Ich habe mich über die Formulierung im Stand-up geärgert und dann zu schnell reagiert. Das hätte ich nicht schreiben sollen.", "Ja, aber du hast angefangen. Ich habe mich nur gewehrt.", "Ich entschuldige, aber ich ärgere über deine Kritik."],
+        "correctIndex": 0, "feedback": ["sich entschuldigen für, sich ärgern über, und die Verantwortung für den eigenen Anteil. Das öffnet das Gespräch.", "Eine Entschuldigung mit „aber“ ist keine.", "Reflexivpronomen fehlen: Ich entschuldige MICH, ich ärgere MICH über …"] },
+      { "speaker": "Lena", "text": "Danke. Ehrlich gesagt tut es mir auch leid – „nicht wartbar“ vor allen zu sagen war nicht fair. Ich hätte dich direkt ansprechen sollen." },
+      { "speaker": "Du", "text": "…", "options": ["Das nehme ich an. Mich stört nicht die Kritik, sondern die Form. Wenn dir etwas an meinem Code nicht gefällt, sag es mir bitte vorher unter vier Augen – ich nehme das ernst.", "Mich stört nicht die Kritik, sondern die Form. Sag es mir nicht vor allen niemals mehr.", "Schon gut. Vergessen wir das."],
+        "correctIndex": 0, "feedback": ["„nicht … sondern“ (Teilnegation), eine klare Bitte, ein Angebot. Grenze gesetzt, Tür offen.", "„nicht … niemals“ ist doppelte Verneinung – im Deutschen nur eine: „Sag es bitte nie wieder vor allen.“", "Konflikte, die man „vergisst“, kommen wieder. Die Grenze muss ausgesprochen werden."] },
+      { "speaker": "Lena", "text": "Fair. Und ich hätte gern, dass wir uns die Stellen, die mir Sorgen machen, zusammen anschauen. Nicht als Kritik, als Review." },
+      { "speaker": "Du", "text": "…", "options": ["Gern. Lass uns das morgen früh machen, dann kann ich mich heute noch darauf vorbereiten. Und danke, dass du dich gemeldet hast.", "Gern. Lass uns das morgen früh machen, dann ich kann heute noch vorbereiten mich.", "Muss das sein?"],
+        "correctIndex": 0, "feedback": ["sich vorbereiten auf → „darauf“, sich melden – und ein Dank, der die Sache abschließt.", "„dann ich kann“ – Verb an Position 2; und „mich“ steht nach dem Verb, nicht am Satzende: „kann ich mich … vorbereiten“.", "Nach einem Konflikt ist ein gemeinsames Review das beste Zeichen, dass er vorbei ist."] },
+      { "speaker": "Lena", "text": "Morgen um neun. Und ich bringe Kaffee – als Wiedergutmachung." }
+    ],
+    "grammar": {
+      "title": "Reflexive Verben und die einfache Negation",
+      "nodeId": "GR.REFLEXIVE_VERBEN",
+      "text": "Reflexive Verben brauchen im Deutschen ein Pronomen, das zur Person passt: ich entschuldige mich, du ärgerst dich, wir bereiten uns vor. Serbisch hat nur „se“ für alle Personen – daher fehlt das deutsche Pronomen gern oder ist falsch (sich statt mich). Steht zusätzlich ein Akkusativobjekt, wird das Pronomen zum Dativ: ich wasche mir die Hände, ich sehe mir den Code an. Mit Präposition: sich ärgern über + Akk., sich entschuldigen für + Akk. (bei + Dat.), sich vorbereiten auf + Akk., sich melden bei + Dat. Negation: Deutsch verneint genau einmal – „nie wieder“, nicht „nie niemals“; Teilnegation mit „nicht …, sondern …“.",
+      "examples": [
+        { "german": "Dafür möchte ich mich entschuldigen.", "serbian": "Za to želim da se izvinim.", "note": "sich entschuldigen für" },
+        { "german": "Ich habe mich über die Formulierung geärgert.", "serbian": "Naljutio sam se zbog formulacije.", "note": "sich ärgern über + Akk." },
+        { "german": "Ich sehe mir die Stellen an.", "serbian": "Pogledaću ta mesta.", "note": "mir (Dativ) + Akkusativobjekt" },
+        { "german": "Mich stört nicht die Kritik, sondern die Form.", "serbian": "Ne smeta mi kritika, nego forma.", "note": "nicht … sondern" }
+      ]
+    },
+    "steps": ["gr.ref.001", "gr.ref.103", "l17.match.001", "gr.ref.003", "gr.neg.005", "l17.spot.001", "gr.ref.101", "gr.neg.003", "l17.dlg.001", "gr.ref.104", "rm.di.009"],
+    "productionExerciseId": "sp.alltag.103",
+    "merksatz": "Mich, dich, sich, uns – das Pronomen wechselt mit der Person; und verneint wird nur einmal.",
+    "nodeIds": ["GR.REFLEXIVE_VERBEN", "GR.NEGATION", "RM.DISKUSSION", "SP.ALLTAG_BERUF"]
+  },
+  "exercises": [
+    { "id": "l17.match.001", "type": "Match", "nodeId": "GR.REFLEXIVE_VERBEN", "band": "B2_1", "context": "Beruf",
+      "prompt": "Reflexiv mit Präposition: Ordne Verb und Ergänzung zu.",
+      "pairs": [ { "left": "sich entschuldigen", "right": "bei jemandem für etwas" }, { "left": "sich ärgern", "right": "über etwas / jemanden" }, { "left": "sich vorbereiten", "right": "auf etwas" }, { "left": "sich melden", "right": "bei jemandem" }, { "left": "sich einigen", "right": "mit jemandem auf etwas" }, { "left": "sich kümmern", "right": "um etwas / jemanden" } ],
+      "explanation": "Reflexivpronomen + feste Präposition: beides gehört zum Verb." },
+    { "id": "l17.spot.001", "type": "SpotError", "nodeId": "GR.REFLEXIVE_VERBEN", "band": "B2_1", "context": "Beruf",
+      "prompt": "Deine Nachricht an Lena nach dem Gespräch hat einen Fehler. Tippe auf das falsche Wort.",
+      "options": ["Danke", "für", "das", "Gespräch.", "Ich", "freue", "sich", "auf", "das", "Review", "morgen", "und", "bereite", "mich", "gut", "vor."],
+      "correctIndex": 6, "answers": ["mich"], "explanation": "1. Person Singular: ich freue MICH. „sich“ nur für er/sie/es/Sie/sie." },
+    { "id": "l17.dlg.001", "type": "Dialogue", "nodeId": "GR.NEGATION", "band": "B2_1", "context": "Beruf",
+      "prompt": "Beim Review am nächsten Morgen: Lena findet eine Stelle wirklich problematisch. Reagiere sachlich – und setze deine Grenze, wo nötig.",
+      "lines": [
+        { "speaker": "Lena", "text": "Hier, diese Funktion: 300 Zeilen, keine Tests, drei verschachtelte Schleifen. Das meinte ich mit nicht wartbar." },
+        { "speaker": "Du", "text": "…", "options": ["Da hast du recht, die ist historisch gewachsen – ich habe sie nicht geschrieben, sondern nur erweitert. Trotzdem: Ich übernehme sie und teile sie diese Woche in drei kleinere Funktionen mit Tests auf.", "Die habe ich nicht geschrieben, das war Jonas. Kein Problem von mir.", "Nichts ist nie perfekt. Ich mache das irgendwann."],
+          "correctIndex": 0, "feedback": ["Zustimmung, Fakten („nicht …, sondern“), dann Verantwortung mit Termin. So endet ein Review als Fortschritt.", "Schuld weiterreichen löst das Problem nicht – und Lena fragt beim Stand-up trotzdem dich.", "„Nichts ist nie“ – doppelte Verneinung, und „irgendwann“ heißt nie."] },
+        { "speaker": "Lena", "text": "Das wäre super. Und die Importlogik? Da hätte ich ehrlich gesagt gern, dass ich die auch anfassen darf." },
+        { "speaker": "Du", "text": "…", "options": ["Beim Import bitte ich dich, Änderungen vorher mit mir abzustimmen – nicht weil ich dir nicht vertraue, sondern weil drei Kunden davon abhängen. Kleine Änderungen gern, größere zu zweit.", "Nein. Der Import ist meiner.", "Klar, mach was du willst."],
+          "correctIndex": 0, "feedback": ["Grenze mit Begründung, „nicht weil …, sondern weil …“, dann ein Angebot. Erwachsen.", "Besitzdenken – genau der Vorwurf, den Lena beim Stand-up gemacht hat.", "Grenzenlose Zustimmung kostet beim nächsten Vorfall dich den Kopf."] },
+        { "speaker": "Lena", "text": "Kleine Änderungen allein, große zu zweit – damit kann ich gut leben. Danke, dass du so klar bist." }
+      ], "explanation": "Kritik annehmen, Verantwortung übernehmen, Grenzen begründen – ohne doppelte Verneinung." }
+  ]
+}

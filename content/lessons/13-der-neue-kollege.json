@@ -1,0 +1,55 @@
+{
+  "lesson": {
+    "id": "L13", "order": 13, "title": "Der Neue: Tarek einarbeiten", "subtitle": "Erklären, anleiten, Artikel und Genus sicher setzen",
+    "theme": "Beruf", "band": "B1_2", "scene": "team", "minutes": 15,
+    "intro": "Jahr zwei. Jetzt bist du derjenige, der einen Neuen einarbeitet: Tarek, 24, aus Damaskus, frisch vom Studium in Hannover, sehr gutes Englisch, Deutsch B1. Du erklärst ihm das System – und merkst, wie viele Artikel man dafür braucht.",
+    "story": [
+      { "speaker": "Tarek", "text": "Hi Aleksandar! Sabine hat gesagt, du zeigst mir alles. Ich habe Angst, dass ich beim Deutsch nicht mitkomme." },
+      { "speaker": "Du", "text": "…", "options": ["Keine Sorge, das ging mir genauso. Wir machen das Schritt für Schritt: Zuerst zeige ich dir das Projekt, dann die Datenbank und am Ende den Import – das ist der Teil, an dem ich am längsten gesessen habe.", "Keine Sorge. Zuerst zeige ich dir Projekt, dann Datenbank und am Ende Import.", "Keine Sorge, das ging mir genauso. Wir machen das Schritt für Schritt: Zuerst ich zeige dir das Projekt, dann die Datenbank."],
+        "correctIndex": 0, "feedback": ["Empathie, Plan in drei Schritten, jedes Nomen mit Artikel (das Projekt, die Datenbank, den Import), und ein Relativsatz obendrauf.", "Genau der Fehler, den du selbst im ersten Jahr gemacht hast: Nomen ohne Artikel. Für Tarek als Vorbild: das Projekt, die Datenbank, den Import.", "„Zuerst ich zeige“ – nach „Zuerst“ steht das Verb an Position 2."] },
+      { "speaker": "Tarek", "text": "Danke! Und was ist das hier – die Datei mit den vielen Zahlen?" },
+      { "speaker": "Du", "text": "…", "options": ["Das ist die Konfigurationsdatei. Jeder Kunde hat eine eigene, und der Import liest daraus die Einstellungen – zum Beispiel das Trennzeichen und die Zeitzone.", "Das ist der Konfigurationsdatei. Jeder Kunde hat eine eigene, und die Import liest daraus die Einstellungen.", "Das ist Config. Jeder Kunde hat eigene, Import liest Settings."],
+        "correctIndex": 0, "feedback": ["die Datei → die Konfigurationsdatei, der Import, das Trennzeichen, die Zeitzone: Das Genus des letzten Wortteils bestimmt das Kompositum.", "Zwei Genusfehler: die Datei (also DIE Konfigurationsdatei), der Import.", "Ohne Artikel und auf Denglisch – Tarek lernt so das falsche Deutsch."] },
+      { "speaker": "Tarek", "text": "Ah, das letzte Wort bestimmt den Artikel! Das habe ich in Hannover gelernt, aber nie benutzt." },
+      { "speaker": "Du", "text": "…", "options": ["Genau. Und ein Tipp aus meinem ersten Jahr: Schreib dir jedes neue Wort mit Artikel und Plural auf, nicht nur das Wort. „Termin“ nützt dir nichts – „der Termin, die Termine“ bleibt hängen.", "Genau. Schreib dir jedes neue Wort auf.", "Genau. Aber Artikel sind nicht so wichtig, Hauptsache man versteht dich."],
+        "correctIndex": 0, "feedback": ["Der Rat, den du selbst gebraucht hättest – mit Beispiel. So gibt man Wissen weiter.", "Zu allgemein; der entscheidende Teil (mit Artikel und Plural) fehlt.", "Falsch und ein schlechter Rat: Fehlende Artikel sind das erste, was Prüfer und Chefs hören."] },
+      { "speaker": "Tarek", "text": "Der Termin, die Termine. Okay. Dann zeig mir mal den Import, an dem du so lange gesessen hast." }
+    ],
+    "grammar": {
+      "title": "Artikel und Genus: Regeln, die wirklich tragen",
+      "nodeId": "GR.ARTIKEL_GENUS",
+      "text": "Serbisch hat keine Artikel, deshalb fehlen sie serbischen Muttersprachlern am häufigsten – und sie fehlen am deutlichsten, weil Deutsche sie immer hören. Drei Werkzeuge: (1) Jedes Nomen als Dreiklang lernen: der Termin, die Termine. (2) Endungen, die das Genus verraten: -ung, -heit, -keit, -schaft, -ion, -tät, -ei → die; -er (Personen), -ling, -ismus → der; -chen, -lein, -ment, -um, nominalisierte Verben (das Lernen) → das. (3) Komposita: das letzte Wort bestimmt den Artikel (die Datei → die Konfigurationsdatei). Unbestimmter Artikel für Neues, bestimmter für Bekanntes, kein Artikel nur bei Stoffen, Plural ohne Menge und festen Wendungen.",
+      "examples": [
+        { "german": "Das ist die Konfigurationsdatei. (die Datei)", "serbian": "To je konfiguracioni fajl.", "note": "letztes Wort bestimmt" },
+        { "german": "Ich habe einen Termin – der Termin ist um zehn.", "serbian": "Imam termin – termin je u deset.", "note": "neu: ein, bekannt: der" },
+        { "german": "die Einstellung, die Sicherheit, die Möglichkeit", "serbian": "podešavanje, sigurnost, mogućnost", "note": "-ung/-heit/-keit → die" },
+        { "german": "das Dokument, das Zentrum, das Lernen", "serbian": "dokument, centar, učenje", "note": "-ment/-um/nominalisiert → das" }
+      ]
+    },
+    "steps": ["gr.art.001", "ws.wb.010", "l13.match.001", "gr.art.009", "gr.art.103", "l13.spot.001", "gr.art.104", "ws.it.010", "l13.dlg.001", "gr.art.105", "gr.v2.101"],
+    "productionExerciseId": "sp.alltag.004",
+    "merksatz": "Kein Wort ohne Artikel und Plural – und beim Kompositum entscheidet das letzte Wort.",
+    "nodeIds": ["GR.ARTIKEL_GENUS", "WS.WORTBILDUNG", "WS.IT_SOFTWARE", "GR.HAUPTSATZ_V2"]
+  },
+  "exercises": [
+    { "id": "l13.match.001", "type": "Match", "nodeId": "GR.ARTIKEL_GENUS", "band": "B1_2", "context": "Beruf",
+      "prompt": "Welcher Artikel? Ordne die Wörter aus Tareks erstem Tag zu.",
+      "pairs": [ { "left": "Konfigurationsdatei", "right": "die – letztes Wort: die Datei" }, { "left": "Benutzerkonto", "right": "das – letztes Wort: das Konto" }, { "left": "Zeitplan", "right": "der – letztes Wort: der Plan" }, { "left": "Einstellung", "right": "die – Endung -ung" }, { "left": "Dokument", "right": "das – Endung -ment" }, { "left": "Entwickler", "right": "der – Person auf -er" } ],
+      "explanation": "Komposita: letztes Wort. Endungen: -ung → die, -ment → das, Personen auf -er → der." },
+    { "id": "l13.spot.001", "type": "SpotError", "nodeId": "GR.ARTIKEL_GENUS", "band": "B1_2", "context": "Beruf",
+      "prompt": "Tareks erste Chat-Nachricht ans Team hat einen Artikelfehler. Tippe auf das falsche Wort.",
+      "options": ["Hallo", "zusammen,", "ich", "habe", "den", "Import", "gestartet,", "aber", "die", "Konfigurationsdatei", "für", "der", "Kunden", "Hansa", "fehlt", "noch."],
+      "correctIndex": 11, "answers": ["den"], "explanation": "für + Akkusativ: für DEN Kunden. (Kunde ist ein n-Nomen: den Kunden.)" },
+    { "id": "l13.dlg.001", "type": "Dialogue", "nodeId": "GR.ARTIKEL_GENUS", "band": "B1_2", "context": "Beruf",
+      "prompt": "Tarek fragt dich nach Wörtern. Antworte jeweils mit der vollständigen, korrekten Form.",
+      "lines": [
+        { "speaker": "Tarek", "text": "Wie sagt man das Ding, wo man Termine einträgt – Kalender?" },
+        { "speaker": "Du", "text": "…", "options": ["Der Kalender, die Kalender – im Büro sagen alle „der Outlook-Kalender“.", "Kalender, ja.", "Die Kalender."],
+          "correctIndex": 0, "feedback": ["Artikel, Plural und der Ausdruck aus dem Alltag – so lernt Tarek das Wort mit allem, was dazugehört.", "Ohne Artikel gibst du ihm das halbe Wort.", "Falsches Genus: der Kalender (Plural: die Kalender)."] },
+        { "speaker": "Tarek", "text": "Und das Papier vom Vermieter, das ich beim Amt gebraucht habe?" },
+        { "speaker": "Du", "text": "…", "options": ["Die Wohnungsgeberbestätigung – die Bestätigung, also „die“. Das Wort ist lang, aber die Endung -ung verrät das Genus.", "Das Wohnungsgeberbestätigung.", "Der Wohnungsgeberbestätigung – ist maskulin, glaube ich."],
+          "correctIndex": 0, "feedback": ["Richtig, und du erklärst gleich die Regel dazu. Genau so hätte es dir am Anfang geholfen.", "die Bestätigung → die.", "-ung ist immer feminin – ohne Ausnahme."] },
+        { "speaker": "Tarek", "text": "-ung immer die. Das merke ich mir. Danke, Mentor!" }
+      ], "explanation": "Wörter immer als Dreiklang weitergeben: Artikel, Wort, Plural – plus die Regel, wo es eine gibt." }
+  ]
+}

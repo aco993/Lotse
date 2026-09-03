@@ -25,9 +25,12 @@ pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfi
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.
 
-## 2a. Kurs: 12 lekcija sa pričom
+## 2a. Kurs: 24 lekcije sa pričom (dva dela)
 
-Pored dnevnih sesija postoji **Kurs** (meni → Kurs): dvanaest lekcija koje prate tvoju prvu godinu u firmi Nordlicht GmbH u Bremenu: prvi dan u timu, prvi mejl šefici, stand-up, ljut klijent, Bürgeramt, stan i komšije, lekar, pad produkcionog sistema, debata o radu od kuće, vikend, razgovor o plati, dan ispita.
+Pored dnevnih sesija postoji **Kurs** (meni → Kurs): 24 lekcije u dva dela koje prate tvoje dve godine u firmi Nordlicht GmbH u Bremenu.
+
+- **Teil 1 (L01–L12, B1+ → B2):** prvi dan u timu, prvi mejl šefici, stand-up, ljut klijent, Bürgeramt, stan i komšije, lekar, pad produkcionog sistema, debata o radu od kuće, vikend, razgovor o plati, dan ispita.
+- **Teil 2 (L13–L24, B2):** uvodiš novog kolegu Tareka (članovi i rod), roditeljski sastanak u vrtiću (zavisne rečenice), organizuješ Betriebsausflug (glagoli s predlozima), prezentuješ klijentu (deklinacija prideva), rešavaš sukob s Lenom (povratni glagoli, negacija), večernji kurs na VHS (lažni prijatelji, tvorba reči), osporavaš Nebenkostenabrechnung (genitiv), glasine o fuziji (subjektivni modalni glagoli), interna prijava za vođu tima (participi kao pridevi), slušanje vesti (indirektni govor), pa dva ispitna dana: Lesen i Schreiben – i položen B2.
 
 Svaka lekcija ima:
 - **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog.

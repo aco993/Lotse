@@ -34,5 +34,25 @@ public sealed record Lesson(
     /// <summary>Node ids the lesson trains; used for the recommendation "which lesson next".</summary>
     IReadOnlyList<string> NodeIds)
 {
+    /// <summary>Lessons per course part ("Jahr"). Lessons 1–12 are part 1, 13–24 part 2.</summary>
+    public const int LessonsPerPart = 12;
+
     public IEnumerable<string> AllExerciseIds => ProductionExerciseId is null ? Steps : Steps.Append(ProductionExerciseId);
+
+    /// <summary>1-based part of the course this lesson belongs to, derived from <see cref="Order"/>.</summary>
+    public int Part => (Order - 1) / LessonsPerPart + 1;
+
+    public static string PartTitle(int part) => part switch
+    {
+        1 => "Teil 1 · Das erste Jahr",
+        2 => "Teil 2 · Das zweite Jahr",
+        _ => $"Teil {part}"
+    };
+
+    public static string PartSubtitle(int part) => part switch
+    {
+        1 => "Ankommen bei der Nordlicht GmbH: vom ersten Tag im Team bis zur ersten Prüfung.",
+        2 => "Verantwortung übernehmen: Kollegen einarbeiten, Konflikte lösen, Fusion, Bewerbung – und die B2-Prüfung.",
+        _ => ""
+    };
 }

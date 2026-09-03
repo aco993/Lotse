@@ -117,3 +117,9 @@ html, body { height: 100%; }
 
 /* Keyboard hints make no sense on touch screens */
 @media (hover: none) and (pointer: coarse) { .kbd-hint { display: none; } }
+
+/* Course parts (Teil 1 / Teil 2) */
+.course-part { margin-bottom: 28px; }
+.course-part-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--mud-palette-lines-default); }
+.course-part-count { white-space: nowrap; align-self: center; }
+@media (max-width: 600px) { .course-part-head { align-items: flex-start; } }
