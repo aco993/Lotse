@@ -36,11 +36,15 @@
             {
                 <MudText Typo="Typo.caption" Color="Color.Warning">Spracherkennung wird von diesem Browser nicht unterstützt (Chrome/Edge nutzen). Du kannst deinen Beitrag stattdessen tippen.</MudText>
             }
-            else
+            else if (_recognitionError is null)
             {
                 <MudText Typo="Typo.caption" Style="opacity:.7">Sprich frei – das Transkript erscheint unten und kann vor dem Absenden korrigiert werden.</MudText>
             }
         </MudStack>
+        @if (_recognitionError is not null)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@_recognitionError</MudAlert>
+        }
     }
 
     <MudTextField @bind-Value="_text" Lines="@(IsSpeaking ? 6 : 12)" Variant="Variant.Outlined" Immediate="true"
@@ -156,6 +160,7 @@ else
     private bool _busy;
     private bool _recording;
     private bool _sttSupported = true;
+    private string? _recognitionError;
     private ProductionResult? _production;
     private bool[] _checks = [];
     private System.Threading.Timer? _timer;
@@ -191,10 +196,29 @@ else
 
     private void OnTranscript(string text, bool isFinal) { _text = text; _ = InvokeAsync(StateHasChanged); }
     private void OnRecognitionEnded() { _recording = false; _ = InvokeAsync(StateHasChanged); }
-    private void OnRecognitionError(string error) { _recording = false; _ = InvokeAsync(StateHasChanged); }
+
+    private void OnRecognitionError(string error)
+    {
+        _recording = false;
+        // "no-speech" fires on every silent pause and is not something the learner did wrong; anything
+        // else (denied mic, no device, network) is worth a plain-language explanation with a fallback.
+        _recognitionError = error == "no-speech" ? null : TranslateRecognitionError(error);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private static string TranslateRecognitionError(string error) => error switch
+    {
+        "not-allowed" or "permission-denied" or "service-not-allowed" =>
+            "Mikrofonzugriff wurde nicht erlaubt. Prüfe die Website-Berechtigungen deines Browsers (Adressleiste → Mikrofonsymbol) und versuche es erneut – oder tippe deinen Beitrag stattdessen.",
+        "audio-capture" => "Kein Mikrofon gefunden. Du kannst deinen Beitrag stattdessen tippen.",
+        "network" => "Netzwerkproblem bei der Spracherkennung. Nochmal versuchen oder stattdessen tippen.",
+        "aborted" => "Aufnahme wurde abgebrochen.",
+        _ => $"Spracherkennung gerade nicht verfügbar ({error}). Du kannst deinen Beitrag stattdessen tippen.",
+    };
 
     private async Task StartRecordingAsync()
     {
+        _recognitionError = null;
         _recording = await Speech.StartRecognitionAsync();
     }
 
