@@ -136,9 +136,9 @@ public sealed class LearningService(
         return streak;
     }
 
-    private static async Task<List<ErrorEvent>> RecentErrorsAsync(LotseDbContext db, int days, CancellationToken ct)
+    private async Task<List<ErrorEvent>> RecentErrorsAsync(LotseDbContext db, int days, CancellationToken ct)
     {
-        var since = DateTime.UtcNow.AddDays(-days);
+        var since = Now.AddDays(-days);
         return (await db.ErrorEvents.AsNoTracking().Where(e => e.Utc >= since).ToListAsync(ct)).Select(e => e.ToModel()).ToList();
     }
 
@@ -279,15 +279,15 @@ public sealed class LearningService(
         return session;
     }
 
-    private static async Task MarkPlacementCompletedAsync(LotseDbContext db, CancellationToken ct)
+    private async Task MarkPlacementCompletedAsync(LotseDbContext db, CancellationToken ct)
     {
         var profile = await db.Profiles.FindAsync([1], ct);
         if (profile is null)
         {
-            profile = new LearnerProfile { Id = 1, CreatedUtc = DateTime.UtcNow };
+            profile = new LearnerProfile { Id = 1, CreatedUtc = Now };
             db.Profiles.Add(profile);
         }
-        profile.PlacementCompletedUtc = DateTime.UtcNow;
+        profile.PlacementCompletedUtc = Now;
     }
 
     public async Task AbandonSessionAsync(Guid id, CancellationToken ct = default)
@@ -405,7 +405,7 @@ public sealed class LearningService(
         return state;
     }
 
-    private static async Task<bool> MarkStepDoneAsync(LotseDbContext db, Guid sessionId, int stepIndex, double score, CancellationToken ct)
+    private async Task<bool> MarkStepDoneAsync(LotseDbContext db, Guid sessionId, int stepIndex, double score, CancellationToken ct)
     {
         var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId, ct);
         if (session is null) return false;
@@ -421,7 +421,7 @@ public sealed class LearningService(
         var complete = steps.All(s => s.Done);
         if (complete && session.EndedUtc is null)
         {
-            session.EndedUtc = DateTime.UtcNow;
+            session.EndedUtc = Now;
             if (session.Kind == SessionKind.Placement) await MarkPlacementCompletedAsync(db, ct);
         }
         return complete;

@@ -23,9 +23,12 @@ builder.Services.AddSingleton(sp => new ContentCatalogProvider(contentDir, sp.Ge
 // ---- Tutor (optional) ------------------------------------------------------------------------------------------------
 var tutorOptions = builder.Configuration.GetSection(TutorOptions.Section).Get<TutorOptions>() ?? new TutorOptions();
 builder.Services.AddSingleton(tutorOptions);
-builder.Services.AddSingleton<ITutor>(sp => tutorOptions.ResolvedApiKey is { Length: > 0 }
-    ? new ClaudeTutor(tutorOptions, sp.GetRequiredService<ILogger<ClaudeTutor>>())
-    : new NullTutor());
+builder.Services.AddSingleton<ITutor>(sp => (tutorOptions.Provider, tutorOptions.IsConfigured) switch
+{
+    (TutorProvider.Anthropic, true) => new ClaudeTutor(tutorOptions, sp.GetRequiredService<ILogger<ClaudeTutor>>()),
+    (TutorProvider.OpenAi, true) => new OpenAiCompatibleTutor(tutorOptions, sp.GetRequiredService<ILogger<OpenAiCompatibleTutor>>()),
+    _ => new NullTutor(),
+});
 
 // ---- Engine + application service ------------------------------------------------------------------------------------
 builder.Services.AddSingleton(TimeProvider.System);
