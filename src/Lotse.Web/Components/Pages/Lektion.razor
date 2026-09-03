@@ -92,7 +92,7 @@ else
                 </tbody>
             </table>
         </div>
-        <MudText Typo="Typo.caption" Class="mt-2 d-block"><MudLink Href="@($"themen")">Mehr zu „{CatalogProvider.Catalog.NodeTitle(_lesson.Grammar.NodeId)}“ unter Themen</MudLink></MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block"><MudLink Href="@($"themen")">@($"Mehr zu „{CatalogProvider.Catalog.NodeTitle(_lesson.Grammar.NodeId)}“ unter Themen")</MudLink></MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 mb-3" Elevation="2" Style="border-left:4px solid var(--mud-palette-secondary)">
