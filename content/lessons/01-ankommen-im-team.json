@@ -19,7 +19,7 @@
     "grammar": {
       "title": "Über Vergangenes erzählen: Perfekt mit haben oder sein",
       "nodeId": "GR.PERFEKT_PRAETERITUM",
-      "text": "Im Gespräch erzählt man Vergangenes im Perfekt. Serbisch bildet das Perfekt immer mit „biti“ (ja sam radio, ja sam došao) – Deutsch unterscheidet: Verben der Bewegung von A nach B und des Zustandswechsels (kommen, fahren, umziehen, aufstehen, einschlafen, werden, bleiben, sein) nehmen „sein“, alle anderen „haben“. Das Partizip II steht am Satzende – die Satzklammer.",
+      "text": "Im Gespräch erzählt man Vergangenes im Perfekt. Serbisch bildet das Perfekt immer mit „biti“ (ja sam radio, ja sam došao) – Deutsch unterscheidet: Verben der Bewegung von A nach B und des Zustandswechsels (kommen, fahren, umziehen, aufstehen, einschlafen, werden, bleiben, sein) nehmen „sein“, alle anderen „haben“. Das Partizip II steht am Satzende – die Satzklammer. Modalverben bilden im Perfekt keinen Partizip, sondern einen doppelten Infinitiv: „Ich habe den Termin verschieben müssen“ – nicht „gemusst“. Im Nebensatz rutscht das Hilfsverb dann ausnahmsweise vor die beiden Infinitive: „…, weil ich ihn habe verschieben müssen.“",
       "examples": [
         { "german": "Ich habe vier Jahre in Belgrad gearbeitet.", "serbian": "Radio sam četiri godine u Beogradu.", "note": "arbeiten → haben" },
         { "german": "Wir sind vor zwei Jahren nach Bremen umgezogen.", "serbian": "Preselili smo se u Bremen pre dve godine.", "note": "umziehen = Ortswechsel → sein" },

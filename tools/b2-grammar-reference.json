@@ -1,0 +1,488 @@
+{
+  "title": "Referenzinventar B2-Grammatik (Goethe-Zertifikat B2 / telc B2)",
+  "sources": [
+    "Profile Deutsch (Glaboniat u. a.), Kapitel „Sprachliche Mittel: Grammatik“, Niveau B2, dazu die Prüfungsziele und die Wortliste des Goethe-Instituts zum Goethe-Zertifikat B2 – eine verbindliche Grammatikliste für B2 veröffentlicht das Institut nicht.",
+    "Schnittmenge der Grammatikinventare gängiger B2-Lehrwerke: Aspekte neu B2 (Klett), Sicher! B2 (Hueber), Erkundungen B2 (Schubert).",
+    "Bewertungsraster Goethe B2 Schreiben und Sprechen, Kriterien „Korrektheit“ und „Wortschatz/Repertoire“ – also die Strukturen, die dort tatsächlich Punkte kosten oder bringen."
+  ],
+  "priorities": {
+    "Muss": "Ohne diese Struktur ist B2 nicht erreichbar – sie kommt in jeder Prüfung vor, und Fehler daran senken die Korrektheitsnote sofort.",
+    "Soll": "Wird in einem guten Ergebnis (ab etwa 80 %) erwartet; Fehlen kostet im Kriterium Repertoire.",
+    "Kann": "Bonus – hebt Text und Rede an den C1-Rand, für das Bestehen nicht nötig."
+  },
+  "items": [
+    {
+      "id": "V01",
+      "group": "Verb / Tempus / Modus",
+      "title": "Präsens, Perfekt, Präteritum: Formen und Gebrauch (haben/sein)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.PERFEKT_PRAETERITUM",
+        "GR.VERBFORMEN"
+      ]
+    },
+    {
+      "id": "V02",
+      "group": "Verb / Tempus / Modus",
+      "title": "Plusquamperfekt und Vorzeitigkeit (nachdem)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "pattern": "(?i)plusquamperfekt|\\bnachdem\\b|\\bhatte\\b|\\bhatten\\b|\\bhattest\\b|vorzeitig"
+    },
+    {
+      "id": "V03",
+      "group": "Verb / Tempus / Modus",
+      "title": "Futur I: Zukunft und Vermutung (wohl)",
+      "priority": "Soll",
+      "nodes": [
+        "GR.PLUSQUAMPERFEKT_FUTUR"
+      ],
+      "pattern": "(?i)futur|\\bwerde\\b|\\bwirst\\b|\\bwird\\b|\\bwerden wir\\b",
+      "explanationPattern": "(?i)\\bfutur\\b"
+    },
+    {
+      "id": "V04",
+      "group": "Verb / Tempus / Modus",
+      "title": "Futur II: Vermutung über Vergangenes",
+      "priority": "Kann",
+      "nodes": [],
+      "pattern": "(?i)futur\\s*(ii|2)|\\b(wird|werde|werden|wirst)\\b[^.?!]{0,60}\\b(ge\\w+|\\w+iert)\\s+(sein|haben)\\b",
+      "explanationPattern": "(?i)futur\\s*(ii|2)"
+    },
+    {
+      "id": "V05",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv II Gegenwart: Höflichkeit, Irreales, würde vs. Originalform",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KONJUNKTIV2"
+      ]
+    },
+    {
+      "id": "V06",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv II Vergangenheit (hätte/wäre + Partizip II)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "pattern": "(?i)\\bh[aä]tte\\w*\\b[^.?!]{0,60}\\b(ge\\w+|\\w+iert)\\b|\\bw[aä]re\\w*\\b[^.?!]{0,60}\\b(ge\\w+|\\w+iert)\\b|vergangenheit",
+      "explanationPattern": "(?i)konjunktiv ii der vergangenheit|h[aä]tte\\w*\\s+(\\w+\\s+){0,3}(ge\\w+|\\w+iert)\\b"
+    },
+    {
+      "id": "V07",
+      "group": "Verb / Tempus / Modus",
+      "title": "Irreale Bedingungssätze (wenn + Konjunktiv II, auch ohne wenn)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KONJUNKTIV2"
+      ],
+      "pattern": "(?i)\\bwenn\\b[^.?!]{0,80}\\b(h[aä]tte\\w*|w[aä]re\\w*|w[uü]rde\\w*|k[oö]nnte\\w*|m[uü]sste\\w*|d[uü]rfte\\w*|sollte\\w*)\\b|irreal|bedingung",
+      "explanationPattern": "(?i)irreal|bedingungssatz"
+    },
+    {
+      "id": "V08",
+      "group": "Verb / Tempus / Modus",
+      "title": "Irrealer Vergleich (als ob) und irrealer Wunsch (wenn … nur/doch)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)\\bals ob\\b|\\bals w[aä]re\\w*\\b|\\bals h[aä]tte\\w*\\b|\\bals w[uü]rde\\w*\\b|irrealer (vergleich|wunsch)|\\bwenn\\b[^.?!]{0,40}\\b(nur|doch)\\b[^.?!]{0,40}\\b(h[aä]tte\\w*|w[aä]re\\w*|k[oö]nnte\\w*)\\b",
+      "explanationPattern": "(?i)als ob|irrealer (vergleich|wunsch)"
+    },
+    {
+      "id": "V09",
+      "group": "Verb / Tempus / Modus",
+      "title": "Konjunktiv I und indirekte Rede (Redewiedergabe, Ersatzformen)",
+      "priority": "Soll",
+      "nodes": [
+        "GR.INDIREKTE_REDE"
+      ]
+    },
+    {
+      "id": "V10",
+      "group": "Verb / Tempus / Modus",
+      "title": "Modalverben: Formen und Bedeutungen (auch Präteritum)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)\\b(muss|m[uü]ssen|musste\\w*|kann|k[oö]nnen|konnte\\w*|darf|d[uü]rfen|durfte\\w*|soll|sollen|sollte\\w*|will|wollen|wollte\\w*|m[oö]chte\\w*)\\b",
+      "explanationPattern": "(?i)modalverb"
+    },
+    {
+      "id": "V11",
+      "group": "Verb / Tempus / Modus",
+      "title": "Perfekt der Modalverben und doppelter Infinitiv (hat … machen müssen)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)doppelter infinitiv|\\b(hat|habe|hast|haben|hatte|hatten|hattest)\\b[^.?!]{0,60}\\b\\w+en\\s+(m[uü]ssen|k[oö]nnen|d[uü]rfen|sollen|wollen)\\b",
+      "explanationPattern": "(?i)doppelter infinitiv|\\b(hat|habe|haben|hatte|hatten)\\b[^.?!]{0,50}\\w+en\\s+(m[uü]ssen|k[oö]nnen|d[uü]rfen|sollen|wollen)\\b"
+    },
+    {
+      "id": "V12",
+      "group": "Verb / Tempus / Modus",
+      "title": "Modalverben subjektiv: Vermutung und Distanz (müsste, dürfte, soll, will)",
+      "priority": "Soll",
+      "nodes": [
+        "GR.MODALVERBEN_SUBJEKTIV"
+      ]
+    },
+    {
+      "id": "P01",
+      "group": "Passiv und Passiversatz",
+      "title": "Vorgangspassiv in allen Zeiten (von/durch)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.PASSIV"
+      ]
+    },
+    {
+      "id": "P02",
+      "group": "Passiv und Passiversatz",
+      "title": "Zustandspassiv (sein + Partizip II)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)zustandspassiv|zustands-passiv",
+      "explanationPattern": "(?i)zustandspassiv"
+    },
+    {
+      "id": "P03",
+      "group": "Passiv und Passiversatz",
+      "title": "Passiv mit Modalverben (muss … werden)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.PASSIV"
+      ],
+      "pattern": "(?i)\\b(kann|k[oö]nnen|muss|m[uü]ssen|soll|sollen|sollte\\w*|darf|d[uü]rfen|musste\\w*|konnte\\w*)\\b[^.?!]{0,70}\\bwerden\\b|\\bwerden\\b\\s+(kann|k[oö]nnen|muss|m[uü]ssen|soll|sollen|darf|d[uü]rfen)\\b"
+    },
+    {
+      "id": "P04",
+      "group": "Passiv und Passiversatz",
+      "title": "Passiversatz: sich lassen, sein + zu, -bar, man",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)passiversatz|passiv-ersatz|ersatzform|\\bl[aä]sst sich\\b|\\blassen sich\\b|\\b(ist|sind|war|waren)\\s+(nicht\\s+|leicht\\s+|schwer\\s+|kaum\\s+|nur\\s+)?zu\\s+\\w+en\\b|sein\\s*\\+\\s*zu",
+      "explanationPattern": "(?i)passiversatz|passiv-ersatz|sein\\s*\\+\\s*zu\\s*\\+?\\s*infinitiv"
+    },
+    {
+      "id": "S01",
+      "group": "Satzbau und Konnektoren",
+      "title": "Hauptsatz: Verb an Position 2, Inversion",
+      "priority": "Muss",
+      "nodes": [
+        "GR.HAUPTSATZ_V2"
+      ],
+      "explanationPattern": "(?i)position 2|verbzweit|an zweiter stelle|inversion"
+    },
+    {
+      "id": "S02",
+      "group": "Satzbau und Konnektoren",
+      "title": "Nebensatz: Verb am Ende; Satzklammer bei trennbaren Verben",
+      "priority": "Muss",
+      "nodes": [
+        "GR.NEBENSATZ_WORTSTELLUNG",
+        "GR.TRENNBARE_VERBEN"
+      ]
+    },
+    {
+      "id": "S03",
+      "group": "Satzbau und Konnektoren",
+      "title": "Kausal, konzessiv, konsekutiv, final (weil, obwohl, sodass, damit)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)\\b(weil|obwohl|sodass|so dass|damit|denn|deshalb|deswegen|trotzdem|dennoch|folglich|infolgedessen)\\b"
+    },
+    {
+      "id": "S04",
+      "group": "Satzbau und Konnektoren",
+      "title": "Temporale Nebensätze (nachdem, bevor, seit(dem), bis, sobald, während, solange)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)\\b(nachdem|bevor|seitdem|sobald|solange|w[aä]hrend)\\b|\\bseit\\b[^.?!]{0,30}\\b(arbeite|arbeitet|wohne|wohnt|bin|ist|sind)\\b"
+    },
+    {
+      "id": "S05",
+      "group": "Satzbau und Konnektoren",
+      "title": "Konnektorklassen und Wortstellung (Adverb vs. Subjunktion vs. Konjunktion)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KONNEKTOREN"
+      ]
+    },
+    {
+      "id": "S06",
+      "group": "Satzbau und Konnektoren",
+      "title": "Zweiteilige Konnektoren (nicht nur … sondern auch, je … desto, zwar … aber, entweder … oder, weder … noch, sowohl … als auch)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)zweiteilig|nicht nur[^.?!]{0,80}sondern auch|\\bje\\b[^.?!]{0,40}\\b(desto|umso)\\b|\\bzwar\\b[^.?!]{0,80}\\baber\\b|\\bentweder\\b[^.?!]{0,60}\\boder\\b|\\bweder\\b[^.?!]{0,60}\\bnoch\\b|sowohl[^.?!]{0,60}als auch|einerseits[^.?!]{0,90}andererseits",
+      "explanationPattern": "(?i)zweiteilig|nicht nur\\s*…?\\s*sondern auch|je\\s*…?\\s*desto|einerseits"
+    },
+    {
+      "id": "S07",
+      "group": "Satzbau und Konnektoren",
+      "title": "Konnektor ↔ Präposition (wegen/trotz/während/aufgrund/infolge ↔ weil/obwohl/während)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)\\b(wegen|trotz|aufgrund|auf grund|infolge|anstelle|mangels|dank)\\s+(des|der|dem|eines|einer|meines|meiner|ihres|ihrer|seines|seiner|unseres|unserer)\\b|\\bw[aä]hrend\\s+(des|der|eines|einer)\\b",
+      "explanationPattern": "(?i)wegen|trotz|aufgrund|infolge|angesichts"
+    },
+    {
+      "id": "S08",
+      "group": "Satzbau und Konnektoren",
+      "title": "Relativsätze: Nominativ, Akkusativ, Dativ",
+      "priority": "Muss",
+      "nodes": [
+        "GR.RELATIVSATZ"
+      ]
+    },
+    {
+      "id": "S09",
+      "group": "Satzbau und Konnektoren",
+      "title": "Relativsätze fortgeschritten: mit Präposition, dessen/deren, was/wo-",
+      "priority": "Soll",
+      "nodes": [
+        "GR.RELATIVSATZ"
+      ],
+      "pattern": "(?i)\\bdessen\\b|\\bderen\\b|,\\s*was\\b|\\b(wobei|worauf|woran|wor[uü]ber|wof[uü]r|wovon|womit|wogegen)\\b|,\\s*(mit|f[uü]r|[uü]ber|auf|an|in|bei|von|zu|durch|gegen)\\s+(dem|der|den|denen|das|die)\\b"
+    },
+    {
+      "id": "S10",
+      "group": "Satzbau und Konnektoren",
+      "title": "Infinitivsätze: zu, um … zu, ohne … zu, (an)statt … zu",
+      "priority": "Muss",
+      "nodes": [
+        "GR.INFINITIV_ZU"
+      ]
+    },
+    {
+      "id": "S11",
+      "group": "Satzbau und Konnektoren",
+      "title": "Indirekte Fragesätze (ob / W-Wort)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)indirekte frage|,\\s*ob\\b|\\bfragte?n?\\b[^.?!]{0,40}\\bob\\b|,\\s*(ob|wann|warum|wieso|wie|wo|wer|was)\\s+\\w+[^.?!]{0,40}\\b(ist|sind|war|waren|kann|soll|will|hat|habe|wird)\\b\\s*[.?!]",
+      "explanationPattern": "(?i)indirekten? frage|\\bob\\b"
+    },
+    {
+      "id": "S12",
+      "group": "Satzbau und Konnektoren",
+      "title": "Mittelfeld: TeKaMoLo und Pronomenstellung",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)tekamolo|mittelfeld|reihenfolge der angaben|temporal[^.?!]{0,40}kausal|pronomen\\w*\\s+(vor|steht|stehen|kommt|kommen)",
+      "explanationPattern": "(?i)tekamolo|mittelfeld|reihenfolge der angaben"
+    },
+    {
+      "id": "N01",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Artikel, Genus, Plural",
+      "priority": "Muss",
+      "nodes": [
+        "GR.ARTIKEL_GENUS"
+      ]
+    },
+    {
+      "id": "N02",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Kasus nach Verben (Akkusativ-/Dativobjekt, Dativverben)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KASUS_VERBOBJEKTE"
+      ],
+      "explanationPattern": "(?i)verben mit dativ|dativverb|dativobjekt|akkusativobjekt|jemandem etwas"
+    },
+    {
+      "id": "N03",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Präpositionen mit festem Kasus",
+      "priority": "Muss",
+      "nodes": [
+        "GR.KASUS_PRAEPOSITIONEN"
+      ]
+    },
+    {
+      "id": "N04",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Wechselpräpositionen (wo? / wohin?)",
+      "priority": "Muss",
+      "nodes": [
+        "GR.WECHSELPRAEPOSITIONEN"
+      ]
+    },
+    {
+      "id": "N05",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Adjektivdeklination nach bestimmtem/unbestimmtem/Nullartikel",
+      "priority": "Muss",
+      "nodes": [
+        "GR.ADJEKTIVDEKLINATION"
+      ]
+    },
+    {
+      "id": "N06",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Adjektivdeklination nach Zahl- und Mengenwörtern (viele, einige, mehrere, andere)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)\\b(viele|vielen|vieler|einige|einigen|einiger|mehrere|mehreren|wenige|wenigen|andere|anderen|anderer|beide|beiden|manche|manchen|s[aä]mtliche|folgende|folgenden|zahlreiche)\\s+\\w{3,}(e|en|er|es)\\b",
+      "explanationPattern": "(?i)nullartikel|ohne artikel|mengenw[oö]rter|zahlw[oö]rter"
+    },
+    {
+      "id": "N07",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Genitiv: Nomen und Präpositionen mit Genitiv",
+      "priority": "Soll",
+      "nodes": [
+        "GR.GENITIV"
+      ]
+    },
+    {
+      "id": "N08",
+      "group": "Nominalgruppe und Kasus",
+      "title": "n-Deklination (der Kollege – dem Kollegen, der Kunde, der Name)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)n-deklination|schwache deklination|\\b(dem|den|des|einem|einen|eines|meinem|meinen|meines|unserem|unseren|diesem|diesen|dieses|jedem|jeden|keinem|keinen|ihrem|ihren|seinem|seinen)\\s+(Kollegen|Kunden|Praktikanten|Experten|Studenten|Menschen|Herrn|Nachbarn|Namen|Kandidaten|Assistenten|Interessenten|Zeugen|Jungen|Lieferanten|Produzenten|Konkurrenten|Architekten)\\b",
+      "explanationPattern": "(?i)n-deklination|n-nomen|schwache deklination"
+    },
+    {
+      "id": "N09",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Komparativ und Superlativ (auch attributiv, so … wie / als)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)komparativ|superlativ|\\bam\\s+\\w{3,}sten\\b|\\bder\\s+(beste|gr[oö][sß]te|wichtigste|schnellste|h[oö]chste|meiste)\\w*\\b|\\b\\w{4,}er\\s+als\\b|\\bso\\s+\\w{4,}\\s+wie\\b",
+      "explanationPattern": "(?i)komparativ|superlativ|steigerung"
+    },
+    {
+      "id": "N10",
+      "group": "Nominalgruppe und Kasus",
+      "title": "Reflexive Verben (Akkusativ/Dativ, reziprok)",
+      "priority": "Soll",
+      "nodes": [
+        "GR.REFLEXIVE_VERBEN"
+      ]
+    },
+    {
+      "id": "N11",
+      "group": "Nominalgruppe und Kasus",
+      "title": "„es“ als Korrelat und Platzhalter (Es ist wichtig, dass …)",
+      "priority": "Kann",
+      "nodes": [],
+      "pattern": "(?i)korrelat|platzhalter-?es|\\bes\\s+(ist|war|w[aä]re|bleibt|f[aä]llt|gibt|lohnt|hei[sß]t)\\b[^.?!]{0,45},\\s*(dass|ob)\\b|\\bes\\s+(ist|war|w[aä]re)\\s+\\w{4,},\\s*[^.?!]{0,45}\\bzu\\s+\\w+en\\b",
+      "explanationPattern": "(?i)korrelat|platzhalter"
+    },
+    {
+      "id": "NS1",
+      "group": "Nominalstil und Attribute",
+      "title": "Nominalisierung ↔ Verbalisierung (Nebensatz ↔ Präpositionalausdruck)",
+      "priority": "Soll",
+      "nodes": [
+        "GR.NOMINALISIERUNG"
+      ]
+    },
+    {
+      "id": "NS2",
+      "group": "Nominalstil und Attribute",
+      "title": "Nomen-Verb-Verbindungen / Funktionsverbgefüge (zur Verfügung stellen, in Frage stellen)",
+      "priority": "Soll",
+      "nodes": [
+        "WS.NOMEN_VERB_VERBINDUNGEN"
+      ],
+      "explanationPattern": "(?i)nomen-verb|funktionsverb|feste wendung|kollokation"
+    },
+    {
+      "id": "NS3",
+      "group": "Nominalstil und Attribute",
+      "title": "Partizipialattribute: Partizip I/II als Adjektiv, erweitertes Attribut ↔ Relativsatz",
+      "priority": "Soll",
+      "nodes": [
+        "GR.PARTIZIPIALATTRIBUT"
+      ]
+    },
+    {
+      "id": "PR1",
+      "group": "Präpositionen",
+      "title": "Verben, Nomen und Adjektive mit fester Präposition",
+      "priority": "Muss",
+      "nodes": [
+        "GR.VERB_PRAEPOSITION"
+      ]
+    },
+    {
+      "id": "PR2",
+      "group": "Präpositionen",
+      "title": "Präpositionaladverbien (darauf, worauf) und da-/wo- + dass-Satz",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)pr[aä]positionaladverb|\\b(darauf|daf[uü]r|davon|dar[uü]ber|daran|dazu|dagegen|darin|darunter|dadurch|worauf|wor[uü]ber|woran|wof[uü]r|womit|wovon|wobei|wonach|wodurch|worum)\\b",
+      "explanationPattern": "(?i)pr[aä]positionaladverb|\\bdarauf\\b|\\bworauf\\b"
+    },
+    {
+      "id": "W01",
+      "group": "Wortbildung",
+      "title": "Wortbildung: Präfixe und Suffixe (-ung, -heit, -keit, un-, -los, -bar, ver-/be-/ent-)",
+      "priority": "Soll",
+      "nodes": [
+        "WS.WORTBILDUNG"
+      ],
+      "explanationPattern": "(?i)wortbildung|suffix|pr[aä]fix|-ung, -heit"
+    },
+    {
+      "id": "W02",
+      "group": "Wortbildung",
+      "title": "Komposita und Wortfamilien",
+      "priority": "Kann",
+      "nodes": [],
+      "pattern": "(?i)kompositum|komposita|zusammengesetzte[sn]? nomen|wortfamilie|bestimmungswort|grundwort|fugen-?s",
+      "explanationPattern": "(?i)kompositum|komposita|zusammengesetzt|wortfamilie|fugen-?s"
+    },
+    {
+      "id": "O01",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "Kommaregeln (Nebensatz, Infinitivsatz mit zu, Aufzählung, Relativsatz)",
+      "priority": "Muss",
+      "nodes": [],
+      "pattern": "(?i)\\bkomma\\w*\\b|zeichensetzung",
+      "explanationPattern": "(?i)komma"
+    },
+    {
+      "id": "O02",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "Groß-/Kleinschreibung inkl. Nominalisierung (das Wichtigste, beim Arbeiten)",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)gro[sß]schreib\\w*|kleinschreib\\w*|gro[sß]geschrieben|kleingeschrieben|substantivier\\w*|gro[sß]\\W{0,4}und\\W{0,4}kleinschreibung",
+      "explanationPattern": "(?i)gro[sß]schreib|kleinschreib|gro[sß]geschrieben|substantiviert"
+    },
+    {
+      "id": "O03",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "das / dass unterscheiden",
+      "priority": "Soll",
+      "nodes": [],
+      "pattern": "(?i)das\\s*/\\s*dass|dass\\s*/\\s*das|dass-satz|„dass“|„das“|unterschied zwischen das und dass",
+      "explanationPattern": "(?i)„dass“|dass-satz|das\\s*/\\s*dass"
+    },
+    {
+      "id": "O04",
+      "group": "Orthografie und Zeichensetzung",
+      "title": "ß/ss-Schreibung und Umlaute",
+      "priority": "Kann",
+      "nodes": [],
+      "pattern": "(?i)scharfe[sn]? s\\b|\\bß\\b\\s*(oder|statt|und|/)|(mit|ohne)\\s+ß\\b|ss\\s*(oder|statt|/)\\s*ß|umlaut|ae/oe/ue|(kurze|lange)[rmn]?\\s+vokal",
+      "explanationPattern": "(?i)scharfe[sn]? s\\b|\\bß\\b\\s*(oder|statt|und|/)|(mit|ohne)\\s+ß\\b|ss\\s*(oder|statt|/)\\s*ß|umlaut|ae/oe/ue|(kurze|lange)[rmn]?\\s+vokal"
+    },
+    {
+      "id": "NG1",
+      "group": "Negation",
+      "title": "Negation: nicht/kein, Stellung von nicht, nicht … sondern",
+      "priority": "Muss",
+      "nodes": [
+        "GR.NEGATION"
+      ],
+      "explanationPattern": "(?i)negation|verneint|teilnegation"
+    }
+  ]
+}
