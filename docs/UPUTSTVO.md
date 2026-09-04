@@ -127,6 +127,12 @@ Na strani **Heute** teme se sada zovu onako kako se objašnjavaju, a ne kako se 
 
 Na stranicama **Themen** i **Fortschritt** ostaje stručni naziv — tamo tražiš temu, a ne dobijaš zadatak.
 
+## 1j. Sitnice koje se primete
+
+- Dugmad za start sesije se sada zaključaju i vrte spinner dok se sesija priprema (ranije je izgledalo kao da klik nije registrovan).
+- U **Einstufung**: ako promašiš laku zadatak neke teme, teži zadatak iste teme se preskače uz oznaku *„übersprungen – Grundlage fehlt"*. Nema smisla pitati teže kad lakše ne ide.
+- Na **Fortschritt** teme koje već sede sklapaju se u grupu **„Sitzt (n)"**, pa strana pokazuje ono što još treba raditi.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

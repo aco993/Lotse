@@ -366,6 +366,51 @@ public sealed class LearningServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Failing_the_easy_placement_item_skips_the_harder_one_of_the_same_topic()
+    {
+        var session = await _svc.StartPlacementAsync();
+        var view = (await _svc.GetSessionAsync(session.Id))!;
+
+        // The plan is an easy pass over every core topic, then a harder one, so the sibling is further down the list.
+        var nodeId = view.Exercises[0].NodeId;
+        var sibling = view.Steps.Select((s, i) => (s, i))
+            .First(t => t.i > 0 && view.Exercises[t.i].NodeId == nodeId).i;
+
+        await _svc.SubmitAnswerAsync(session.Id, 0, view.Exercises[0].Id, "definitiv-falsch", 1000, false);
+
+        var after = (await _svc.GetSessionAsync(session.Id))!;
+        Assert.True(after.Steps[sibling].Done, "Die schwerere Aufgabe desselben Themas wurde nicht übersprungen.");
+        Assert.Equal(0, after.Steps[sibling].Score);
+        Assert.Equal("übersprungen – Grundlage fehlt", after.Steps[sibling].Reason);
+
+        // A different topic must be untouched - this skips one sibling, not the rest of the test.
+        var other = view.Steps.Select((s, i) => (s, i)).First(t => view.Exercises[t.i].NodeId != nodeId).i;
+        Assert.False(after.Steps[other].Done);
+    }
+
+    [Fact]
+    public async Task A_correct_easy_placement_answer_leaves_the_harder_item_in_place()
+    {
+        var session = await _svc.StartPlacementAsync();
+        var view = (await _svc.GetSessionAsync(session.Id))!;
+        var first = view.Exercises[0];
+        var nodeId = first.NodeId;
+        var sibling = view.Steps.Select((s, i) => (s, i)).First(t => t.i > 0 && view.Exercises[t.i].NodeId == nodeId).i;
+
+        // Choice types are answered with the index, everything else with the text.
+        var correct = first.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError
+            ? first.CorrectIndex!.Value.ToString()
+            : first.Answers[0];
+        var result = await _svc.SubmitAnswerAsync(session.Id, 0, first.Id, correct, 1000, false);
+        // Without this the test could pass for the wrong reason: a rejected answer would also leave the sibling alone
+        // only if the skip were broken in the other direction.
+        Assert.Equal(Outcome.Correct, result.Check.Outcome);
+
+        var after = (await _svc.GetSessionAsync(session.Id))!;
+        Assert.False(after.Steps[sibling].Done);
+    }
+
+    [Fact]
     public async Task Readiness_trend_stays_silent_until_there_is_something_to_compare()
     {
         // Day one: a snapshot is written, but there is nothing a week old, so no arrow is claimed.

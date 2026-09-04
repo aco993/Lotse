@@ -78,9 +78,28 @@ else
     {
         var nodes = CatalogProvider.Catalog.Nodes.Where(n => n.Area == area).OrderBy(n => n.Band).ThenBy(n => n.Title).ToList();
         if (nodes.Count == 0) continue;
+        @* What already sits does not need a bar each: it is folded away so the page is about what still needs work. *@
+        var strong = nodes.Where(n => _states.GetValueOrDefault(n.Id)?.IsStrong == true).ToList();
+        var rest = nodes.Except(strong).ToList();
         <MudPaper Class="pa-4 mb-3" Elevation="1">
             <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">@AreaLabel(area)</MudText>
-            @foreach (var n in nodes)
+            @if (strong.Count > 0)
+            {
+                <MudExpansionPanels Elevation="0" Class="mb-2">
+                    <MudExpansionPanel Text="@($"Sitzt ({strong.Count})")">
+                        @foreach (var n in strong)
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
+                                <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="opacity:.5">@n.Band.Label()</span></MudText>
+                                <div style="flex:1"><MasteryBar Value="@(_states.GetValueOrDefault(n.Id)!.Mastery)" Confidence="@(_states.GetValueOrDefault(n.Id)!.Confidence)" /></div>
+                                <MudText Typo="Typo.caption" Style="width:110px;text-align:right">@($"{_states.GetValueOrDefault(n.Id)!.Mastery:P0} · {_states.GetValueOrDefault(n.Id)!.Attempts}×")</MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Verified" Size="Size.Small" Color="Color.Tertiary" />
+                            </MudStack>
+                        }
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+            }
+            @foreach (var n in rest)
             {
                 var s = _states.GetValueOrDefault(n.Id);
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">

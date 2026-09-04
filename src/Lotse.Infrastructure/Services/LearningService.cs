@@ -739,6 +739,27 @@ public sealed class LearningService(
         return state;
     }
 
+    /// <summary>
+    /// The placement runs an easy pass over every core topic and then a harder one. Failing the easy item of a topic
+    /// already answers the harder question, so asking it anyway costs the learner time and tells us nothing - Stefan
+    /// called it "kein echtes Überspringen". The plan is built up front, so the skip happens here: the sibling is
+    /// marked done with score 0 and a reason the summary can show.
+    /// </summary>
+    private void SkipHarderSibling(List<StepRecord> steps, int stepIndex)
+    {
+        var nodeId = Catalog.Exercise(steps[stepIndex].ExerciseId)?.NodeId;
+        if (nodeId is null) return;
+
+        for (var i = stepIndex + 1; i < steps.Count; i++)
+        {
+            if (steps[i].Done || Catalog.Exercise(steps[i].ExerciseId)?.NodeId != nodeId) continue;
+            steps[i].Done = true;
+            steps[i].Score = 0;
+            steps[i].Reason = "übersprungen – Grundlage fehlt";
+            return;   // exactly one harder item per topic
+        }
+    }
+
     private async Task<bool> MarkStepDoneAsync(LotseDbContext db, string userId, Guid sessionId, int stepIndex, double score, CancellationToken ct)
     {
         var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId, ct);
@@ -748,8 +769,9 @@ public sealed class LearningService(
         {
             steps[stepIndex].Done = true;
             steps[stepIndex].Score = score;
-            session.StepsDone = steps.Count(s => s.Done);
             if (score >= 0.7) session.CorrectCount++;
+            if (session.Kind == SessionKind.Placement && score < 0.7) SkipHarderSibling(steps, stepIndex);
+            session.StepsDone = steps.Count(s => s.Done);
             session.PlanJson = JsonSerializer.Serialize(steps);
         }
         var complete = steps.All(s => s.Done);
