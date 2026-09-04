@@ -58,6 +58,27 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
     });
 
     [Fact]
+    public Task The_course_greets_the_learner_by_their_own_name() => app.RunAsync(nameof(The_course_greets_the_learner_by_their_own_name), async page =>
+    {
+        await RegisterAsync(page, LotseE2EFixture.UniqueEmail("name"));
+
+        // Without a name of their own, the learner gets the author's - the course reads exactly as it always did.
+        await page.GotoAsync("/kurs/L02");
+        await Expect(page.GetByText("Sehr geehrter Herr Micić", new() { Exact = false }).First).ToBeVisibleAsync();
+
+        await page.GotoAsync("/einstellungen");
+        await page.GetByLabel("Vorname").First.FillAsync("Marko");
+        await page.GetByLabel("Nachname").First.FillAsync("Petrović");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
+        await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
+
+        // Same lesson, now addressed to them - the tokens live in the content, the name never does.
+        await page.GotoAsync("/kurs/L02");
+        await Expect(page.GetByText("Sehr geehrter Herr Petrović", new() { Exact = false }).First).ToBeVisibleAsync();
+        await Expect(page.GetByText("Micić", new() { Exact = false })).ToHaveCountAsync(0);
+    });
+
+    [Fact]
     public Task Occupation_is_saved_explained_and_survives_a_reload() => app.RunAsync(nameof(Occupation_is_saved_explained_and_survives_a_reload), async page =>
     {
         await RegisterAsync(page, LotseE2EFixture.UniqueEmail("beruf"));

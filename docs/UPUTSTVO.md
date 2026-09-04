@@ -89,6 +89,14 @@ Efekat je namerno mali i objašnjiv:
 
 Bez izbora sve radi tačno kao i pre.
 
+## 1f. Tvoje ime u kursu
+
+U **Einstellungen** unosiš **Vorname** i **Nachname**. Kurs onda oslovljava tebe: mejl od Herr Krügera glasi „Sehr geehrter Herr *tvoje prezime*", a potpisi u uzornim rešenjima nose tvoje ime.
+
+Ako polja ostaviš prazna, ostaje autorovo ime (Aleksandar Micić) — ništa se ne kvari.
+
+Tehnički: u sadržaju stoje `{Vorname}`, `{Nachname}` i `{Name}`, a ime se ubacuje tek kad se lekcija ili zadatak predaju **tebi**. Zajednička baza zadataka ostaje neutralna, pa se imena ne mešaju između naloga na istom računaru.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

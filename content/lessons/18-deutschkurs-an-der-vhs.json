@@ -4,16 +4,16 @@
     "theme": "Alltag", "band": "B1_2", "scene": "exam", "minutes": 15,
     "intro": "Sabine hat dir einen B2-Kurs an der Volkshochschule bezahlt. Dienstags 18 Uhr, zwölf Leute aus neun Ländern, Kursleiterin Frau Schulz. Heute geht es um Wörter, die man zu kennen glaubt – und um die Kunst, aus einem Wort zehn zu machen.",
     "story": [
-      { "speaker": "Frau Schulz", "text": "Herr Micić, Sie sagten vorhin, Sie hätten sich auf einen Konkurs beworben. Erzählen Sie mal!" },
+      { "speaker": "Frau Schulz", "text": "Herr {Nachname}, Sie sagten vorhin, Sie hätten sich auf einen Konkurs beworben. Erzählen Sie mal!" },
       { "speaker": "Du", "text": "…", "options": ["Oh – ich meine natürlich eine Stellenausschreibung. Auf Serbisch heißt das „konkurs“, deshalb rutscht mir das Wort immer wieder raus. Ein Konkurs wäre ja eine Insolvenz.", "Ja, ein Konkurs bei einer Firma in Hannover. Ich habe die Stelle nicht bekommen.", "Sorry, ich meine Job-Ausschreibung. Konkurs ist serbisch."],
         "correctIndex": 0, "feedback": ["Fehler erkannt, richtiges Wort, Erklärung der Ursache und sogar die deutsche Bedeutung. So lernt die ganze Gruppe mit.", "Ein „Konkurs“ ist eine Pleite. Sie haben sich also auf eine Insolvenz beworben – Frau Schulz wird schmunzeln.", "„Sorry“ und „Job-Ausschreibung“ – im Kurs bitte Deutsch: Entschuldigung, Stellenausschreibung."] },
-      { "speaker": "Frau Schulz", "text": "Sehr gut erklärt! Das nennt man einen falschen Freund. Wer hat noch einen? Herr Micić, aus Ihrer Sammlung?" },
+      { "speaker": "Frau Schulz", "text": "Sehr gut erklärt! Das nennt man einen falschen Freund. Wer hat noch einen? Herr {Nachname}, aus Ihrer Sammlung?" },
       { "speaker": "Du", "text": "…", "options": ["Die Mappe – auf Serbisch „mapa“, die Landkarte. Ich habe einmal im Büro nach einer Mappe von Bremen gefragt und einen Aktenordner bekommen.", "Mappe ist Landkarte auf Serbisch.", "Ich habe keine mehr."],
         "correctIndex": 0, "feedback": ["Wort, Bedeutung in beiden Sprachen und eine Anekdote – so bleibt es bei allen hängen.", "Genau andersherum: Die deutsche Mappe ist eine Hülle für Papiere; „mapa“ ist die Landkarte.", "Du hast eine ganze Sammlung – das ist genau die Situation, sie zu teilen."] },
       { "speaker": "Frau Schulz", "text": "Wunderbar. Zweites Thema heute: Wortbildung. Aus „arbeiten“ machen Sie mir bitte ein Nomen, ein Adjektiv und eine Person." },
       { "speaker": "Du", "text": "…", "options": ["Die Arbeit, arbeitslos oder arbeitsfähig, und der Arbeiter beziehungsweise die Arbeitnehmerin.", "Die Arbeit, arbeitlich, der Arbeitender.", "Arbeit, arbeiten, arbeitet."],
         "correctIndex": 0, "feedback": ["Nomen, zwei Adjektive mit Suffix, Personen mit -er und Kompositum – mit Artikeln. Vorbildlich.", "„arbeitlich“ gibt es nicht, „der Arbeitender“ ist falsch gebildet (der Arbeitende / der Arbeiter).", "Das sind Verbformen, keine Wortbildung."] },
-      { "speaker": "Frau Schulz", "text": "Sie sind reif für B2, Herr Micić. Hausaufgabe für alle: zehn Wörter aus Ihrem Beruf, jeweils mit Nomen, Adjektiv und Person." }
+      { "speaker": "Frau Schulz", "text": "Sie sind reif für B2, Herr {Nachname}. Hausaufgabe für alle: zehn Wörter aus Ihrem Beruf, jeweils mit Nomen, Adjektiv und Person." }
     ],
     "grammar": {
       "title": "Falsche Freunde und Wortbildung: Zwei Werkzeuge gegen den Wortschatzstau",

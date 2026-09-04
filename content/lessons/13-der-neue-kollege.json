@@ -4,7 +4,7 @@
     "theme": "Beruf", "band": "B1_2", "scene": "team", "minutes": 15,
     "intro": "Jahr zwei. Jetzt bist du derjenige, der einen Neuen einarbeitet: Tarek, 24, aus Damaskus, frisch vom Studium in Hannover, sehr gutes Englisch, Deutsch B1. Du erklärst ihm das System – und merkst, wie viele Artikel man dafür braucht.",
     "story": [
-      { "speaker": "Tarek", "text": "Hi Aleksandar! Sabine hat gesagt, du zeigst mir alles. Ich habe Angst, dass ich beim Deutsch nicht mitkomme." },
+      { "speaker": "Tarek", "text": "Hi {Vorname}! Sabine hat gesagt, du zeigst mir alles. Ich habe Angst, dass ich beim Deutsch nicht mitkomme." },
       { "speaker": "Du", "text": "…", "options": ["Keine Sorge, das ging mir genauso. Wir machen das Schritt für Schritt: Zuerst zeige ich dir das Projekt, dann die Datenbank und am Ende den Import – das ist der Teil, an dem ich am längsten gesessen habe.", "Keine Sorge. Zuerst zeige ich dir Projekt, dann Datenbank und am Ende Import.", "Keine Sorge, das ging mir genauso. Wir machen das Schritt für Schritt: Zuerst ich zeige dir das Projekt, dann die Datenbank."],
         "correctIndex": 0, "feedback": ["Empathie, Plan in drei Schritten, jedes Nomen mit Artikel (das Projekt, die Datenbank, den Import), und ein Relativsatz obendrauf.", "Genau der Fehler, den du selbst im ersten Jahr gemacht hast: Nomen ohne Artikel. Für Tarek als Vorbild: das Projekt, die Datenbank, den Import.", "„Zuerst ich zeige“ – nach „Zuerst“ steht das Verb an Position 2."] },
       { "speaker": "Tarek", "text": "Danke! Und was ist das hier – die Datei mit den vielen Zahlen?" },

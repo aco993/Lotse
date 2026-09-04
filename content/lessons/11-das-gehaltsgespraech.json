@@ -4,7 +4,7 @@
     "theme": "Beruf", "band": "B2_2", "scene": "salary", "minutes": 18,
     "intro": "Nach acht Monaten steht dein erstes Mitarbeitergespräch mit Sabine an. Du hast den Import stabilisiert, zwei Kunden gerettet und den automatischen Test eingeführt. Jetzt geht es um Geld – auf Deutsch, ohne zu bitten und ohne zu drohen.",
     "story": [
-      { "speaker": "Sabine", "text": "Aleksandar, bevor wir zu den Zielen kommen: Wie siehst du selbst deine ersten acht Monate?" },
+      { "speaker": "Sabine", "text": "{Vorname}, bevor wir zu den Zielen kommen: Wie siehst du selbst deine ersten acht Monate?" },
       { "speaker": "Du", "text": "…", "options": ["Insgesamt sehr positiv. Nach der Stabilisierung des Imports laufen die Kundensysteme seit April ohne Ausfall, und durch die Einführung des automatischen Tests haben wir seitdem keinen Schnittstellenfehler mehr ausgeliefert. Beides hätte ohne die Unterstützung des Teams länger gedauert.", "Gut. Ich habe den Import gefixt und Tests gemacht. Das Team war okay.", "Insgesamt sehr positiv. Nachdem ich den Import stabilisiert habe, laufen die Kundensysteme ohne Ausfall, und nachdem ich den Test eingeführt habe, gibt es keine Fehler mehr. Ich habe das alles allein gemacht."],
         "correctIndex": 0, "feedback": ["Nominalstil (Stabilisierung, Einführung), messbare Ergebnisse, und der Dank ans Team – das ist Führungs-Deutsch.", "Zu wenig, zu locker. „gefixt“ und „Tests gemacht“ unter Wert verkauft.", "Sprachlich fast gut, aber „alles allein“ ist im deutschen Kontext ein Warnsignal – Teamleistung zählt."] },
       { "speaker": "Sabine", "text": "Das sehe ich genauso, und die Kunden auch. Gibt es etwas, das du dir für das nächste Jahr wünschst?" },

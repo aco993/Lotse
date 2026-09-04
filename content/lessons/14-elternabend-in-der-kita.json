@@ -4,7 +4,7 @@
     "theme": "Alltag", "band": "B1_2", "scene": "home", "minutes": 15,
     "intro": "Elternabend in der Kita eures Jüngsten. Zwanzig Eltern auf Kinderstühlen, die Erzieherin Frau Lindner erklärt das Jahr, und du sollst für die Familie sprechen, weil deine Frau Spätschicht hat. Es geht um Eingewöhnung, Sprache und einen Ausflug.",
     "story": [
-      { "speaker": "Frau Lindner", "text": "Herr Micić, Sie hatten gefragt, wie es mit der Sprache bei Luka läuft. Möchten Sie das hier besprechen oder lieber einzeln?" },
+      { "speaker": "Frau Lindner", "text": "Herr {Nachname}, Sie hatten gefragt, wie es mit der Sprache bei Luka läuft. Möchten Sie das hier besprechen oder lieber einzeln?" },
       { "speaker": "Du", "text": "…", "options": ["Gern hier, das betrifft ja mehrere Familien. Wir haben gemerkt, dass Luka zu Hause immer öfter Deutsch spricht, und fragen uns, ob wir das unterstützen oder bei Serbisch bleiben sollen.", "Gern hier. Luka spricht zu Hause immer öfter Deutsch, wir fragen uns, sollen wir das unterstützen oder bei Serbisch bleiben?", "Gern hier. Wir haben gemerkt, dass Luka spricht zu Hause immer öfter Deutsch."],
         "correctIndex": 0, "feedback": ["Zwei Nebensätze (dass …, ob …), beide mit dem Verb am Ende, und eine Frage, die viele Eltern haben.", "Inhaltlich gut, aber die indirekte Frage braucht „ob“ und den Nebensatz: „ob wir das unterstützen sollen“.", "„dass Luka spricht zu Hause“ – im dass-Satz wandert das Verb ans Ende: „dass Luka … Deutsch spricht“."] },
       { "speaker": "Frau Lindner", "text": "Eine wichtige Frage! Unsere Erfahrung: Kinder lernen Deutsch hier von selbst. Was sie von Ihnen brauchen, ist eine starke erste Sprache. Sprechen Sie zu Hause ruhig Serbisch." },
@@ -13,7 +13,7 @@
       { "speaker": "Frau Lindner", "text": "Genau. Noch ein Punkt: der Ausflug in den Tierpark am 14. Wir brauchen zwei Eltern als Begleitung. Wer könnte?" },
       { "speaker": "Du", "text": "…", "options": ["Ich könnte, wenn ich rechtzeitig Bescheid weiß, weil ich den Tag im Büro freinehmen muss. Bis wann müssten Sie es wissen?", "Ich kann, wenn ich weiß Bescheid rechtzeitig.", "Nein, ich arbeite."],
         "correctIndex": 0, "feedback": ["Zusage mit Bedingung (wenn), Begründung (weil) und eine präzise Rückfrage. Frau Lindner kann planen.", "„wenn ich weiß Bescheid rechtzeitig“ – Verb ans Ende: „wenn ich rechtzeitig Bescheid weiß“.", "Alle arbeiten; Elternabende leben von denen, die trotzdem fragen, wie es gehen könnte."] },
-      { "speaker": "Frau Lindner", "text": "Bis Ende der Woche wäre wunderbar. Dann trage ich Sie vorläufig ein – vielen Dank, Herr Micić!" }
+      { "speaker": "Frau Lindner", "text": "Bis Ende der Woche wäre wunderbar. Dann trage ich Sie vorläufig ein – vielen Dank, Herr {Nachname}!" }
     ],
     "grammar": {
       "title": "Nebensätze: dass, ob, weil, wenn – das Verb geht ans Ende",
@@ -49,7 +49,7 @@
         { "speaker": "Frau Lindner", "text": "Ehrlich gesagt beide. Wir haben es geklärt, und am Ende haben sie zusammen gespielt. Ich erzähle es Ihnen, damit Sie zu Hause anknüpfen können." },
         { "speaker": "Du", "text": "…", "options": ["Das mache ich. Ich glaube, dass es hilft, wenn wir zu Hause darüber sprechen, wie man sich einigt, statt sich zu streiten.", "Das mache ich. Ich glaube dass es hilft wenn wir zu Hause sprechen wie man sich einigt.", "Okay."],
           "correctIndex": 0, "feedback": ["Verschachtelte Nebensätze (dass …, wenn …, wie …) korrekt, mit Kommas, und ein Plan.", "Alle Kommas fehlen – vor dass, wenn und wie muss eines stehen. Sonst gut.", "Sie hat sich Mühe gegeben; ein Satz mehr wäre fair."] },
-        { "speaker": "Frau Lindner", "text": "Genau so. Bis morgen, Herr Micić – und grüßen Sie Ihre Frau." }
+        { "speaker": "Frau Lindner", "text": "Genau so. Bis morgen, Herr {Nachname} – und grüßen Sie Ihre Frau." }
       ], "explanation": "Gespräche mit Erzieherinnen und Lehrern: dass/ob/weil richtig gesetzt, Kommas nicht vergessen." }
   ]
 }

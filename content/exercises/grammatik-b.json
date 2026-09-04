@@ -279,7 +279,7 @@
     { "id": "gr.ref.006", "type": "Cloze", "nodeId": "GR.REFLEXIVE_VERBEN", "band": "B2_1", "context": "Alltag",
       "prompt": "Hast du ___ schon bei ihm bedankt?", "answers": ["dich"], "explanation": "sich bedanken bei + Dativ, für + Akkusativ." },
     { "id": "gr.ref.007", "type": "Cloze", "nodeId": "GR.REFLEXIVE_VERBEN", "band": "B2_1", "context": "Beruf",
-      "prompt": "Darf ich ___ kurz vorstellen? Mein Name ist Aleksandar.", "answers": ["mich"], "explanation": "sich vorstellen (Akk) = predstaviti se." },
+      "prompt": "Darf ich ___ kurz vorstellen? Mein Name ist {Vorname}.", "answers": ["mich"], "explanation": "sich vorstellen (Akk) = predstaviti se." },
 
     { "id": "gr.gen.001", "type": "Cloze", "nodeId": "GR.GENITIV", "band": "B2_1", "context": "Beruf",
       "prompt": "Die Meinung ___ (der Chef) ist mir wichtig.", "answers": ["des Chefs"], "explanation": "Genitiv maskulin: des + -s." },

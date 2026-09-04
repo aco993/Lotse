@@ -123,9 +123,12 @@ else
     private bool _busy;
     private bool _reading;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        _lesson = CatalogProvider.Catalog.Lesson(Id);
+        // The catalogue is shared by every account; the learner's own name goes into a copy, here at the boundary.
+        var profile = await Learning.GetProfileAsync();
+        var fromCatalog = CatalogProvider.Catalog.Lesson(Id);
+        _lesson = fromCatalog is null ? null : NameTemplate.Render(fromCatalog, profile.FirstName, profile.LastName);
         _storyChoices.Clear();
         if (_lesson is null) return;
         var all = CatalogProvider.Catalog.Lessons;

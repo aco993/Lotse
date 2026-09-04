@@ -89,6 +89,30 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
         }
     }
 
+    /// <summary>
+    /// The course used to greet its author by name. It now carries {Vorname}/{Nachname}/{Name}, and this test is
+    /// what stops the literal name from creeping back in with the next lesson.
+    /// </summary>
+    [Fact]
+    public void No_content_file_hard_codes_the_authors_name()
+    {
+        var dir = ContentLoader.ResolveContentDirectory(null);
+        var offenders = Directory.EnumerateFiles(dir, "*.json", SearchOption.AllDirectories)
+            .Where(f => File.ReadAllText(f).Contains("Aleksandar", StringComparison.Ordinal)
+                     || File.ReadAllText(f).Contains("Micić", StringComparison.Ordinal))
+            .Select(Path.GetFileName)
+            .ToList();
+        Assert.True(offenders.Count == 0, "Fester Name statt Token in: " + string.Join(", ", offenders));
+    }
+
+    /// <summary>
+    /// AnswerChecker compares the learner's input against these strings verbatim, so a token here could never be
+    /// matched - it would be an unsolvable exercise.
+    /// </summary>
+    [Fact]
+    public void No_answer_contains_a_name_token()
+        => Assert.All(fx.Catalog.Exercises, e => Assert.All(e.Answers, a => Assert.False(NameTemplate.ContainsToken(a), e.Id)));
+
     [Fact]
     public void Audio_only_exercises_have_text_to_speak()
         => Assert.All(fx.Catalog.Exercises.Where(e => e.AudioOnly || e.Type == ExerciseType.Dictation), e => Assert.False(string.IsNullOrWhiteSpace(e.Text), e.Id));

@@ -4,12 +4,12 @@
     "theme": "Beruf", "band": "B2_1", "scene": "meeting", "minutes": 15,
     "intro": "Jeden Morgen um 9:15 steht das Team im Kreis: Was war gestern, was ist heute, wo hakt es? Zehn Minuten, klare Sätze. Heute leitet Jonas, weil Sabine noch im Urlaub ist.",
     "story": [
-      { "speaker": "Jonas", "text": "Guten Morgen zusammen. Aleksandar, fang du doch an – gestern, heute, Blocker?" },
+      { "speaker": "Jonas", "text": "Guten Morgen zusammen. {Vorname}, fang du doch an – gestern, heute, Blocker?" },
       { "speaker": "Du", "text": "…", "options": ["Gestern habe ich den Importfehler analysiert – die Ursache liegt in der Schnittstelle zur Buchhaltung. Heute schreibe ich die Korrektur und die Tests. Blocker: Ich warte noch auf den Testserver-Zugang.", "Gestern ich habe Importfehler analysiert. Heute ich schreibe Korrektur und Tests. Blocker: Testserver.", "Gestern habe ich das Import-Issue debugged, heute mache ich den Fix und die Tests, Blocker ist der Testserver-Access."],
         "correctIndex": 0, "feedback": ["Drei Teile, Perfekt für gestern, Präsens für heute, deutsche Fachbegriffe (Schnittstelle, Korrektur). Vorbildlich.", "Zweimal „Gestern ich habe / Heute ich schreibe“ – Verb an Position 2! Und Artikel fehlen (den Importfehler, die Korrektur).", "Verständlich, aber „debugged“, „Fix“, „Access“ – in deutschen Teams sagt man das oft, in der Prüfung und gegenüber Kunden nicht."] },
       { "speaker": "Jonas", "text": "Danke. Zum Testserver: Die Freigabe ist gestern reingekommen, die IT richtet ihn heute ein. Ich habe noch eine Bitte an alle: Das Review-Meeting am Freitag müssen wir verschieben, der Kunde kann nicht." },
       { "speaker": "Lena", "text": "Auf wann denn? Ich bin nächste Woche Montag und Dienstag auf Dienstreise." },
-      { "speaker": "Jonas", "text": "Mittwoch um zehn? Aleksandar, passt das bei dir? Dann könntest du gleich den Import-Teil vorstellen." },
+      { "speaker": "Jonas", "text": "Mittwoch um zehn? {Vorname}, passt das bei dir? Dann könntest du gleich den Import-Teil vorstellen." },
       { "speaker": "Du", "text": "…", "options": ["Mittwoch um zehn passt. Ich bereite die Präsentation bis Dienstagabend vor und schicke sie dir vorher zu.", "Mittwoch um zehn passt. Ich vorbereite die Präsentation bis Dienstagabend und zuschicke sie dir vorher.", "Mittwoch um zehn passt. Ich bereite vor die Präsentation bis Dienstagabend und schicke zu sie dir vorher."],
         "correctIndex": 0, "feedback": ["Beide trennbaren Verben richtig: bereite … vor, schicke … zu – der Präfix wandert ans Satzende.", "Trennbare Verben werden im Hauptsatz getrennt: nicht „ich vorbereite“, sondern „ich bereite … vor“.", "Der Präfix steht ganz am Ende des Satzes, nicht direkt hinter dem Verb: „bereite die Präsentation … vor“."] },
       { "speaker": "Jonas", "text": "Super. Ich trage den Termin ein und sage dem Kunden Bescheid. Das war’s – schönen Tag!" }
@@ -42,7 +42,7 @@
     { "id": "l03.dlg.001", "type": "Dialogue", "nodeId": "RM.MEETING_BERUF", "band": "B2_1", "context": "Beruf",
       "prompt": "Jonas bittet dich kurzfristig, eine Aufgabe zu übernehmen, die nicht in deinen Tag passt. Reagiere professionell.",
       "lines": [
-        { "speaker": "Jonas", "text": "Aleksandar, kannst du heute noch den Export für die Buchhaltung anpassen? Frau Kaya braucht ihn morgen früh." },
+        { "speaker": "Jonas", "text": "{Vorname}, kannst du heute noch den Export für die Buchhaltung anpassen? Frau Kaya braucht ihn morgen früh." },
         { "speaker": "Du", "text": "…", "options": ["Heute schaffe ich das leider nicht, ich muss die Import-Korrektur bis fünf abgeben. Ich könnte morgen früh als Erstes damit anfangen – reicht das Frau Kaya bis zehn?", "Nein, keine Zeit. Frag Lena.", "Ja klar, mache ich. (denkst: Das wird nichts.)"],
           "correctIndex": 0, "feedback": ["Klare Absage mit Grund, dann ein Gegenangebot mit Uhrzeit. Genau so verhandelt man Prioritäten.", "Ein „Nein“ ohne Begründung und ohne Alternative wirkt im deutschen Team unkooperativ.", "Zusagen, was man nicht halten kann, kostet Vertrauen. Lieber ehrlich verhandeln."] },
         { "speaker": "Jonas", "text": "Bis zehn müsste gehen, ich frag sie. Und wenn nicht?" },

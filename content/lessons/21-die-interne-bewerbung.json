@@ -7,7 +7,7 @@
       { "speaker": "Sabine", "text": "Du solltest dich bewerben. Aber schreib das Anschreiben nicht wie eine Mail an mich – Frau Ahrens kennt dich nicht." },
       { "speaker": "Du", "text": "…", "options": ["Verstanden. Ich beschreibe die drei Ergebnisse aus zwei Jahren: den stabilisierten Import, die eingeführten automatischen Tests und die erfolgreich abgeschlossene Umstellung bei Hansa Logistik.", "Verstanden. Ich schreibe, dass ich den Import stabilisiert habe, dass ich Tests eingeführt habe und dass ich die Umstellung bei Hansa gemacht habe.", "Verstanden. Ich schreibe, dass ich fleißig und teamfähig bin."],
         "correctIndex": 0, "feedback": ["Drei Partizipialattribute (der stabilisierte Import, die eingeführten Tests, die abgeschlossene Umstellung) – so verdichtet ein Anschreiben Ergebnisse.", "Inhaltlich dasselbe, aber drei dass-Sätze hintereinander lesen sich wie ein Protokoll. Für ein Anschreiben: Partizipien und Nomen.", "Floskeln, die in jedem Anschreiben stehen. Frau Ahrens will Ergebnisse."] },
-      { "speaker": "Frau Ahrens (im Gespräch)", "text": "Herr Micić, Sie wären verantwortlich für zwei Teams, die sich noch nicht kennen. Was qualifiziert Sie dafür – außer Technik?" },
+      { "speaker": "Frau Ahrens (im Gespräch)", "text": "Herr {Nachname}, Sie wären verantwortlich für zwei Teams, die sich noch nicht kennen. Was qualifiziert Sie dafür – außer Technik?" },
       { "speaker": "Du", "text": "…", "options": ["Zwei Dinge. Erstens habe ich selbst erlebt, wie es ist, in ein bestehendes Team zu kommen – als Zugezogener und als Neuer. Zweitens habe ich in diesem Jahr einen Kollegen eingearbeitet und einen Konflikt im Team gelöst, der die Zusammenarbeit blockiert hatte.", "Ich bin gut mit Menschen und ich kann Deutsch und Serbisch.", "Technik ist doch das Wichtigste."],
         "correctIndex": 0, "feedback": ["Zwei Beispiele statt Eigenschaften, ein Relativsatz mit Plusquamperfekt („der … blockiert hatte“) – Erfahrung, die man glaubt.", "„gut mit Menschen“ ist eine Behauptung; Frau Ahrens fragt nach Belegen.", "Sie hat „außer Technik“ gesagt – die Frage ignorieren ist die schlechteste Antwort."] },
       { "speaker": "Herr Krüger", "text": "Und Ihr Deutsch? Die Hamburger Kollegen kommunizieren viel schriftlich mit Kunden." },
@@ -43,13 +43,13 @@
     { "id": "l21.dlg.001", "type": "Dialogue", "nodeId": "WS.BERUF_BUERO", "band": "B2_2", "context": "Beruf",
       "prompt": "Frau Ahrens ruft an: Du bekommst die Stelle – unter einer Bedingung. Verhandle klar und dankbar.",
       "lines": [
-        { "speaker": "Frau Ahrens", "text": "Herr Micić, wir möchten Ihnen die Stelle anbieten. Eine Bedingung: Sie wären zwei Tage pro Woche in Hamburg. Ist das für Sie machbar?" },
+        { "speaker": "Frau Ahrens", "text": "Herr {Nachname}, wir möchten Ihnen die Stelle anbieten. Eine Bedingung: Sie wären zwei Tage pro Woche in Hamburg. Ist das für Sie machbar?" },
         { "speaker": "Du", "text": "…", "options": ["Vielen Dank, das freut mich sehr. Zwei Tage Hamburg sind machbar, wenn sie planbar sind – ich habe zwei Kinder in der Kita. Könnten wir feste Tage vereinbaren, etwa Dienstag und Mittwoch?", "Ja, klar, kein Problem. (denkst: Wie soll ich das mit der Kita machen?)", "Zwei Tage? Das ist zu viel. Einen Tag maximal."],
           "correctIndex": 0, "feedback": ["Dank, Zusage mit Bedingung, Grund, konkreter Vorschlag – die Bedingung wird verhandelbar, ohne dass die Stelle wackelt.", "Zusagen, was zu Hause nicht geklärt ist, rächt sich in Woche drei.", "Gegenforderung ohne Begründung, bevor du dich bedankt hast."] },
         { "speaker": "Frau Ahrens", "text": "Feste Tage sind sinnvoll, Dienstag und Mittwoch passen. Das Gehalt hat Herr Krüger Ihnen genannt?" },
         { "speaker": "Du", "text": "…", "options": ["Ja, die genannte Spanne ist für mich in Ordnung. Ich würde gern die schriftliche Zusage abwarten und dann in Ruhe mit meiner Familie sprechen – ich melde mich bis Montag.", "Ja, passt. Ich fange morgen an.", "Das Gehalt ist zu niedrig."],
           "correctIndex": 0, "feedback": ["„die genannte Spanne“ (Partizipialattribut), Bitte um Schriftform, Bedenkzeit mit Termin – professionell bis zum Schluss.", "Etwas zu schnell für eine Entscheidung, die die Familie betrifft; und ohne schriftliche Zusage.", "Das gehörte, wenn überhaupt, ins Gespräch mit Herrn Krüger – mit Begründung."] },
-        { "speaker": "Frau Ahrens", "text": "Bis Montag, gern. Die schriftliche Zusage geht heute raus. Herzlichen Glückwunsch, Herr Micić." }
+        { "speaker": "Frau Ahrens", "text": "Bis Montag, gern. Die schriftliche Zusage geht heute raus. Herzlichen Glückwunsch, Herr {Nachname}." }
       ], "explanation": "Angebot annehmen: danken, Bedingung begründen, Vorschlag machen, Schriftform und Bedenkzeit erbitten." }
   ]
 }

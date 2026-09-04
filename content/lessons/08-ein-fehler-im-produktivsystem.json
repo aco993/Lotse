@@ -4,7 +4,7 @@
     "theme": "Beruf", "band": "B2_1", "scene": "server", "minutes": 18,
     "intro": "Freitag, 16:40. Nach der nächtlichen Bereitstellung fehlen bei drei Kunden Datensätze. Sabine ist zurück aus dem Urlaub und will in fünf Minuten wissen, was passiert ist – verständlich, chronologisch, ohne Fachchinesisch. Und der Projektleiter Herr Krüger hört mit.",
     "story": [
-      { "speaker": "Sabine", "text": "Aleksandar, kurz und klar: Was ist heute Nacht passiert?" },
+      { "speaker": "Sabine", "text": "{Vorname}, kurz und klar: Was ist heute Nacht passiert?" },
       { "speaker": "Du", "text": "…", "options": ["Nachdem die neue Version um zwei Uhr eingespielt worden war, ist der Import bei drei Kunden abgebrochen. Die Ursache war eine Änderung an der Schnittstelle, die nicht in allen Kundenkonfigurationen getestet worden war.", "Nach dem Deploy um zwei ist der Import bei drei Kunden gecrasht. Das Interface-Change war nicht in allen Configs getestet.", "Also, heute Nacht, wir haben deployed, und dann Import ist abgebrochen bei drei Kunden, weil Schnittstelle war anders."],
         "correctIndex": 0, "feedback": ["Plusquamperfekt für das Frühere, Passiv für den Vorgang, Relativsatz für die Ursache – ein Bericht, den auch der Projektleiter versteht.", "Inhaltlich richtig, sprachlich Denglisch. Vor Nicht-Technikern: einspielen, Schnittstelle, Konfiguration.", "Wortstellung (dann Import ist …, weil Schnittstelle war …) und fehlende Artikel machen den Bericht mühsam."] },
       { "speaker": "Herr Krüger", "text": "Sind Daten verloren gegangen?" },
@@ -43,7 +43,7 @@
     { "id": "l08.dlg.001", "type": "Dialogue", "nodeId": "WS.IT_SOFTWARE", "band": "B2_1", "context": "Beruf",
       "prompt": "Frau Kaya aus der Buchhaltung versteht nichts von IT und fragt, ob ihre Zahlen noch stimmen. Erkläre es ohne Fachwörter.",
       "lines": [
-        { "speaker": "Frau Kaya", "text": "Herr Micić, ich habe gehört, es gab ein Problem mit dem System. Kann ich die Monatszahlen von heute noch verwenden?" },
+        { "speaker": "Frau Kaya", "text": "Herr {Nachname}, ich habe gehört, es gab ein Problem mit dem System. Kann ich die Monatszahlen von heute noch verwenden?" },
         { "speaker": "Du", "text": "…", "options": ["Für Ihre Zahlen ändert sich nichts: Betroffen waren nur die Importe von drei Kunden, und die werden heute Nacht nachgeholt. Ihre Auswertung von heute Vormittag ist vollständig.", "Der Import-Job ist nach dem Deployment wegen eines Interface-Bugs fehlgeschlagen, aber der Fix ist gemerged, das Rollout läuft nachts.", "Weiß ich nicht, fragen Sie Jonas."],
           "correctIndex": 0, "feedback": ["Antwort auf ihre eigentliche Frage zuerst, dann die Einordnung – ohne ein einziges Fachwort.", "Alles richtig und alles unverständlich für sie: Deployment, Interface-Bug, gemerged, Rollout.", "Abschieben; du weißt es doch."] },
         { "speaker": "Frau Kaya", "text": "Und muss ich morgen etwas neu erstellen?" },

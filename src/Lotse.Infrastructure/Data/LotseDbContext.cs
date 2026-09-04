@@ -41,7 +41,9 @@ public sealed class LessonProgressEntity
 public sealed class LearnerProfile
 {
     public required string UserId { get; set; }
-    public string Name { get; set; } = "";
+    /// <summary>Substituted into the content's {Vorname}/{Name} tokens; empty falls back to the author's own name.</summary>
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
     public string NativeLanguage { get; set; } = "Serbisch";
     /// <summary>Free text, purely context for the tutor prompt ("… arbeitet als Softwareentwickler").</summary>
     public string? JobTitle { get; set; } = "Softwareentwickler";

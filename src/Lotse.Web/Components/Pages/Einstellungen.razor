@@ -16,7 +16,8 @@ else
     <MudPaper Class="pa-4 mb-3" Elevation="1">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Lernplan</MudText>
         <MudGrid Spacing="2">
-            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.Name" Label="Name (für Musterlösungen)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.FirstName" Label="Vorname" Variant="Variant.Outlined" HelperText="@($"Erscheint im Kurs und in Musterlösungen. Leer = {NameTemplate.DefaultFirstName}.")" /></MudItem>
+            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.LastName" Label="Nachname" Variant="Variant.Outlined" HelperText="@($"Für „Sehr geehrter Herr …“. Leer = {NameTemplate.DefaultLastName}.")" /></MudItem>
             <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.JobTitle" Label="Beruf (Kontext für den Tutor)" Variant="Variant.Outlined" /></MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect T="Occupation" @bind-Value="_p.Occupation" Label="Branche" Variant="Variant.Outlined">
