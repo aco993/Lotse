@@ -61,7 +61,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 
 ## From the persona test – next
 
-- ⬜ Target level as a profile setting (B2 / C1): the planner's focus ranking caps at B2.2 today; a C1 learner (Ana, Petar) should get `WS.C1_GEHOBEN` and the B2.2 grammar in focus, and a "C1" label on the exam page.
+- ✅ Target level as a profile setting (B2 / C1), 0.9.0: the focus ranking's band cap follows the setting, so a C1 learner reaches `WS.C1_GEHOBEN` and the B2.2 grammar; app bar, Themen and Heute ("C1-Nähe") follow it, and the exam page says plainly that it stays Goethe-B2.
 - ⬜ Occupation as a profile setting (IT / Pflege / Bau / Medizin / Büro) steering which contexts the planner prefers; the Gesundheit pack already carries the Pflege vocabulary Jelena missed.
 - ⬜ First name in the profile, substituted into model answers and the story instead of the fixed name (Ana).
 - ⬜ Motivation beyond the streak: weekly goal, "words that stick" (FSRS stability ≥ 21 days), a due-load forecast for the next seven days on Fortschritt (Tamara, Ana, Petar).

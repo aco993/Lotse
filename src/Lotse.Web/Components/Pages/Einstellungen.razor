@@ -4,6 +4,7 @@
 @inject TutorRegistry Tutors
 @inject HealthService Health
 @inject ISnackbar Snackbar
+@inject Lotse.Web.Services.LearnerProfileState ProfileState
 
 <PageTitle>Einstellungen – Lotse</PageTitle>
 
@@ -26,6 +27,13 @@ else
                 </MudSelect>
             </MudItem>
             <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="TargetLevel" @bind-Value="_p.TargetLevel" Label="Zielniveau" Variant="Variant.Outlined">
+                    <MudSelectItem T="TargetLevel" Value="TargetLevel.B2">B2 – Prüfungsvorbereitung</MudSelectItem>
+                    <MudSelectItem T="TargetLevel" Value="TargetLevel.C1">C1 – darüber hinaus</MudSelectItem>
+                </MudSelect>
+                <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@TargetLevelHint</MudText>
+            </MudItem>
         </MudGrid>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="SaveAsync">Speichern</MudButton>
         @if (_p.PlacementCompletedUtc is { } done)
@@ -143,6 +151,11 @@ else
     private bool _showKey;
     private bool _probing;
     private TutorProbe? _probe;
+    /// <summary>One sentence of consequence per choice - the setting is otherwise invisible until a session is planned.</summary>
+    private string TargetLevelHint => _p?.TargetLevel == TargetLevel.C1
+        ? "Schwerpunkte dürfen jetzt bis C1 reichen (gehobener Wortschatz, B2.2-Grammatik). Die Prüfungsseite bleibt Goethe-B2."
+        : "Schwerpunkte bleiben bei B2.2 und darunter – der direkte Weg zur B2-Prüfung.";
+
     private TutorPreset Preset => TutorPresets.Get(_presetId);
     private string KeyHelp => Preset.KeyEnvVar is { } env ? $"Leer lassen, um {env} aus der Umgebung zu nutzen" : "";
 
@@ -204,6 +217,8 @@ else
         if (_p is null) return;
         _p.TargetExamDate = _examDate is { } d ? DateOnly.FromDateTime(d) : null;
         await Learning.SaveProfileAsync(_p);
+        // Tells the shell (app bar) about the new target level; pages re-read on their own when navigated to.
+        ProfileState.Set(_p);
         Snackbar.Add("Gespeichert.", Severity.Success);
     }
 

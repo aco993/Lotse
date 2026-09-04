@@ -6,7 +6,20 @@
 <PageTitle>Prüfung B2 – Lotse</PageTitle>
 
 <MudText Typo="Typo.h5" Class="mb-1">@ExamBlueprint.Name</MudText>
-<MudText Typo="Typo.body2" Class="mb-4" Style="opacity:.8">Vier Module, jedes einzeln bestehbar, jeweils 60 % nötig. Unten das Format mit Tipps – und die Simulationen, die es hier schon gibt.</MudText>
+<MudText Typo="Typo.body2" Class="mb-2" Style="opacity:.8">Vier Module, jedes einzeln bestehbar, jeweils 60 % nötig. Unten das Format mit Tipps – und die Simulationen, die es hier schon gibt.</MudText>
+@if (_target == TargetLevel.C1)
+{
+    @* Honest limit: the blueprint, the prognosis and every simulation here are Goethe-B2. The C1 setting widens
+       what the planner drills; it does not turn this page into a C1 exam. Saying so beats implying otherwise. *@
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-4">
+        Dein Zielniveau ist C1. Diese Seite bleibt trotzdem die <b>B2-Prüfung</b>: Format, Prognose und Simulationen folgen dem Goethe-B2-Blueprint.
+        Das C1-Ziel wirkt in den täglichen Sessions – gehobener Wortschatz und B2.2-Grammatik kommen dort in die Schwerpunkte.
+    </MudAlert>
+}
+else
+{
+    <div class="mb-4"></div>
+}
 
 <MudGrid Spacing="2" Class="mb-4">
     @foreach (var m in ExamBlueprint.Modules)
@@ -76,6 +89,7 @@
 
 @code {
     private ReadinessReport? _readiness;
+    private TargetLevel _target = TargetLevel.B2;
 
     private static readonly Func<Exercise, bool> Teil1 = e => e.Type == ExerciseType.FreeWrite && e.MinWords >= 150;
     private static readonly Func<Exercise, bool> Teil2 = e => e.Type == ExerciseType.FreeWrite && e.MinWords is >= 100 and < 150;
@@ -86,6 +100,7 @@
     {
         var states = await Learning.GetSkillStatesAsync();
         _readiness = LearnerAnalysis.Readiness(CatalogProvider.Catalog, states);
+        _target = (await Learning.GetProfileAsync()).TargetLevel;
     }
 
     private async Task StartRandom(Func<Exercise, bool> filter)

@@ -46,6 +46,8 @@ public sealed class LearnerProfile
     public string? Occupation { get; set; } = "Softwareentwickler";
     public int DailyMinutes { get; set; } = 10;
     public DateOnly? TargetExamDate { get; set; }
+    /// <summary>B2 by default; C1 lifts the planner's focus cap. See <see cref="Core.Model.TargetLevel"/>.</summary>
+    public TargetLevel TargetLevel { get; set; } = TargetLevel.B2;
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public DateTime? PlacementCompletedUtc { get; set; }
 }

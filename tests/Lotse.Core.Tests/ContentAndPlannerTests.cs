@@ -98,7 +98,7 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
 {
     private static readonly DateTime Now = new(2026, 9, 2, 18, 0, 0, DateTimeKind.Utc);
 
-    private PlannerInput Input(int minutes, Dictionary<string, SkillState>? states = null, List<ReviewState>? due = null, int sessions = 0, DateTime? lastProduction = null)
+    private PlannerInput Input(int minutes, Dictionary<string, SkillState>? states = null, List<ReviewState>? due = null, int sessions = 0, DateTime? lastProduction = null, TargetLevel target = TargetLevel.B2)
         => new()
         {
             TimeBudgetMinutes = minutes,
@@ -108,6 +108,7 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
             DueReviews = due ?? [],
             SessionsCompleted = sessions,
             LastProductionUtc = lastProduction,
+            TargetLevel = target,
             Seed = 7,
         };
 
@@ -125,6 +126,40 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     {
         var plan = new SessionPlanner().Plan(Input(5));
         Assert.InRange(plan.EstimatedSeconds, 2 * 60, 7 * 60);
+    }
+
+    /// <summary>Everything mastered except the C1 band, so the focus ranking has exactly one direction to go.</summary>
+    private Dictionary<string, SkillState> OnlyC1Weak()
+    {
+        var states = new Dictionary<string, SkillState>();
+        foreach (var n in fx.Catalog.Nodes)
+            states[n.Id] = n.Band == CefrBand.C1
+                ? new SkillState { NodeId = n.Id, Theta = -1.5, Attempts = 12, Correct = 3, LastPracticedUtc = Now.AddDays(-1), LastErrorUtc = Now.AddDays(-1) }
+                : new SkillState { NodeId = n.Id, Theta = 1.5, Attempts = 12, Correct = 12, LastPracticedUtc = Now.AddDays(-1) };
+        return states;
+    }
+
+    private List<SkillNode> FocusedNodes(SessionPlan plan) => plan.Steps
+        .Where(s => s.Kind is StepKind.Focus or StepKind.Explore)
+        .Select(s => fx.Catalog.Node(s.Exercise.NodeId)!)
+        .ToList();
+
+    [Fact]
+    public void C1_target_lets_the_focus_reach_above_B2()
+    {
+        // Guard: the assertion below is only meaningful while the catalogue actually has drillable C1 material.
+        Assert.Contains(fx.Catalog.Nodes, n => n.Band == CefrBand.C1 && fx.Catalog.ForNode(n.Id).Any(e => !e.IsProduction && !e.IsReceptive));
+
+        var plan = new SessionPlanner().Plan(Input(15, OnlyC1Weak(), target: TargetLevel.C1));
+        Assert.Contains(FocusedNodes(plan), n => n.Band == CefrBand.C1);
+    }
+
+    [Fact]
+    public void B2_target_never_puts_a_C1_node_in_focus()
+    {
+        // Same learner, same weaknesses - only the goal differs. A B2 candidate's minutes belong to B2 material.
+        var plan = new SessionPlanner().Plan(Input(15, OnlyC1Weak()));
+        Assert.DoesNotContain(FocusedNodes(plan), n => n.Band == CefrBand.C1);
     }
 
     [Fact]

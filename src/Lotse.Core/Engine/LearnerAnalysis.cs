@@ -108,6 +108,28 @@ public static class LearnerAnalysis
         return new ReadinessReport(overall, modules, verdict);
     }
 
+    /// <summary>
+    /// How close a C1-bound learner is to the material above B2 - the C1 nodes and the B2.2 grammar, weighted like
+    /// readiness is. Deliberately NOT called "C1 readiness": there is no C1 exam blueprint in this app, so this is a
+    /// mastery figure for the upper end of the content, nothing more. Returns null when there is no such content.
+    /// </summary>
+    public static ModuleReadiness? C1Proximity(ContentCatalog catalog, IReadOnlyDictionary<string, SkillState> states)
+    {
+        const double prior = 0.45;
+        double Blend(SkillState? s) => s is null ? prior : s.Confidence * s.Mastery + (1 - s.Confidence) * prior;
+
+        var nodes = catalog.Nodes.Where(n => n.Band >= CefrBand.B2_2).ToList();
+        if (nodes.Count == 0) return null;
+
+        var wSum = nodes.Sum(n => n.Weight);
+        var value = nodes.Sum(n => Blend(states.GetValueOrDefault(n.Id)) * n.Weight) / wSum;
+        var coverage = nodes.Sum(n => (states.GetValueOrDefault(n.Id)?.Confidence ?? 0) * n.Weight) / wSum;
+        var blockers = nodes.Select(n => (n, s: states.GetValueOrDefault(n.Id)))
+            .Where(t => t.s is not null && t.s.Attempts >= 3 && t.s.Mastery < 0.55)
+            .OrderBy(t => t.s!.Mastery).Take(3).Select(t => t.n.Title).ToList();
+        return new ModuleReadiness("C1-Nähe", value, coverage, blockers);
+    }
+
     private static readonly (string Module, SkillArea[] Areas)[] ModuleMap =
     [
         ("Lesen", [SkillArea.Lesen, SkillArea.Wortschatz]),

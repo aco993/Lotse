@@ -108,6 +108,7 @@ builder.Services.AddSingleton(ttsDefaults with
 });
 builder.Services.AddSingleton<ITextToSpeech, PiperTtsService>();
 builder.Services.AddScoped<Lotse.Web.Components.Shared.SpeechService>();
+builder.Services.AddScoped<LearnerProfileState>();
 
 // ---- UI --------------------------------------------------------------------------------------------------------------
 builder.Services.AddMudServices(c =>
