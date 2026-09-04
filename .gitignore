@@ -8,6 +8,8 @@ obj/
 *.db-wal
 TestResults/
 artifacts/
+# tools/persona-harness braucht ein einmaliges `npm install` - dessen node_modules gehoert nicht ins Repo.
+node_modules/
 .idea/
 *.swp
 appsettings.Local.json
