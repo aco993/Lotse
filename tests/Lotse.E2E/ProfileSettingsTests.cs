@@ -103,6 +103,20 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
     });
 
     [Fact]
+    public Task Heute_speaks_plainly_while_Themen_keeps_the_terms() => app.RunAsync(nameof(Heute_speaks_plainly_while_Themen_keeps_the_terms), async page =>
+    {
+        await RegisterAsync(page, LotseE2EFixture.UniqueEmail("klartext"));
+
+        // "TeKaMoLo" is the giveaway: a term that means nothing to an A2/B1 learner being told what to do next.
+        await Expect(page.GetByText("Der Lotse schlägt vor")).ToBeVisibleAsync();
+        await Expect(page.GetByText("TeKaMoLo")).ToHaveCountAsync(0);
+
+        // Themen is where you look a topic up, so there the precise title stays.
+        await page.GotoAsync("/themen");
+        await Expect(page.GetByText("TeKaMoLo").First).ToBeVisibleAsync();
+    });
+
+    [Fact]
     public Task Occupation_is_saved_explained_and_survives_a_reload() => app.RunAsync(nameof(Occupation_is_saved_explained_and_survives_a_reload), async page =>
     {
         await RegisterAsync(page, LotseE2EFixture.UniqueEmail("beruf"));

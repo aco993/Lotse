@@ -141,7 +141,7 @@ else
                 {
                     <div class="mb-2">
                         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                            <MudText Typo="Typo.body2" Style="font-weight:500">@w.Title</MudText>
+                            <MudText Typo="Typo.body2" Style="font-weight:500">@w.PlainTitle</MudText>
                             <TrendIcon Trend="w.Trend" />
                             <MudSpacer />
                             <MudText Typo="Typo.caption">@w.Mastery.ToString("P0")@(w.Errors7d > 0 ? $" · {w.Errors7d} Fehler / 7 Tage" : "")</MudText>

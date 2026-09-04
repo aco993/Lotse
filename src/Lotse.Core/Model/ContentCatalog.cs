@@ -31,6 +31,9 @@ public sealed class ContentCatalog
 
     public string NodeTitle(string id) => Node(id)?.Title ?? id;
 
+    /// <summary>The jargon-free name where one exists; used where the learner is told what to practise, not where they look a topic up.</summary>
+    public string NodePlainTitle(string id) => Node(id) is { } n ? n.PlainTitle ?? n.Title : id;
+
     /// <summary>Returns a catalog that also contains <paramref name="extra"/> exercises (e.g. AI-generated ones loaded from the database).</summary>
     public ContentCatalog With(IEnumerable<Exercise> extra)
         => new(_nodes.Values, _errors.Values, _exercises.Values.Concat(extra.Where(e => !_exercises.ContainsKey(e.Id))), _lessons.Values);

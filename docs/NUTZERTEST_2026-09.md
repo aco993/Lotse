@@ -60,6 +60,9 @@ Erledigt in 0.9.0:
 - **Bereitschaft „bewegt sich nicht"** (Marko, Dragan) – taeglicher Schnappschuss, Heute zeigt die Veraenderung
   gegenueber etwa einer Woche; ohne Vergleichswert bleibt die Zeile weg.
 
+- **Fachjargon auf der Startseite** (Nikola, Tamara) – jeder Grammatikknoten hat jetzt einen Klartextnamen; Heute
+  benutzt ihn, Themen und Fortschritt behalten den Fachbegriff.
+
 Offen (bewusst): Punkte, Abzeichen und Bestenlisten – begründet in `docs/KONZEPT.md` §5.
 
 ## Methode, kurz

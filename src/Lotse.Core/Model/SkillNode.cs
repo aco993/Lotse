@@ -75,7 +75,13 @@ public sealed record SkillNode(
     string? InterferenceNote,
     IReadOnlyList<string> Prerequisites,
     /// <summary>Relative weight of the node when computing exam readiness (1 = normal).</summary>
-    double Weight = 1.0);
+    double Weight = 1.0,
+    /// <summary>
+    /// The same topic said without grammar jargon ("Satzbau: das Verb steht an zweiter Stelle"), for the places
+    /// where a learner is being told what to do rather than looking a topic up. Optional; falls back to
+    /// <see cref="Title"/>. Themen and Fortschritt keep the precise title on purpose - that is where terms belong.
+    /// </summary>
+    string? PlainTitle = null);
 
 /// <summary>A catalogued error type. Every mistake, whether detected deterministically or by the AI tutor, is tagged with one of these codes.</summary>
 public sealed record ErrorType(
