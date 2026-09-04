@@ -18,6 +18,9 @@ public abstract class LotseComponentTest : BunitContext
         JSInterop.Mode = JSRuntimeMode.Loose;
         JSInterop.SetupModule("./js/speech.js").Mode = JSRuntimeMode.Loose;
         Services.AddMudServices();
+        // No Piper in the test host, same as on a machine where install-piper.ps1 was never run: SpeechService
+        // then goes straight to the browser voices, which loose JS interop answers.
+        Services.AddSingleton<ITextToSpeech>(new NoTextToSpeech());
         Services.AddScoped<SpeechService>();
         Services.AddSingleton<ILearningService>(Learning);
     }

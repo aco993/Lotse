@@ -27,7 +27,9 @@ Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 kar
 
 **Passkey umesto lozinke:** u Konto (klik na svoj email u meniju) → Passkeys → „Passkey hinzufügen“ – otisak prsta, lice ili PIN uređaja. Posle toga na login strani samo email + „Mit Passkey anmelden“. Radi na `localhost` ili preko HTTPS-a; sa telefona preko IP-adrese u lokalnoj mreži (http://192.168…) browser to ne dozvoljava – tu ostaje lozinka.
 
-Zaboravljena lozinka: **Passwort vergessen?** na login strani.
+Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
+
+„Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).
 
 ## 1b. Šta je novo u 0.8.0 (posle testa sa 10 persona)
 
@@ -37,9 +39,28 @@ Zaboravljena lozinka: **Passwort vergessen?** na login strani.
 - **Themen:** legenda boja sada filtrira po oblasti (klik = filter, drugi klik = sve).
 - **Ponavljanja po FSRS-u:** intervali prate krivu zaborava (stavka dolazi kad verovatnoća sećanja padne na 90 %); ništa ne moraš da menjaš.
 - **Tastatura:** vidljiv fokus, „Zum Inhalt springen“ na prvi Tab, posle „Prüfen“ fokus je na „Weiter“ (Enter nastavlja).
-- **Fond reči:** 11 novih tematskih paketa (Arbeit, Gesundheit/Pflege, Umwelt, Medien, Bildung, Geld, Wohnen/Mobilität, Charakter/Gefühle, Präfixverben, IT-Beruf, C1-gehoben). Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
+- **Fond reči:** 11 novih tematskih paketa (Arbeit, Gesundheit/Pflege, Umwelt, Medien, Bildung, Geld, Wohnen/Mobilität, Charakter/Gefühle, Präfixverben, IT-Beruf, C1-gehoben).
 
-„Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).
+## 1c. Prirodan nemački glas (preporučeno, jednom po računaru)
+
+Bez ovog koraka app čita nemački glasovima koje nudi sam pregledač. Na Windowsu su to stare Hedda/Katja/Stefan i zvuče osetno robotski. Jedna komanda to menja:
+
+```powershell
+pwsh -File tools/install-piper.ps1
+```
+
+Skript preuzima **Piper** (MIT, ~21 MB) i dva nemačka glasa u `%LOCALAPPDATA%\Lotse` (~120 MB ukupno):
+
+| Glas | Uloga |
+|---|---|
+| `de_DE-thorsten-medium` | podrazumevani i muški — Herr Krüger, Jonas, Tarek, tvoje replike |
+| `de_DE-kerstin-low` | ženski — Sabine, Lena, Ana, Frau Kaya, Prüferin |
+
+Sve radi **offline**: nema ključa, nema interneta, nijedna rečenica ne napušta računar. Rečenica se izgovori za oko pola sekunde i posle toga je keširana, pa je ponovno slušanje trenutno.
+
+Ništa ne moraš da podešavaš — app sama pronađe glasove i pri startu u konzoli ispiše `Lokale Sprachausgabe aktiv: ...`. Ako preskočiš ovaj korak, sve i dalje radi, samo sa starim glasovima pregledača. Skript smeš da pokreneš više puta; preskače ono što već postoji.
+
+> Glasovi **nisu** deo repozitorijuma (preveliki su), pa ovaj korak ponavljaš na svakom novom računaru posle `git clone`.
 
 ## 2. Prvi dan: Einstufung
 
@@ -53,7 +74,7 @@ Pored dnevnih sesija postoji **Kurs** (meni → Kurs): 24 lekcije u dva dela koj
 - **Teil 2 (L13–L24, B2):** uvodiš novog kolegu Tareka (članovi i rod), roditeljski sastanak u vrtiću (zavisne rečenice), organizuješ Betriebsausflug (glagoli s predlozima), prezentuješ klijentu (deklinacija prideva), rešavaš sukob s Lenom (povratni glagoli, negacija), večernji kurs na VHS (lažni prijatelji, tvorba reči), osporavaš Nebenkostenabrechnung (genitiv), glasine o fuziji (subjektivni modalni glagoli), interna prijava za vođu tima (participi kao pridevi), slušanje vesti (indirektni govor), pa dva ispitna dana: Lesen i Schreiben – i položen B2.
 
 Svaka lekcija ima:
-- **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog.
+- **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog – muški i ženski likovi različitim glasom, ako si uradio korak 1c.
 - **Objašnjenje gramatike** sa tabelom nemački ↔ srpski i zvučnikom uz svaki primer.
 - **10–11 interaktivnih koraka**: razgovor, „Fehler finden" (klikni pogrešnu reč u kolegin mejl), spajanje parova, praznine, prevodi.
 - **Završni zadatak**: pišeš ili govoriš sam.
@@ -140,5 +161,7 @@ Za razgovor, dubinske ispravke i coaching koristi prompt iz `docs/CLAUDE_CHAT_PR
 - Ako se stranica „sruši", aplikacija pokazuje prijateljsku poruku sa dugmetom „Noch einmal" – tvoj napredak je već sačuvan.
 - Aplikacija se ne pokreće: proveri `dotnet --version` (treba 10.x) i da port 5178 nije zauzet (`--urls http://localhost:5311`).
 - Mikrofon ne radi: samo Chrome/Edge; dozvoli mikrofon u pregledaču; možeš i da kucaš transkript.
-- Nema zvuka pri diktatu: pregledač bez nemačkog glasa – Windows: Einstellungen → Zeit und Sprache → Sprache → Deutsch dodati.
+- Zvuk robotski: nisi pokrenuo `tools/install-piper.ps1` (vidi 1c). U konzoli piše koji je glas aktivan – `Lokale Sprachausgabe aktiv: ...` znači da Piper radi, `nicht eingerichtet` znači da app koristi glasove pregledača.
+- Nema zvuka uopšte: bez Pipera trebaju ti glasovi pregledača – Windows: Einstellungen → Zeit und Sprache → Sprache → Deutsch dodati. Sa Piperom to nije potrebno.
+- Svi likovi zvuče isto: nedostaje ženski glas `de_DE-kerstin-low`; pokreni skript iz 1c ponovo.
 - Log servera vidiš u konzoli u kojoj si pokrenuo `dotnet run`.

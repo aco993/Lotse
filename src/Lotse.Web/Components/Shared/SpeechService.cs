@@ -30,16 +30,22 @@ public sealed class SpeechService(IJSRuntime js, ITextToSpeech tts) : IAsyncDisp
     /// back to the browser voices whenever rendering or playback did not work out - every failure path here is a
     /// fallback, never an exception, because a hiccup in the audio must not interrupt an exercise.
     /// </summary>
-    public async ValueTask<bool> SpeakAsync(string text, double rate = 0.95)
+    public async ValueTask<bool> SpeakAsync(string text, double rate = 0.95, SpeechVoice voice = SpeechVoice.Male)
     {
         if (tts.Available)
         {
             string? key = null;
-            try { key = await tts.SynthesizeAsync(text, rate); }
+            try { key = await tts.SynthesizeAsync(text, rate, voice); }
             catch (OperationCanceledException) { /* circuit or request gone; fall back */ }
 
-            if (key is not null && await (await ModuleAsync()).InvokeAsync<bool>("playAudio", $"/api/tts/{key}.wav"))
-                return true;
+            if (key is not null)
+            {
+                var outcome = await (await ModuleAsync()).InvokeAsync<string>("playAudio", $"/api/tts/{key}.wav");
+                // "stopped" means someone deliberately silenced us - falling back here would start the browser
+                // voice right after the learner pressed stop.
+                if (outcome is "ended") return true;
+                if (outcome is "stopped") return false;
+            }
         }
 
         return await (await ModuleAsync()).InvokeAsync<bool>("speak", text, rate);

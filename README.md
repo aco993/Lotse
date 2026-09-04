@@ -46,6 +46,25 @@ Open http://localhost:5178 (or the port printed in the console), register an acc
 
 No mail server is configured on a fresh clone, so "Passwort vergessen?" logs the reset link to the console instead of emailing it - watch the terminal Lotse is running in after requesting one.
 
+### Better pronunciation (optional, recommended)
+
+Out of the box, listening tasks use the browser's own German voices. On Windows those are the older Hedda/Katja/Stefan
+voices and they sound noticeably robotic. One command replaces them with a neural voice that runs locally:
+
+```powershell
+pwsh -File tools/install-piper.ps1
+```
+
+It downloads Piper (MIT, ~21 MB) and two German voices (CC0, ~120 MB together) into `%LOCALAPPDATA%\Lotse`:
+`de_DE-thorsten-medium` as the default and male voice, `de_DE-kerstin-low` for the women in the story - so Herr Krüger
+and Sabine no longer sound like the same person. Nothing goes into the repo, no API key, and no sentence ever leaves
+the machine; a line renders in about half a second and is then cached.
+
+Lotse picks the voices up automatically and logs `Lokale Sprachausgabe aktiv: ...` at startup. Without the step the
+browser voices simply stay in use, and with only the default voice installed every role speaks with it. Rendered audio
+is cached under the data directory and served only to a signed-in learner. The script is idempotent - re-running it
+skips what is already there, which is also how you add the second voice later.
+
 ### Optional: enable the AI tutor
 
 Open **Einstellungen → KI-Tutor**, pick a provider, paste a key, press *Verbindung testen*, then *Speichern & aktivieren*. The key is stored encrypted on this machine only. Groq offers a free tier (https://console.groq.com/keys) and answers in seconds; Claude gives the best exam-grade feedback; Ollama runs fully offline.
@@ -78,7 +97,8 @@ The real app on Kestrel (`WebApplicationFactory.UseKestrel`, .NET 10) in a real 
 | Accounts | ASP.NET Core Identity (cookies, lockout, passkeys/WebAuthn via Identity schema v3, German error messages), `ICurrentUserAccessor` seam | Everything per account, Core stays account-free |
 | Data | EF Core 10 + SQLite, migrations (`DatabaseInitializer` baselines pre-migration files), Data Protection for the API key at rest | Zero-install persistence; keys never in clear text |
 | AI | Anthropic SDK (Claude) and any OpenAI-compatible endpoint (Groq, Ollama, LM Studio, OpenRouter, Mistral, DeepSeek, OpenAI), structured JSON output with graceful fallback | Provider-agnostic, works offline with Ollama |
-| Browser | Web Speech API (TTS/STT), PWA manifest, CSS custom properties + `color-mix()` for theme-aware accents | Phone-first, installable, dark mode for free |
+| Speech | Piper (MIT) rendering the voices `de_DE-thorsten` / `de_DE-kerstin` (CC0) locally, picked per character from the speaker label, WAVs cached and served behind the login; the browser's own voices as the fallback when Piper is not installed | Near-native German without a key, a cloud voice, or lesson text leaving the machine |
+| Browser | Web Speech API (recognition, fallback voices), PWA manifest, CSS custom properties + `color-mix()` for theme-aware accents | Phone-first, installable, dark mode for free |
 | Tests | xUnit v3 on Microsoft.Testing.Platform, bUnit 2, `WebApplicationFactory` in-process (TestServer) and on Kestrel, Playwright 1.62 with CDP virtual authenticator | Engine in ms, components in memory, the host as it ships, the browser as the learner sees it |
 | Delivery | GitHub Actions (format → build → tests → E2E, traces on failure), Dependabot (NuGet + actions, weekly, grouped), MIT | Green main, current dependencies |
 
@@ -93,6 +113,7 @@ tests/Lotse.Core.Tests   xUnit v3 (Microsoft.Testing.Platform): engine, content,
 tests/Lotse.Web.Tests    bUnit component tests + the host in-process (WebApplicationFactory)
 tests/Lotse.E2E          Playwright: the real app on Kestrel in a real Chromium (daily loop, writing, passkeys)
 tools/persona-harness    Playwright layer for persona tests and verify-fixes.mjs; validate-vocab.mjs for content packs
+tools/install-piper.ps1  one-off setup of the local neural voice (Piper + de_DE-thorsten), idempotent
 docs/                    concept, plan, architecture, grammar-coverage report
 tools/                   B2 grammar reference inventory + the script that measures coverage
 ```

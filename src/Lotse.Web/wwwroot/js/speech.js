@@ -35,28 +35,29 @@ export function speak(text, rate) {
 }
 
 /**
- * Plays a WAV rendered on the server. Resolves true when it finished, false on any problem (missing file,
- * decode error, autoplay blocked) so the caller can still fall back to the browser voices.
+ * Plays a WAV rendered on the server. Resolves with one of three outcomes, which the caller must tell apart:
+ *   "ended"   - played to the end
+ *   "failed"  - could not play (missing file, decode error, autoplay blocked) -> caller may use browser voices
+ *   "stopped" - deliberately interrupted -> caller must stay silent, NOT fall back and start talking again
  */
 export function playAudio(url) {
     return new Promise((resolve) => {
         stopSpeaking();
         const el = new Audio(url);
         let settled = false;
-        const done = (ok) => {
+        const done = (outcome) => {
             if (settled) return;          // ended/error/stop can all arrive; the first one wins
             settled = true;
             el.onended = null;
             el.onerror = null;
             if (audio === el) { audio = null; audioDone = null; }
-            resolve(ok);
+            resolve(outcome);
         };
         audio = el;
         audioDone = done;
-        el.onended = () => done(true);
-        el.onerror = () => done(false);
-        // A rejected play() is the autoplay policy or a missing file - both mean "fall back", not "crash".
-        el.play().catch(() => done(false));
+        el.onended = () => done("ended");
+        el.onerror = () => done("failed");
+        el.play().catch(() => done("failed"));
     });
 }
 
@@ -67,9 +68,9 @@ export function stopSpeaking() {
         audio = null;
         audioDone = null;
         el.pause();
-        // Resolve the pending playAudio() as "did not finish". Without this the awaiting .NET call would hang
-        // forever and leave the Vorlesen button disabled for the rest of the circuit.
-        if (done) done(false);
+        // Resolve the pending playAudio(). Without this the awaiting .NET call would hang forever and leave the
+        // Vorlesen button disabled for the rest of the circuit.
+        if (done) done("stopped");
     }
 }
 

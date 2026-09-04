@@ -1,12 +1,20 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Lotse.Infrastructure.Services;
 
-/// <summary>Where piper.exe and its voice live, plus the folder the rendered WAVs are cached in.</summary>
-public sealed record PiperTtsOptions(string PiperPath, string VoicePath, string CacheDirectory)
+/// <summary>Which of the installed voices to speak with. The male one is the default and the better model.</summary>
+public enum SpeechVoice
+{
+    Male,
+    Female,
+}
+
+/// <summary>Where piper.exe and its voices live, plus the folder the rendered WAVs are cached in.</summary>
+public sealed record PiperTtsOptions(string PiperPath, string VoicePath, string CacheDirectory, string? VoiceFemalePath = null)
 {
     /// <summary>Default install location written by <c>tools/install-piper.ps1</c>.</summary>
     public static PiperTtsOptions Defaults(string cacheDirectory)
@@ -15,7 +23,8 @@ public sealed record PiperTtsOptions(string PiperPath, string VoicePath, string 
         return new PiperTtsOptions(
             Path.Combine(root, "piper", "piper.exe"),
             Path.Combine(root, "voices", "de_DE-thorsten-medium.onnx"),
-            cacheDirectory);
+            cacheDirectory,
+            Path.Combine(root, "voices", "de_DE-kerstin-low.onnx"));
     }
 }
 
@@ -25,23 +34,25 @@ public sealed record PiperTtsOptions(string PiperPath, string VoicePath, string 
 /// </summary>
 public interface ITextToSpeech
 {
-    /// <summary>True once the engine and a voice are actually present on this machine.</summary>
+    /// <summary>True once the engine and at least the default voice are actually present on this machine.</summary>
     bool Available { get; }
 
     /// <summary>
     /// Renders <paramref name="text"/> and returns the cache key of the WAV, or null when nothing could be
     /// rendered (engine missing, empty text, failure). The caller then falls back to browser speech.
+    /// A voice that is not installed falls back to the default one rather than failing.
     /// </summary>
-    Task<string?> SynthesizeAsync(string text, double rate = 1.0, CancellationToken ct = default);
+    Task<string?> SynthesizeAsync(string text, double rate = 1.0, SpeechVoice voice = SpeechVoice.Male, CancellationToken ct = default);
 
     /// <summary>Absolute path of a previously rendered WAV, or null when <paramref name="key"/> is unknown.</summary>
     string? ResolveCached(string key);
 }
 
 /// <summary>
-/// Local neural text-to-speech via Piper (https://github.com/rhasspy/piper), MIT licensed, voice de_DE-thorsten
-/// (CC0). It runs as a short-lived child process and never talks to the network, which is why it is preferred over
-/// the browser's online voices: the same near-native pronunciation without sending lesson text to a third party.
+/// Local neural text-to-speech via Piper (https://github.com/rhasspy/piper), MIT licensed, voices de_DE-thorsten
+/// and de_DE-kerstin (CC0). It runs as a short-lived child process and never talks to the network, which is why it
+/// is preferred over the browser's online voices: the same near-native pronunciation without sending lesson text to
+/// a third party.
 ///
 /// Rendering the same sentence again is common (a learner replays a listening task), so every result is cached on
 /// disk under a hash of voice + speed + text and reused. Cache entries are plain WAV files; deleting the folder is
@@ -57,18 +68,24 @@ public sealed class PiperTtsService : ITextToSpeech
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly PiperTtsOptions _options;
     private readonly ILogger<PiperTtsService> _log;
-    private readonly string _voiceId;
+    private readonly Dictionary<SpeechVoice, string> _voices = [];
 
     public PiperTtsService(PiperTtsOptions options, ILogger<PiperTtsService> log)
     {
         _options = options;
         _log = log;
-        _voiceId = Path.GetFileNameWithoutExtension(options.VoicePath);
-        Available = File.Exists(options.PiperPath) && File.Exists(options.VoicePath);
+
+        if (File.Exists(options.VoicePath)) _voices[SpeechVoice.Male] = options.VoicePath;
+        if (options.VoiceFemalePath is { Length: > 0 } f && File.Exists(f)) _voices[SpeechVoice.Female] = f;
+
+        Available = File.Exists(options.PiperPath) && _voices.ContainsKey(SpeechVoice.Male);
         if (Available)
         {
             Directory.CreateDirectory(options.CacheDirectory);
-            _log.LogInformation("Lokale Sprachausgabe aktiv: {Voice} ({Piper})", _voiceId, options.PiperPath);
+            _log.LogInformation("Lokale Sprachausgabe aktiv: {Voices} ({Piper})",
+                string.Join(", ", _voices.Values.Select(Path.GetFileNameWithoutExtension)), options.PiperPath);
+            if (!_voices.ContainsKey(SpeechVoice.Female))
+                _log.LogInformation("Keine Frauenstimme installiert - alle Rollen sprechen mit der Standardstimme. Nachruesten mit tools/install-piper.ps1.");
         }
         else
         {
@@ -89,15 +106,19 @@ public sealed class PiperTtsService : ITextToSpeech
         return File.Exists(path) ? path : null;
     }
 
-    public async Task<string?> SynthesizeAsync(string text, double rate = 1.0, CancellationToken ct = default)
+    public async Task<string?> SynthesizeAsync(string text, double rate = 1.0, SpeechVoice voice = SpeechVoice.Male, CancellationToken ct = default)
     {
         if (!Available) return null;
         var line = Flatten(text);
         if (line.Length == 0) return null;
 
+        // An uninstalled voice speaks with the default one - a missing model is a reason to sound less varied,
+        // not a reason to go silent.
+        var voicePath = _voices.TryGetValue(voice, out var p) ? p : _voices[SpeechVoice.Male];
+
         // Piper's length_scale is duration, so it moves opposite to the browser's rate: 0.75x speed = 1.33x length.
         var lengthScale = Math.Clamp(1.0 / (rate <= 0 ? 1.0 : rate), 0.5, 2.5);
-        var key = CacheKey(line, lengthScale);
+        var key = CacheKey(voicePath, line, lengthScale);
         var target = Path.Combine(_options.CacheDirectory, key + ".wav");
         if (File.Exists(target)) return key;
 
@@ -106,7 +127,7 @@ public sealed class PiperTtsService : ITextToSpeech
         {
             // Another caller may have rendered the very same sentence while we waited for the gate.
             if (File.Exists(target)) return key;
-            return await RenderAsync(line, lengthScale, key, target, ct) ? key : null;
+            return await RenderAsync(voicePath, line, lengthScale, key, target, ct) ? key : null;
         }
         finally
         {
@@ -114,7 +135,7 @@ public sealed class PiperTtsService : ITextToSpeech
         }
     }
 
-    private async Task<bool> RenderAsync(string line, double lengthScale, string key, string target, CancellationToken ct)
+    private async Task<bool> RenderAsync(string voicePath, string line, double lengthScale, string key, string target, CancellationToken ct)
     {
         // Render to a temp file first: a cancelled or crashed run must not leave a truncated WAV behind that
         // every later request would then happily serve from the cache.
@@ -130,11 +151,11 @@ public sealed class PiperTtsService : ITextToSpeech
             StandardInputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
         };
         psi.ArgumentList.Add("--model");
-        psi.ArgumentList.Add(_options.VoicePath);
+        psi.ArgumentList.Add(voicePath);
         psi.ArgumentList.Add("--output_file");
         psi.ArgumentList.Add(temp);
         psi.ArgumentList.Add("--length_scale");
-        psi.ArgumentList.Add(lengthScale.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
+        psi.ArgumentList.Add(lengthScale.ToString("0.###", CultureInfo.InvariantCulture));
 
         try
         {
@@ -179,9 +200,9 @@ public sealed class PiperTtsService : ITextToSpeech
         }
     }
 
-    private string CacheKey(string line, double lengthScale)
+    private static string CacheKey(string voicePath, string line, double lengthScale)
     {
-        var material = $"{_voiceId}|{lengthScale:0.###}|{line}";
+        var material = $"{Path.GetFileNameWithoutExtension(voicePath)}|{lengthScale.ToString("0.###", CultureInfo.InvariantCulture)}|{line}";
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
     }
 

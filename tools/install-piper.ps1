@@ -8,10 +8,13 @@
     Die Windows-Stimmen (Hedda/Katja/Stefan) sind aeltere konkatenative Stimmen und klingen
     deutlich robotischer - deshalb dieser Schritt.
 
-    Geladen werden zwei Dinge, beide dauerhaft nach %LOCALAPPDATA%\Lotse (NICHT ins Repo,
-    dafuer sind sie zu gross):
-      1. piper_windows_amd64.zip  (~21 MB, GitHub Release rhasspy/piper)
-      2. Stimme de_DE-thorsten-medium .onnx + .onnx.json (~64 MB, HuggingFace rhasspy/piper-voices)
+    Geladen wird nach %LOCALAPPDATA%\Lotse (NICHT ins Repo, dafuer ist es zu gross):
+      1. piper_windows_amd64.zip       (~21 MB, GitHub Release rhasspy/piper)
+      2. Stimme de_DE-thorsten-medium  (~64 MB, HuggingFace rhasspy/piper-voices) - Standard- und Maennerstimme
+      3. Stimme de_DE-kerstin-low      (~60 MB, dieselbe Quelle) - Frauenstimme fuer Sabine, Lena, Frau Kaya ...
+
+    Die Frauenstimme gibt es nur als "low"-Modell und klingt etwas rauher als Thorsten; sie ist trotzdem
+    deutlich natuerlicher als die Windows-Stimmen. Fehlt sie, spricht die App alle Rollen mit Thorsten.
 
     Das Skript ist idempotent: was schon da ist, wird nicht erneut geladen (-Force erzwingt es).
 
@@ -34,14 +37,18 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'   # sonst bremst die Fortschrittsanzeige den Download massiv
 
 $PiperRelease = 'https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip'
-$VoiceBase = 'https://huggingface.co/rhasspy/piper-voices/resolve/main/de/de_DE/thorsten/medium'
-$VoiceName = 'de_DE-thorsten-medium'
+$VoiceHost = 'https://huggingface.co/rhasspy/piper-voices/resolve/main'
+
+# Reihenfolge zaehlt: die erste Stimme ist die Standardstimme, mit der die Funktionsprobe laeuft.
+$Voices = @(
+    @{ Name = 'de_DE-thorsten-medium'; Pfad = 'de/de_DE/thorsten/medium'; Rolle = 'Standard- und Maennerstimme' }
+    @{ Name = 'de_DE-kerstin-low'; Pfad = 'de/de_DE/kerstin/low'; Rolle = 'Frauenstimme' }
+)
 
 $piperDir = Join-Path $Root 'piper'
 $voiceDir = Join-Path $Root 'voices'
 $piperExe = Join-Path $piperDir 'piper.exe'
-$voiceOnnx = Join-Path $voiceDir "$VoiceName.onnx"
-$voiceJson = Join-Path $voiceDir "$VoiceName.onnx.json"
+$voiceOnnx = Join-Path $voiceDir "$($Voices[0].Name).onnx"
 
 function Get-File {
     param([string]$Url, [string]$Ziel, [string]$Label)
@@ -80,9 +87,12 @@ else {
     Write-Host "  [fertig]    piper.exe"
 }
 
-# ---- 2. Stimme -------------------------------------------------------------------------------------
-Get-File -Url "$VoiceBase/$VoiceName.onnx"      -Ziel $voiceOnnx -Label "$VoiceName.onnx"
-Get-File -Url "$VoiceBase/$VoiceName.onnx.json" -Ziel $voiceJson -Label "$VoiceName.onnx.json"
+# ---- 2. Stimmen ------------------------------------------------------------------------------------
+foreach ($v in $Voices) {
+    Write-Host "  --- $($v.Name) ($($v.Rolle))"
+    Get-File -Url "$VoiceHost/$($v.Pfad)/$($v.Name).onnx"      -Ziel (Join-Path $voiceDir "$($v.Name).onnx")      -Label "$($v.Name).onnx"
+    Get-File -Url "$VoiceHost/$($v.Pfad)/$($v.Name).onnx.json" -Ziel (Join-Path $voiceDir "$($v.Name).onnx.json") -Label "$($v.Name).onnx.json"
+}
 
 # ---- 3. Funktionsprobe -----------------------------------------------------------------------------
 Write-Host ""
@@ -106,8 +116,11 @@ $kb = [math]::Round((Get-Item -LiteralPath $probe).Length / 1KB, 1)
 Remove-Item -LiteralPath $probe -Force
 Write-Host "  OK - Probe-WAV erzeugt ($kb KB)."
 Write-Host ""
-Write-Host "Fertig. Lotse findet die Stimme automatisch unter:"
+Write-Host "Fertig. Lotse findet das alles automatisch:"
 Write-Host "  piper.exe : $piperExe"
-Write-Host "  Stimme    : $voiceOnnx"
+foreach ($v in $Voices) {
+    Write-Host ("  Stimme    : {0}  ({1})" -f (Join-Path $voiceDir "$($v.Name).onnx"), $v.Rolle)
+}
 Write-Host ""
-Write-Host "Andere Pfade? Dann in appsettings.json setzen: Lotse:Tts:PiperPath / Lotse:Tts:VoicePath"
+Write-Host "Andere Pfade? In appsettings.json setzen:"
+Write-Host "  Lotse:Tts:PiperPath / Lotse:Tts:VoicePath / Lotse:Tts:VoiceFemalePath"
