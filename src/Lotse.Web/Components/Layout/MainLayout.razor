@@ -2,6 +2,8 @@
 @inject SpeechService Speech
 @inject NavigationManager Nav
 @inject Lotse.Infrastructure.Ai.TutorRegistry Tutors
+@inject Lotse.Web.Services.LearnerProfileState ProfileState
+@implements IDisposable
 
 <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
 <MudPopoverProvider />
@@ -13,7 +15,7 @@
     <MudAppBar Elevation="0" Dense="true" Class="lotse-appbar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" aria-label="Menü" />
         <MudText Typo="Typo.h6" Class="ml-1" Style="font-weight:600; letter-spacing:.3px">Lotse</MudText>
-        <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.75">Dein Kurs auf B2</MudText>
+        <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.75">Dein Kurs auf @_target.Label()</MudText>
         <MudSpacer />
         <MudTooltip Text="@(_dark ? "Helles Design" : "Dunkles Design")">
             <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" aria-label="Design wechseln" />
@@ -52,6 +54,7 @@
     private bool _drawerOpen;
     private bool _dark;
     private ErrorBoundary? _errors;
+    private TargetLevel _target = TargetLevel.B2;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,7 +67,19 @@
         // TutorRegistry.EnsureCurrentAsync remains as a cheap guard on every provider call: defence in depth,
         // not the mechanism.
         await Tutors.InitializeAsync();
+        // The bar says what the learner is working towards. The layout is built once per circuit, so it also has to
+        // listen: saving on Einstellungen must move the label without a full reload.
+        ProfileState.Changed += OnProfileChanged;
+        _target = (await ProfileState.GetAsync()).TargetLevel;
     }
+
+    private void OnProfileChanged() => _ = InvokeAsync(async () =>
+    {
+        _target = (await ProfileState.GetAsync()).TargetLevel;
+        StateHasChanged();
+    });
+
+    public void Dispose() => ProfileState.Changed -= OnProfileChanged;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

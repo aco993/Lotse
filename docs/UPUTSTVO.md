@@ -62,6 +62,17 @@ Ništa ne moraš da podešavaš — app sama pronađe glasove i pri startu u kon
 
 > Glasovi **nisu** deo repozitorijuma (preveliki su), pa ovaj korak ponavljaš na svakom novom računaru posle `git clone`.
 
+## 1d. Zielniveau: B2 ili C1
+
+U **Einstellungen**, pored termina ispita, biraš cilj:
+
+- **B2 – Prüfungsvorbereitung** (podrazumevano): težišta ostaju na B2.2 i ispod. Najkraći put do ispita.
+- **C1 – darüber hinaus**: težišta smeju da idu do C1, pa u dnevne sesije ulaze i `C1 gehoben` (biran rečnik) i B2.2-gramatika.
+
+Šta se **ne** menja: Einstufung (ona ionako meri granicu B1/B2), težina zadataka u odnosu na tvoj izmereni nivo, i strana **Prüfung B2** — ona ostaje ispit po Goethe-B2 obrascu i to ti izričito piše kad je cilj C1. Ova app nema C1-ispit i ne pretvara se da ga ima.
+
+Kad je cilj C1, na strani Heute uz „B2-Bereitschaft" stoji i druga linija **C1-Nähe** — koliko ti sedi gradivo iznad B2. To nije druga „spremnost za ispit", nego mera savladanosti; dok ima malo podataka piše „(Schätzung)".
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

@@ -42,7 +42,22 @@ else
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.StreakDays 🔥</div><div class="l">Tage in Folge</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.MinutesToday</div><div class="l">Minuten heute</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.DueReviews</div><div class="l">Wiederholungen fällig</div></MudPaper></MudItem>
-        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.Readiness.Overall.ToString("P0")</div><div class="l">B2-Bereitschaft<br /><span class="kpi-sub">@ReadinessConfidence</span></div></MudPaper></MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="kpi" Elevation="1">
+                <div class="v">@_m.Readiness.Overall.ToString("P0")</div>
+                <div class="l">
+                    B2-Bereitschaft<br /><span class="kpi-sub">@ReadinessConfidence</span>
+                    @if (_m.C1Proximity is { } c1)
+                    {
+                        @* Only for a C1 learner. Not a second readiness: the app has no C1 exam blueprint, so this
+                           says how well the material above B2 sits, with the same honesty about thin data. *@
+                        @* Short on purpose: the caption above already says how thin the data is, and repeating the
+                           full sentence made this tile twice as tall as its neighbours. *@
+                        <br /><span class="kpi-sub">C1-Nähe @c1.Readiness.ToString("P0")@(c1.Coverage < 0.15 ? " (Schätzung)" : "")</span>
+                    }
+                </div>
+            </MudPaper>
+        </MudItem>
     </MudGrid>
 
     <MudCard Elevation="2" Class="mb-4">

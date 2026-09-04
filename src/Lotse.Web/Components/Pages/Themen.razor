@@ -11,6 +11,12 @@
     <div>
         <MudText Typo="Typo.h5">Themen</MudText>
         <MudText Typo="Typo.body2" Style="opacity:.85">Normalerweise entscheidet der Lotse. Wenn du ein Thema gezielt willst – etwa vor einem Meeting –, starte hier eine Fokus-Session. Mit Tutor kannst du die Übungsbank zu einem Thema erweitern lassen.</MudText>
+        <MudText Typo="Typo.caption" Style="opacity:.75">
+            @(_target == TargetLevel.C1
+                ? "Zielniveau C1: Schwerpunkte dürfen bis C1 reichen – die C1-Themen unten kommen von selbst dran."
+                : "Zielniveau B2: Schwerpunkte bleiben bei B2.2 und darunter. C1-Themen stehen hier, werden aber nicht automatisch vorgeschlagen.")
+            Ändern in <MudLink Href="einstellungen">Einstellungen</MudLink>.
+        </MudText>
     </div>
 </div>
 @* The legend doubles as a filter: one tap narrows the list to that area, a second tap clears it. *@
@@ -95,8 +101,13 @@
     private string _search = "";
     private string? _generating;
     private IReadOnlyDictionary<string, SkillState>? _states;
+    private TargetLevel _target = TargetLevel.B2;
 
-    protected override async Task OnInitializedAsync() => _states = await Learning.GetSkillStatesAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        _states = await Learning.GetSkillStatesAsync();
+        _target = (await Learning.GetProfileAsync()).TargetLevel;
+    }
 
     private SkillArea? _area;
 

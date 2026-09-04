@@ -86,5 +86,33 @@ public sealed class LotseE2EFixture : IAsyncLifetime
         }
     }
 
+    /// <summary>
+    /// A page in a context of the given size and colour scheme, for the screen shots that prove a UI change on both
+    /// form factors and in both themes. The caller closes the context. No tracing here - these runs are expected to
+    /// pass and their artefact is the PNG, not a trace.
+    /// </summary>
+    public async Task<(IBrowserContext Context, IPage Page)> NewPageAsync(int width, int height, ColorScheme scheme)
+    {
+        var context = await _browser!.NewContextAsync(new()
+        {
+            BaseURL = BaseUrl,
+            ViewportSize = new() { Width = width, Height = height },
+            Locale = "de-DE",
+            ColorScheme = scheme,
+        });
+        return (context, await context.NewPageAsync());
+    }
+
+    /// <summary>Where the screen shots land: next to the test binaries, so a run never writes into the repo.</summary>
+    public static string ScreenshotDirectory
+    {
+        get
+        {
+            var dir = Path.Combine(AppContext.BaseDirectory, "screenshots");
+            Directory.CreateDirectory(dir);
+            return dir;
+        }
+    }
+
     public static string UniqueEmail(string tag) => $"{tag}-{Guid.NewGuid():N}@lotse.test";
 }

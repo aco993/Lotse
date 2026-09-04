@@ -43,6 +43,8 @@ public sealed record PlannerInput
     public DateTime? LastInputUtc { get; init; }
     /// <summary>Optional node the learner explicitly wants to work on.</summary>
     public string? RequestedNodeId { get; init; }
+    /// <summary>How far above B2 the focus ranking may reach. Defaults to B2, so existing plans are unchanged.</summary>
+    public TargetLevel TargetLevel { get; init; } = TargetLevel.B2;
     /// <summary>Seed for the tie-breaking randomness so plans are reproducible in tests.</summary>
     public int Seed { get; init; } = Environment.TickCount;
 }
@@ -236,7 +238,11 @@ public sealed class SessionPlanner
         var errors7d = input.RecentErrors.Where(e => (input.NowUtc - e.Utc).TotalDays <= 7).GroupBy(e => e.NodeId).ToDictionary(g => g.Key, g => g.Count());
 
         var ranked = new List<(string, double, string)>();
-        foreach (var node in catalog.Nodes.Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel && n.Band <= CefrBand.B2_2))
+        // The cap is the one place the target level acts: a B2 learner never sees a C1 node in focus, a C1 learner
+        // reaches WS.C1_GEHOBEN and the B2.2 grammar. TargetDifficulty is untouched - aiming higher must not mean
+        // being handed items far above the measured ability.
+        var bandCap = input.TargetLevel.FocusCap();
+        foreach (var node in catalog.Nodes.Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel && n.Band <= bandCap))
         {
             if (!catalog.ForNode(node.Id).Any(e => !e.IsProduction && !e.IsReceptive)) continue;
             var state = input.SkillStates.GetValueOrDefault(node.Id);

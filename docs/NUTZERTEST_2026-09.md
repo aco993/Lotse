@@ -42,8 +42,11 @@ die Story-Lektionen. Fachlich: kein einziger Sprachfehler im Inhalt (Stefan), di
 | Falscher Konsolenfehler bei Passkey-Autofill | Ivana | Autofill-Absage wird still behandelt |
 | „1 Minuten“ | Stefan | Singular |
 
+Erledigt in 0.9.0: **Ziel-Niveau C1 als Planer-Modus** (Petar, Ana) – Einstellung neben dem Prüfungstermin, hebt die
+Bandgrenze der Schwerpunkte auf C1, „C1-Nähe" auf Heute; die Prüfungsseite bleibt ausdrücklich B2.
+
 Offen (bewusst): Gamification jenseits von Streak und Zielen (Tamara, Ana), Beruf als Profilmerkmal für die Auswahl
-der Kontexte (Jelena), Vorname im Profil statt des festen Namens in Musterlösungen (Ana), Ziel-Niveau C1 als Planer-Modus (Petar, Ana).
+der Kontexte (Jelena), Vorname im Profil statt des festen Namens in Musterlösungen (Ana).
 
 ## Methode, kurz
 

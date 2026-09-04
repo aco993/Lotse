@@ -38,6 +38,8 @@ public sealed record ProductionResult(long ProductionId, ProductionEvaluation? E
 public sealed record DashboardModel(
     LearnerProfile Profile,
     ReadinessReport Readiness,
+    /// <summary>Mastery of the C1 and B2.2 nodes; null unless the learner aims at C1.</summary>
+    ModuleReadiness? C1Proximity,
     IReadOnlyList<WeakArea> WeakAreas,
     IReadOnlyList<(string Code, string Title, int Count, string NodeTitle)> TopErrors,
     int StreakDays,
@@ -155,6 +157,8 @@ public sealed class LearningService(
 
         var streak = await ComputeStreakAsync(db, userId, now, ct);
         var readiness = LearnerAnalysis.Readiness(Catalog, states);
+        // Only computed for a C1 learner: a B2 learner has no use for a number about material they are not aiming at.
+        var c1 = profile.TargetLevel == TargetLevel.C1 ? LearnerAnalysis.C1Proximity(Catalog, states) : null;
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, now);
         var topErrors = LearnerAnalysis.TopErrorCodes(Catalog, errors, now);
 
@@ -162,7 +166,7 @@ public sealed class LearningService(
         var preview = planner.Plan(input with { Seed = now.DayOfYear }).Summary;
 
         var t = await TutorAsync(ct);
-        return new DashboardModel(profile, readiness, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
+        return new DashboardModel(profile, readiness, c1, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
     }
 
     private static async Task<int> ComputeStreakAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
@@ -201,6 +205,9 @@ public sealed class LearningService(
         var receptiveIds = Catalog.Exercises.Where(e => e.IsReceptive).Select(e => e.Id).ToList();
         var lastInput = await db.Attempts.Where(a => a.UserId == userId && receptiveIds.Contains(a.ExerciseId))
             .OrderByDescending(a => a.Utc).Select(a => (DateTime?)a.Utc).FirstOrDefaultAsync(ct);
+        // Read straight from the row: the profile may not be in this DbContext's change tracker, and a session must
+        // be planned for the level the learner has saved, not for a stale copy.
+        var targetLevel = await db.Profiles.AsNoTracking().Where(p => p.UserId == userId).Select(p => p.TargetLevel).FirstOrDefaultAsync(ct);
 
         return new PlannerInput
         {
@@ -215,6 +222,7 @@ public sealed class LearningService(
             LastProductionUtc = lastProduction,
             LastInputUtc = lastInput,
             RequestedNodeId = requestedNode,
+            TargetLevel = targetLevel,
             Seed = Random.Shared.Next(),
         };
     }
