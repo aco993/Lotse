@@ -76,6 +76,7 @@ The Goethe B2 blueprint (modules, parts, timing, item counts, pass rule, per-par
 - **Transparent adaptation.** Reason chips on every step, mastery bars with confidence, a readable error journal.
 - **Honest scoring.** Slips (capitalisation, umlaut spelling, one typo in a long word, missing article) count as "almost right" but are always logged.
 - **Immersion with a safety line.** UI and explanations in German; contrastive Serbian notes exactly where interference bites.
+- **Motivation from evidence, not from points.** No XP, no badges, no levels, and no leaderboard - this is a tool for one learner at a time, so there is nobody to be ahead of, and a score would compete with the honest numbers instead of supporting them. What is shown instead is the work itself: a weekly goal in minutes, how many items have stuck (FSRS stability past three weeks), how much is coming due in the next seven days, and what share of the scheduled material would come back right now. On Mondays, two deterministic lines about the week that ended.
 
 ## 6. Why this stack
 

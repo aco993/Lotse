@@ -60,6 +60,24 @@ else
         </MudItem>
     </MudGrid>
 
+    @* Weekly goal instead of points: the motivation is the visible amount of work, not a score. *@
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-1" Wrap="Wrap.Wrap">
+            <MudText Typo="Typo.subtitle2" Style="font-weight:600">Wochenziel</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.body2">@_m.MinutesThisWeek von @_m.Profile.WeeklyGoalMinutes Minuten diese Woche</MudText>
+        </MudStack>
+        <MudProgressLinear Color="@(WeekProgress >= 100 ? Color.Tertiary : Color.Primary)" Value="@WeekProgress" Size="Size.Large" Rounded="true" />
+        @if (_m.WeeklyReview is { } wr)
+        {
+            <MudText Typo="Typo.body2" Class="mt-3" Style="font-weight:600">Wochenrückblick</MudText>
+            <MudText Typo="Typo.body2">
+                Letzte Woche: @wr.Attempts @(wr.Attempts == 1 ? "Aufgabe" : "Aufgaben"), @wr.Accuracy.ToString("P0") richtig, @wr.Stuck @(wr.Stuck == 1 ? "Wort sitzt" : "Wörter sitzen").
+                @(wr.WeakestNodeTitle is null ? "" : $"Am schwersten fiel dir „{wr.WeakestNodeTitle}“.")
+            </MudText>
+        }
+    </MudPaper>
+
     <MudCard Elevation="2" Class="mb-4">
         <MudCardContent>
             @if (_m.OpenSession is { } open && !(open.Kind == SessionKind.Placement && _m.Profile.PlacementCompletedUtc is null))
@@ -183,6 +201,11 @@ else
         var s = await Learning.StartPlacementAsync(quick);
         Nav.NavigateTo($"session/{s.Id}");
     }
+
+    /// <summary>Capped at 100 so the bar cannot overflow on a strong week; the number next to it still tells the truth.</summary>
+    private double WeekProgress => _m is null || _m.Profile.WeeklyGoalMinutes <= 0
+        ? 0
+        : Math.Min(100, 100.0 * _m.MinutesThisWeek / _m.Profile.WeeklyGoalMinutes);
 
     /// <summary>The readiness number is shrunk towards a prior until there is evidence; say so instead of looking stuck.</summary>
     private string ReadinessConfidence

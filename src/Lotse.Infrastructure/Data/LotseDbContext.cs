@@ -50,6 +50,8 @@ public sealed class LearnerProfile
     /// <summary>Structured field; steers which drills the planner prefers. See <see cref="Core.Model.Occupation"/>.</summary>
     public Occupation Occupation { get; set; } = Occupation.Unspecified;
     public int DailyMinutes { get; set; } = 10;
+    /// <summary>Minutes the learner wants to reach in a calendar week; shown as a bar on Heute.</summary>
+    public int WeeklyGoalMinutes { get; set; } = 60;
     public DateOnly? TargetExamDate { get; set; }
     /// <summary>B2 by default; C1 lifts the planner's focus cap. See <see cref="Core.Model.TargetLevel"/>.</summary>
     public TargetLevel TargetLevel { get; set; } = TargetLevel.B2;

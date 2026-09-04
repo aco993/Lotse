@@ -33,6 +33,11 @@ else
                     <MudSelectItem T="int" Value="30">30 Minuten</MudSelectItem>
                 </MudSelect>
             </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="int" @bind-Value="_p.WeeklyGoalMinutes" Label="Wochenziel" Variant="Variant.Outlined">
+                    @foreach (var m in new[] { 30, 60, 90, 120, 180, 300 }) { <MudSelectItem T="int" Value="@m">@m Minuten pro Woche</MudSelectItem> }
+                </MudSelect>
+            </MudItem>
             <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" /></MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect T="TargetLevel" @bind-Value="_p.TargetLevel" Label="Zielniveau" Variant="Variant.Outlined">
