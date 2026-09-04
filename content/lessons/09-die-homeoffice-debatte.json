@@ -18,10 +18,10 @@
       "nodeId": "GR.KONNEKTOREN",
       "text": "Konnektoren machen aus Sätzen einen Gedankengang. Drei Familien mit drei Wortstellungen: (1) Adverbien auf Position 1, danach das Verb: deshalb, trotzdem, dennoch, außerdem, allerdings, andererseits. (2) Nebensatzkonnektoren, Verb am Ende: weil, obwohl, während, sodass, damit, falls. (3) Zweiteilige: einerseits … andererseits, nicht nur … sondern auch, zwar … aber, je … desto. Der häufigste Logikfehler: „trotzdem“ (Gegensatz) statt „außerdem/hinzu kommt“ (Ergänzung). Prüfe: Widerspricht der zweite Satz dem ersten, oder ergänzt er ihn?",
       "examples": [
-        { "german": "Ich arbeite zu Hause konzentrierter, deshalb halte ich zwei Bürotage für genug.", "serbian": "Kod kuće radim koncentrisanije, zato smatram da su dva dana u kancelariji dovoljna.", "note": "Folge: deshalb + Inversion" },
-        { "german": "Obwohl Homeoffice Vorteile hat, fehlt vielen der Kontakt.", "serbian": "Iako rad od kuće ima prednosti, mnogima nedostaje kontakt.", "note": "Einräumung: obwohl, Verb am Ende" },
-        { "german": "Einerseits spart man Zeit, andererseits verliert man den Austausch.", "serbian": "S jedne strane štedi se vreme, s druge strane gubi se razmena.", "note": "zweiteilig" },
-        { "german": "Hinzu kommt, dass die Bürokosten sinken.", "serbian": "Uz to, troškovi kancelarije se smanjuju.", "note": "Ergänzung, nicht Gegensatz" }
+        { "german": "Ich arbeite zu Hause konzentrierter, deshalb halte ich zwei Bürotage für genug.", "serbian": "Kod kuće radim koncentrisanije, zato smatram da su dva dana u kancelariji dovoljna.", "english": "I concentrate better at home, so I think two office days are enough.", "note": "Folge: deshalb + Inversion" },
+        { "german": "Obwohl Homeoffice Vorteile hat, fehlt vielen der Kontakt.", "serbian": "Iako rad od kuće ima prednosti, mnogima nedostaje kontakt.", "english": "Although working from home has advantages, many people miss the contact.", "note": "Einräumung: obwohl, Verb am Ende" },
+        { "german": "Einerseits spart man Zeit, andererseits verliert man den Austausch.", "serbian": "S jedne strane štedi se vreme, s druge strane gubi se razmena.", "english": "On the one hand you save time, on the other you lose the exchange.", "note": "zweiteilig" },
+        { "german": "Hinzu kommt, dass die Bürokosten sinken.", "serbian": "Uz to, troškovi kancelarije se smanjuju.", "english": "On top of that, office costs go down.", "note": "Ergänzung, nicht Gegensatz" }
       ]
     },
     "steps": ["rm.ma.001", "gr.kon.001", "l09.match.001", "gr.kon.003", "rm.ma.008", "l09.spot.001", "gr.kon.006", "rm.ma.012", "l09.dlg.001", "gr.kon.012", "rm.ma.006"],

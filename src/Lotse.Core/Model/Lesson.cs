@@ -1,10 +1,27 @@
 namespace Lotse.Core.Model;
 
-/// <summary>One row of a grammar explanation: German example, Serbian equivalent, optional note.</summary>
-public sealed record ExampleRow(string German, string Serbian, string? Note = null);
+/// <summary>One row of a grammar explanation: German example, its equivalent in the helper language, optional note.</summary>
+public sealed record ExampleRow(string German, string Serbian, string? Note = null, string? English = null)
+{
+    /// <summary>
+    /// The equivalent to put in the second column. Unlike a contrastive note this one does fall back: an empty
+    /// cell in a two-column table looks like a bug, and the German sentence next to it still carries the lesson.
+    /// </summary>
+    public string Helper(HelperLanguage lang)
+        => lang == HelperLanguage.English && !string.IsNullOrWhiteSpace(English) ? English : Serbian;
+}
 
 /// <summary>The "Erklärung" block of a lesson – short, example-driven, contrastive.</summary>
-public sealed record LessonExplanation(string Title, string NodeId, string Text, IReadOnlyList<ExampleRow> Examples);
+public sealed record LessonExplanation(string Title, string NodeId, string Text, IReadOnlyList<ExampleRow> Examples, string? TextEn = null)
+{
+    /// <summary>
+    /// The explanation stays German either way - that is the language being learned. What changes is the language
+    /// it contrasts with: a sentence about „biti“ helps a Serbian speaker and means nothing to an English one.
+    /// Lessons whose explanation names no first language at all need no second version.
+    /// </summary>
+    public string TextFor(HelperLanguage lang)
+        => lang == HelperLanguage.English && !string.IsNullOrWhiteSpace(TextEn) ? TextEn : Text;
+}
 
 /// <summary>
 /// A lesson ("Lektion") of the course: a situation from work or everyday life told as a dialogue, one grammar focus

@@ -18,12 +18,12 @@
     "grammar": {
       "title": "Genitiv: Das Deutsch der Briefe, Verträge und Ämter",
       "nodeId": "GR.GENITIV",
-      "text": "Mündlich weicht der Genitiv oft dem „von + Dativ“ (die Kosten von der Heizung), schriftlich und auf B2 ist er Pflicht: die Kosten der Heizung, die Abrechnung des Vorjahres, die Position des Hausmeisters. Formen: maskulin/neutrum des/eines + -s oder -es (des Jahres, des Hausmeisters; n-Nomen: des Kunden), feminin und Plural der/einer ohne Endung am Nomen. Präpositionen mit Genitiv, die in Briefen ständig vorkommen: wegen, trotz, während, innerhalb, außerhalb, aufgrund, bezüglich, anhand, anlässlich, laut (auch Dativ). Der serbische Genitiv ist häufiger (nach Zahlen, Mengen, Verneinung) – im Deutschen nicht: „fünf Kollegen“, „keine Zeit“ (Akkusativ).",
+      "text": "Mündlich weicht der Genitiv oft dem „von + Dativ“ (die Kosten von der Heizung), schriftlich und auf B2 ist er Pflicht: die Kosten der Heizung, die Abrechnung des Vorjahres, die Position des Hausmeisters. Formen: maskulin/neutrum des/eines + -s oder -es (des Jahres, des Hausmeisters; n-Nomen: des Kunden), feminin und Plural der/einer ohne Endung am Nomen. Präpositionen mit Genitiv, die in Briefen ständig vorkommen: wegen, trotz, während, innerhalb, außerhalb, aufgrund, bezüglich, anhand, anlässlich, laut (auch Dativ). Der serbische Genitiv ist häufiger (nach Zahlen, Mengen, Verneinung) – im Deutschen nicht: „fünf Kollegen“, „keine Zeit“ (Akkusativ).", "textEn": "Mündlich weicht der Genitiv oft dem „von + Dativ“ (die Kosten von der Heizung), schriftlich und auf B2 ist er Pflicht: die Kosten der Heizung, die Abrechnung des Vorjahres, die Position des Hausmeisters. Englisch hat für dieselbe Beziehung zwei Formen – „the caretaker's item“ und „the item of the caretaker“ –, der Gedanke ist also vertraut; neu sind die Endungen. Formen: maskulin/neutrum des/eines + -s oder -es (des Jahres, des Hausmeisters; n-Nomen: des Kunden), feminin und Plural der/einer ohne Endung am Nomen. Präpositionen mit Genitiv, die in Briefen ständig vorkommen: wegen, trotz, während, innerhalb, außerhalb, aufgrund, bezüglich, anhand, anlässlich, laut (auch Dativ).",
       "examples": [
-        { "german": "die Abrechnung des Vorjahres", "serbian": "obračun prošle godine", "note": "des + -es" },
-        { "german": "die Position des Hausmeisters", "serbian": "stavka domara", "note": "des + -s" },
-        { "german": "innerhalb einer Frist von vier Wochen", "serbian": "u roku od četiri nedelje", "note": "innerhalb + Genitiv" },
-        { "german": "während des Abrechnungszeitraums", "serbian": "tokom obračunskog perioda", "note": "während + Genitiv" }
+        { "german": "die Abrechnung des Vorjahres", "serbian": "obračun prošle godine", "english": "last year's statement", "note": "des + -es" },
+        { "german": "die Position des Hausmeisters", "serbian": "stavka domara", "english": "the caretaker item", "note": "des + -s" },
+        { "german": "innerhalb einer Frist von vier Wochen", "serbian": "u roku od četiri nedelje", "english": "within a period of four weeks", "note": "innerhalb + Genitiv" },
+        { "german": "während des Abrechnungszeitraums", "serbian": "tokom obračunskog perioda", "english": "during the accounting period", "note": "während + Genitiv" }
       ]
     },
     "steps": ["gr.gen.001", "gr.gen.003", "l19.match.001", "gr.gen.005", "gr.gen.007", "l19.spot.001", "gr.gen.102", "ws.beh.101", "l19.dlg.001", "gr.gen.105", "rm.bb.005"],

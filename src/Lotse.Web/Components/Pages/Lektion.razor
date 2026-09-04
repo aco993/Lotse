@@ -76,16 +76,16 @@ else
 
     <MudPaper Class="pa-4 mb-3" Elevation="1">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Erklärung: @_lesson.Grammar.Title</MudText>
-        <MudText Typo="Typo.body2" Class="mb-3" Style="line-height:1.6">@_lesson.Grammar.Text</MudText>
+        <MudText Typo="Typo.body2" Class="mb-3" Style="line-height:1.6">@_lesson.Grammar.TextFor(_lang)</MudText>
         <div style="overflow-x:auto">
             <table class="example-table">
-                <thead><tr><th>Deutsch</th><th>Serbisch</th><th></th></tr></thead>
+                <thead><tr><th>Deutsch</th><th>@_lang.Label()</th><th></th></tr></thead>
                 <tbody>
                 @foreach (var ex in _lesson.Grammar.Examples)
                 {
                     <tr>
                         <td><b>@ex.German</b> <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" OnClick="async () => await Speech.SpeakAsync(ex.German)" aria-label="Vorlesen" /></td>
-                        <td style="opacity:.85">@ex.Serbian</td>
+                        <td style="opacity:.85">@ex.Helper(_lang)</td>
                         <td style="opacity:.7;font-size:.85rem">@ex.Note</td>
                     </tr>
                 }
@@ -122,13 +122,16 @@ else
     private readonly Dictionary<int, int> _storyChoices = new();
     private bool _busy;
     private bool _reading;
+    private HelperLanguage _lang = HelperLanguage.Serbian;
 
     protected override async Task OnParametersSetAsync()
     {
         // The catalogue is shared by every account; the learner's own name goes into a copy, here at the boundary.
         var profile = await Learning.GetProfileAsync();
+        _lang = profile.HelperLanguage;
+        var view = new LearnerView(profile.FirstName, profile.LastName, _lang);
         var fromCatalog = CatalogProvider.Catalog.Lesson(Id);
-        _lesson = fromCatalog is null ? null : NameTemplate.Render(fromCatalog, profile.FirstName, profile.LastName);
+        _lesson = fromCatalog is null ? null : NameTemplate.Render(fromCatalog, view);
         _storyChoices.Clear();
         if (_lesson is null) return;
         var all = CatalogProvider.Catalog.Lessons;

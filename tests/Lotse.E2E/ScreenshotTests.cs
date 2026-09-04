@@ -72,6 +72,18 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     await page.GotoAsync("/kurs/L02");
                     await Expect(page.GetByText("Sehr geehrter Herr Petrović", new() { Exact = false }).First).ToBeVisibleAsync();
                     await Shoot(page, $"lektion-name-{viewport}-{theme}");
+
+                    // The same lesson with English as the helper language: second column and heading switch,
+                    // everything around them stays German.
+                    await page.GotoAsync("/einstellungen");
+                    await page.Locator("div.mud-input-control:has(input[aria-label='Erklärsprache'])").ClickAsync();
+                    await page.Locator(".mud-list-item", new() { HasTextString = "Englisch" }).First.ClickAsync();
+                    await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
+                    await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
+                    await page.GotoAsync("/kurs/L02");
+                    await Expect(page.GetByRole(AriaRole.Columnheader, new() { Name = "Englisch" })).ToBeVisibleAsync();
+                    await Expect(page.GetByText("Could you please send me the documents?")).ToBeVisibleAsync();
+                    await Shoot(page, $"lektion-englisch-{viewport}-{theme}");
                 }
                 finally
                 {

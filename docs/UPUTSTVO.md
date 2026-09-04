@@ -133,6 +133,23 @@ Na stranicama **Themen** i **Fortschritt** ostaje stručni naziv — tamo traži
 - U **Einstufung**: ako promašiš laku zadatak neke teme, teži zadatak iste teme se preskače uz oznaku *„übersprungen – Grundlage fehlt"*. Nema smisla pitati teže kad lakše ne ide.
 - Na **Fortschritt** teme koje već sede sklapaju se u grupu **„Sitzt (n)"**, pa strana pokazuje ono što još treba raditi.
 
+## 1k. Jezik objašnjenja: srpski ili engleski
+
+U *Einstellungen → Erklärsprache* biraš na kom jeziku ti app objašnjava nemački. **Sama aplikacija ostaje na nemačkom** — meni, zadaci, povratne informacije, sve. To je i poenta: živiš u ciljnom jeziku.
+
+Menja se samo most:
+
+| Gde | Srpski | Engleski |
+|---|---|---|
+| Vokabular (924 reči) | „propratno pismo" | „cover letter" |
+| Prevodi (75 rečenica) | „Imam sastanak u tri sata." | „I have an appointment at three o'clock." |
+| Druga kolona u gramatičkoj tabeli | srpski ekvivalent | engleski ekvivalent |
+| Kontrastivne napomene | poređenje sa srpskim | poređenje sa engleskim |
+
+Bitno: engleske napomene **nisu prevod** srpskih. „sa + instrumental → mit + Dativ" Englezu ne znači ništa, pa tamo piše da engleski predlozi uopšte nemaju padež. Isto pravilo, drugi polaznik. Zato se ponegde napomene i suprotstavljaju: kod „so schnell wie / schneller als" srpskom polazniku se kaže da je to česta greška (srpski koristi „kao" za oba), a engleskom da mu maternji jezik tu izuzetno pomaže („as fast as" / „faster than").
+
+Promena važi odmah, bez restarta, i vezana je za tvoj nalog — drugi nalog na istom računaru može imati drugi jezik.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

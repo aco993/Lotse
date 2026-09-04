@@ -46,6 +46,13 @@ else
                 </MudSelect>
                 <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@TargetLevelHint</MudText>
             </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="HelperLanguage" @bind-Value="_p.HelperLanguage" Label="Erklärsprache" Variant="Variant.Outlined">
+                    <MudSelectItem T="HelperLanguage" Value="HelperLanguage.Serbian">Serbisch</MudSelectItem>
+                    <MudSelectItem T="HelperLanguage" Value="HelperLanguage.English">Englisch</MudSelectItem>
+                </MudSelect>
+                <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@HelperLanguageHint</MudText>
+            </MudItem>
         </MudGrid>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="SaveAsync">Speichern</MudButton>
         @if (_p.PlacementCompletedUtc is { } done)
@@ -171,6 +178,11 @@ else
     private string OccupationHint => _p is null || _p.Occupation == Occupation.Unspecified
         ? "Ohne Angabe wählt der Lotse wie bisher – rein nach deinen Schwächen."
         : $"Bei gleicher Eignung bevorzugt der Lotse Aufgaben aus deinem Feld und sagt es dazu. Die Kurs-Geschichte bleibt unverändert.";
+
+    /// <summary>Says what actually changes - and, just as important, what does not.</summary>
+    private string HelperLanguageHint => _p?.HelperLanguage == HelperLanguage.English
+        ? "Vokabeln, Übersetzungen, die zweite Spalte der Grammatiktabellen und die Kontrastnotizen erscheinen auf Englisch. Die Oberfläche bleibt Deutsch."
+        : "Vokabeln, Übersetzungen und Kontrastnotizen erscheinen auf Serbisch. Die Oberfläche bleibt Deutsch.";
 
     private TutorPreset Preset => TutorPresets.Get(_presetId);
     private string KeyHelp => Preset.KeyEnvVar is { } env ? $"Leer lassen, um {env} aus der Umgebung zu nutzen" : "";

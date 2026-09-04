@@ -58,7 +58,7 @@
                     <div class="task-meta">
                         <span class="topic-title">@n.Title</span>
                         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="task-chip">@n.Band.Label()</MudChip>
-                        @if (n.SerbianInterference) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary" Class="task-chip" Icon="@Icons.Material.Filled.SwapHoriz">SR-Interferenz</MudChip> }
+                        @if (n.SerbianInterference) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary" Class="task-chip" Icon="@Icons.Material.Filled.SwapHoriz">@_lang.ShortTag()-Interferenz</MudChip> }
                         <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Outlined.FitnessCenter">@drills Übungen</MudChip>
                         @if (s is not null && s.Attempts > 0)
                         {
@@ -69,9 +69,9 @@
                         }
                     </div>
                     <MudText Typo="Typo.body2" Class="task-prompt" Style="opacity:.85">@n.Description</MudText>
-                    @if (n.InterferenceNote is not null)
+                    @if (n.InterferenceNoteFor(_lang) is { } note)
                     {
-                        <div class="ex-serbian mt-2"><MudText Typo="Typo.body2">@n.InterferenceNote</MudText></div>
+                        <div class="ex-serbian mt-2"><MudText Typo="Typo.body2">@note</MudText></div>
                     }
                     <MudStack Row="true" Spacing="1" Class="mt-2" Wrap="Wrap.Wrap">
                         @if (drills > 0)
@@ -102,11 +102,14 @@
     private string? _generating;
     private IReadOnlyDictionary<string, SkillState>? _states;
     private TargetLevel _target = TargetLevel.B2;
+    private HelperLanguage _lang = HelperLanguage.Serbian;
 
     protected override async Task OnInitializedAsync()
     {
         _states = await Learning.GetSkillStatesAsync();
-        _target = (await Learning.GetProfileAsync()).TargetLevel;
+        var profile = await Learning.GetProfileAsync();
+        _target = profile.TargetLevel;
+        _lang = profile.HelperLanguage;
     }
 
     private SkillArea? _area;

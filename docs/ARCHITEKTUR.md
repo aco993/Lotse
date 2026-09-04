@@ -98,7 +98,7 @@ Session page ◀─────┘  renders step i via ExerciseRunner
 | cloze, transform, translate, dictation | prompt, answers | instruction, hint, explanation, serbianNote, text (dictation: spoken sentence) |
 | multipleChoice | prompt, options, correctIndex | explanation |
 | wordOrder | prompt, options (chunks), answers (ordered sentence) | explanation |
-| vocab | prompt (Serbian), answers (German incl. article), lemma | article, plural, exampleDe, explanation |
+| vocab | prompt (helper language), answers (German incl. article), lemma | promptEn, article, plural, exampleDe, explanation, serbianNote/englishNote |
 | freeWrite | prompt, minWords, rubric | modelAnswer, tags |
 | speak | prompt, rubric | targetSeconds, modelAnswer |
 | reading | prompt, text, questions | audioOnly (true = Hören: text is spoken, never shown) |

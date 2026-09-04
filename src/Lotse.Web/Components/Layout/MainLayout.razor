@@ -28,7 +28,11 @@
         <MudContainer MaxWidth="MaxWidth.Medium" Class="py-4 px-3 px-sm-6">
             <ErrorBoundary @ref="_errors">
                 <ChildContent>
-                    @Body
+                    @* Cascaded so every feedback panel labels its contrastive note with the right language without
+                       each exercise component having to load the profile itself. *@
+                    <CascadingValue Value="_lang">
+                        @Body
+                    </CascadingValue>
                 </ChildContent>
                 <ErrorContent Context="ex">
                     @* Friendly recovery instead of the yellow bar: the circuit stays alive, the learner keeps their session. *@
@@ -55,6 +59,7 @@
     private bool _dark;
     private ErrorBoundary? _errors;
     private TargetLevel _target = TargetLevel.B2;
+    private HelperLanguage _lang = HelperLanguage.Serbian;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,14 +75,20 @@
         // The bar says what the learner is working towards. The layout is built once per circuit, so it also has to
         // listen: saving on Einstellungen must move the label without a full reload.
         ProfileState.Changed += OnProfileChanged;
-        _target = (await ProfileState.GetAsync()).TargetLevel;
+        Apply(await ProfileState.GetAsync());
     }
 
     private void OnProfileChanged() => _ = InvokeAsync(async () =>
     {
-        _target = (await ProfileState.GetAsync()).TargetLevel;
+        Apply(await ProfileState.GetAsync());
         StateHasChanged();
     });
+
+    private void Apply(LearnerProfile p)
+    {
+        _target = p.TargetLevel;
+        _lang = p.HelperLanguage;
+    }
 
     public void Dispose() => ProfileState.Changed -= OnProfileChanged;
 

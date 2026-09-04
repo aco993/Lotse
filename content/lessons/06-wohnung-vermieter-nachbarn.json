@@ -18,12 +18,12 @@
     "grammar": {
       "title": "Wechselpräpositionen: Wo? Dativ – Wohin? Akkusativ",
       "nodeId": "GR.WECHSELPRAEPOSITIONEN",
-      "text": "Neun Präpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen) wechseln den Kasus: Lage (wo?) → Dativ, Richtung/Bewegung hin (wohin?) → Akkusativ. Das Serbische macht genau dasselbe mit Lokativ und Akkusativ: „u kancelariji“ (wo) vs. „u kancelariju“ (wohin). Übertrage es 1:1: im Büro / ins Büro, an der Wand / an die Wand, auf dem Tisch / auf den Tisch. Achtung: Bei Verben mit fester Präposition (sich ärgern über, warten auf) gilt immer der feste Kasus – meist Akkusativ.",
+      "text": "Neun Präpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen) wechseln den Kasus: Lage (wo?) → Dativ, Richtung/Bewegung hin (wohin?) → Akkusativ. Das Serbische macht genau dasselbe mit Lokativ und Akkusativ: „u kancelariji“ (wo) vs. „u kancelariju“ (wohin). Übertrage es 1:1: im Büro / ins Büro, an der Wand / an die Wand, auf dem Tisch / auf den Tisch. Achtung: Bei Verben mit fester Präposition (sich ärgern über, warten auf) gilt immer der feste Kasus – meist Akkusativ.", "textEn": "Neun Präpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen) wechseln den Kasus: Lage (wo?) → Dativ, Richtung/Bewegung hin (wohin?) → Akkusativ. Englisch markiert den Unterschied manchmal mit einem anderen Wort – „in the house“ gegenüber „into the house“ –, aber eben nur manchmal und nie am Nomen. Deutsch behält die Präposition und wechselt den Kasus: im Büro / ins Büro, an der Wand / an die Wand, auf dem Tisch / auf den Tisch. Achtung: Bei Verben mit fester Präposition (sich ärgern über, warten auf) gilt immer der feste Kasus – meist Akkusativ.",
       "examples": [
-        { "german": "Die Heizung im Wohnzimmer tropft.", "serbian": "Grejanje u dnevnoj sobi curi.", "note": "wo? → im = in dem" },
-        { "german": "Ich habe an die Verwaltung geschrieben.", "serbian": "Pisao sam upravi (ka upravi).", "note": "wohin? → an die" },
-        { "german": "Der Schlüssel liegt auf dem Tisch. / Leg ihn auf den Tisch.", "serbian": "Ključ je na stolu. / Stavi ga na sto.", "note": "Lage / Richtung" },
-        { "german": "Ich ärgere mich über den Nachbarn.", "serbian": "Ljutim se na komšiju.", "note": "feste Präposition → immer Akk." }
+        { "german": "Die Heizung im Wohnzimmer tropft.", "serbian": "Grejanje u dnevnoj sobi curi.", "english": "The heating in the living room is dripping.", "note": "wo? → im = in dem" },
+        { "german": "Ich habe an die Verwaltung geschrieben.", "serbian": "Pisao sam upravi (ka upravi).", "english": "I wrote to the property management.", "note": "wohin? → an die" },
+        { "german": "Der Schlüssel liegt auf dem Tisch. / Leg ihn auf den Tisch.", "serbian": "Ključ je na stolu. / Stavi ga na sto.", "english": "The key is on the table. / Put it on the table.", "note": "Lage / Richtung" },
+        { "german": "Ich ärgere mich über den Nachbarn.", "serbian": "Ljutim se na komšiju.", "english": "I'm annoyed at the neighbour.", "note": "feste Präposition → immer Akk." }
       ]
     },
     "steps": ["gr.wp.001", "ws.beh.002", "l06.match.001", "gr.wp.002", "gr.wp.003", "l06.spot.001", "gr.wp.007", "gr.wp.008", "ws.beh.003", "l06.dlg.001", "rm.bb.005"],

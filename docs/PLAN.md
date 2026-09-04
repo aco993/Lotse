@@ -67,6 +67,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ✅ Motivation beyond the streak, 0.9.0: weekly goal in minutes on Heute, a Monday Wochenrückblick, and three FSRS cards on Fortschritt (stuck items, seven-day due forecast, current retention). No XP or leaderboard - see KONZEPT §5.
 - ✅ Readiness trend, 0.9.0: a daily snapshot per learner, compared against one six to eight days old; Heute shows ▲/▼/= or stays silent.
 - ✅ Plain-language names, 0.9.0: `SkillNode.PlainTitle` for all 26 grammar nodes, used on Heute; Themen and Fortschritt keep the terms.
+- ✅ English as a second helper language, 0.9.0: `HelperLanguage` on the profile swaps vocabulary prompts, translation sources, the grammar tables' second column and every contrastive note; the interface stays German. The notes are written for an English first language, not translated from the Serbian ones.
 - ⬜ Optional: Web API + minimal React client to demonstrate the engine's independence from Blazor.
 
 ## Deliberate non-goals

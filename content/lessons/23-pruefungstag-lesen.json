@@ -20,10 +20,10 @@
       "nodeId": "LS.LESEN_DETAIL",
       "text": "B2-Lesen misst nicht, ob du jedes Wort kennst, sondern ob du gezielt lesen kannst. Drei Techniken: (1) Aufgaben vor dem Text lesen und wissen, wonach du suchst – global (worum geht es?), selektiv (wo steht die Zahl?), detailliert (was genau meint der Autor?). (2) Umschreibungen erkennen: Die richtige Antwort formuliert den Text um; das wörtlich gleiche Wort in einer Antwort ist oft die Falle. (3) Verweiswörter als Landkarte: dieser, dabei, deshalb, das, allerdings, dennoch zeigen, wie Sätze zusammenhängen – entscheidend in Teil 2. Zeit: 65 Minuten, davon zehn für die Zuordnungen (Teil 1, 5), fünfzehn für Teil 3, zehn für Teil 4, zwanzig für Teil 2, fünf für den Antwortbogen.",
       "examples": [
-        { "german": "Text: „nach Feierabend nicht mehr erreichbar“ – Aussage: „schaltet abends das Diensthandy aus“", "serbian": "Tekst: „posle posla nedostupan“ – tvrdnja: „uveče isključuje službeni telefon“", "note": "Umschreibung = richtig" },
-        { "german": "Text: „hat Bedenken“ – Antwort: „hat keine Bedenken“", "serbian": "Tekst: „ima sumnje“ – odgovor: „nema sumnje“", "note": "gleiches Wort, Gegenteil = Falle" },
-        { "german": "„… Dabei entstehen hohe Kosten.“ → „dabei“ zeigt auf die Handlung davor", "serbian": "„… Pri tome nastaju visoki troškovi.“ → „pri tome“ upućuje na prethodnu radnju", "note": "Verweiswort, Teil 2" },
-        { "german": "Teil 5: Überschriften an Abschnitten – Schlüsselwörter der Absätze vergleichen", "serbian": "Deo 5: naslovi uz pasuse – uporedi ključne reči", "note": "selektiv lesen" }
+        { "german": "Text: „nach Feierabend nicht mehr erreichbar“ – Aussage: „schaltet abends das Diensthandy aus“", "serbian": "Tekst: „posle posla nedostupan“ – tvrdnja: „uveče isključuje službeni telefon“", "english": "Text: „not reachable after work“ – statement: „switches the work phone off in the evening“", "note": "Umschreibung = richtig" },
+        { "german": "Text: „hat Bedenken“ – Antwort: „hat keine Bedenken“", "serbian": "Tekst: „ima sumnje“ – odgovor: „nema sumnje“", "english": "Text: „has reservations“ – answer: „has no reservations“", "note": "gleiches Wort, Gegenteil = Falle" },
+        { "german": "„… Dabei entstehen hohe Kosten.“ → „dabei“ zeigt auf die Handlung davor", "serbian": "„… Pri tome nastaju visoki troškovi.“ → „pri tome“ upućuje na prethodnu radnju", "english": "„… In doing so, high costs arise.“ → „dabei“ points back to the action before it", "note": "Verweiswort, Teil 2" },
+        { "german": "Teil 5: Überschriften an Abschnitten – Schlüsselwörter der Absätze vergleichen", "serbian": "Deo 5: naslovi uz pasuse – uporedi ključne reči", "english": "Part 5: headings for sections – compare the key words of each paragraph", "note": "selektiv lesen" }
       ]
     },
     "steps": ["ls.002", "l23.match.001", "ls.103", "l23.spot.001", "ls.101", "l23.dlg.001", "ls.104", "ls.105", "rm.ma.006"],

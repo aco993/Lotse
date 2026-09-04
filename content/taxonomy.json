@@ -9,6 +9,7 @@
       "serbianInterference": true,
       "description": "Bestimmter/unbestimmter Artikel, Genus der Nomen, Pluralformen.",
       "interferenceNote": "Serbisch hat keine Artikel – der häufigste Fehler serbischer Muttersprachler ist der FEHLENDE Artikel („Ich habe Termin“ → „Ich habe einen Termin“). Lerne jedes Nomen immer mit Artikel und Plural.",
+      "interferenceNoteEn": "English has articles too, so the trap is not the missing one – it is the gender. English „the“ covers der, die and das, and nothing in a noun's meaning tells you which one it takes. Learn every noun as a package: „das Anschreiben, die Anschreiben“, never just „Anschreiben“.",
       "prerequisites": [],
       "plainTitle": "der, die oder das: welcher Artikel zum Wort gehört"
     },
@@ -33,6 +34,7 @@
       "serbianInterference": true,
       "description": "Verbzweitstellung, Inversion nach Adverbien, Reihenfolge der Angaben (temporal, kausal, modal, lokal).",
       "interferenceNote": "Im Serbischen ist die Wortstellung frei („Juče sam bio u Berlinu“). Im Deutschen steht das konjugierte Verb IMMER an Position 2: „Gestern war ich in Berlin“ – nicht „Gestern ich war…“.",
+      "interferenceNoteEn": "English keeps the subject in front of the verb even after a time phrase: „Yesterday I was in Berlin.“ German does not – the conjugated verb holds position 2 and the subject moves behind it: „Gestern war ich in Berlin.“ „Gestern ich war …“ is the classic English-speaker sentence.",
       "prerequisites": [],
       "plainTitle": "Satzbau: das Verb steht an zweiter Stelle"
     },
@@ -45,6 +47,7 @@
       "serbianInterference": true,
       "description": "Präfix am Satzende, Satzklammer bei Perfekt/Modalverb.",
       "interferenceNote": "Serbische Präfixverben (dolaziti, izlaziti) werden nie getrennt. Deutsch: „Ich rufe dich morgen an.“",
+      "interferenceNoteEn": "You already do this in English with phrasal verbs: „I'll ring you up“, „turn the light off“. German works the same way – „Ich rufe dich morgen an“ – except the particle is glued to the front in the infinitive (anrufen) and lands at the very end of the clause.",
       "prerequisites": [
         "GR.HAUPTSATZ_V2"
       ],
@@ -59,6 +62,7 @@
       "serbianInterference": true,
       "description": "kein vs. nicht, Position von nicht (Satznegation vs. Teilnegation).",
       "interferenceNote": "Serbisch verneint doppelt („Nikad ništa ne radim“). Deutsch verneint nur EINMAL: „Ich mache nie etwas“ – nicht „Ich mache nie nichts“.",
+      "interferenceNoteEn": "Negating once is not your problem – English does the same. The two real ones are the choice between „nicht“ and „kein“ (kein only before a noun with no article: „Ich habe keine Zeit“) and the position of „nicht“, which stands late in the clause but before the part it negates.",
       "prerequisites": [],
       "plainTitle": "Nein sagen: nicht oder kein – und wo es steht"
     },
@@ -71,6 +75,7 @@
       "serbianInterference": true,
       "description": "Verben mit Dativ (helfen, danken, gefallen, gehören, folgen), Verben mit zwei Objekten.",
       "interferenceNote": "Viele Verben verlangen im Deutschen einen anderen Kasus als im Serbischen: „helfen + Dativ“ (pomagati + Dat stimmt), aber „fragen + Akkusativ“ (pitati + Akk stimmt), „anrufen + Akkusativ“ (zvati + Akk) – „gratulieren + Dativ“ (čestitati + Dat).",
+      "interferenceNoteEn": "English objects look identical: „I help him“, „I ask him“, „I call him“. German gives each verb a case and they differ: „helfen“ + Dativ (ich helfe ihm), „fragen“ and „anrufen“ + Akkusativ (ich frage ihn, ich rufe ihn an), „gratulieren“ + Dativ. There is no rule – the case belongs to the verb, so learn it with the verb.",
       "prerequisites": [
         "GR.ARTIKEL_GENUS"
       ],
@@ -85,6 +90,7 @@
       "serbianInterference": true,
       "description": "mit, nach, bei, seit, von, zu, aus, gegenüber → Dativ; für, ohne, gegen, um, durch, bis → Akkusativ; wegen, trotz, während, statt → Genitiv.",
       "interferenceNote": "Serbisch hat 7 Fälle, das hilft beim Prinzip – aber die Zuordnung ist anders: „sa“ + Instrumental → „mit“ + Dativ; „za“ + Akk → „für“ + Akk; „zbog“ + Genitiv → „wegen“ + Genitiv (stimmt sogar!).",
+      "interferenceNoteEn": "English prepositions have no case at all: „with the colleague“, „for the colleague“, „because of the colleague“ – the noun never changes. In German the preposition decides the ending: „mit“ + Dativ, „für“ + Akkusativ, „wegen“ + Genitiv. This is new grammar, not a variation on something you already have.",
       "prerequisites": [
         "GR.ARTIKEL_GENUS"
       ],
@@ -99,6 +105,7 @@
       "serbianInterference": true,
       "description": "in, an, auf, über, unter, vor, hinter, neben, zwischen – Dativ bei Lage, Akkusativ bei Richtung.",
       "interferenceNote": "Das Prinzip kennst du aus dem Serbischen: „u kući“ (Lokativ, wo?) vs. „u kuću“ (Akkusativ, wohin?). Übertrage es 1:1: „im Haus“ (Dativ) vs. „ins Haus“ (Akkusativ).",
+      "interferenceNoteEn": "English sometimes marks the difference with a different word: „in the house“ (where?) vs. „into the house“ (where to?). German keeps the same preposition and switches the case instead: „im Haus“ (Dativ) vs. „ins Haus“ (Akkusativ). Ask „wo?“ for Dativ, „wohin?“ for Akkusativ.",
       "prerequisites": [
         "GR.KASUS_PRAEPOSITIONEN"
       ],
@@ -113,6 +120,7 @@
       "serbianInterference": true,
       "description": "Endungen nach bestimmtem, unbestimmtem und Nullartikel in allen Kasus.",
       "interferenceNote": "Im Serbischen trägt das Adjektiv selbst die volle Information (dobrog čoveka). Im Deutschen hängt die Endung davon ab, ob der ARTIKEL den Kasus schon zeigt: „der gute Mann“ (Artikel zeigt) vs. „guter Mann“ (Adjektiv muss zeigen).",
+      "interferenceNoteEn": "English adjectives never change: „good man, good men, of the good man“. German endings depend on whether the article has already shown the case: „der gute Mann“ (the article shows it, so the adjective can stay weak) vs. „guter Mann“ (no article, so the adjective has to do the work).",
       "prerequisites": [
         "GR.ARTIKEL_GENUS",
         "GR.KASUS_PRAEPOSITIONEN"
@@ -128,6 +136,7 @@
       "serbianInterference": true,
       "description": "weil, dass, obwohl, wenn, als, damit, ob – konjugiertes Verb am Satzende; Nebensatz vor Hauptsatz → Inversion.",
       "interferenceNote": "Serbisch: „Ne mogu da dođem, jer RADIM danas.“ Deutsch: „Ich kann nicht kommen, weil ich heute ARBEITE.“ Das Verb wandert ans Ende. Gesprochen hört man oft „weil ich arbeite heute“ – in der Prüfung ist das ein Fehler.",
+      "interferenceNoteEn": "English keeps its word order inside a subordinate clause: „I can't come because I am working today.“ German sends the verb to the very end: „Ich kann nicht kommen, weil ich heute ARBEITE.“ Spoken German sometimes breaks this after „weil“ – in the exam it is a mistake.",
       "prerequisites": [
         "GR.HAUPTSATZ_V2"
       ],
@@ -142,6 +151,7 @@
       "serbianInterference": true,
       "description": "haben/sein als Hilfsverb, Partizip II, Präteritum von sein/haben/Modalverben und in schriftlichen Texten.",
       "interferenceNote": "Serbisch bildet das Perfekt IMMER mit „biti“ (Ja sam došao / Ja sam radio). Deutsch: Bewegung und Zustandswechsel mit „sein“ (ich bin gekommen), alles andere mit „haben“ (ich habe gearbeitet).",
+      "interferenceNoteEn": "English builds every perfect with „have“: „I have come“, „I have worked“. German splits them: verbs of movement and change of state take „sein“ („ich bin gekommen“), everything else „haben“ („ich habe gearbeitet“). Also note the division of labour is different – spoken German uses the Perfekt where English would use the simple past.",
       "prerequisites": [
         "GR.VERBFORMEN"
       ],
@@ -156,6 +166,7 @@
       "serbianInterference": false,
       "description": "nachdem + Plusquamperfekt, Vorzeitigkeit; Futur I für Prognosen und Versprechen.",
       "interferenceNote": "Serbisch nutzt für Vorzeitigkeit meist einfaches Perfekt („Nakon što sam završio…“). Deutsch nach „nachdem“ zwingend Plusquamperfekt: „Nachdem ich fertig geworden WAR, …“.",
+      "interferenceNoteEn": "Your past perfect maps directly: „After I had finished, …“ = „Nachdem ich fertig geworden WAR, …“. The difference is that German makes it obligatory after „nachdem“, where English often gets away with a simple past.",
       "prerequisites": [
         "GR.PERFEKT_PRAETERITUM"
       ],
@@ -170,6 +181,7 @@
       "serbianInterference": true,
       "description": "würde + Infinitiv, hätte/wäre/könnte/müsste/sollte, irreale Bedingungen, höfliche Bitten, Wünsche.",
       "interferenceNote": "Serbisch „bih/bi“ + Partizip (Ja bih došao) entspricht dem deutschen Konjunktiv II – aber Deutsch unterscheidet Gegenwart (ich würde kommen / ich käme) und Vergangenheit (ich wäre gekommen). Im Beruf ist Konjunktiv II das wichtigste Höflichkeitsmittel: „Könnten Sie…?“, „Ich hätte eine Frage.“",
+      "interferenceNoteEn": "„Would“ and „could“ are your bridge: „Could you send me the documents?“ = „Könnten Sie mir die Unterlagen schicken?“, „I would like“ = „ich hätte gern“. German uses it more often than English does – in an office it is the normal register, not extra politeness.",
       "prerequisites": [
         "GR.PERFEKT_PRAETERITUM"
       ],
@@ -184,6 +196,7 @@
       "serbianInterference": true,
       "description": "Vorgangspassiv (werden + Partizip II) in allen Zeiten, Passiv mit Modalverb, Zustandspassiv (sein + Partizip II), Passiversatz (man, lassen sich, -bar).",
       "interferenceNote": "Serbisch bevorzugt das reflexive Passiv („Kuća se gradi“). Deutsch: „Das Haus WIRD gebaut“ (Vorgang) vs. „Das Haus IST gebaut“ (Zustand/Ergebnis) – zwei verschiedene Formen!",
+      "interferenceNoteEn": "English „the house is built“ is ambiguous: it can describe the process or the finished state. German forces you to choose: „Das Haus WIRD gebaut“ (it is being built) vs. „Das Haus IST gebaut“ (it stands finished). Two different constructions, two different meanings.",
       "prerequisites": [
         "GR.PERFEKT_PRAETERITUM"
       ],
@@ -198,6 +211,7 @@
       "serbianInterference": true,
       "description": "warten auf, sich freuen über/auf, sich interessieren für, abhängen von … + darauf/worauf, daran/woran.",
       "interferenceNote": "Die Präposition ist selten identisch: „čekati NA“ → „warten AUF“, „zavisiti OD“ → „abhängen VON“, „interesovati se ZA“ → „sich interessieren FÜR“, „razmišljati O“ → „nachdenken ÜBER“. Immer als Einheit lernen: Verb + Präposition + Kasus.",
+      "interferenceNoteEn": "The preposition is almost never the one you expect: „wait FOR“ → „warten AUF“ (+ Akkusativ), „depend ON“ → „abhängen VON“ (+ Dativ), „be interested IN“ → „sich interessieren FÜR“ (+ Akkusativ), „think ABOUT“ → „nachdenken ÜBER“ (+ Akkusativ). Learn verb + preposition + case as one unit.",
       "prerequisites": [
         "GR.KASUS_PRAEPOSITIONEN"
       ],
@@ -212,6 +226,7 @@
       "serbianInterference": false,
       "description": "deshalb, trotzdem, dennoch, allerdings, außerdem, jedoch (Position 1 + Inversion); obwohl, während, sodass, falls; zweiteilige: nicht nur … sondern auch, sowohl … als auch, entweder … oder, je … desto, zwar … aber.",
       "interferenceNote": "Achtung bei „trotzdem“ vs. „obwohl“: „trotzdem“ verbindet zwei Hauptsätze (Verb an Position 2), „obwohl“ leitet einen Nebensatz ein (Verb am Ende). Serbisch „ipak“ / „iako“ – gleiche Logik.",
+      "interferenceNoteEn": "„Although“ and „nevertheless“ split the same way as „obwohl“ and „trotzdem“ – but German also changes the word order: „obwohl“ starts a subordinate clause (verb at the end), „trotzdem“ joins two main clauses (verb in position 2).",
       "prerequisites": [
         "GR.NEBENSATZ_WORTSTELLUNG"
       ],
@@ -226,6 +241,7 @@
       "serbianInterference": true,
       "description": "Relativpronomen der/die/das in allen Kasus, mit Präposition, „was“ und „wo“.",
       "interferenceNote": "Serbisch „koji/koja/koje“ dekliniert auch – aber Genus und Kasus kommen aus verschiedenen Sätzen: Genus vom Bezugswort (der Kollege), Kasus vom Verb im Relativsatz (dem ich helfe → Dativ).",
+      "interferenceNoteEn": "English lets you drop the relative pronoun („the colleague I help“) and never declines it. German does neither: the pronoun is obligatory and it is declined – gender from the noun it refers to (der Kollege), case from the verb inside the relative clause (dem ich helfe → Dativ).",
       "prerequisites": [
         "GR.NEBENSATZ_WORTSTELLUNG",
         "GR.KASUS_VERBOBJEKTE"
@@ -241,6 +257,7 @@
       "serbianInterference": true,
       "description": "Infinitivkonstruktionen nach Verben, Nomen und Adjektiven; Finalsatz um…zu vs. damit.",
       "interferenceNote": "Serbisch nutzt „da“ + Präsens („Planiram da putujem“). Deutsch: Infinitiv mit zu („Ich plane zu reisen“). „Da bih…“ → „um … zu“ bei gleichem Subjekt, sonst „damit“.",
+      "interferenceNoteEn": "„To + infinitive“ maps almost one to one: „I plan to travel“ = „Ich plane zu reisen“. „In order to“ becomes „um … zu“ when both halves share a subject; when the subject changes, German switches to „damit“ – English simply keeps „so that“.",
       "prerequisites": [
         "GR.NEBENSATZ_WORTSTELLUNG"
       ],
@@ -255,6 +272,7 @@
       "serbianInterference": true,
       "description": "sich (Akk) erinnern, sich (Dat) etwas vorstellen, echte vs. unechte Reflexiva.",
       "interferenceNote": "Serbisch hat nur ein „se“; Deutsch unterscheidet mich/dich/sich und mir/dir/sich: „Ich wasche MICH“ vs. „Ich wasche MIR die Hände“.",
+      "interferenceNoteEn": "English has „myself“ but uses it sparingly. Many German verbs are reflexive where the English one is not: „sich freuen“ = to be glad, „sich erholen“ = to recover, „sich beeilen“ = to hurry. And German distinguishes accusative from dative: „Ich wasche MICH“ vs. „Ich wasche MIR die Hände“.",
       "prerequisites": [
         "GR.KASUS_VERBOBJEKTE"
       ],
@@ -269,6 +287,7 @@
       "serbianInterference": false,
       "description": "Genitivattribut (die Meinung des Kollegen), Präpositionen mit Genitiv, -s/-es bei maskulin/neutrum.",
       "interferenceNote": "Der serbische Genitiv ist viel häufiger als der deutsche (auch nach Zahlen, Verneinung, Mengen). Im Deutschen NICHT: „Ich habe keine Zeit“ (Akk), „fünf Kollegen“ (Nominativ).",
+      "interferenceNoteEn": "You have two forms for this – „the colleague's office“ and „the office of the colleague“ – so the idea is familiar. What is different: the German genitive is narrower and more formal, spoken German often replaces it with „von“ + Dativ, and a handful of prepositions („wegen“, „trotz“, „während“) demand it.",
       "prerequisites": [
         "GR.ARTIKEL_GENUS"
       ],
@@ -283,6 +302,7 @@
       "serbianInterference": true,
       "description": "Maskuline Nomen auf -e sowie auf -ent/-ant/-ist/-oge/-at bekommen außer im Nominativ Singular immer ein -n: dem Kollegen, den Kunden, des Praktikanten. Sonderfall „der Name“ (des Namens).",
       "interferenceNote": "Serbisch dekliniert jedes Nomen, Deutsch fast keines – deshalb lernt man „das deutsche Nomen bleibt gleich“ und übergeneralisiert: „mit dem Kollege“, „für den Kunde“. Es ist die kleine Liste, die zählt, nicht die Regel.",
+      "interferenceNoteEn": "English nouns change only for the plural, so nothing prepares you for „der Kollege – dem Kollegen – den Kollegen“. It is a small closed group (mostly masculine nouns ending in -e, plus Herr, Student, Kunde) and it is worth memorising as a list rather than as a rule.",
       "prerequisites": [
         "GR.ARTIKEL_GENUS",
         "GR.KASUS_VERBOBJEKTE"
@@ -356,6 +376,7 @@
       "serbianInterference": true,
       "description": "Großschreibung der Nomen, ß/ss, Umlaute, Komma vor Nebensätzen.",
       "interferenceNote": "Serbisch schreibt fast phonetisch und klein. Deutsch: ALLE Nomen groß (auch nominalisierte Verben: „das Lernen“), Komma vor „dass/weil/obwohl“ ist Pflicht.",
+      "interferenceNoteEn": "English capitalises names and sentence beginnings; German capitalises EVERY noun, including nouns made from verbs („das Lernen“). The comma rules also differ: German requires a comma before „dass“, „weil“ and „obwohl“, where English usually leaves it out before „that“.",
       "prerequisites": [],
       "plainTitle": "Rechtschreibung und Komma"
     },
@@ -423,6 +444,7 @@
       "serbianInterference": true,
       "description": "Wörter, die im Serbischen ähnlich klingen, aber anderes bedeuten: Konkurs, Magazin, Pension, Mappe, Rock, Kuchen, Ambulanz, Akademiker.",
       "interferenceNote": "Diese Wörter erzeugen Missverständnisse, die niemand korrigiert, weil sie grammatisch richtig klingen. Deshalb werden sie hier gezielt geübt.",
+      "interferenceNoteEn": "Words that look like English but are not: „bekommen“ is to receive, not to become; „ein Gift“ is poison, not a present; „also“ means therefore; „sensibel“ means sensitive; „eventuell“ means possibly, not eventually. These slip through because the sentence stays grammatical, so nobody corrects you.",
       "prerequisites": []
     },
     {
@@ -522,6 +544,7 @@
       "serbianInterference": true,
       "description": "Trennbare und untrennbare Verben, deren Bedeutung das Präfix bestimmt (absagen, ansagen, aussagen, versagen), mit Präposition und Kasus.",
       "interferenceNote": "Serbische Verbpräfixe (do-, iz-, na-, po-, za-) markieren vor allem den Aspekt; deutsche Präfixe ändern die Bedeutung. „Absagen“ ist nicht „einfach sagen“, sondern otkazati.",
+      "interferenceNoteEn": "Your equivalent is the phrasal verb: „give up“, „give in“, „give away“ share a verb and mean three different things. German prefixes do the same job – „sagen“ (to say), „absagen“ (to cancel), „zusagen“ (to accept), „aussagen“ (to testify) – so treat each prefix verb as its own word, not as a variation of the base.",
       "prerequisites": []
     },
     {

@@ -21,10 +21,10 @@
       "nodeId": "GR.INDIREKTE_REDE",
       "text": "Nachrichten geben fremde Aussagen mit dem Konjunktiv I wieder: „Der Verband erklärte, die Produktivität sei nicht gesunken“ – der Sender sagt damit: Das behauptet der Verband, wir prüfen es nicht. Formen: sei, habe, könne, müsse, wolle, werde; bei anderen Verben Stamm + e (er gehe, sie sehe). Ist der Konjunktiv I mit dem Indikativ identisch (wir haben / sie haben), weicht man auf den Konjunktiv II aus (wir hätten). Für die Prüfung musst du ihn erkennen, nicht bilden: Wo „sei“, „habe“, „werde“ steht, spricht eine Quelle – und die Aufgabe fragt fast immer danach, wer. Im Gespräch reicht „Sabine sagt, es gehe nicht um Kündigungen“ oder einfach ein dass-Satz.",
       "examples": [
-        { "german": "Der Verband erklärte, die Produktivität sei nicht gesunken.", "serbian": "Udruženje je izjavilo da produktivnost nije opala.", "note": "sei = Wiedergabe" },
-        { "german": "Man sehe allerdings Risiken für die Ausbildung.", "serbian": "Međutim, vide se rizici za obuku.", "note": "sehe = Konj. I von sehen" },
-        { "german": "Laut Studie hätten 38 Prozent zu Hause gearbeitet.", "serbian": "Prema studiji, 38 odsto je radilo od kuće.", "note": "hätten = Ersatzform (haben = Indikativ)" },
-        { "german": "Die Ministerin kündigte an, sie werde das Gesetz ändern.", "serbian": "Ministarka je najavila da će promeniti zakon.", "note": "werde = Zukunft in der Wiedergabe" }
+        { "german": "Der Verband erklärte, die Produktivität sei nicht gesunken.", "serbian": "Udruženje je izjavilo da produktivnost nije opala.", "english": "The association stated that productivity had not fallen.", "note": "sei = Wiedergabe" },
+        { "german": "Man sehe allerdings Risiken für die Ausbildung.", "serbian": "Međutim, vide se rizici za obuku.", "english": "They do, however, see risks for training.", "note": "sehe = Konj. I von sehen" },
+        { "german": "Laut Studie hätten 38 Prozent zu Hause gearbeitet.", "serbian": "Prema studiji, 38 odsto je radilo od kuće.", "english": "According to the study, 38 per cent had worked from home.", "note": "hätten = Ersatzform (haben = Indikativ)" },
+        { "german": "Die Ministerin kündigte an, sie werde das Gesetz ändern.", "serbian": "Ministarka je najavila da će promeniti zakon.", "english": "The minister announced that she would change the law.", "note": "werde = Zukunft in der Wiedergabe" }
       ]
     },
     "steps": ["gr.ir.001", "gr.ir.102", "l22.match.001", "hv.mc.003", "gr.ir.103", "l22.spot.001", "gr.ir.105", "hv.mc.104", "l22.dlg.001", "hv.d.105", "gr.ir.002"],

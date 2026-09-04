@@ -27,7 +27,7 @@
     @if (Result.InterferenceNote is not null)
     {
         <div class="ex-serbian mt-3">
-            <MudText Typo="Typo.caption" Style="font-weight:600">Serbisch ↔ Deutsch</MudText>
+            <MudText Typo="Typo.caption" Style="font-weight:600">@HelperLang.Label() ↔ Deutsch</MudText>
             <MudText Typo="Typo.body2">@Result.InterferenceNote</MudText>
         </div>
     }
@@ -39,6 +39,12 @@
 
 @code {
     [Parameter, EditorRequired] public AnswerResult Result { get; set; } = default!;
+
+    /// <summary>
+    /// The heading over the contrastive note names the language it contrasts with, so it has to follow the
+    /// learner's choice. The note itself is already picked per language in LearningService.
+    /// </summary>
+    [CascadingParameter] public HelperLanguage HelperLang { get; set; } = HelperLanguage.Serbian;
 
     private string CssClass => Result.Check.Outcome switch
     {

@@ -81,7 +81,18 @@ public sealed record SkillNode(
     /// where a learner is being told what to do rather than looking a topic up. Optional; falls back to
     /// <see cref="Title"/>. Themen and Fortschritt keep the precise title on purpose - that is where terms belong.
     /// </summary>
-    string? PlainTitle = null);
+    string? PlainTitle = null,
+    /// <summary>
+    /// The interference note written for English speakers. Like <see cref="Exercise.EnglishNote"/> this is authored,
+    /// not translated: what trips up a Serbian speaker (articles, V2) and an English one (cases, verb-final clauses)
+    /// is not the same list.
+    /// </summary>
+    string? InterferenceNoteEn = null)
+{
+    /// <summary>The interference note in the learner's helper language, or null when none was written for it.</summary>
+    public string? InterferenceNoteFor(HelperLanguage lang)
+        => lang == HelperLanguage.English ? InterferenceNoteEn : InterferenceNote;
+}
 
 /// <summary>A catalogued error type. Every mistake, whether detected deterministically or by the AI tutor, is tagged with one of these codes.</summary>
 public sealed record ErrorType(

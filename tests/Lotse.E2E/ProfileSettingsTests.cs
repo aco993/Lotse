@@ -136,4 +136,38 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
         await page.ReloadAsync();
         await Expect(page.GetByText("bevorzugt der Lotse Aufgaben aus deinem Feld")).ToBeVisibleAsync();
     });
+
+    [Fact]
+    public Task Switching_the_helper_language_to_english_changes_the_bridge_but_not_the_interface() => app.RunAsync(nameof(Switching_the_helper_language_to_english_changes_the_bridge_but_not_the_interface), async page =>
+    {
+        await RegisterAsync(page, LotseE2EFixture.UniqueEmail("sprache"));
+
+        // Serbian is the default: the grammar table's second column is Serbian, and so is its heading.
+        await page.GotoAsync("/kurs/L02");
+        // A <th> is a columnheader, not a cell.
+        await Expect(page.GetByRole(AriaRole.Columnheader, new() { Name = "Serbisch" })).ToBeVisibleAsync();
+        await Expect(page.GetByText("Da li biste mi, molim Vas, poslali dokumenta?")).ToBeVisibleAsync();
+
+        await page.GotoAsync("/einstellungen");
+        await OpenSelectAsync(page, "Erklärsprache");
+        await page.Locator(".mud-list-item", new() { HasTextString = "Englisch" }).First.ClickAsync();
+        await Expect(page.GetByText("erscheinen auf Englisch")).ToBeVisibleAsync();
+        await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
+        await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
+
+        // Same lesson, other bridge - and the interface around it is still German.
+        await page.GotoAsync("/kurs/L02");
+        await Expect(page.GetByRole(AriaRole.Columnheader, new() { Name = "Englisch" })).ToBeVisibleAsync();
+        await Expect(page.GetByText("Could you please send me the documents?")).ToBeVisibleAsync();
+        await Expect(page.GetByText("Da li biste mi, molim Vas, poslali dokumenta?")).Not.ToBeVisibleAsync();
+        await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Die erste E-Mail an die Chefin" })).ToBeVisibleAsync();
+
+        // Themen names the language it contrasts with, so the chip has to follow too.
+        await page.GotoAsync("/themen");
+        await Expect(page.GetByText("EN-Interferenz").First).ToBeVisibleAsync();
+
+        // And it survives a reload, i.e. it really reached the profile row.
+        await page.ReloadAsync();
+        await Expect(page.GetByText("EN-Interferenz").First).ToBeVisibleAsync();
+    });
 }

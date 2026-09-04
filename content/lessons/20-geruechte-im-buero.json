@@ -20,10 +20,10 @@
       "nodeId": "GR.MODALVERBEN_SUBJEKTIV",
       "text": "Modalverben drücken nicht nur Können und Müssen aus, sondern auch, wie sicher der Sprecher ist: müssen (fast sicher: Er muss krank sein), dürfte (wahrscheinlich), könnte/kann (möglich), mag (vielleicht). Zwei Sonderfälle für Gerüchte: „soll“ = andere behaupten es (Nordlicht soll verkauft werden), „will“ = die Person behauptet es selbst (Er will das allein gemacht haben). Für Vergangenes: Modalverb + Partizip II + haben/sein (Er dürfte schon gegangen sein). Wer Vermutungen so abstuft, klingt souverän – wer alles mit „sicher“ und „bestimmt“ sagt, klingt nach Kaffeeküche. Nachrichten und Berichte geben Behauptungen mit Konjunktiv I wieder: Sie sagt, es gehe nicht um Kündigungen.",
       "examples": [
-        { "german": "Nordlicht soll verkauft werden.", "serbian": "Navodno se Nordlicht prodaje.", "note": "soll = angeblich, Hörensagen" },
-        { "german": "Das dürfte etwas Größeres bedeuten.", "serbian": "To verovatno znači nešto veće.", "note": "dürfte = wahrscheinlich" },
-        { "german": "Das könnten Berater sein.", "serbian": "To bi mogli biti konsultanti.", "note": "könnte = möglich" },
-        { "german": "Sabine sagt, es gehe nicht um Kündigungen.", "serbian": "Sabine kaže da nije reč o otkazima.", "note": "Konjunktiv I: neutrale Wiedergabe" }
+        { "german": "Nordlicht soll verkauft werden.", "serbian": "Navodno se Nordlicht prodaje.", "english": "Nordlicht is supposedly being sold.", "note": "soll = angeblich, Hörensagen" },
+        { "german": "Das dürfte etwas Größeres bedeuten.", "serbian": "To verovatno znači nešto veće.", "english": "That is likely to mean something bigger.", "note": "dürfte = wahrscheinlich" },
+        { "german": "Das könnten Berater sein.", "serbian": "To bi mogli biti konsultanti.", "english": "Those could be consultants.", "note": "könnte = möglich" },
+        { "german": "Sabine sagt, es gehe nicht um Kündigungen.", "serbian": "Sabine kaže da nije reč o otkazima.", "english": "Sabine says it is not about redundancies.", "note": "Konjunktiv I: neutrale Wiedergabe" }
       ]
     },
     "steps": ["gr.ms.001", "gr.ms.002", "l20.match.001", "gr.ms.103", "gr.ms.105", "l20.spot.001", "gr.ir.001", "gr.ms.104", "l20.dlg.001", "gr.ir.104", "gr.ms.106"],
