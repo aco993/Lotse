@@ -1,4 +1,4 @@
-html, body { height: 100%; }
+html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not loaded on the static Account pages */
 
 .lotse-appbar .mud-typography { color: #fff; }
 
@@ -130,46 +130,158 @@ html, body { height: 100%; }
 .nav-account-logout span { display: none; }
 @media (min-width: 960px) { .nav-account-logout span { display: inline; } }
 
-/* Account pages (Login/Register/ForgotPassword/ResetPassword/Manage) render standalone via AccountLayout, no
-   MudBlazor theme available there (static SSR, see each page's doc comment) - colours are hand-picked to match
-   MainLayout's palette (Primary #1F5F8B, Secondary #E07A1F, Tertiary #2E8B57, error #C44536). */
-.account-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: #F6F7F9; }
-.account-card { width: 100%; max-width: 420px; background: #fff; border-radius: 16px; padding: 30px 28px; box-shadow: 0 16px 40px rgba(31,95,139,.12); }
-.account-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; color: #1F5F8B; margin-bottom: 20px; }
-.account-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 6px; color: #16324A; }
-.account-sub { opacity: .7; font-size: .9rem; margin: 0 0 22px; line-height: 1.5; }
-.account-field { margin-bottom: 15px; }
-.account-field label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: 5px; opacity: .8; }
-.account-field input {
-    /* Blazor's <InputText> renders a bare <input> with no type="..." attribute at all (the browser defaults it to
-       text) - an input[type="text"] selector never matches it, so this targets every input in the form directly. */
-    width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 9px; border: 1px solid #d8dce1; font-size: .95rem; font-family: inherit;
+/* ---- Account pages (Login / Register / ForgotPassword / ResetPassword / Manage) -----------------------------
+   Rendered standalone via AccountLayout as static SSR: no MudBlazor, no theme provider, no circuit, and App.razor
+   leaves out blazor.web.js + MudBlazor css/js for these routes (see each page's doc comment). Everything the
+   pages need is here, self-contained. The palette mirrors MainLayout's MudTheme (Primary #1F5F8B, Secondary
+   #E07A1F, Tertiary #2E8B57, error #C44536, dark surfaces #111820 / #1A2430 / #16202B) so the hand-off into the
+   app after login does not change the look. Layout: brand panel + form side by side from 900px, on phones the
+   brand panel folds into a slim top bar. */
+.acct {
+    --acct-bg: #EEF2F6; --acct-surface: #FFFFFF; --acct-text: #16202B; --acct-muted: #5B6B7A; --acct-line: #D6DDE5;
+    --acct-primary: #1F5F8B; --acct-primary-soft: rgba(31,95,139,.10); --acct-ring: rgba(31,95,139,.22);
+    --acct-btn: #1F5F8B; --acct-btn-text: #FFFFFF; --acct-btn-shadow: rgba(31,95,139,.28);
+    --acct-success: #2E8B57; --acct-error: #C44536; --acct-input-bg: #FFFFFF; --acct-card-shadow: rgba(22,50,74,.08);
+    color-scheme: light;
+    min-height: 100vh; display: flex; background: var(--acct-bg); color: var(--acct-text);
+    font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5;
 }
-.account-field input:focus { outline: none; border-color: #1F5F8B; box-shadow: 0 0 0 3px rgba(31,95,139,.16); }
-.account-error { display: block; color: #C44536; font-size: .78rem; margin-top: 4px; }
-.account-submit {
-    width: 100%; padding: 12px; border-radius: 9px; border: none; background: #E07A1F; color: #fff;
-    font-weight: 700; font-size: .95rem; cursor: pointer; margin-top: 8px; transition: background .15s;
-}
-.account-submit:hover { background: #c8690f; }
-.account-links { margin-top: 18px; font-size: .87rem; text-align: center; opacity: .9; }
-.account-links a { color: #1F5F8B; text-decoration: none; font-weight: 600; }
-.account-links a:hover { text-decoration: underline; }
-.account-alert { border-radius: 9px; padding: 11px 13px; font-size: .85rem; margin-bottom: 18px; line-height: 1.4; }
-.account-alert.error { background: rgba(196,69,54,.10); color: #C44536; border: 1px solid rgba(196,69,54,.22); }
-.account-alert.success { background: rgba(46,139,87,.10); color: #2E8B57; border: 1px solid rgba(46,139,87,.22); }
 @media (prefers-color-scheme: dark) {
-    .account-shell { background: #111820; }
-    .account-card { background: #1A2430; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
-    .account-brand, .account-title { color: #E8EDF2; }
-    .account-field input {
-        background: #16202B; border-color: #2a3644; color: #E8EDF2;
+    .acct {
+        --acct-bg: #111820; --acct-surface: #1A2430; --acct-text: #E8EDF2; --acct-muted: #9FB0C0; --acct-line: #2A3644;
+        --acct-primary: #6FB1E0; --acct-primary-soft: rgba(111,177,224,.14); --acct-ring: rgba(111,177,224,.30);
+        --acct-btn: #6FB1E0; --acct-btn-text: #0F1A24; --acct-btn-shadow: rgba(111,177,224,.18);
+        --acct-success: #5CC08A; --acct-error: #E8766A; --acct-input-bg: #16202B; --acct-card-shadow: rgba(0,0,0,.45);
+        color-scheme: dark;
     }
-    .account-field label { color: #cfd8e0; }
 }
+
+/* Brand panel (desktop) and top bar (phones) share the wordmark */
+.acct-brand { display: none; }
+.acct-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.acct-topbar { display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: linear-gradient(135deg, #1F5F8B 0%, #16324A 100%); color: #fff; }
+.acct-topbar .acct-name { font-size: 1.15rem; }
+.acct-topbar .acct-tag { margin-left: auto; opacity: .8; font-size: .8rem; }
+.acct-name { font-weight: 700; letter-spacing: .2px; }
+.acct-tag { font-size: .85rem; opacity: .85; }
+.acct-logo { flex: none; display: block; }
+@media (min-width: 900px) {
+    .acct-topbar { display: none; }
+    .acct-brand {
+        display: flex; flex-direction: column; justify-content: space-between; width: 42%; max-width: 540px; padding: 52px 56px;
+        background: linear-gradient(160deg, #1F5F8B 0%, #16324A 100%); color: #fff; position: relative; overflow: hidden;
+    }
+    .acct-brand::before { content: ""; position: absolute; width: 560px; height: 560px; border-radius: 50%; right: -220px; top: -260px; background: rgba(255,255,255,.06); }
+    .acct-brand::after { content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%; left: -170px; bottom: -220px; background: rgba(224,122,31,.20); }
+    .acct-brand > * { position: relative; z-index: 1; }
+    .acct-wordmark { display: flex; align-items: center; gap: 14px; margin-bottom: 44px; }
+    .acct-wordmark .acct-name { font-size: 1.6rem; line-height: 1.1; }
+    .acct-claim { font-size: 1.9rem; font-weight: 700; line-height: 1.22; margin: 0 0 30px; letter-spacing: -.01em; max-width: 14em; }
+    .acct-points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 1rem; }
+    .acct-points li { display: flex; align-items: flex-start; gap: 12px; opacity: .95; }
+    .acct-points svg { width: 22px; height: 22px; flex: none; color: #F2A65A; margin-top: 1px; }
+    .acct-foot { margin: 40px 0 0; font-size: .85rem; opacity: .7; max-width: 30em; line-height: 1.5; }
+}
+
+/* Form card */
+.acct-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 28px 18px 44px; }
+.acct-card { width: 100%; max-width: 430px; background: var(--acct-surface); border: 1px solid var(--acct-line); border-radius: 20px; padding: 32px 30px; box-shadow: 0 12px 34px var(--acct-card-shadow); }
+@media (max-width: 480px) { .acct-card { padding: 26px 20px; border-radius: 16px; } }
+.acct h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 6px; letter-spacing: -.01em; line-height: 1.2; }
+.acct-sub { color: var(--acct-muted); margin: 0 0 24px; font-size: .95rem; }
+.acct-sub code { font-family: Consolas, "Courier New", monospace; font-size: .85em; background: var(--acct-primary-soft); padding: 1px 5px; border-radius: 5px; }
+
+.acct-field { margin-bottom: 16px; }
+.acct-label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: .84rem; font-weight: 600; margin-bottom: 6px; }
+.acct-label a { font-weight: 500; font-size: .8rem; }
+/* Blazor's <InputText> renders a bare <input> without a type attribute unless one is given explicitly, so the
+   selector must not depend on [type=...]. */
+.acct input:not([type="checkbox"]) {
+    width: 100%; box-sizing: border-box; height: 46px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--acct-line);
+    background: var(--acct-input-bg); color: var(--acct-text); font: inherit; font-size: 1rem; transition: border-color .15s, box-shadow .15s;
+}
+.acct input::placeholder { color: var(--acct-muted); opacity: .75; }
+.acct input:focus { outline: none; border-color: var(--acct-primary); box-shadow: 0 0 0 4px var(--acct-ring); }
+.acct input.invalid { border-color: var(--acct-error); }
+.acct input:-webkit-autofill { -webkit-box-shadow: 0 0 0 100px var(--acct-input-bg) inset; -webkit-text-fill-color: var(--acct-text); }
+.acct-pw { position: relative; }
+.acct-pw input { padding-right: 48px; }
+.acct-pw-toggle {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: none; border-radius: 9px;
+    background: transparent; color: var(--acct-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.acct-pw-toggle:hover, .acct-pw-toggle:focus-visible { background: var(--acct-primary-soft); color: var(--acct-primary); outline: none; }
+.acct-pw-toggle svg { width: 20px; height: 20px; }
+.acct-pw-toggle .eye-off { display: none; }
+.acct-pw-toggle[aria-pressed="true"] .eye { display: none; }
+.acct-pw-toggle[aria-pressed="true"] .eye-off { display: block; }
+.acct-hint { font-size: .78rem; color: var(--acct-muted); margin-top: 6px; }
+.acct-error { display: block; font-size: .78rem; color: var(--acct-error); margin-top: 6px; }
+.acct-check { display: flex; align-items: center; gap: 10px; font-size: .9rem; margin: 2px 0 20px; cursor: pointer; }
+.acct-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--acct-primary); cursor: pointer; }
+
+.acct-btn {
+    width: 100%; height: 48px; border: none; border-radius: 12px; background: var(--acct-btn); color: var(--acct-btn-text);
+    font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px var(--acct-btn-shadow);
+    transition: filter .15s, transform .08s, box-shadow .15s;
+}
+.acct-btn:hover { filter: brightness(1.08); box-shadow: 0 8px 20px var(--acct-btn-shadow); }
+.acct-btn:active { transform: translateY(1px); }
+.acct-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--acct-ring); }
+
+.acct-alert { display: flex; gap: 10px; align-items: flex-start; border-radius: 12px; padding: 12px 14px; font-size: .88rem; margin-bottom: 18px; line-height: 1.45; }
+.acct-alert svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
+.acct-alert.error { background: rgba(196,69,54,.10); color: var(--acct-error); border: 1px solid rgba(196,69,54,.25); }
+.acct-alert.success { background: rgba(46,139,87,.10); color: var(--acct-success); border: 1px solid rgba(46,139,87,.25); }
+
+.acct a { color: var(--acct-primary); text-decoration: none; font-weight: 600; }
+.acct a:hover { text-decoration: underline; }
+.acct-alt { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--acct-line); text-align: center; font-size: .9rem; color: var(--acct-muted); }
+.acct-note { font-size: .8rem; color: var(--acct-muted); margin: -4px 0 18px; display: flex; gap: 8px; align-items: flex-start; }
+.acct-note svg { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--acct-success); }
+.acct-links { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; font-size: .9rem; }
+.acct-kv { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--acct-line); font-size: .93rem; }
+.acct-kv:last-of-type { border-bottom: 1px solid var(--acct-line); }
+.acct-kv b { color: var(--acct-muted); font-weight: 500; }
+.acct-kv span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Course parts (Teil 1 / Teil 2) */
 .course-part { margin-bottom: 28px; }
 .course-part-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--mud-palette-lines-default); }
 .course-part-count { white-space: nowrap; align-self: center; }
 @media (max-width: 600px) { .course-part-head { align-items: flex-start; } }
+
+/* Task pick lists (Schreiben / Sprechen) and recent productions. The accent colour carries meaning: the task's
+   context (Alltag green, Beruf blue, Prüfung orange) or, for submitted work, the result - as a left stripe, an
+   icon tile, the label, and a faint wash over the whole card. All via the theme palette, so light and dark match. */
+.task-card { --task-accent: var(--mud-palette-primary); position: relative; overflow: hidden; cursor: pointer; border-left: 4px solid var(--task-accent); transition: transform .15s, box-shadow .15s; }
+.task-card::before { content: ""; position: absolute; inset: 0; background: var(--task-accent); opacity: .05; pointer-events: none; transition: opacity .15s; }
+.task-card:not(.static):hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.14); }
+.task-card:not(.static):hover::before { opacity: .10; }
+.task-card.static { cursor: default; }
+.ctx-alltag { --task-accent: var(--mud-palette-tertiary); }
+.ctx-beruf { --task-accent: var(--mud-palette-primary); }
+.ctx-pruefung { --task-accent: var(--mud-palette-secondary); }
+.score-good { --task-accent: var(--mud-palette-tertiary); }
+.score-weak { --task-accent: var(--mud-palette-secondary); }
+.score-none { --task-accent: var(--mud-palette-text-secondary); }
+.task-row { display: flex; gap: 12px; align-items: flex-start; position: relative; }
+.task-icon { width: 36px; height: 36px; min-width: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: var(--task-accent); color: #fff; margin-top: 2px; }
+.task-body { flex: 1; min-width: 0; }
+.task-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+.task-ctx { font-size: .76rem; font-weight: 700; color: var(--task-accent); text-transform: uppercase; letter-spacing: .5px; }
+.task-chip.mud-chip { margin: 0; height: 22px; }
+.task-node { margin-left: auto; font-size: .72rem; opacity: .65; font-weight: 500; text-align: right; }
+.task-prompt { line-height: 1.5; }
+.task-go { align-self: center; opacity: .35; transition: opacity .15s, transform .15s; }
+.task-card:hover .task-go { opacity: .85; transform: translateX(2px); }
+@media (max-width: 600px) { .task-go { display: none; } .task-node { flex-basis: 100%; margin-left: 0; text-align: left; } }
+
+/* Page intro bands (Schreiben / Sprechen) + the context legend under them */
+.page-intro { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--intro-tint-strong); background: linear-gradient(135deg, var(--intro-tint-strong), var(--intro-tint-weak)); }
+.page-intro-icon { width: 42px; height: 42px; min-width: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--intro-color); }
+.intro-schreiben { --intro-color: var(--mud-palette-primary); --intro-tint-strong: rgba(31,95,139,.16); --intro-tint-weak: rgba(31,95,139,.03); }
+.intro-sprechen { --intro-color: var(--mud-palette-secondary); --intro-tint-strong: rgba(224,122,31,.18); --intro-tint-weak: rgba(224,122,31,.03); }
+.task-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .75rem; opacity: .8; margin: 0 4px 2px; }
+.task-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.task-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); }

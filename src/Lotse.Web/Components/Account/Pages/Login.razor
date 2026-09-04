@@ -10,42 +10,41 @@
 
 <PageTitle>Anmelden – Lotse</PageTitle>
 
-<h1 class="account-title">Anmelden</h1>
-<p class="account-sub">Weiter bei deinem eigenen Lernstand.</p>
+<h1>Willkommen zurück</h1>
+<p class="acct-sub">Melde dich an – dein Lernstand wartet.</p>
 
 @if (_errorMessage is not null)
 {
-    <div class="account-alert error">@_errorMessage</div>
+    <AcctAlert Kind="error">@_errorMessage</AcctAlert>
 }
 @if (StatusMessage is { } status)
 {
-    <div class="account-alert success">@status</div>
+    <AcctAlert Kind="success">@status</AcctAlert>
 }
 
 <EditForm Model="Input" method="post" OnValidSubmit="LoginUserAsync" FormName="login">
     <DataAnnotationsValidator />
-    <div class="account-field">
-        <label for="email">E-Mail</label>
-        <InputText id="email" @bind-Value="Input.Email" autocomplete="username" placeholder="name@beispiel.de" />
-        <ValidationMessage For="() => Input.Email" class="account-error" />
+    <div class="acct-field">
+        <label class="acct-label" for="email">E-Mail</label>
+        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" autofocus />
+        <ValidationMessage For="() => Input.Email" class="acct-error" />
     </div>
-    <div class="account-field">
-        <label for="password">Passwort</label>
-        <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="current-password" />
-        <ValidationMessage For="() => Input.Password" class="account-error" />
+    <div class="acct-field">
+        <label class="acct-label" for="password"><span>Passwort</span><a href="Account/ForgotPassword">Passwort vergessen?</a></label>
+        <div class="acct-pw">
+            <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="current-password" />
+            <AcctPwToggle Target="password" />
+        </div>
+        <ValidationMessage For="() => Input.Password" class="acct-error" />
     </div>
-    <div class="account-field" style="display:flex;align-items:center;gap:8px">
-        <InputCheckbox id="remember" @bind-Value="Input.RememberMe" style="width:auto" />
-        <label for="remember" style="margin:0;font-weight:400">Angemeldet bleiben</label>
-    </div>
-    <button type="submit" class="account-submit">Anmelden</button>
+    <label class="acct-check" for="remember">
+        <InputCheckbox id="remember" @bind-Value="Input.RememberMe" />
+        <span>Angemeldet bleiben</span>
+    </label>
+    <button type="submit" class="acct-btn">Anmelden</button>
 </EditForm>
 
-<div class="account-links">
-    <a href="Account/ForgotPassword">Passwort vergessen?</a>
-    &nbsp;·&nbsp;
-    Neu hier? <a href="@RegisterUrl">Konto erstellen</a>
-</div>
+<div class="acct-alt">Neu hier? <a href="@RegisterUrl">Konto erstellen</a></div>
 
 @code {
     private string? _errorMessage;
@@ -72,16 +71,16 @@
     {
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded) RedirectManager.RedirectTo(ReturnUrl ?? "");
-        else _errorMessage = "Anmeldung fehlgeschlagen. E-Mail oder Passwort falsch.";
+        else _errorMessage = "Anmeldung fehlgeschlagen – E-Mail oder Passwort stimmt nicht.";
     }
 
     private sealed class InputModel
     {
-        [Required(ErrorMessage = "E-Mail erforderlich.")]
-        [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
+        [Required(ErrorMessage = "Bitte E-Mail eingeben.")]
+        [EmailAddress(ErrorMessage = "Das sieht nicht nach einer E-Mail-Adresse aus.")]
         public string Email { get; set; } = "";
 
-        [Required(ErrorMessage = "Passwort erforderlich.")]
+        [Required(ErrorMessage = "Bitte Passwort eingeben.")]
         public string Password { get; set; } = "";
 
         public bool RememberMe { get; set; }

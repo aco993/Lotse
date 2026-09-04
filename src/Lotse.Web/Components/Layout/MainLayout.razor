@@ -3,6 +3,7 @@
 @inject NavigationManager Nav
 @inject Lotse.Infrastructure.Ai.TutorRegistry Tutors
 @inject Lotse.Infrastructure.CurrentUser.ICurrentUserAccessor CurrentUser
+@inject AuthenticationStateProvider AuthState
 
 <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
 <MudPopoverProvider />
@@ -77,6 +78,14 @@
         // first-load call means this banner/settings display never shows a previous learner's stale Tutor state on
         // a reused circuit; TutorRegistry's own EnsureCurrentAsync is the matching guard on the functional side
         // (every provider call), so a real request never runs under the wrong account's key even if this were skipped.
+        // /Error and /not-found are [AllowAnonymous] and use this layout too - nothing to load for a visitor
+        // without an account, and CurrentUser would (correctly) throw for one.
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        if (auth.User.Identity?.IsAuthenticated != true)
+        {
+            if (firstRender) StateHasChanged();
+            return;
+        }
         var userId = await CurrentUser.GetUserIdAsync();
         if (_tutorsInitializedForUserId != userId)
         {

@@ -48,10 +48,20 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     // No email sender is configured on this machine (see IdentityNoOpEmailSender) - requiring confirmation would
     // lock every new registration out immediately, so registration signs the learner in right away instead.
     options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
+    // Length over composition rules (NIST SP 800-63B): 8+ characters, no forced digit/symbol/case mix. The
+    // registration form promises exactly this ("Mindestens 8 Zeichen"), so the two must stay in step.
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 4;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
 })
     .AddEntityFrameworkStores<LotseDbContext>()
     .AddSignInManager()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<GermanIdentityErrorDescriber>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
@@ -114,7 +124,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
-app.MapStaticAssets();
+// Static assets (app.css, MudBlazor css/js, favicon, blazor.web.js, ...) are endpoints too, so the fallback
+// "must be signed in" policy above would apply to them as well - a signed-out visitor would get every stylesheet
+// and script answered with a redirect to the login page (HTML instead of CSS/JS), i.e. a completely unstyled login
+// screen. Public by design; there is nothing account-specific in wwwroot.
+app.MapStaticAssets().AllowAnonymous();
 app.MapHealthChecks("/health").AllowAnonymous(); // infra probe, not a learner-facing page
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapAdditionalIdentityEndpoints();

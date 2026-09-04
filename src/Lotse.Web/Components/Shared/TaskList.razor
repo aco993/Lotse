@@ -1,4 +1,6 @@
-@* Pickable list of production / reading tasks with context and length badges. *@
+@* Pickable list of production / reading tasks. Colour carries meaning here: the accent (left stripe, icon tile,
+   context label, faint wash) is the task's context - green Alltag, blue Beruf, orange Prüfung - so a long list
+   scans by situation before anyone reads a word; the icon tile says what you'll do (write / speak / read). *@
 @inject ContentCatalogProvider CatalogProvider
 
 @if (Items.Count == 0)
@@ -9,16 +11,21 @@
     @foreach (var ex in Items)
     {
         var item = ex;
-        <MudPaper Class="pa-3" Elevation="1" Style="cursor:pointer" @onclick="() => OnPick.InvokeAsync(item)">
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1" Wrap="Wrap.Wrap">
-                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(item.Context == ExerciseContext.Beruf ? Color.Primary : item.Context == ExerciseContext.Pruefung ? Color.Secondary : Color.Default)">@item.Context</MudChip>
-                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@item.Band.Label()</MudChip>
-                @if (item.MinWords is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">~@item.MinWords Wörter</MudChip> }
-                @if (item.TargetSeconds is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">~@(item.TargetSeconds / 60) min</MudChip> }
-                <MudSpacer />
-                <MudText Typo="Typo.caption" Style="opacity:.7">@CatalogProvider.Catalog.NodeTitle(item.NodeId)</MudText>
-            </MudStack>
-            <MudText Typo="Typo.body2">@item.Prompt</MudText>
+        <MudPaper Class="@($"task-card pa-3 {ContextClass(item.Context)}")" Elevation="1" @onclick="() => OnPick.InvokeAsync(item)">
+            <div class="task-row">
+                <div class="task-icon"><MudIcon Icon="@IconFor(item.Type)" Size="Size.Small" /></div>
+                <div class="task-body">
+                    <div class="task-meta">
+                        <span class="task-ctx">@ContextLabel(item.Context)</span>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="task-chip">@item.Band.Label()</MudChip>
+                        @if (item.MinWords is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Outlined.Notes">~@item.MinWords Wörter</MudChip> }
+                        @if (item.TargetSeconds is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Outlined.Timer">~@(item.TargetSeconds / 60) min</MudChip> }
+                        <span class="task-node">@CatalogProvider.Catalog.NodeTitle(item.NodeId)</span>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="task-prompt">@item.Prompt</MudText>
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="task-go" />
+            </div>
         </MudPaper>
     }
 </MudStack>
@@ -26,4 +33,25 @@
 @code {
     [Parameter, EditorRequired] public IReadOnlyList<Exercise> Items { get; set; } = [];
     [Parameter] public EventCallback<Exercise> OnPick { get; set; }
+
+    private static string ContextClass(ExerciseContext c) => c switch
+    {
+        ExerciseContext.Beruf => "ctx-beruf",
+        ExerciseContext.Pruefung => "ctx-pruefung",
+        _ => "ctx-alltag",
+    };
+
+    private static string ContextLabel(ExerciseContext c) => c switch
+    {
+        ExerciseContext.Beruf => "Beruf",
+        ExerciseContext.Pruefung => "Prüfung",
+        _ => "Alltag",
+    };
+
+    private static string IconFor(ExerciseType t) => t switch
+    {
+        ExerciseType.Speak => Icons.Material.Filled.Mic,
+        ExerciseType.Reading => Icons.Material.Filled.MenuBook,
+        _ => Icons.Material.Filled.Edit,
+    };
 }

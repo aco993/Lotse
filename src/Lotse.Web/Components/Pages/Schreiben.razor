@@ -5,20 +5,26 @@
 
 <PageTitle>Schreiben – Lotse</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-1">Schreiben</MudText>
-<MudText Typo="Typo.body2" Class="mb-4" Style="opacity:.8">Kurze Nachrichten für den Alltag, formelle Mails für den Job, Prüfungsformate für Teil 1 und 2. Deine größte Lücke ist aktives Produzieren – hier schließt du sie.</MudText>
+<div class="page-intro intro-schreiben">
+    <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.Edit" /></div>
+    <div>
+        <MudText Typo="Typo.h5">Schreiben</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">Kurze Nachrichten für den Alltag, formelle Mails für den Job, Prüfungsformate für Teil 1 und 2. Deine größte Lücke ist aktives Produzieren – hier schließt du sie.</MudText>
+    </div>
+</div>
+<div class="task-legend"><span class="ctx-alltag">Alltag</span><span class="ctx-beruf">Beruf</span><span class="ctx-pruefung">Prüfung</span></div>
 
 <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" Class="mt-2">
-    <MudTabPanel Text="Kurz (5 min)">
+    <MudTabPanel Text="Kurz (5 min)" Icon="@Icons.Material.Filled.Timer">
         <TaskList Items="Micro" OnPick="StartAsync" />
     </MudTabPanel>
-    <MudTabPanel Text="Prüfung Teil 2 – Nachricht">
+    <MudTabPanel Text="Prüfung Teil 2 – Nachricht" Icon="@Icons.Material.Filled.Mail">
         <TaskList Items="Teil2" OnPick="StartAsync" />
     </MudTabPanel>
-    <MudTabPanel Text="Prüfung Teil 1 – Forumsbeitrag">
+    <MudTabPanel Text="Prüfung Teil 1 – Forumsbeitrag" Icon="@Icons.Material.Filled.Forum">
         <TaskList Items="Teil1" OnPick="StartAsync" />
     </MudTabPanel>
-    <MudTabPanel Text="Bisherige Texte">
+    <MudTabPanel Text="Bisherige Texte" Icon="@Icons.Material.Filled.History">
         <RecentProductions Speaking="false" />
     </MudTabPanel>
 </MudTabs>
