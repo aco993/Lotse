@@ -113,6 +113,21 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     public void No_answer_contains_a_name_token()
         => Assert.All(fx.Catalog.Exercises, e => Assert.All(e.Answers, a => Assert.False(NameTemplate.ContainsToken(a), e.Id)));
 
+    /// <summary>
+    /// Heute tells the learner what to practise; "Nominalstil ↔ Verbalstil" is a term, not an instruction. Every
+    /// grammar node therefore owes a plain-language name - and one that is not just the title again.
+    /// </summary>
+    [Fact]
+    public void Every_grammar_node_has_a_plain_language_name()
+    {
+        var missing = fx.Catalog.Nodes
+            .Where(n => n.Area == SkillArea.Grammatik)
+            .Where(n => string.IsNullOrWhiteSpace(n.PlainTitle) || n.PlainTitle == n.Title)
+            .Select(n => n.Id)
+            .ToList();
+        Assert.True(missing.Count == 0, "Ohne plainTitle: " + string.Join(", ", missing));
+    }
+
     [Fact]
     public void Audio_only_exercises_have_text_to_speak()
         => Assert.All(fx.Catalog.Exercises.Where(e => e.AudioOnly || e.Type == ExerciseType.Dictation), e => Assert.False(string.IsNullOrWhiteSpace(e.Text), e.Id));

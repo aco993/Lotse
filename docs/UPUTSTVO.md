@@ -121,6 +121,12 @@ Pored procenta spremnosti na strani **Heute** stoji i strelica: **▲ 3 % seit l
 
 App svaki dan kad otvoriš Heute zapiše jedno očitavanje i poredi ga sa onim od pre otprilike nedelju dana (6–8 dana). Dok takvog zapisa nema, linija se **ne prikazuje** — bolje ništa nego izmišljen trend.
 
+## 1i. Imena tema na razumljivom jeziku
+
+Na strani **Heute** teme se sada zovu onako kako se objašnjavaju, a ne kako se zovu u gramatici: umesto „Hauptsatz: Verb an Position 2 & TeKaMoLo" piše **„Satzbau: das Verb steht an zweiter Stelle"**.
+
+Na stranicama **Themen** i **Fortschritt** ostaje stručni naziv — tamo tražiš temu, a ne dobijaš zadatak.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

@@ -13,6 +13,8 @@ public enum Trend
 public sealed record WeakArea(
     string NodeId,
     string Title,
+    /// <summary>The jargon-free name for Heute; equals <paramref name="Title"/> where the node has none.</summary>
+    string PlainTitle,
     SkillArea Area,
     double Mastery,
     double Confidence,
@@ -63,7 +65,7 @@ public static class LearnerAnalysis
             };
 
             var priority = (1 - mastery) * (0.4 + 0.6 * confidence) + n7 * 0.08 + n30 * 0.02;
-            result.Add((new WeakArea(node.Id, node.Title, node.Area, mastery, confidence, n7, n30, top, trend, node.InterferenceNote), priority));
+            result.Add((new WeakArea(node.Id, node.Title, node.PlainTitle ?? node.Title, node.Area, mastery, confidence, n7, n30, top, trend, node.InterferenceNote), priority));
         }
         return result.OrderByDescending(r => r.Priority).Take(take).Select(r => r.Area).ToList();
     }

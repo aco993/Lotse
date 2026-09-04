@@ -510,7 +510,7 @@ public sealed class LearningService(
             attempts.Count,
             attempts.Average(a => a.Score),
             ProgressStatsCalculator.Compute(reviews, now).Stuck,
-            weakest is null ? null : Catalog.NodeTitle(weakest));
+            weakest is null ? null : Catalog.NodePlainTitle(weakest));
     }
 
     /// <summary>The learner's own name for the content tokens; empty fields fall back inside <see cref="NameTemplate"/>.</summary>

@@ -363,7 +363,9 @@ public sealed class SessionPlanner
         var parts = new List<string>();
         var reviews = steps.Count(s => s.Kind == StepKind.Review);
         var rechecks = steps.Count(s => s.Kind == StepKind.Recheck);
-        var focus = steps.Where(s => s.Kind is StepKind.Focus or StepKind.Explore).Select(s => catalog.NodeTitle(s.Exercise.NodeId)).Distinct().Take(3).ToList();
+        // The summary is a suggestion to the learner ("Der Lotse schlägt vor …"), so it speaks plainly; the precise
+        // term is one click away on Themen.
+        var focus = steps.Where(s => s.Kind is StepKind.Focus or StepKind.Explore).Select(s => catalog.NodePlainTitle(s.Exercise.NodeId)).Distinct().Take(3).ToList();
         if (rechecks > 0) parts.Add($"{rechecks} Wiedervorlage{(rechecks == 1 ? "" : "n")}");
         if (reviews > 0) parts.Add($"{reviews} Wiederholung{(reviews == 1 ? "" : "en")}");
         if (focus.Count > 0) parts.Add($"Schwerpunkt: {string.Join(", ", focus)}");
