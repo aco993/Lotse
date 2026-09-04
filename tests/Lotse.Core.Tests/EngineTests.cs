@@ -36,7 +36,12 @@ public class AnswerCheckerTests
 {
     private static Exercise Cloze(params string[] answers) => new()
     {
-        Id = "t.cloze", Type = ExerciseType.Cloze, NodeId = "GR.KASUS_PRAEPOSITIONEN", Band = CefrBand.B1_2, Prompt = "mit ___ Bus", Answers = answers,
+        Id = "t.cloze",
+        Type = ExerciseType.Cloze,
+        NodeId = "GR.KASUS_PRAEPOSITIONEN",
+        Band = CefrBand.B1_2,
+        Prompt = "mit ___ Bus",
+        Answers = answers,
     };
 
     [Fact]

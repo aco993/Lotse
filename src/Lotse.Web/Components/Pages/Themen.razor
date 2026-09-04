@@ -3,16 +3,26 @@
 @inject ContentCatalogProvider CatalogProvider
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
-@inject TutorRegistry Tutors
 
 <PageTitle>Themen – Lotse</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-1">Themen</MudText>
-<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">Normalerweise entscheidet der Lotse. Wenn du ein Thema gezielt willst – etwa vor einem Meeting –, starte hier eine Fokus-Session. Mit Tutor kannst du die Übungsbank zu einem Thema erweitern lassen.</MudText>
+<div class="page-intro intro-themen">
+    <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.Map" /></div>
+    <div>
+        <MudText Typo="Typo.h5">Themen</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">Normalerweise entscheidet der Lotse. Wenn du ein Thema gezielt willst – etwa vor einem Meeting –, starte hier eine Fokus-Session. Mit Tutor kannst du die Übungsbank zu einem Thema erweitern lassen.</MudText>
+    </div>
+</div>
+<div class="task-legend">
+    @foreach (var area in Enum.GetValues<SkillArea>())
+    {
+        <span class="@AreaClass(area)">@AreaLabel(area)</span>
+    }
+</div>
 
 @if (Learning.Tutor.IsAvailable)
 {
-    <MudPaper Class="pa-3 mb-3" Elevation="1" Style="border:1px solid var(--mud-palette-primary)">
+    <MudPaper Class="pa-3 mb-3 mt-2" Elevation="1" Style="border:1px solid var(--mud-palette-primary)">
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
             <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" />
             <MudText Typo="Typo.body2">Übungsbank auffüllen: je 6 neue Aufgaben für deine 3 schwächsten Themen, zugeschnitten auf deine letzten Fehler.</MudText>
@@ -23,46 +33,60 @@
     </MudPaper>
 }
 
-<MudTextField @bind-Value="_search" Placeholder="Thema suchen …" Variant="Variant.Outlined" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-3" />
+<MudTextField @bind-Value="_search" Placeholder="Thema suchen …" Variant="Variant.Outlined" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-2 mt-2" />
 
-@foreach (var node in CatalogProvider.Catalog.Nodes.Where(Matches).OrderBy(n => n.Area).ThenBy(n => n.Band))
+@foreach (var group in CatalogProvider.Catalog.Nodes.Where(Matches).OrderBy(n => n.Area).ThenBy(n => n.Band).GroupBy(n => n.Area))
 {
-    var n = node;
-    var drills = CatalogProvider.Catalog.ForNode(n.Id).Count(e => !e.IsProduction && !e.IsReceptive);
-    var s = _states?.GetValueOrDefault(n.Id);
-    <MudPaper Class="pa-3 mb-2" Elevation="1">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Wrap="Wrap.Wrap">
-            <MudText Typo="Typo.subtitle2">@n.Title</MudText>
-            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@n.Band.Label()</MudChip>
-            @if (n.SerbianInterference) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">SR-Interferenz</MudChip> }
-            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@drills Übungen</MudChip>
-            <MudSpacer />
-            @if (s is not null && s.Attempts > 0) { <MudText Typo="Typo.caption">@s.Mastery.ToString("P0") · @s.Attempts×</MudText> }
-        </MudStack>
-        <MudText Typo="Typo.body2" Class="mt-1" Style="opacity:.85">@n.Description</MudText>
-        @if (n.InterferenceNote is not null)
-        {
-            <div class="ex-serbian mt-2"><MudText Typo="Typo.body2">@n.InterferenceNote</MudText></div>
-        }
-        <MudStack Row="true" Spacing="1" Class="mt-2">
-            @if (drills > 0)
-            {
-                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => FocusAsync(n.Id)">Fokus-Session (10 min)</MudButton>
-            }
-            @if (Learning.Tutor.IsAvailable && n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
-            {
-                <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : "6 neue Übungen erzeugen")</MudButton>
-            }
-            @if (Learning.Tutor.IsAvailable && n.Area is SkillArea.Lesen or SkillArea.Hoeren)
-            {
-                <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateReadingAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : (n.Area == SkillArea.Lesen ? "Neuen Lesetext erzeugen" : "Neue Höraufgabe erzeugen"))</MudButton>
-            }
-            @if (CatalogProvider.Catalog.ForNode(n.Id).Any(e => e.Type == ExerciseType.Reading))
-            {
-                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => StartReadingAsync(n.Id)">@(n.Area == SkillArea.Hoeren ? "Höraufgabe üben" : "Lesetext üben")</MudButton>
-            }
-        </MudStack>
-    </MudPaper>
+    <div class="area-head @AreaClass(group.Key)"><span>@AreaLabel(group.Key)</span><small>@group.Count() @(group.Count() == 1 ? "Thema" : "Themen")</small></div>
+    @foreach (var node in group)
+    {
+        var n = node;
+        var drills = CatalogProvider.Catalog.ForNode(n.Id).Count(e => !e.IsProduction && !e.IsReceptive);
+        var s = _states?.GetValueOrDefault(n.Id);
+        <MudPaper @key="n.Id" Class="@($"task-card task-static topic-card pa-3 mb-2 {AreaClass(n.Area)}")" Elevation="1">
+            <div class="task-row">
+                <div class="task-icon"><MudIcon Icon="@AreaIcon(n.Area)" Size="Size.Small" /></div>
+                <div class="task-body">
+                    <div class="task-meta">
+                        <span class="topic-title">@n.Title</span>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="task-chip">@n.Band.Label()</MudChip>
+                        @if (n.SerbianInterference) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary" Class="task-chip" Icon="@Icons.Material.Filled.SwapHoriz">SR-Interferenz</MudChip> }
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Outlined.FitnessCenter">@drills Übungen</MudChip>
+                        @if (s is not null && s.Attempts > 0)
+                        {
+                            <span class="task-node topic-mastery">
+                                <span class="heat topic-heat"><span style="@($"width:{(int)Math.Round(s.Mastery * 100)}%")"></span></span>
+                                @s.Mastery.ToString("P0") · @s.Attempts×
+                            </span>
+                        }
+                    </div>
+                    <MudText Typo="Typo.body2" Class="task-prompt" Style="opacity:.85">@n.Description</MudText>
+                    @if (n.InterferenceNote is not null)
+                    {
+                        <div class="ex-serbian mt-2"><MudText Typo="Typo.body2">@n.InterferenceNote</MudText></div>
+                    }
+                    <MudStack Row="true" Spacing="1" Class="mt-2" Wrap="Wrap.Wrap">
+                        @if (drills > 0)
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => FocusAsync(n.Id)">Fokus-Session (10 min)</MudButton>
+                        }
+                        @if (Learning.Tutor.IsAvailable && n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : "6 neue Übungen erzeugen")</MudButton>
+                        }
+                        @if (Learning.Tutor.IsAvailable && n.Area is SkillArea.Lesen or SkillArea.Hoeren)
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="() => GenerateReadingAsync(n.Id)" Disabled="_generating == n.Id">@(_generating == n.Id ? "Erzeuge …" : (n.Area == SkillArea.Lesen ? "Neuen Lesetext erzeugen" : "Neue Höraufgabe erzeugen"))</MudButton>
+                        }
+                        @if (CatalogProvider.Catalog.ForNode(n.Id).Any(e => e.Type == ExerciseType.Reading))
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => StartReadingAsync(n.Id)">@(n.Area == SkillArea.Hoeren ? "Höraufgabe üben" : "Lesetext üben")</MudButton>
+                        }
+                    </MudStack>
+                </div>
+            </div>
+        </MudPaper>
+    }
 }
 
 @code {
@@ -70,17 +94,40 @@
     private string? _generating;
     private IReadOnlyDictionary<string, SkillState>? _states;
 
-    protected override async Task OnInitializedAsync()
-    {
-        // See TutorRegistry.EnsureCurrentAsync's doc comment: without this, a fresh circuit's first render here
-        // could show "kein Tutor" even though the signed-in learner has one configured.
-        await Tutors.EnsureCurrentAsync();
-        _states = await Learning.GetSkillStatesAsync();
-    }
+    protected override async Task OnInitializedAsync() => _states = await Learning.GetSkillStatesAsync();
 
     private bool Matches(SkillNode n) => string.IsNullOrWhiteSpace(_search)
         || n.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
         || n.Description.Contains(_search, StringComparison.OrdinalIgnoreCase);
+
+    // One hue per skill area, used for the stripe, icon tile, section header and legend (see .area-* in app.css).
+    private static string AreaClass(SkillArea a) => a switch
+    {
+        SkillArea.Grammatik => "area-grammatik",
+        SkillArea.Wortschatz => "area-wortschatz",
+        SkillArea.Redemittel => "area-redemittel",
+        SkillArea.Lesen => "area-lesen",
+        SkillArea.Hoeren => "area-hoeren",
+        SkillArea.Schreiben => "area-schreiben",
+        _ => "area-sprechen",
+    };
+
+    private static string AreaLabel(SkillArea a) => a switch
+    {
+        SkillArea.Hoeren => "Hören",
+        _ => a.ToString(),
+    };
+
+    private static string AreaIcon(SkillArea a) => a switch
+    {
+        SkillArea.Grammatik => Icons.Material.Filled.Spellcheck,
+        SkillArea.Wortschatz => Icons.Material.Filled.Translate,
+        SkillArea.Redemittel => Icons.Material.Filled.Chat,
+        SkillArea.Lesen => Icons.Material.Filled.MenuBook,
+        SkillArea.Hoeren => Icons.Material.Filled.Headphones,
+        SkillArea.Schreiben => Icons.Material.Filled.Edit,
+        _ => Icons.Material.Filled.Mic,
+    };
 
     private async Task FocusAsync(string nodeId)
     {

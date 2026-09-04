@@ -111,9 +111,21 @@ public sealed class LearningService(
 
     public async Task SaveProfileAsync(LearnerProfile profile, CancellationToken ct = default)
     {
+        // The caller hands in the object it got from GetProfileAsync, but the row written is always the signed-in
+        // learner's - this method must not be the one way to overwrite somebody else's profile.
+        profile.UserId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         db.Profiles.Update(profile);
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>The tutor, re-checked against the signed-in learner first (see <see cref="ILearnerBound"/>) - the
+    /// cached <see cref="ITutor.IsAvailable"/>/<see cref="ITutor.Description"/> would otherwise be stale on the
+    /// first read of a fresh circuit (dashboard after login) or after a logout/login on a surviving one.</summary>
+    private async Task<ITutor> TutorAsync(CancellationToken ct)
+    {
+        if (tutor is ILearnerBound bound) await bound.EnsureCurrentAsync(ct);
+        return tutor;
     }
 
     public async Task<DashboardModel> GetDashboardAsync(CancellationToken ct = default)
@@ -122,9 +134,9 @@ public sealed class LearningService(
         var userId = profile.UserId;
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var now = Now;
-        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, LotseDbContext.UserIdShadow) == userId).ToDictionaryAsync(s => s.NodeId, ct);
         var errors = await RecentErrorsAsync(db, userId, 30, ct);
-        var due = await db.ReviewStates.CountAsync(r => EF.Property<string>(r, "UserId") == userId && r.DueUtc <= now, ct);
+        var due = await db.ReviewStates.CountAsync(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId && r.DueUtc <= now, ct);
         var rechecks = states.Values.Count(s => s.RecheckDueUtc is not null && s.RecheckDueUtc <= now);
 
         var since7 = now.AddDays(-7);
@@ -144,7 +156,8 @@ public sealed class LearningService(
         var input = await BuildPlannerInputAsync(db, userId, profile.DailyMinutes, null, ct);
         var preview = planner.Plan(input with { Seed = now.DayOfYear }).Summary;
 
-        return new DashboardModel(profile, readiness, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, tutor.IsAvailable, tutor.Description);
+        var t = await TutorAsync(ct);
+        return new DashboardModel(profile, readiness, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
     }
 
     private static async Task<int> ComputeStreakAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
@@ -171,8 +184,8 @@ public sealed class LearningService(
     private async Task<PlannerInput> BuildPlannerInputAsync(LotseDbContext db, string userId, int minutes, string? requestedNode, CancellationToken ct)
     {
         var now = Now;
-        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
-        var due = await db.ReviewStates.AsNoTracking().Where(r => EF.Property<string>(r, "UserId") == userId && r.DueUtc <= now).ToListAsync(ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, LotseDbContext.UserIdShadow) == userId).ToDictionaryAsync(s => s.NodeId, ct);
+        var due = await db.ReviewStates.AsNoTracking().Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId && r.DueUtc <= now).ToListAsync(ct);
         var recentSince = now.AddDays(-4);
         var recent = (await db.Attempts.AsNoTracking().Where(a => a.UserId == userId && a.Utc >= recentSince).Select(a => a.ExerciseId).ToListAsync(ct)).ToHashSet();
         var recentProd = (await db.Productions.AsNoTracking().Where(p => p.UserId == userId && p.Utc >= recentSince).Select(p => p.ExerciseId).ToListAsync(ct));
@@ -282,8 +295,15 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var session = new SessionEntity
         {
-            Id = Guid.NewGuid(), UserId = userId, Kind = SessionKind.Lesson, LessonId = lesson.Id, PlannedMinutes = lesson.Minutes, StartedUtc = Now,
-            PlanJson = JsonSerializer.Serialize(steps), StepsTotal = steps.Count, Summary = $"Lektion {lesson.Order}: {lesson.Title}",
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Kind = SessionKind.Lesson,
+            LessonId = lesson.Id,
+            PlannedMinutes = lesson.Minutes,
+            StartedUtc = Now,
+            PlanJson = JsonSerializer.Serialize(steps),
+            StepsTotal = steps.Count,
+            Summary = $"Lektion {lesson.Order}: {lesson.Title}",
         };
         db.Sessions.Add(session);
         var progress = await db.LessonProgress.FindAsync([userId, lesson.Id], ct);
@@ -355,8 +375,14 @@ public sealed class LearningService(
         var steps = new List<StepRecord> { new() { Kind = ex.IsProduction ? StepKind.Production : StepKind.Focus, ExerciseId = ex.Id, Reason = "Freie Übung" } };
         var session = new SessionEntity
         {
-            Id = Guid.NewGuid(), UserId = userId, Kind = kind, PlannedMinutes = ex.EstimatedSeconds / 60 + 1, StartedUtc = Now,
-            PlanJson = JsonSerializer.Serialize(steps), StepsTotal = 1, Summary = Catalog.NodeTitle(ex.NodeId),
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Kind = kind,
+            PlannedMinutes = ex.EstimatedSeconds / 60 + 1,
+            StartedUtc = Now,
+            PlanJson = JsonSerializer.Serialize(steps),
+            StepsTotal = 1,
+            Summary = Catalog.NodeTitle(ex.NodeId),
         };
         db.Sessions.Add(session);
         await db.SaveChangesAsync(ct);
@@ -445,8 +471,16 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var attempt = new AttemptEntity
         {
-            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = check.Outcome, Score = check.Score,
-            DurationMs = durationMs, HintUsed = hintUsed, Utc = now, AnswerText = answer,
+            UserId = userId,
+            SessionId = sessionId,
+            ExerciseId = exercise.Id,
+            NodeId = exercise.NodeId,
+            Outcome = check.Outcome,
+            Score = check.Score,
+            DurationMs = durationMs,
+            HintUsed = hintUsed,
+            Utc = now,
+            AnswerText = answer,
         };
         db.Attempts.Add(attempt);
         await db.SaveChangesAsync(ct);
@@ -463,8 +497,14 @@ public sealed class LearningService(
             var et = Catalog.Error(code);
             db.ErrorEvents.Add(new ErrorEventEntity
             {
-                UserId = userId, AttemptId = attempt.Id, Code = code, NodeId = et?.NodeId ?? exercise.NodeId, Utc = now,
-                Snippet = answer, Correction = check.Expected, FromAi = false,
+                UserId = userId,
+                AttemptId = attempt.Id,
+                Code = code,
+                NodeId = et?.NodeId ?? exercise.NodeId,
+                Utc = now,
+                Snippet = answer,
+                Correction = check.Expected,
+                FromAi = false,
             });
         }
 
@@ -486,7 +526,7 @@ public sealed class LearningService(
             review = new ReviewState { ExerciseId = exercise.Id, NodeId = exercise.NodeId, DueUtc = now };
             // Same shadow-key ordering as GetOrCreateStateAsync above.
             var entry = db.Entry(review);
-            entry.Property("UserId").CurrentValue = userId;
+            entry.Property(LotseDbContext.UserIdShadow).CurrentValue = userId;
             entry.State = EntityState.Added;
         }
         ReviewScheduler.Apply(review, ReviewScheduler.GradeFor(check.Outcome, hintUsed, durationMs, exercise.EstimatedSeconds), now);
@@ -518,8 +558,15 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         db.Attempts.Add(new AttemptEntity
         {
-            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = score,
-            DurationMs = durationMs, Utc = now, AnswerText = string.Join(",", chosen),
+            UserId = userId,
+            SessionId = sessionId,
+            ExerciseId = exercise.Id,
+            NodeId = exercise.NodeId,
+            Outcome = Outcome.Graded,
+            Score = score,
+            DurationMs = durationMs,
+            Utc = now,
+            AnswerText = string.Join(",", chosen),
         });
         var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
         LearnerAnalysis.ApplyAttempt(state, exercise, score, now);
@@ -539,7 +586,7 @@ public sealed class LearningService(
             // UserId is a shadow property AND part of the key, so it must be set before the entity is marked
             // Added (Add() itself would try to build the identity-map key immediately, while it is still null).
             var entry = db.Entry(state);
-            entry.Property("UserId").CurrentValue = userId;
+            entry.Property(LotseDbContext.UserIdShadow).CurrentValue = userId;
             entry.State = EntityState.Added;
         }
         return state;
@@ -584,7 +631,7 @@ public sealed class LearningService(
     {
         var profile = await GetProfileAsync(ct);
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == profile.UserId).ToDictionaryAsync(s => s.NodeId, ct);
+        var states = await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, LotseDbContext.UserIdShadow) == profile.UserId).ToDictionaryAsync(s => s.NodeId, ct);
         var errors = await RecentErrorsAsync(db, profile.UserId, 30, ct);
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, Now, take: 5).Select(w => w.Title).ToList();
         var codes = errors.GroupBy(e => e.Code).OrderByDescending(g => g.Count()).Take(8).Select(g => g.Key).ToList();
@@ -617,9 +664,18 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var entity = new ProductionEntity
         {
-            UserId = userId, SessionId = sessionId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, IsSpeaking = speaking, Text = text, WordCount = words, Utc = now,
-            Score = evaluation?.OverallScore, EstimatedLevel = evaluation?.EstimatedLevel,
-            EvaluationJson = evaluation is null ? null : JsonSerializer.Serialize(evaluation), EvaluatedByAi = evaluation is not null,
+            UserId = userId,
+            SessionId = sessionId,
+            ExerciseId = exercise.Id,
+            NodeId = exercise.NodeId,
+            IsSpeaking = speaking,
+            Text = text,
+            WordCount = words,
+            Utc = now,
+            Score = evaluation?.OverallScore,
+            EstimatedLevel = evaluation?.EstimatedLevel,
+            EvaluationJson = evaluation is null ? null : JsonSerializer.Serialize(evaluation),
+            EvaluatedByAi = evaluation is not null,
         };
         db.Productions.Add(entity);
         await db.SaveChangesAsync(ct);
@@ -641,7 +697,12 @@ public sealed class LearningService(
 
         db.Attempts.Add(new AttemptEntity
         {
-            UserId = userId, ExerciseId = exercise.Id, NodeId = exercise.NodeId, Outcome = Outcome.Graded, Score = evaluation.OverallScore, Utc = now,
+            UserId = userId,
+            ExerciseId = exercise.Id,
+            NodeId = exercise.NodeId,
+            Outcome = Outcome.Graded,
+            Score = evaluation.OverallScore,
+            Utc = now,
         });
 
         // Every tagged error is evidence on its node: a small negative observation at B2.1 difficulty.
@@ -695,7 +756,7 @@ public sealed class LearningService(
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        return await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, "UserId") == userId).ToDictionaryAsync(s => s.NodeId, ct);
+        return await db.SkillStates.AsNoTracking().Where(s => EF.Property<string>(s, LotseDbContext.UserIdShadow) == userId).ToDictionaryAsync(s => s.NodeId, ct);
     }
 
     /// <summary>Errors made during one session (deterministic ones via attempts, AI ones via productions), grouped for the summary screen.</summary>
@@ -811,13 +872,17 @@ public sealed class LearningService(
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        await db.SkillStates.Where(s => EF.Property<string>(s, "UserId") == userId).ExecuteDeleteAsync(ct);
-        await db.ReviewStates.Where(r => EF.Property<string>(r, "UserId") == userId).ExecuteDeleteAsync(ct);
+        // One transaction: eight bulk deletes that stop halfway (SQLite lock, cancellation) must not leave a
+        // learner with their attempts gone but their sessions and streak still counting them.
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        await db.SkillStates.Where(s => EF.Property<string>(s, LotseDbContext.UserIdShadow) == userId).ExecuteDeleteAsync(ct);
+        await db.ReviewStates.Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId).ExecuteDeleteAsync(ct);
         await db.ErrorEvents.Where(e => e.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Attempts.Where(a => a.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Productions.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
         await db.LessonProgress.Where(l => l.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Sessions.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Profiles.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
+        await tx.CommitAsync(ct);
     }
 }

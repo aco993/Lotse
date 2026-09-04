@@ -1,3 +1,5 @@
+@using System.Reflection
+@using Microsoft.AspNetCore.Components.Endpoints
 <!DOCTYPE html>
 <html lang="de">
 
@@ -5,15 +7,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <base href="/" />
-    <ResourcePreloader />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    @if (!IsAccountPage)
+    @if (!IsStaticPage)
     {
+        @* Preloads and the import map exist for blazor.web.js and MudBlazor, neither of which a static page loads. *@
+        <ResourcePreloader />
         <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     }
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["Lotse.Web.styles.css"]" />
-    <ImportMap />
+    @if (!IsStaticPage)
+    {
+        <ImportMap />
+    }
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#1F5F8B" />
@@ -42,11 +48,11 @@
          Account-vs-regular route split instead. HeadOutlet gets the same value so its interactivity never outlives
          (or falls short of) whatever <Routes/> resolved to for this request. -->
     <Routes @rendermode="@PageRenderMode" />
-    @if (PageRenderMode is not null)
+    @if (!IsStaticPage)
     {
-        @* Static pages (the Account forms, and /Error or /not-found for a signed-out visitor) get no circuit
-           bootstrap: nothing to reconnect, nothing MudBlazor to run, and for a signed-out visitor blazor.web.js
-           would only try - and fail against the fallback authorization policy - to negotiate a circuit. *@
+        @* Static pages get no circuit bootstrap: nothing to reconnect, nothing MudBlazor to run, and for a
+           signed-out visitor blazor.web.js would only try - and fail against the fallback authorization policy -
+           to negotiate a circuit. *@
         <ReconnectModal />
         <script src="_content/MudBlazor/MudBlazor.min.js"></script>
         <script src="@Assets["_framework/blazor.web.js"]"></script>
@@ -60,11 +66,18 @@
 
     private static readonly InteractiveServerRenderMode NoPrerender = new(prerender: false);
 
-    private bool IsAccountPage => HttpContext.Request.Path.StartsWithSegments("/Account");
-    private bool IsSignedIn => HttpContext.User.Identity?.IsAuthenticated == true;
+    // A page declares that it needs genuine static SSR by living on AccountLayout (the Identity forms: setting the
+    // auth cookie needs a real HTTP response; plus /Error and /not-found, which must work without a login and
+    // therefore without a circuit). Read that off the matched page's own metadata instead of guessing from the URL,
+    // so a new static page anywhere in the app is static by construction. Everything else is InteractiveServer.
+    private bool IsStaticPage
+    {
+        get
+        {
+            var page = HttpContext.GetEndpoint()?.Metadata.GetMetadata<ComponentTypeMetadata>()?.Type;
+            return page?.GetCustomAttribute<LayoutAttribute>()?.LayoutType == typeof(Account.Shared.AccountLayout);
+        }
+    }
 
-    // Interactive only for a signed-in learner outside /Account: the Account forms must be static (auth cookie),
-    // and a signed-out visitor can only ever see those plus /Error and /not-found - rendering those statically too
-    // saves them a circuit negotiation the fallback authorization policy would refuse anyway.
-    private IComponentRenderMode? PageRenderMode => IsAccountPage || !IsSignedIn ? null : NoPrerender;
+    private IComponentRenderMode? PageRenderMode => IsStaticPage ? null : NoPrerender;
 }

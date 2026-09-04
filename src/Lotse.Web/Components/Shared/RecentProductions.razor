@@ -10,7 +10,7 @@ else
     <MudStack Spacing="2">
         @foreach (var p in _items)
         {
-            <MudPaper Class="@($"task-card static pa-3 {ScoreClass(p)}")" Elevation="1">
+            <MudPaper @key="p.Id" Class="@($"task-card task-static pa-3 {ScoreClass(p)}")" Elevation="1">
                 <div class="task-row">
                     <div class="task-icon"><MudIcon Icon="@(p.IsSpeaking ? Icons.Material.Filled.Mic : Icons.Material.Filled.Edit)" Size="Size.Small" /></div>
                     <div class="task-body">

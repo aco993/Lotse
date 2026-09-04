@@ -8,10 +8,12 @@
     <MudText Typo="Typo.body2" Style="opacity:.7">Keine Aufgaben in dieser Kategorie.</MudText>
 }
 <MudStack Spacing="2">
-    @foreach (var ex in Items)
+    @foreach (var item in Items)
     {
-        var item = ex;
-        <MudPaper Class="@($"task-card pa-3 {ContextClass(item.Context)}")" Elevation="1" @onclick="() => OnPick.InvokeAsync(item)">
+        @* Whole card is the control: role/tabindex/keydown make it reachable and operable from the keyboard. *@
+        <MudPaper @key="item.Id" Class="@($"task-card pa-3 {ContextClass(item.Context)}")" Elevation="1"
+                  role="button" tabindex="0" aria-label="@($"{ContextLabel(item.Context)}, {item.Band.Label()}: {item.Prompt}")"
+                  @onclick="() => OnPick.InvokeAsync(item)" @onkeydown="e => OnKeyAsync(e, item)">
             <div class="task-row">
                 <div class="task-icon"><MudIcon Icon="@IconFor(item.Type)" Size="Size.Small" /></div>
                 <div class="task-body">
@@ -33,6 +35,9 @@
 @code {
     [Parameter, EditorRequired] public IReadOnlyList<Exercise> Items { get; set; } = [];
     [Parameter] public EventCallback<Exercise> OnPick { get; set; }
+
+    private Task OnKeyAsync(KeyboardEventArgs e, Exercise item)
+        => e.Key is "Enter" or " " ? OnPick.InvokeAsync(item) : Task.CompletedTask;
 
     private static string ContextClass(ExerciseContext c) => c switch
     {

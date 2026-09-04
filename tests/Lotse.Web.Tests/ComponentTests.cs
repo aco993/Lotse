@@ -24,15 +24,27 @@ public abstract class LotseComponentTest : BunitContext
 
     protected static Exercise Cloze(string id = "c1", params string[] answers) => new()
     {
-        Id = id, Type = ExerciseType.Cloze, NodeId = "GR.KASUS_PRAEPOSITIONEN", Band = CefrBand.B1_2,
-        Prompt = "Ich fahre mit ___ Bus.", Instruction = "Artikel", Answers = answers.Length == 0 ? ["dem"] : answers,
-        Explanation = "mit + Dativ", SerbianNote = "sa + instrumental → mit + Dativ",
+        Id = id,
+        Type = ExerciseType.Cloze,
+        NodeId = "GR.KASUS_PRAEPOSITIONEN",
+        Band = CefrBand.B1_2,
+        Prompt = "Ich fahre mit ___ Bus.",
+        Instruction = "Artikel",
+        Answers = answers.Length == 0 ? ["dem"] : answers,
+        Explanation = "mit + Dativ",
+        SerbianNote = "sa + instrumental → mit + Dativ",
     };
 
     protected static Exercise Choice(string id = "m1") => new()
     {
-        Id = id, Type = ExerciseType.MultipleChoice, NodeId = "GR.ARTIKEL_GENUS", Band = CefrBand.B1_1,
-        Prompt = "___ Problem", Options = ["Der", "Die", "Das"], CorrectIndex = 2, Explanation = "das Problem",
+        Id = id,
+        Type = ExerciseType.MultipleChoice,
+        NodeId = "GR.ARTIKEL_GENUS",
+        Band = CefrBand.B1_1,
+        Prompt = "___ Problem",
+        Options = ["Der", "Die", "Das"],
+        CorrectIndex = 2,
+        Explanation = "das Problem",
     };
 }
 
@@ -148,7 +160,11 @@ public class DialogueExerciseTests : LotseComponentTest
 {
     private static Exercise Dialogue() => new()
     {
-        Id = "d1", Type = ExerciseType.Dialogue, NodeId = "SP.ALLTAG_BERUF", Band = CefrBand.B1_2, Prompt = "Kaffeeküche",
+        Id = "d1",
+        Type = ExerciseType.Dialogue,
+        NodeId = "SP.ALLTAG_BERUF",
+        Band = CefrBand.B1_2,
+        Prompt = "Kaffeeküche",
         Lines =
         [
             new DialogueLine("Jonas", "Hi! Neu hier?"),

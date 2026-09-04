@@ -27,7 +27,7 @@ Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 kar
 
 Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
 
-„Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, generisane vežbe) – ne i tvoj nalog, ne i tuđe naloge, i ne Tutor-podešavanja (ključ ostaje).
+„Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).
 
 ## 2. Prvi dan: Einstufung
 

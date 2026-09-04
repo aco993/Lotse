@@ -3,7 +3,7 @@
 <AuthorizeView>
     <Authorized>
         <div class="nav-account">
-            <div class="nav-account-email" title="@context.User.Identity?.Name">@context.User.Identity?.Name</div>
+            <a class="nav-account-email" href="Account/Manage" title="Konto verwalten (@context.User.Identity?.Name)">@context.User.Identity?.Name</a>
             <form action="Account/Logout" method="post">
                 <AntiforgeryToken />
                 <input type="hidden" name="ReturnUrl" value="@Nav.ToBaseRelativePath(Nav.Uri)" />

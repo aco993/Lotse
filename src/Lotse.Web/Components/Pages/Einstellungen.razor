@@ -115,7 +115,7 @@ else
 
     <MudPaper Class="pa-4" Elevation="1" Style="border:1px solid var(--mud-palette-error)">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Zurücksetzen</MudText>
-        <MudText Typo="Typo.body2" Class="mb-2">Löscht Lernstand, Sessions, Fehlerjournal und generierte Übungen. Inhalte und Tutor-Einstellungen bleiben.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Löscht deinen Lernstand, deine Sessions und dein Fehlerjournal – nur dieses Konto. Inhalte, die gemeinsame Übungsbank und deine Tutor-Einstellungen bleiben.</MudText>
         @if (!_confirmReset)
         {
             <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _confirmReset = true">Alle Lerndaten löschen</MudButton>
@@ -152,10 +152,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Must happen before reading Tutors.Settings below: MainLayout also refreshes this Scoped instance, but
-        // only in its own OnAfterRenderAsync, which runs after this page's first render - too late for this page's
-        // own initial read of Tutors.Settings to reflect it (see TutorRegistry.EnsureCurrentAsync's doc comment).
-        await Tutors.EnsureCurrentAsync();
         _p = await Learning.GetProfileAsync();
         _examDate = _p.TargetExamDate?.ToDateTime(TimeOnly.MinValue);
         var s = Tutors.Settings;
@@ -233,7 +229,6 @@ else
     {
         _confirmReset = false;
         await Learning.ResetAllDataAsync();
-        await CatalogProvider.RefreshAsync();
         _p = await Learning.GetProfileAsync();
         Snackbar.Add("Lerndaten gelöscht.", Severity.Info);
     }

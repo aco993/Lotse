@@ -120,7 +120,8 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 
 /* Signed-in learner chip + logout, top of the nav drawer */
 .nav-account { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px; }
-.nav-account-email { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; opacity: .85; }
+.nav-account-email { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; opacity: .85; color: inherit; text-decoration: none; }
+.nav-account-email:hover { opacity: 1; text-decoration: underline; }
 .nav-account form { margin: 0; }
 .nav-account-logout {
     display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer;
@@ -201,7 +202,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     background: var(--acct-input-bg); color: var(--acct-text); font: inherit; font-size: 1rem; transition: border-color .15s, box-shadow .15s;
 }
 .acct input::placeholder { color: var(--acct-muted); opacity: .75; }
-.acct input:focus { outline: none; border-color: var(--acct-primary); box-shadow: 0 0 0 4px var(--acct-ring); }
+.acct input:not([type="checkbox"]):focus { outline: none; border-color: var(--acct-primary); box-shadow: 0 0 0 4px var(--acct-ring); }
 .acct input.invalid { border-color: var(--acct-error); }
 .acct input:-webkit-autofill { -webkit-box-shadow: 0 0 0 100px var(--acct-input-bg) inset; -webkit-text-fill-color: var(--acct-text); }
 .acct-pw { position: relative; }
@@ -254,11 +255,15 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 /* Task pick lists (Schreiben / Sprechen) and recent productions. The accent colour carries meaning: the task's
    context (Alltag green, Beruf blue, Prüfung orange) or, for submitted work, the result - as a left stripe, an
    icon tile, the label, and a faint wash over the whole card. All via the theme palette, so light and dark match. */
+/* The modifier is "task-static", not "static": MudBlazor ships a `.static { position: static !important }`
+   utility, which would cancel the `position: relative` below and let every card's ::before wash escape to the
+   layout - 49 stacked washes over the whole page (found on Themen). */
 .task-card { --task-accent: var(--mud-palette-primary); position: relative; overflow: hidden; cursor: pointer; border-left: 4px solid var(--task-accent); transition: transform .15s, box-shadow .15s; }
 .task-card::before { content: ""; position: absolute; inset: 0; background: var(--task-accent); opacity: .05; pointer-events: none; transition: opacity .15s; }
-.task-card:not(.static):hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.14); }
-.task-card:not(.static):hover::before { opacity: .10; }
-.task-card.static { cursor: default; }
+.task-card:not(.task-static):hover, .task-card:not(.task-static):focus-visible { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.14); outline: none; }
+.task-card:not(.task-static):hover::before, .task-card:not(.task-static):focus-visible::before { opacity: .10; }
+.task-card:focus-visible { box-shadow: 0 0 0 3px var(--task-accent), 0 8px 22px rgba(0,0,0,.14); }
+.task-card.task-static { cursor: default; }
 .ctx-alltag { --task-accent: var(--mud-palette-tertiary); }
 .ctx-beruf { --task-accent: var(--mud-palette-primary); }
 .ctx-pruefung { --task-accent: var(--mud-palette-secondary); }
@@ -269,7 +274,9 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .task-icon { width: 36px; height: 36px; min-width: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: var(--task-accent); color: #fff; margin-top: 2px; }
 .task-body { flex: 1; min-width: 0; }
 .task-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
-.task-ctx { font-size: .76rem; font-weight: 700; color: var(--task-accent); text-transform: uppercase; letter-spacing: .5px; }
+/* Small bold text in the accent hue: mixed 25 % toward the theme's text colour so it clears AA contrast on both
+   the white and the dark surface (pure #7C6BD6 / #A07850 on #1A2430 would not). */
+.task-ctx { font-size: .76rem; font-weight: 700; color: color-mix(in srgb, var(--task-accent) 75%, var(--mud-palette-text-primary)); text-transform: uppercase; letter-spacing: .5px; }
 .task-chip.mud-chip { margin: 0; height: 22px; }
 .task-node { margin-left: auto; font-size: .72rem; opacity: .65; font-weight: 500; text-align: right; }
 .task-prompt { line-height: 1.5; }
@@ -278,10 +285,28 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 @media (max-width: 600px) { .task-go { display: none; } .task-node { flex-basis: 100%; margin-left: 0; text-align: left; } }
 
 /* Page intro bands (Schreiben / Sprechen) + the context legend under them */
-.page-intro { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--intro-tint-strong); background: linear-gradient(135deg, var(--intro-tint-strong), var(--intro-tint-weak)); }
+.page-intro { --intro-color: var(--mud-palette-primary); --intro-tint-strong: rgba(31,95,139,.16); --intro-tint-weak: rgba(31,95,139,.03); display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--intro-tint-strong); background: linear-gradient(135deg, var(--intro-tint-strong), var(--intro-tint-weak)); }
 .page-intro-icon { width: 42px; height: 42px; min-width: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--intro-color); }
 .intro-schreiben { --intro-color: var(--mud-palette-primary); --intro-tint-strong: rgba(31,95,139,.16); --intro-tint-weak: rgba(31,95,139,.03); }
 .intro-sprechen { --intro-color: var(--mud-palette-secondary); --intro-tint-strong: rgba(224,122,31,.18); --intro-tint-weak: rgba(224,122,31,.03); }
 .task-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .75rem; opacity: .8; margin: 0 4px 2px; }
 .task-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .task-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); }
+
+/* Themen: one hue per skill area. Fixed mid-luminance values rather than palette tokens because the palette only
+   has three accents for seven areas; all of them hold up on both the light (#fff) and dark (#1A2430) surface. */
+.intro-themen { --intro-color: var(--mud-palette-tertiary); --intro-tint-strong: rgba(46,139,87,.16); --intro-tint-weak: rgba(46,139,87,.03); }
+.area-grammatik { --task-accent: #3B82C4; }
+.area-wortschatz { --task-accent: #3A9D6B; }
+.area-redemittel { --task-accent: #E07A1F; }
+.area-lesen { --task-accent: #7C6BD6; }
+.area-hoeren { --task-accent: #1FA2B0; }
+.area-schreiben { --task-accent: #C74B7A; }
+.area-sprechen { --task-accent: #A07850; }
+.area-head { display: flex; align-items: baseline; gap: 10px; margin: 20px 4px 8px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: color-mix(in srgb, var(--task-accent) 75%, var(--mud-palette-text-primary)); }
+.area-head::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); align-self: center; }
+.area-head small { font-weight: 500; text-transform: none; letter-spacing: 0; opacity: .6; color: var(--mud-palette-text-primary); }
+.topic-title { font-weight: 600; font-size: .95rem; }
+.topic-mastery { display: inline-flex; align-items: center; gap: 8px; }
+.topic-heat { width: 64px; height: 6px; display: inline-block; }
+.topic-heat > span { background: var(--task-accent); }
