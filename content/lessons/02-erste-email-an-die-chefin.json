@@ -18,12 +18,12 @@
     "grammar": {
       "title": "Höflich bitten: Konjunktiv II als Türöffner",
       "nodeId": "GR.KONJUNKTIV2",
-      "text": "Im Beruf ist der Konjunktiv II das wichtigste Höflichkeitsmittel. Er nimmt der Bitte die Direktheit: „Könnten Sie …?“, „Ich hätte eine Frage“, „Wäre es möglich, …?“, „Ich würde gern …“. Serbisch kennt „bih/biste“ (Da li biste mogli …?) – das Prinzip ist dasselbe, nur nutzt Deutsch es öfter, auch bei einfachen Fragen. Formen: hätte, wäre, könnte, würde + Infinitiv, müsste, sollte, dürfte.",
+      "text": "Im Beruf ist der Konjunktiv II das wichtigste Höflichkeitsmittel. Er nimmt der Bitte die Direktheit: „Könnten Sie …?“, „Ich hätte eine Frage“, „Wäre es möglich, …?“, „Ich würde gern …“. Serbisch kennt „bih/biste“ (Da li biste mogli …?) – das Prinzip ist dasselbe, nur nutzt Deutsch es öfter, auch bei einfachen Fragen. Formen: hätte, wäre, könnte, würde + Infinitiv, müsste, sollte, dürfte.", "textEn": "Im Beruf ist der Konjunktiv II das wichtigste Höflichkeitsmittel. Er nimmt der Bitte die Direktheit: „Könnten Sie …?“, „Ich hätte eine Frage“, „Wäre es möglich, …?“, „Ich würde gern …“. Englisch macht dasselbe mit „would“ und „could“ (Could you send me …?, I'd like to …) – das Prinzip ist dasselbe, nur nutzt Deutsch es öfter, auch bei einfachen Fragen, und es ist dort kein Extra an Höflichkeit, sondern der normale Ton im Büro. Formen: hätte, wäre, könnte, würde + Infinitiv, müsste, sollte, dürfte.",
       "examples": [
-        { "german": "Könnten Sie mir bitte die Unterlagen schicken?", "serbian": "Da li biste mi, molim Vas, poslali dokumenta?", "note": "könnten + bitte" },
-        { "german": "Ich hätte eine Frage zur Rechnung.", "serbian": "Imao bih jedno pitanje u vezi sa računom.", "note": "hätte statt habe" },
-        { "german": "Wäre es möglich, den Termin zu verschieben?", "serbian": "Da li bi bilo moguće pomeriti termin?", "note": "Wäre es möglich, … zu …?" },
-        { "german": "Ich würde gern einen Termin vereinbaren.", "serbian": "Rado bih zakazao termin.", "note": "würde + gern + Infinitiv" }
+        { "german": "Könnten Sie mir bitte die Unterlagen schicken?", "serbian": "Da li biste mi, molim Vas, poslali dokumenta?", "english": "Could you please send me the documents?", "note": "könnten + bitte" },
+        { "german": "Ich hätte eine Frage zur Rechnung.", "serbian": "Imao bih jedno pitanje u vezi sa računom.", "english": "I'd have a question about the invoice.", "note": "hätte statt habe" },
+        { "german": "Wäre es möglich, den Termin zu verschieben?", "serbian": "Da li bi bilo moguće pomeriti termin?", "english": "Would it be possible to postpone the appointment?", "note": "Wäre es möglich, … zu …?" },
+        { "german": "Ich würde gern einen Termin vereinbaren.", "serbian": "Rado bih zakazao termin.", "english": "I'd like to arrange an appointment.", "note": "würde + gern + Infinitiv" }
       ]
     },
     "steps": ["gr.k2.001", "rm.em.001", "l02.match.001", "gr.k2.002", "rm.em.005", "l02.spot.001", "rm.em.009", "gr.k2.010", "l02.dlg.001", "rm.em.014", "rm.em.007"],

@@ -18,12 +18,12 @@
     "grammar": {
       "title": "Partizipien als Adjektive: Ergebnisse in ein Wort packen",
       "nodeId": "GR.PARTIZIPIALATTRIBUT",
-      "text": "Aus einem Relativsatz wird ein Wort: „der Import, der stabilisiert wurde“ → „der stabilisierte Import“ (Partizip II, passiv/abgeschlossen); „die Kosten, die steigen“ → „die steigenden Kosten“ (Partizip I, aktiv/gleichzeitig). Das Partizip wird wie ein Adjektiv dekliniert: der stabilisierte Import, die eingeführten Tests, mit dem abgeschlossenen Projekt. Erweitert: „die im letzten Jahr eingeführten Tests“ – alles zwischen Artikel und Partizip gehört dazu. In Lebensläufen, Anschreiben und Berichten ersetzt das die dass-Satz-Ketten. Serbisch kennt beides (stabilizovani uvoz, rastući troškovi) – die Deklination ist das Neue.",
+      "text": "Aus einem Relativsatz wird ein Wort: „der Import, der stabilisiert wurde“ → „der stabilisierte Import“ (Partizip II, passiv/abgeschlossen); „die Kosten, die steigen“ → „die steigenden Kosten“ (Partizip I, aktiv/gleichzeitig). Das Partizip wird wie ein Adjektiv dekliniert: der stabilisierte Import, die eingeführten Tests, mit dem abgeschlossenen Projekt. Erweitert: „die im letzten Jahr eingeführten Tests“ – alles zwischen Artikel und Partizip gehört dazu. In Lebensläufen, Anschreiben und Berichten ersetzt das die dass-Satz-Ketten. Serbisch kennt beides (stabilizovani uvoz, rastući troškovi) – die Deklination ist das Neue.", "textEn": "Aus einem Relativsatz wird ein Wort: „der Import, der stabilisiert wurde“ → „der stabilisierte Import“ (Partizip II, passiv/abgeschlossen); „die Kosten, die steigen“ → „die steigenden Kosten“ (Partizip I, aktiv/gleichzeitig). Englisch macht dasselbe mit „the stabilised import“ und „the rising costs“ – neu ist, dass das Partizip wie ein Adjektiv dekliniert wird: der stabilisierte Import, die eingeführten Tests, mit dem abgeschlossenen Projekt. Erweitert: „die im letzten Jahr eingeführten Tests“ – alles zwischen Artikel und Partizip gehört dazu; im Englischen stünde dieser Zusatz hinter dem Nomen. In Lebensläufen, Anschreiben und Berichten ersetzt das die dass-Satz-Ketten.",
       "examples": [
-        { "german": "der stabilisierte Import", "serbian": "stabilizovani uvoz", "note": "Partizip II = abgeschlossen" },
-        { "german": "die steigenden Anforderungen", "serbian": "rastući zahtevi", "note": "Partizip I = gleichzeitig" },
-        { "german": "die im letzten Jahr eingeführten Tests", "serbian": "testovi uvedeni prošle godine", "note": "erweitertes Attribut" },
-        { "german": "eine erfolgreich abgeschlossene Umstellung", "serbian": "uspešno završena migracija", "note": "nach „eine“: -e" }
+        { "german": "der stabilisierte Import", "serbian": "stabilizovani uvoz", "english": "the stabilised import", "note": "Partizip II = abgeschlossen" },
+        { "german": "die steigenden Anforderungen", "serbian": "rastući zahtevi", "english": "the rising requirements", "note": "Partizip I = gleichzeitig" },
+        { "german": "die im letzten Jahr eingeführten Tests", "serbian": "testovi uvedeni prošle godine", "english": "the tests introduced last year", "note": "erweitertes Attribut" },
+        { "german": "eine erfolgreich abgeschlossene Umstellung", "serbian": "uspešno završena migracija", "english": "a successfully completed migration", "note": "nach „eine“: -e" }
       ]
     },
     "steps": ["gr.pa.001", "gr.pa.002", "l21.match.001", "gr.pa.004", "gr.pa.104", "l21.spot.001", "gr.pa.106", "gr.nom.101", "l21.dlg.001", "ws.bb.103", "gr.pa.105"],

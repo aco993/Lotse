@@ -55,6 +55,8 @@ public sealed class LearnerProfile
     public DateOnly? TargetExamDate { get; set; }
     /// <summary>B2 by default; C1 lifts the planner's focus cap. See <see cref="Core.Model.TargetLevel"/>.</summary>
     public TargetLevel TargetLevel { get; set; } = TargetLevel.B2;
+    /// <summary>Which language the app explains German in. The interface itself stays German either way.</summary>
+    public HelperLanguage HelperLanguage { get; set; } = HelperLanguage.Serbian;
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public DateTime? PlacementCompletedUtc { get; set; }
 }

@@ -20,10 +20,10 @@
       "nodeId": "WS.FALSCHE_FREUNDE",
       "text": "Falsche Freunde klingen vertraut und bedeuten etwas anderes – und niemand korrigiert sie, weil der Satz grammatisch stimmt: Konkurs (Insolvenz, nicht Ausschreibung), Mappe (Hülle, nicht Landkarte), Pension (Beamtenruhegeld/Gasthaus, nicht Rente), Magazin (Zeitschrift, nicht Lager), Ambulanz (Notaufnahme, nicht Praxis), Rock (Kleidungsstück, nicht Frist), Kuchen (nicht Küche), Kante (nicht Eimer), Akademiker (jeder mit Hochschulabschluss). Wortbildung ist das Gegenmittel gegen kleinen Wortschatz: aus einem Stamm werden Nomen (-ung, -heit, -keit, -schaft), Adjektive (-lich, -ig, -isch, -bar, -los, -voll), Personen (-er, -in) und Komposita. Wer „arbeiten“ kennt, kennt zehn Wörter. Komposita gehören dazu: Das letzte Wort bestimmt Artikel und Bedeutung, davor steht oft ein Fugen-s (die Kündigungsfrist, der Jahresabschluss, das Arbeitszeitkonto). Zwei Schreibfallen zum Schluss: Nach kurzem Vokal steht ss (verpasst, Adresse, muss), nach langem Vokal oder Diphthong das scharfe s (Straße, heiß, groß) – „weiß“ mit ß, aber „wissen/gewusst“ mit ss. Und Umlaute schreibt man immer als ä, ö, ü; ae/oe/ue ist ein Tastaturnotbehelf und in der Prüfung ein Fehler.",
       "examples": [
-        { "german": "die Stellenausschreibung (nicht: der Konkurs)", "serbian": "konkurs", "note": "Konkurs = Insolvenz" },
-        { "german": "die Landkarte (nicht: die Mappe)", "serbian": "mapa", "note": "Mappe = Hülle für Papiere" },
-        { "german": "arbeiten → die Arbeit, arbeitslos, der Arbeiter, die Arbeitszeit", "serbian": "raditi → rad, nezaposlen, radnik, radno vreme", "note": "ein Stamm, viele Wörter" },
-        { "german": "wartbar, lesbar, erreichbar", "serbian": "održiv, čitljiv, dostupan", "note": "-bar = kann … werden" }
+        { "german": "die Stellenausschreibung (nicht: der Konkurs)", "serbian": "konkurs", "english": "the job advertisement (Konkurs means bankruptcy, not a competition)", "note": "Konkurs = Insolvenz" },
+        { "german": "die Landkarte (nicht: die Mappe)", "serbian": "mapa", "english": "the map (eine Mappe is a folder, not a map)", "note": "Mappe = Hülle für Papiere" },
+        { "german": "arbeiten → die Arbeit, arbeitslos, der Arbeiter, die Arbeitszeit", "serbian": "raditi → rad, nezaposlen, radnik, radno vreme", "english": "to work → work, unemployed, the worker, working hours", "note": "ein Stamm, viele Wörter" },
+        { "german": "wartbar, lesbar, erreichbar", "serbian": "održiv, čitljiv, dostupan", "english": "maintainable, readable, reachable", "note": "-bar = kann … werden" }
       ]
     },
     "steps": ["ws.ff.001", "ws.ff.002", "l18.match.001", "ws.ff.003", "ws.ff.005", "l18.spot.001", "ws.wb.002", "ws.wb.009", "l18.dlg.001", "ws.wb.104", "ws.ff.013"],

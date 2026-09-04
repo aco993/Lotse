@@ -58,6 +58,8 @@ public static class NameTemplate
         Options = RenderAll(e.Options, firstName, lastName),
         Explanation = RenderOptional(e.Explanation, firstName, lastName),
         SerbianNote = RenderOptional(e.SerbianNote, firstName, lastName),
+        EnglishNote = RenderOptional(e.EnglishNote, firstName, lastName),
+        PromptEn = RenderOptional(e.PromptEn, firstName, lastName),
         ExampleDe = RenderOptional(e.ExampleDe, firstName, lastName),
         ModelAnswer = RenderOptional(e.ModelAnswer, firstName, lastName),
         Text = RenderOptional(e.Text, firstName, lastName),
@@ -68,6 +70,27 @@ public static class NameTemplate
         Pairs = e.Pairs.Count == 0 ? e.Pairs
             : [.. e.Pairs.Select(p => p with { Left = Render(p.Left, firstName, lastName), Right = Render(p.Right, firstName, lastName) })],
     };
+
+    /// <summary>
+    /// The full boundary: the learner's name substituted and the helper language applied. For Vocab and Translate
+    /// the prompt IS the helper language, so it is swapped here - one place, so no path can forget it (the speech
+    /// synthesiser reads the rendered text, and a wrong-language prompt would be spoken as well as shown).
+    ///
+    /// The prompt falls back to Serbian when no English one was authored: a Vocab card without a prompt has no
+    /// question at all. A content test makes sure that fallback never fires in practice.
+    /// </summary>
+    public static Exercise Render(Exercise e, LearnerView view)
+    {
+        var rendered = Render(e, view.FirstName, view.LastName);
+        if (view.HelperLanguage != HelperLanguage.English || string.IsNullOrWhiteSpace(rendered.PromptEn)) return rendered;
+        return rendered with { Prompt = rendered.PromptEn };
+    }
+
+    /// <summary>
+    /// Lessons carry both helper columns to the view, which picks one per row (<see cref="ExampleRow.Helper"/>);
+    /// only the name substitution happens here.
+    /// </summary>
+    public static Lesson Render(Lesson l, LearnerView view) => Render(l, view.FirstName, view.LastName);
 
     public static Lesson Render(Lesson l, string firstName, string lastName) => l with
     {

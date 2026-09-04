@@ -24,10 +24,10 @@
       "nodeId": "RM.VORTRAG_STRUKTUR",
       "text": "In der mündlichen Prüfung entscheidet nicht nur die Grammatik, sondern ob du Struktur hörbar machst. Vortrag: „Ich möchte über … sprechen. Zunächst …, danach …, anschließend …, abschließend …“ – „Aus eigener Erfahrung kann ich sagen, dass …“ – „In meinem Heimatland …“ – „Zusammenfassend lässt sich sagen, dass …“. Diskussion: „Da stimme ich Ihnen zu, allerdings …“ – „Das sehe ich anders, weil …“ – „Wie sehen Sie das?“ – „Könnten wir uns darauf einigen, dass …?“. Diese Sätze müssen automatisch kommen, damit der Kopf frei ist für den Inhalt.",
       "examples": [
-        { "german": "Zunächst …, danach …, abschließend …", "serbian": "Najpre …, zatim …, na kraju …", "note": "Gliederung hörbar machen" },
-        { "german": "Da haben Sie Recht, allerdings …", "serbian": "Tu ste u pravu, međutim …", "note": "zustimmen + einschränken" },
-        { "german": "Wie sehen Sie das?", "serbian": "Kako Vi to vidite?", "note": "Partner einbeziehen" },
-        { "german": "Könnten wir uns darauf einigen, dass …?", "serbian": "Da li bismo mogli da se složimo da …?", "note": "Kompromissformel" }
+        { "german": "Zunächst …, danach …, abschließend …", "serbian": "Najpre …, zatim …, na kraju …", "english": "First …, then …, finally …", "note": "Gliederung hörbar machen" },
+        { "german": "Da haben Sie Recht, allerdings …", "serbian": "Tu ste u pravu, međutim …", "english": "You're right there, however …", "note": "zustimmen + einschränken" },
+        { "german": "Wie sehen Sie das?", "serbian": "Kako Vi to vidite?", "english": "How do you see it?", "note": "Partner einbeziehen" },
+        { "german": "Könnten wir uns darauf einigen, dass …?", "serbian": "Da li bismo mogli da se složimo da …?", "english": "Could we agree that …?", "note": "Kompromissformel" }
       ]
     },
     "steps": ["rm.vs.001", "rm.vs.002", "l12.match.001", "rm.vs.007", "rm.di.001", "l12.spot.001", "rm.di.005", "rm.di.006", "l12.dlg.001", "rm.vs.005", "rm.di.010"],

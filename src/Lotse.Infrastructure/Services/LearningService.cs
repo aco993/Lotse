@@ -414,8 +414,8 @@ public sealed class LearningService(
         await db.SaveChangesAsync(ct);
         var check = new CheckResult(outcome, $"{correct} von {total} richtig", [], feedback);
         // Checked against the raw answers above; only the copy the learner gets to read carries their name.
-        var (rf, rl) = await LearnerNamesAsync(db, userId, ct);
-        return new AnswerResult(check, NameTemplate.Render(exercise, rf, rl), Catalog.Node(exercise.NodeId), state.Mastery, null, complete);
+        var view = await LearnerViewAsync(db, userId, ct);
+        return new AnswerResult(check, NameTemplate.Render(exercise, view), Catalog.Node(exercise.NodeId), state.Mastery, null, complete);
     }
 
     /// <summary>A free session on one exercise (used by the Schreiben/Sprechen/Prüfung pages).</summary>
@@ -514,11 +514,15 @@ public sealed class LearningService(
     }
 
     /// <summary>The learner's own name for the content tokens; empty fields fall back inside <see cref="NameTemplate"/>.</summary>
-    private static async Task<(string First, string Last)> LearnerNamesAsync(LotseDbContext db, string userId, CancellationToken ct)
+    /// <summary>
+    /// Name and helper language in one read - everything the render boundary needs to turn shared catalogue
+    /// content into this learner's copy. A learner without a profile row gets the defaults.
+    /// </summary>
+    private static async Task<LearnerView> LearnerViewAsync(LotseDbContext db, string userId, CancellationToken ct)
     {
         var row = await db.Profiles.AsNoTracking().Where(p => p.UserId == userId)
-            .Select(p => new { p.FirstName, p.LastName }).FirstOrDefaultAsync(ct);
-        return (row?.FirstName ?? "", row?.LastName ?? "");
+            .Select(p => new { p.FirstName, p.LastName, p.HelperLanguage }).FirstOrDefaultAsync(ct);
+        return row is null ? LearnerView.Default : new LearnerView(row.FirstName ?? "", row.LastName ?? "", row.HelperLanguage);
     }
 
     public async Task<SessionView?> GetSessionAsync(Guid id, CancellationToken ct = default)
@@ -530,9 +534,9 @@ public sealed class LearningService(
         var steps = JsonSerializer.Deserialize<List<StepRecord>>(session.PlanJson) ?? [];
         // The catalogue is a singleton shared by every account, so the learner's name is substituted into copies
         // here - the one boundary where content stops being shared and belongs to one person.
-        var (first, last) = await LearnerNamesAsync(db, userId, ct);
+        var view = await LearnerViewAsync(db, userId, ct);
         var exercises = steps.Select(s => Catalog.Exercise(s.ExerciseId)).Where(e => e is not null)
-            .Select(e => NameTemplate.Render(e!, first, last)).ToList();
+            .Select(e => NameTemplate.Render(e!, view)).ToList();
         if (exercises.Count != steps.Count)
         {
             steps = steps.Where(s => Catalog.Exercise(s.ExerciseId) is not null).ToList();
@@ -684,12 +688,14 @@ public sealed class LearningService(
         await db.SaveChangesAsync(ct);
 
         var node = Catalog.Node(exercise.NodeId);
+        var view = await LearnerViewAsync(db, userId, ct);
+        var lang = view.HelperLanguage;
         // The contrastive note belongs to real mistakes, not to a capitalisation slip on an otherwise right answer.
+        // It is also the one place where "no note in your language" simply means no note - see Exercise.NoteFor.
         var note = check.Outcome == Outcome.Incorrect
-            ? exercise.SerbianNote ?? node?.InterferenceNote
-            : check.SlipCodes.Contains(AnswerChecker.SlipMissingArticle) ? Catalog.Node("GR.ARTIKEL_GENUS")?.InterferenceNote : null;
-        var (rf, rl) = await LearnerNamesAsync(db, userId, ct);
-        return new AnswerResult(check, NameTemplate.Render(exercise, rf, rl), node, state.Mastery, note, complete);
+            ? exercise.NoteFor(lang) ?? node?.InterferenceNoteFor(lang)
+            : check.SlipCodes.Contains(AnswerChecker.SlipMissingArticle) ? Catalog.Node("GR.ARTIKEL_GENUS")?.InterferenceNoteFor(lang) : null;
+        return new AnswerResult(check, NameTemplate.Render(exercise, view), node, state.Mastery, note, complete);
     }
 
     /// <summary>Reading / listening comprehension: one score for the whole exercise.</summary>

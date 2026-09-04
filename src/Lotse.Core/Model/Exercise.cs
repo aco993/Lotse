@@ -93,6 +93,23 @@ public sealed record Exercise
     public string? Explanation { get; init; }
     /// <summary>Contrastive note for Serbian speakers, shown when helpful.</summary>
     public string? SerbianNote { get; init; }
+    /// <summary>
+    /// The same note written for English speakers. Deliberately not a translation of <see cref="SerbianNote"/>:
+    /// "sa + instrumental → mit + Dativ" says nothing to someone whose first language has no cases, so the contrast
+    /// has to be made against English instead.
+    /// </summary>
+    public string? EnglishNote { get; init; }
+    /// <summary>
+    /// The prompt in English, for the two types whose prompt IS the helper language (Vocab, Translate). Everything
+    /// else has a German prompt and leaves this null. A content test asserts no Vocab/Translate item lacks it.
+    /// </summary>
+    public string? PromptEn { get; init; }
+
+    /// <summary>
+    /// The contrastive note in the learner's helper language, or null. No fallback on purpose: showing a Serbian
+    /// note to someone who chose English is worse than showing none, and the note is an extra, never the task.
+    /// </summary>
+    public string? NoteFor(HelperLanguage lang) => lang == HelperLanguage.English ? EnglishNote : SerbianNote;
 
     // Vocab-specific
     public string? Lemma { get; init; }

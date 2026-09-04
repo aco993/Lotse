@@ -18,12 +18,12 @@
     "grammar": {
       "title": "Präpositionen mit festem Kasus",
       "nodeId": "GR.KASUS_PRAEPOSITIONEN",
-      "text": "Jede Präposition „bestellt“ ihren Kasus. Dativ: mit, nach, bei, seit, von, zu, aus, gegenüber. Akkusativ: für, ohne, gegen, um, durch, bis. Genitiv (schriftlich und auf dem Amt): wegen, trotz, während, innerhalb, außerhalb, statt, aufgrund. Das Prinzip kennst du aus dem Serbischen mit seinen sieben Fällen – nur die Zuordnung ist anders: „sa + instrumental“ → „mit + Dativ“, „za + akuzativ“ → „für + Akkusativ“, „zbog + genitiv“ → „wegen + Genitiv“ (das stimmt sogar überein). Lerne Präposition und Kasus als ein Paar.",
+      "text": "Jede Präposition „bestellt“ ihren Kasus. Dativ: mit, nach, bei, seit, von, zu, aus, gegenüber. Akkusativ: für, ohne, gegen, um, durch, bis. Genitiv (schriftlich und auf dem Amt): wegen, trotz, während, innerhalb, außerhalb, statt, aufgrund. Das Prinzip kennst du aus dem Serbischen mit seinen sieben Fällen – nur die Zuordnung ist anders: „sa + instrumental“ → „mit + Dativ“, „za + akuzativ“ → „für + Akkusativ“, „zbog + genitiv“ → „wegen + Genitiv“ (das stimmt sogar überein). Lerne Präposition und Kasus als ein Paar.", "textEn": "Jede Präposition „bestellt“ ihren Kasus. Dativ: mit, nach, bei, seit, von, zu, aus, gegenüber. Akkusativ: für, ohne, gegen, um, durch, bis. Genitiv (schriftlich und auf dem Amt): wegen, trotz, während, innerhalb, außerhalb, statt, aufgrund. Im Englischen ändert eine Präposition am folgenden Nomen gar nichts („with the colleague“, „for the colleague“, „because of the colleague“) – hier gibt es also nichts zu übertragen, sondern etwas Neues zu lernen. Der einzige Anker: Der Kasus gehört fest zur Präposition, nicht zur Bedeutung. Lerne Präposition und Kasus als ein Paar.",
       "examples": [
-        { "german": "die Bestätigung vom Vermieter (von + dem)", "serbian": "potvrda od stanodavca", "note": "von + Dativ" },
-        { "german": "innerhalb von zwei Wochen / innerhalb zweier Wochen", "serbian": "u roku od dve nedelje", "note": "innerhalb + Genitiv / von + Dativ" },
-        { "german": "seit einem Jahr in Deutschland", "serbian": "godinu dana u Nemačkoj", "note": "seit + Dativ, Präsens!" },
-        { "german": "wegen des Umzugs", "serbian": "zbog selidbe", "note": "wegen + Genitiv" }
+        { "german": "die Bestätigung vom Vermieter (von + dem)", "serbian": "potvrda od stanodavca", "english": "the confirmation from the landlord", "note": "von + Dativ" },
+        { "german": "innerhalb von zwei Wochen / innerhalb zweier Wochen", "serbian": "u roku od dve nedelje", "english": "within two weeks", "note": "innerhalb + Genitiv / von + Dativ" },
+        { "german": "seit einem Jahr in Deutschland", "serbian": "godinu dana u Nemačkoj", "english": "in Germany for a year", "note": "seit + Dativ, Präsens!" },
+        { "german": "wegen des Umzugs", "serbian": "zbog selidbe", "english": "because of the move", "note": "wegen + Genitiv" }
       ]
     },
     "steps": ["ws.beh.001", "gr.kp.001", "l05.match.001", "gr.kp.003", "ws.beh.013", "l05.spot.001", "gr.kp.004", "gr.kp.007", "l05.dlg.001", "gr.kp.011", "ws.beh.010"],
