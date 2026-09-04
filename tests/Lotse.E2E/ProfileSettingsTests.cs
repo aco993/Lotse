@@ -10,8 +10,11 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
 {
     private const string Password = "lozinka-e2e-2026";
 
-    private static Task OpenTargetLevelAsync(IPage page)
-        => page.Locator("div.mud-input-control:has(input[aria-label='Zielniveau'])").ClickAsync();
+    /// <summary>MudSelect's own input is type=hidden, so the click has to land on the control wrapper around it.</summary>
+    private static Task OpenSelectAsync(IPage page, string label)
+        => page.Locator($"div.mud-input-control:has(input[aria-label='{label}'])").ClickAsync();
+
+    private static Task OpenTargetLevelAsync(IPage page) => OpenSelectAsync(page, "Zielniveau");
 
     private static async Task RegisterAsync(IPage page, string email)
     {
@@ -52,5 +55,26 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
         await page.Locator(".mud-list-item", new() { HasTextString = "B2 – Prüfungsvorbereitung" }).First.ClickAsync();
         await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
         await Expect(page.GetByText("Dein Kurs auf B2")).ToBeVisibleAsync();
+    });
+
+    [Fact]
+    public Task Occupation_is_saved_explained_and_survives_a_reload() => app.RunAsync(nameof(Occupation_is_saved_explained_and_survives_a_reload), async page =>
+    {
+        await RegisterAsync(page, LotseE2EFixture.UniqueEmail("beruf"));
+
+        await page.GotoAsync("/einstellungen");
+        // Unset by default, and the hint says the planner behaves as it always did.
+        await Expect(page.GetByText("rein nach deinen Schwächen")).ToBeVisibleAsync();
+
+        await OpenSelectAsync(page, "Branche");
+        await page.Locator(".mud-list-item", new() { HasTextString = "Pflege" }).First.ClickAsync();
+        await Expect(page.GetByText("bevorzugt der Lotse Aufgaben aus deinem Feld")).ToBeVisibleAsync();
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
+        await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
+
+        // A setting that does not survive a reload was never saved.
+        await page.ReloadAsync();
+        await Expect(page.GetByText("bevorzugt der Lotse Aufgaben aus deinem Feld")).ToBeVisibleAsync();
     });
 }

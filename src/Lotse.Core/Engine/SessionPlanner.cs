@@ -45,6 +45,8 @@ public sealed record PlannerInput
     public string? RequestedNodeId { get; init; }
     /// <summary>How far above B2 the focus ranking may reach. Defaults to B2, so existing plans are unchanged.</summary>
     public TargetLevel TargetLevel { get; init; } = TargetLevel.B2;
+    /// <summary>The learner's field. Unspecified (the default) leaves every ranking and tie-break exactly as it was.</summary>
+    public Occupation Occupation { get; init; } = Occupation.Unspecified;
     /// <summary>Seed for the tie-breaking randomness so plans are reproducible in tests.</summary>
     public int Seed { get; init; } = Environment.TickCount;
 }
@@ -136,7 +138,7 @@ public sealed class SessionPlanner
             var placed = 0;
             while (placed < perNodeCap)
             {
-                var ex = PickDrill(catalog, nodeId, target, used, input.RecentExerciseIds, rng, avoidRecent: true);
+                var ex = PickDrill(catalog, nodeId, target, used, input.RecentExerciseIds, rng, avoidRecent: true, input.Occupation);
                 if (ex is null || !Fits(ex)) break;
                 var kind = state is null || state.Attempts < 3 ? StepKind.Explore : StepKind.Focus;
                 Add(kind, ex, why);
@@ -169,6 +171,7 @@ public sealed class SessionPlanner
             var filler = catalog.Exercises
                 .Where(e => !e.IsProduction && !e.IsReceptive && !used.Contains(e.Id) && !input.RecentExerciseIds.Contains(e.Id))
                 .OrderBy(e => Math.Abs(e.Band.Difficulty() - Ability.TargetDifficulty(input.SkillStates.GetValueOrDefault(e.NodeId)?.Theta ?? PriorTheta)))
+                .ThenByDescending(e => input.Occupation.Fit(e))
                 .ThenBy(_ => rng.Next())
                 .FirstOrDefault(Fits);
             if (filler is null) break;
@@ -251,24 +254,30 @@ public sealed class SessionPlanner
             var daysSince = state?.LastPracticedUtc is null ? 30 : (input.NowUtc - state.LastPracticedUtc.Value).TotalDays;
             var freshErrors = errors7d.GetValueOrDefault(node.Id);
 
+            // A nudge, not a rewrite: 0.15 can lift a node past a near neighbour, never past a real weakness.
+            var occupationFits = input.Occupation.PreferredNodes().Contains(node.Id);
+
             var priority = (1 - mastery) * node.Weight * (0.5 + 0.5 * confidence) // known weakness, trusted more with evidence
                          + (confidence < 0.25 ? 0.35 : 0)                        // exploration bonus for unknown nodes
                          + Math.Min(0.3, daysSince / 14.0 * 0.3)                  // spacing across topics
                          + Math.Min(0.3, freshErrors * 0.1)                       // fresh mistakes
-                         + (node.SerbianInterference ? 0.05 : 0);
+                         + (node.SerbianInterference ? 0.05 : 0)
+                         + (occupationFits ? OccupationExtensions.NodeBoost : 0);
 
             var reason = state is null || state.Attempts < 3
                 ? $"Erkundung: Wie sicher bist du bei „{node.Title}“?"
                 : freshErrors > 0
                     ? $"Schwerpunkt „{node.Title}“: {freshErrors} Fehler in den letzten 7 Tagen (Beherrschung {mastery:P0})."
                     : $"Schwerpunkt „{node.Title}“: Beherrschung {mastery:P0}.";
+            // Say it when it mattered - an adaptation the learner cannot see is indistinguishable from a whim.
+            if (occupationFits) reason += $" Vorgezogen, {input.Occupation.ReasonTail()}.";
             ranked.Add((node.Id, priority, reason));
         }
         return ranked.OrderByDescending(r => r.Item2);
     }
 
     private static Exercise? PickDrill(ContentCatalog catalog, string nodeId, double targetDifficulty, ISet<string> used,
-        IReadOnlySet<string> recent, Random rng, bool avoidRecent)
+        IReadOnlySet<string> recent, Random rng, bool avoidRecent, Occupation occupation = Occupation.Unspecified)
     {
         var candidates = catalog.ForNode(nodeId)
             .Where(e => !e.IsProduction && e.Type != ExerciseType.Reading && !used.Contains(e.Id))
@@ -281,6 +290,9 @@ public sealed class SessionPlanner
         return fresh
             .OrderBy(e => Math.Abs(e.Band.Difficulty() - targetDifficulty))
             .ThenBy(e => TypePreference(e.Type))
+            // Occupation is the last word before chance, never before fit or pedagogy. With Unspecified the key is
+            // constant, so the ordering - and the sequence of rng draws - is bit for bit the old one.
+            .ThenByDescending(e => occupation.Fit(e))
             .ThenBy(_ => rng.Next())
             .First();
     }

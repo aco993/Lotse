@@ -207,7 +207,10 @@ public sealed class LearningService(
             .OrderByDescending(a => a.Utc).Select(a => (DateTime?)a.Utc).FirstOrDefaultAsync(ct);
         // Read straight from the row: the profile may not be in this DbContext's change tracker, and a session must
         // be planned for the level the learner has saved, not for a stale copy.
-        var targetLevel = await db.Profiles.AsNoTracking().Where(p => p.UserId == userId).Select(p => p.TargetLevel).FirstOrDefaultAsync(ct);
+        var plannerProfile = await db.Profiles.AsNoTracking().Where(p => p.UserId == userId)
+            .Select(p => new { p.TargetLevel, p.Occupation }).FirstOrDefaultAsync(ct);
+        var targetLevel = plannerProfile?.TargetLevel ?? TargetLevel.B2;
+        var occupation = plannerProfile?.Occupation ?? Occupation.Unspecified;
 
         return new PlannerInput
         {
@@ -223,6 +226,7 @@ public sealed class LearningService(
             LastInputUtc = lastInput,
             RequestedNodeId = requestedNode,
             TargetLevel = targetLevel,
+            Occupation = occupation,
             Seed = Random.Shared.Next(),
         };
     }
@@ -676,7 +680,12 @@ public sealed class LearningService(
         var errors = await RecentErrorsAsync(db, profile.UserId, 30, ct);
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, Now, take: 5).Select(w => w.Title).ToList();
         var codes = errors.GroupBy(e => e.Code).OrderByDescending(g => g.Count()).Take(8).Select(g => g.Key).ToList();
-        return new LearnerContext(profile.NativeLanguage, weak, codes, Catalog.ErrorTypes.ToList(), profile.Occupation);
+        // The free text is the richer prompt ("Softwareentwickler"); the structured field is the fallback so the
+        // tutor still knows the field when only the dropdown was set.
+        var job = string.IsNullOrWhiteSpace(profile.JobTitle)
+            ? profile.Occupation == Occupation.Unspecified ? null : profile.Occupation.Label()
+            : profile.JobTitle;
+        return new LearnerContext(profile.NativeLanguage, weak, codes, Catalog.ErrorTypes.ToList(), job);
     }
 
     public async Task<ProductionResult> SubmitProductionAsync(Guid? sessionId, int stepIndex, string exerciseId, string text, bool speaking, CancellationToken ct = default)
