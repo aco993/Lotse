@@ -6,7 +6,8 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
-@* Static SSR by design – see Register.razor's doc comment for why. *@
+@* Static SSR by design – see Register.razor's doc comment for why. Two ways in: password, or a passkey (WebAuthn)
+   via PasskeySubmit, which posts the credential back through this same form as Input.Passkey. *@
 
 <PageTitle>Anmelden – Lotse</PageTitle>
 
@@ -22,11 +23,11 @@
     <AcctAlert Kind="success">@_statusMessage</AcctAlert>
 }
 
-<EditForm Model="Input" method="post" OnValidSubmit="LoginUserAsync" FormName="login">
+<EditForm EditContext="_editContext" method="post" OnSubmit="LoginUserAsync" FormName="login">
     <DataAnnotationsValidator />
     <div class="acct-field">
         <label class="acct-label" for="email">E-Mail</label>
-        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" autofocus />
+        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username webauthn" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" autofocus />
         <ValidationMessage For="() => Input.Email" class="acct-error" />
     </div>
     <div class="acct-field">
@@ -42,6 +43,11 @@
         <span>Angemeldet bleiben</span>
     </label>
     <button type="submit" class="acct-btn">Anmelden</button>
+    <div class="acct-divider">oder</div>
+    <PasskeySubmit Operation="PasskeyOperation.Request" Name="Input.Passkey" EmailName="Input.Email" class="acct-btn secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="4" y="11" width="16" height="10" rx="2"/><circle cx="12" cy="16" r="1.5"/></svg>
+        Mit Passkey anmelden
+    </PasskeySubmit>
 </EditForm>
 
 <div class="acct-alt">Neu hier? <a href="@RegisterUrl">Konto erstellen</a></div>
@@ -49,6 +55,7 @@
 @code {
     private string? _errorMessage;
     private string? _statusMessage;
+    private EditContext _editContext = default!;
 
 #pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
@@ -60,6 +67,7 @@
 
     protected override void OnInitialized()
     {
+        _editContext = new EditContext(Input);
         // One-shot status from a redirect (e.g. "account not found"), same pattern as Manage/ChangePassword.
         if (HttpContext.Request.Cookies.TryGetValue(IdentityRedirectManager.StatusCookieName, out var message))
         {
@@ -70,9 +78,26 @@
 
     public async Task LoginUserAsync()
     {
-        // lockoutOnFailure: true - five wrong passwords lock the account for five minutes (IdentityOptions.Lockout
-        // defaults), otherwise this form would allow unlimited guessing against any registered address.
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+        if (!string.IsNullOrEmpty(Input.Passkey?.Error))
+        {
+            _errorMessage = $"Passkey: {Input.Passkey.Error}";
+            return;
+        }
+
+        SignInResult result;
+        if (!string.IsNullOrEmpty(Input.Passkey?.CredentialJson))
+        {
+            // Passkey sign-in carries no password, so the DataAnnotations on the password field must not run.
+            result = await SignInManager.PasskeySignInAsync(Input.Passkey.CredentialJson);
+        }
+        else
+        {
+            if (!_editContext.Validate()) return;
+            // lockoutOnFailure: true - five wrong passwords lock the account for five minutes (IdentityOptions.Lockout
+            // defaults), otherwise this form would allow unlimited guessing against any registered address.
+            result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+        }
+
         if (result.Succeeded) RedirectManager.RedirectTo(ReturnUrl ?? "");
         else if (result.IsLockedOut) _errorMessage = "Zu viele Fehlversuche – dieses Konto ist für fünf Minuten gesperrt.";
         else _errorMessage = "Anmeldung fehlgeschlagen – E-Mail oder Passwort stimmt nicht.";
@@ -88,5 +113,7 @@
         public string Password { get; set; } = "";
 
         public bool RememberMe { get; set; }
+
+        public PasskeyInputModel? Passkey { get; set; }
     }
 }

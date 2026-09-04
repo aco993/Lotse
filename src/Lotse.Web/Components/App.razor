@@ -48,7 +48,12 @@
          Account-vs-regular route split instead. HeadOutlet gets the same value so its interactivity never outlives
          (or falls short of) whatever <Routes/> resolved to for this request. -->
     <Routes @rendermode="@PageRenderMode" />
-    @if (!IsStaticPage)
+    @if (IsStaticPage)
+    {
+        @* The only script a static page gets: the WebAuthn helper behind <PasskeySubmit> (login, Manage/Passkeys). *@
+        <script src="@Assets["Components/Account/Shared/PasskeySubmit.razor.js"]" type="module"></script>
+    }
+    else
     {
         @* Static pages get no circuit bootstrap: nothing to reconnect, nothing MudBlazor to run, and for a
            signed-out visitor blazor.web.js would only try - and fail against the fallback authorization policy -

@@ -53,8 +53,9 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 ## Phase 5 – Portfolio polish ⬜
 
 - ⬜ README with screenshots and a short architecture diagram; English/German.
-- ⬜ CI (GitHub Actions): build, tests, content validation; release artefact (self-contained win-x64).
-- ⬜ Playwright smoke test for the daily loop (start session → answer → finish).
+- ✅ CI (GitHub Actions): format gate, build, all test tiers incl. Playwright, traces on failure; Dependabot. ⬜ Release artefact (self-contained win-x64).
+- ✅ Playwright end-to-end: the daily loop (register → placement → answer → logout → login → resume) and the passkey ceremony, on Kestrel via `WebApplicationFactory.UseKestrel`.
+- ✅ Passkeys (WebAuthn) next to the password (0.7.2).
 - ⬜ Optional: Web API + minimal React client to demonstrate the engine's independence from Blazor.
 
 ## Deliberate non-goals

@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # NuGet: every version lives in Directory.Packages.props (central package management); one grouped PR a week.
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dotnet-and-tests:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

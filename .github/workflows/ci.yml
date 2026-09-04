@@ -5,17 +5,38 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+
       - name: Restore
         run: dotnet restore Lotse.slnx
+
+      - name: Format gate (dotnet format --verify-no-changes)
+        run: dotnet format Lotse.slnx --verify-no-changes --no-restore
+
       - name: Build
         run: dotnet build Lotse.slnx --no-restore -c Release
-      - name: Test (engine, service, content integrity)
+
+      - name: Install Playwright Chromium
+        run: pwsh tests/Lotse.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Test (engine, content, service, components, host, E2E)
         run: dotnet test Lotse.slnx --no-build -c Release
+
+      - name: Upload Playwright traces (failures only)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: tests/Lotse.E2E/bin/Release/net10.0/playwright-traces/
+          if-no-files-found: ignore

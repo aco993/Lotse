@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Lotse.Core.Tests/Lotse.Core.Tests.csproj" />
+    <Project Path="tests/Lotse.E2E/Lotse.E2E.csproj" />
     <Project Path="tests/Lotse.Web.Tests/Lotse.Web.Tests.csproj" />
   </Folder>
 </Solution>

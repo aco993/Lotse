@@ -5,8 +5,9 @@
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ Lotse.Web  (Blazor Server, MudBlazor)                            │
-│   Account/*: Login · Register · ForgotPassword · ResetPassword · │
-│              Manage (ASP.NET Core Identity, static SSR)          │
+│   Account/*: Login (Passwort oder Passkey) · Register ·          │
+│              ForgotPassword · ResetPassword · Manage (Passwort,  │
+│              Passkeys) - ASP.NET Core Identity, static SSR       │
 │   Pages: Heute · Session · Schreiben · Sprechen · Prüfung ·      │
 │          Fortschritt · Fehler · Themen · Einstellungen           │
 │          (all behind the login, InteractiveServer)               │
@@ -102,6 +103,10 @@ The test suite loads the real content and rejects any item that violates this co
 SQLite file `data/lotse.db`. `LotseDbContext : IdentityDbContext<ApplicationUser>` - the Identity tables (`AspNetUsers` and friends) alongside Lotse's own: LearnerProfiles (one per account), SkillStates (per account+node), ReviewStates (per account+exercise), Attempts, ErrorEvents, Sessions (plan as JSON), Productions (text + evaluation JSON), Settings (per account+key - this is where the Tutor's encrypted API key lives, never readable from another account), and the one shared table, GeneratedExercises (JSON, no `UserId` - see the trade-off table above).
 
 `SkillState` and `ReviewState` are Core types mapped directly by EF Core – no duplicate entity classes; computed members are ignored in the model. Their `UserId` is an EF Core *shadow* property (set via `Entry(x).Property("UserId")`, never a real field on the Core type) for the same reason: `Lotse.Core` stays free of any notion of "account".
+
+## Passkeys (WebAuthn)
+
+Identity schema v3 (`IdentityDbContext` adds `AspNetUserPasskeys` when `IdentityOptions.Stores.SchemaVersion` says so). That option is read from the *application* service provider behind the DbContext options, so `LotseDbContext.OnConfiguring` supplies a minimal provider carrying exactly that one setting whenever nobody else did - tests and `dotnet ef` build the same model as the app, and `DatabaseInitializerTests` checks that the migrations agree. The browser side is the official template's `<passkey-submit>` custom element (`PasskeySubmit.razor.js`): it fetches creation/request options from two minimal-API endpoints (antiforgery token in a header, validated explicitly), runs `navigator.credentials.create/get`, and posts the credential back through the surrounding static form - the login page keeps working exactly like a plain HTML form, this is its only script. The E2E test drives the whole ceremony with Chromium's virtual authenticator (CDP `WebAuthn.addVirtualAuthenticator`), so it runs headless in CI without hardware.
 
 ## Multi-user accounts
 
