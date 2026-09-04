@@ -43,7 +43,10 @@ public sealed class LearnerProfile
     public required string UserId { get; set; }
     public string Name { get; set; } = "";
     public string NativeLanguage { get; set; } = "Serbisch";
-    public string? Occupation { get; set; } = "Softwareentwickler";
+    /// <summary>Free text, purely context for the tutor prompt ("… arbeitet als Softwareentwickler").</summary>
+    public string? JobTitle { get; set; } = "Softwareentwickler";
+    /// <summary>Structured field; steers which drills the planner prefers. See <see cref="Core.Model.Occupation"/>.</summary>
+    public Occupation Occupation { get; set; } = Occupation.Unspecified;
     public int DailyMinutes { get; set; } = 10;
     public DateOnly? TargetExamDate { get; set; }
     /// <summary>B2 by default; C1 lifts the planner's focus cap. See <see cref="Core.Model.TargetLevel"/>.</summary>

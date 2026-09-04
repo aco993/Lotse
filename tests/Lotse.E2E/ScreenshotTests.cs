@@ -50,6 +50,8 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     await Expect(page.GetByText("Schwerpunkte bleiben bei B2.2")).ToBeVisibleAsync();
                     await page.Locator("div.mud-input-control:has(input[aria-label='Zielniveau'])").ClickAsync();
                     await page.Locator(".mud-list-item", new() { HasTextString = "C1 – darüber hinaus" }).First.ClickAsync();
+                    await page.Locator("div.mud-input-control:has(input[aria-label='Branche'])").ClickAsync();
+                    await page.Locator(".mud-list-item", new() { HasTextString = "Pflege" }).First.ClickAsync();
                     await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
                     await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
                     await Shoot(page, $"einstellungen-zielniveau-{viewport}-{theme}");

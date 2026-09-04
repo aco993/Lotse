@@ -73,6 +73,22 @@ U **Einstellungen**, pored termina ispita, biraš cilj:
 
 Kad je cilj C1, na strani Heute uz „B2-Bereitschaft" stoji i druga linija **C1-Nähe** — koliko ti sedi gradivo iznad B2. To nije druga „spremnost za ispit", nego mera savladanosti; dok ima malo podataka piše „(Schätzung)".
 
+## 1e. Branche (oblast u kojoj radiš)
+
+U **Einstellungen** pored polja „Beruf" (slobodan tekst, koji ide tutoru kao kontekst) sada biraš i **Branche**: IT/Software, Pflege, Bau/Handwerk, Medizin, Büro/Verwaltung, Handel/Verkauf — ili ništa.
+
+Efekat je namerno mali i objašnjiv:
+
+- par rečničkih tema dobije blagu prednost (Pflege/Medizin → `Gesundheit & Körper`, Bau → `Wohnen & Mobilität` i `Arbeit & Karriere`, IT → `IT & Software` …),
+- kad su dva zadatka podjednako prikladna, pobeđuje onaj iz tvoje oblasti,
+- kad je to odlučilo, u obrazloženju zadatka piše zašto: *„Vorgezogen, weil du in der Pflege arbeitest."*
+
+Šta se **ne** dešava: tvoje slabosti i dalje odlučuju šta se vežba. Ako ti je pasiv slab, dobijaš pasiv — bez obzira na branšu. Branša nikad ne sakriva gradivo i ne pravi ti „ugodnu zonu".
+
+> **Priča u kursu ostaje ista.** 24 lekcije prate posao u softverskoj firmi — to je autorova priča i namerno je IT-obojena. Branša utiče na *vežbe i rečnik*, ne na lekcije.
+
+Bez izbora sve radi tačno kao i pre.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

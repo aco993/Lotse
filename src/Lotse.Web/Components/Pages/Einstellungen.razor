@@ -17,7 +17,13 @@ else
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Lernplan</MudText>
         <MudGrid Spacing="2">
             <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.Name" Label="Name (für Musterlösungen)" Variant="Variant.Outlined" /></MudItem>
-            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.Occupation" Label="Beruf (Kontext für den Tutor)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6"><MudTextField @bind-Value="_p.JobTitle" Label="Beruf (Kontext für den Tutor)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="Occupation" @bind-Value="_p.Occupation" Label="Branche" Variant="Variant.Outlined">
+                    @foreach (var o in Enum.GetValues<Occupation>()) { <MudSelectItem T="Occupation" Value="@o">@o.Label()</MudSelectItem> }
+                </MudSelect>
+                <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@OccupationHint</MudText>
+            </MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect T="int" @bind-Value="_p.DailyMinutes" Label="Tägliche Session" Variant="Variant.Outlined">
                     <MudSelectItem T="int" Value="5">5 Minuten</MudSelectItem>
@@ -155,6 +161,10 @@ else
     private string TargetLevelHint => _p?.TargetLevel == TargetLevel.C1
         ? "Schwerpunkte dürfen jetzt bis C1 reichen (gehobener Wortschatz, B2.2-Grammatik). Die Prüfungsseite bleibt Goethe-B2."
         : "Schwerpunkte bleiben bei B2.2 und darunter – der direkte Weg zur B2-Prüfung.";
+
+    private string OccupationHint => _p is null || _p.Occupation == Occupation.Unspecified
+        ? "Ohne Angabe wählt der Lotse wie bisher – rein nach deinen Schwächen."
+        : $"Bei gleicher Eignung bevorzugt der Lotse Aufgaben aus deinem Feld und sagt es dazu. Die Kurs-Geschichte bleibt unverändert.";
 
     private TutorPreset Preset => TutorPresets.Get(_presetId);
     private string KeyHelp => Preset.KeyEnvVar is { } env ? $"Leer lassen, um {env} aus der Umgebung zu nutzen" : "";

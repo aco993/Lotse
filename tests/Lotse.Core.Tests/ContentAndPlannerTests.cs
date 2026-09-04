@@ -162,6 +162,66 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
         Assert.DoesNotContain(FocusedNodes(plan), n => n.Band == CefrBand.C1);
     }
 
+    /// <summary>Every node equally and mildly known, so nothing but the occupation nudge can move the order.</summary>
+    private Dictionary<string, SkillState> AllEqual()
+    {
+        var states = new Dictionary<string, SkillState>();
+        foreach (var n in fx.Catalog.Nodes)
+            states[n.Id] = new SkillState { NodeId = n.Id, Theta = 0, Attempts = 8, Correct = 5, LastPracticedUtc = Now.AddDays(-3) };
+        return states;
+    }
+
+    [Fact]
+    public void Occupation_lifts_its_own_nodes_and_says_why()
+    {
+        var states = AllEqual();
+        var ohne = new SessionPlanner().RankFocusNodes(Input(15, states)).ToList();
+        var mit = new SessionPlanner().RankFocusNodes(Input(15, states) with { Occupation = Occupation.Pflege }).ToList();
+
+        int Rank(List<(string NodeId, double Priority, string Reason)> l) => l.FindIndex(r => r.NodeId == "WS.GESUNDHEIT_KOERPER");
+        Assert.True(Rank(mit) < Rank(ohne), $"Pflege: Rang {Rank(mit)} statt besser als {Rank(ohne)}");
+
+        // An adaptation the learner cannot see is indistinguishable from a whim.
+        Assert.Contains("weil du in der Pflege arbeitest", mit.First(r => r.NodeId == "WS.GESUNDHEIT_KOERPER").Reason);
+    }
+
+    [Fact]
+    public void Without_an_occupation_nothing_is_pulled_forward()
+    {
+        var ranked = new SessionPlanner().RankFocusNodes(Input(15, AllEqual())).ToList();
+        Assert.All(ranked, r => Assert.DoesNotContain("Vorgezogen", r.Reason));
+    }
+
+    [Fact]
+    public void Occupation_is_only_a_tie_break_never_a_reordering_of_weaknesses()
+    {
+        // A genuine weakness must still win over a merely well-fitting topic.
+        var states = AllEqual();
+        states["GR.PASSIV"] = new SkillState { NodeId = "GR.PASSIV", Theta = -2.0, Attempts = 15, Correct = 2, LastPracticedUtc = Now.AddDays(-1), LastErrorUtc = Now.AddDays(-1) };
+
+        var ranked = new SessionPlanner().RankFocusNodes(Input(15, states) with { Occupation = Occupation.Pflege }).ToList();
+        Assert.Equal("GR.PASSIV", ranked[0].NodeId);
+    }
+
+    [Theory]
+    [InlineData(Occupation.Unspecified, 0)]   // an unset profile must score every exercise the same
+    [InlineData(Occupation.IT, 5)]            // node + tag + professional context
+    public void Occupation_fit_scores_what_it_promises(Occupation occupation, int expected)
+    {
+        var exercise = new Exercise
+        {
+            Id = "x",
+            Type = ExerciseType.Cloze,
+            NodeId = "WS.IT_SOFTWARE",
+            Band = CefrBand.B2_1,
+            Prompt = "…",
+            Answers = ["…"],
+            Tags = ["it"],
+            Context = ExerciseContext.Beruf,
+        };
+        Assert.Equal(expected, occupation.Fit(exercise));
+    }
+
     [Fact]
     public void Weak_node_is_prioritised_and_explained()
     {
