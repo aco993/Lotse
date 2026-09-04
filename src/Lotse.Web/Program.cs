@@ -32,7 +32,7 @@ builder.Services.AddSingleton(sp => new ContentCatalogProvider(contentDir, sp.Ge
 // references it) - only the EF Core store is a separate package. Registration follows the shape of the official
 // `dotnet new blazor -au Individual` template, trimmed to what Lotse actually uses (no external logins, no 2FA).
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<ICurrentUserAccessor, WebCurrentUserAccessor>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -49,10 +49,11 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     // lock every new registration out immediately, so registration signs the learner in right away instead.
     options.SignIn.RequireConfirmedAccount = false;
     options.User.RequireUniqueEmail = true;
-    // Length over composition rules (NIST SP 800-63B): 8+ characters, no forced digit/symbol/case mix. The
-    // registration form promises exactly this ("Mindestens 8 Zeichen"), so the two must stay in step.
-    options.Password.RequiredLength = 8;
-    options.Password.RequiredUniqueChars = 4;
+    // Length over composition rules (NIST SP 800-63B): 8+ characters, no forced digit/symbol/case mix and no
+    // unique-character minimum either. The registration form promises exactly "Mindestens 8 Zeichen", so the
+    // two must stay in step - any rule added here needs a matching hint in Register/ResetPassword/ChangePassword.
+    options.Password.RequiredLength = PasswordRules.MinLength;
+    options.Password.RequiredUniqueChars = 1;
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
@@ -78,7 +79,7 @@ var tutorDefaults = builder.Configuration.GetSection("Lotse:Tutor").Get<TutorDef
 // would overwrite the in-memory tutor for every other signed-in learner. See TutorRegistry's own doc comment.
 builder.Services.AddScoped<TutorRegistry>(sp => new TutorRegistry(
     sp.GetRequiredService<IDbContextFactory<LotseDbContext>>(),
-    sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
+    sp.GetRequiredService<IDataProtectionProvider>(),
     sp.GetRequiredService<ILoggerFactory>(),
     sp.GetRequiredService<ICurrentUserAccessor>(),
     tutorDefaults.ToSettings()));
@@ -134,6 +135,9 @@ app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();
+
+/// <summary>Makes the top-level-statements host visible to <c>WebApplicationFactory&lt;Program&gt;</c> in Lotse.Web.Tests.</summary>
+public partial class Program { }
 
 /// <summary>Defaults from appsettings / environment / command line; the settings page can override them at runtime.</summary>
 internal sealed class TutorDefaultsConfig

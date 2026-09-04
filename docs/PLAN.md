@@ -59,6 +59,6 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 
 ## Deliberate non-goals
 
-- Multi-user, accounts, cloud sync – it is a personal tool; the engine is reusable if that ever changes.
+- Cloud sync, social/passkey login, 2FA – accounts exist since 0.7.0 (several learners on one machine, fully isolated), but the data stays local; the engine is reusable if that ever changes.
 - Gamification beyond streak and progress – motivation comes from visible mastery and exam readiness.
 - Chasing 100 % automatic grading of free text – the tutor is good, the self-check is honest, and both feed the same model.

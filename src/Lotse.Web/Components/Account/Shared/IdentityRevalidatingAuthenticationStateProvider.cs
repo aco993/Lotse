@@ -9,13 +9,14 @@ namespace Lotse.Web.Components.Account.Shared;
 
 /// <summary>
 /// Periodically re-checks the signed-in learner's security stamp against the store, so a changed password or a
-/// deleted account signs the circuit out live instead of waiting for the auth cookie to expire.
+/// deleted account signs the circuit out live instead of waiting for the auth cookie to expire. Same class (and
+/// name) as in the official Identity template; the name matters because the framework already ships a
+/// <c>Microsoft.AspNetCore.Components.Server.ServerAuthenticationStateProvider</c> that this must not be confused with.
 ///
-/// Lotse disables prerendering (see <c>App.razor</c>: <c>NoPrerender</c>) — unlike the official ASP.NET Core
-/// Identity template, there is therefore no prerender-to-interactive handoff whose auth state needs persisting
-/// across via <c>PersistentComponentState</c>. This is the plain revalidating provider, nothing more.
+/// Lotse disables prerendering (see <c>App.razor</c>) — unlike the official template there is therefore no
+/// prerender-to-interactive handoff whose auth state needs persisting via <c>PersistentComponentState</c>.
 /// </summary>
-internal sealed class ServerAuthenticationStateProvider(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IOptions<IdentityOptions> optionsAccessor)
+internal sealed class IdentityRevalidatingAuthenticationStateProvider(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IOptions<IdentityOptions> optionsAccessor)
     : RevalidatingServerAuthenticationStateProvider(loggerFactory)
 {
     private readonly IdentityOptions _options = optionsAccessor.Value;

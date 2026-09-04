@@ -1,6 +1,24 @@
 @page "/not-found"
-@layout MainLayout
+@using Lotse.Web.Components.Account.Shared
+@layout AccountLayout
 @attribute [AllowAnonymous]
 
+@* On AccountLayout (static, no circuit, no MudBlazor) so it works for signed-out visitors exactly like the login
+   page does - see App.razor's IsStaticPage. *@
+
 <PageTitle>Nicht gefunden – Lotse</PageTitle>
-<MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="mt-4">Diese Seite gibt es nicht. <MudLink Href="">Zur Übersicht</MudLink></MudAlert>
+
+<h1>Diese Seite gibt es nicht</h1>
+<p class="acct-sub">Vielleicht ein alter Link, vielleicht ein Tippfehler in der Adresse.</p>
+<a class="acct-btn" href="" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Zur Übersicht</a>
+
+@code {
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+
+    // A not-found page should say so in the status line too, not only in its text. Only possible while rendering
+    // statically (HttpContext present, headers not sent); inside a live circuit there is no response to set.
+    protected override void OnInitialized()
+    {
+        if (HttpContext is { Response.HasStarted: false }) HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+    }
+}

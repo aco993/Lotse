@@ -39,7 +39,7 @@
             <AcctPwToggle Target="password" />
         </div>
         <ValidationMessage For="() => Input.Password" class="acct-error" />
-        <div class="acct-hint">Mindestens 8 Zeichen. Länge zählt mehr als Sonderzeichen – ein Satz, den nur du kennst, ist ideal.</div>
+        <div class="acct-hint">Mindestens @PasswordRules.MinLength Zeichen. Länge zählt mehr als Sonderzeichen – ein Satz, den nur du kennst, ist ideal.</div>
     </div>
     <div class="acct-field">
         <label class="acct-label" for="confirm">Passwort wiederholen</label>
@@ -94,7 +94,7 @@
         public string Email { get; set; } = "";
 
         [Required(ErrorMessage = "Bitte Passwort wählen.")]
-        [StringLength(100, ErrorMessage = "Mindestens {2} Zeichen.", MinimumLength = 8)]
+        [StringLength(100, ErrorMessage = "Mindestens {2} Zeichen.", MinimumLength = PasswordRules.MinLength)]
         public string Password { get; set; } = "";
 
         [Required(ErrorMessage = "Bitte Passwort wiederholen.")]

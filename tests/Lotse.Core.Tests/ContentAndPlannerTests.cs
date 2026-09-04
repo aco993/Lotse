@@ -101,9 +101,14 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     private PlannerInput Input(int minutes, Dictionary<string, SkillState>? states = null, List<ReviewState>? due = null, int sessions = 0, DateTime? lastProduction = null)
         => new()
         {
-            TimeBudgetMinutes = minutes, NowUtc = Now, Catalog = fx.Catalog,
-            SkillStates = states ?? new Dictionary<string, SkillState>(), DueReviews = due ?? [], SessionsCompleted = sessions,
-            LastProductionUtc = lastProduction, Seed = 7,
+            TimeBudgetMinutes = minutes,
+            NowUtc = Now,
+            Catalog = fx.Catalog,
+            SkillStates = states ?? new Dictionary<string, SkillState>(),
+            DueReviews = due ?? [],
+            SessionsCompleted = sessions,
+            LastProductionUtc = lastProduction,
+            Seed = 7,
         };
 
     [Fact]

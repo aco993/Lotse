@@ -142,7 +142,10 @@ public sealed class SettingEntity
 
 public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public const int LotseSchemaVersion = 2;
+    /// <summary>Name of the EF Core shadow property that scopes <see cref="SkillState"/> and <see cref="ReviewState"/>
+    /// (pure Core types, no UserId member of their own) to an account. Every <c>EF.Property&lt;string&gt;</c> /
+    /// <c>Entry(x).Property(...)</c> access goes through this constant - the string exists exactly once.</summary>
+    public const string UserIdShadow = "UserId";
 
     public DbSet<LearnerProfile> Profiles => Set<LearnerProfile>();
     public DbSet<SkillState> SkillStates => Set<SkillState>();
@@ -174,21 +177,21 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
         // SkillState/ReviewState are pure Lotse.Core domain objects (used directly by the engine and its unit
         // tests, no DB involved there) reused here as EF entities. They carry no UserId property of their own —
         // the scoping lives purely in this mapping as an EF Core shadow property, so the learning engine never has
-        // to know accounts exist. LearningService reads/writes it via EF.Property<string>(x, "UserId").
+        // to know accounts exist. LearningService reads/writes it via EF.Property<string>(x, UserIdShadow).
         b.Entity<SkillState>(e =>
         {
-            e.Property<string>("UserId").IsRequired();
-            e.HasKey("UserId", nameof(SkillState.NodeId));
-            e.HasOne<ApplicationUser>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade);
+            e.Property<string>(UserIdShadow).IsRequired();
+            e.HasKey(UserIdShadow, nameof(SkillState.NodeId));
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(UserIdShadow).OnDelete(DeleteBehavior.Cascade);
             e.Ignore(s => s.Mastery).Ignore(s => s.Confidence).Ignore(s => s.IsWeak).Ignore(s => s.IsStrong);
         });
 
         b.Entity<ReviewState>(e =>
         {
-            e.Property<string>("UserId").IsRequired();
-            e.HasKey("UserId", nameof(ReviewState.ExerciseId));
-            e.HasOne<ApplicationUser>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade);
-            e.HasIndex("UserId", nameof(ReviewState.DueUtc));
+            e.Property<string>(UserIdShadow).IsRequired();
+            e.HasKey(UserIdShadow, nameof(ReviewState.ExerciseId));
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(UserIdShadow).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(UserIdShadow, nameof(ReviewState.DueUtc));
             e.Ignore(r => r.IsNew);
         });
 

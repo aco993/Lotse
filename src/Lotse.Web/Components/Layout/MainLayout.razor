@@ -2,8 +2,6 @@
 @inject SpeechService Speech
 @inject NavigationManager Nav
 @inject Lotse.Infrastructure.Ai.TutorRegistry Tutors
-@inject Lotse.Infrastructure.CurrentUser.ICurrentUserAccessor CurrentUser
-@inject AuthenticationStateProvider AuthState
 
 <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
 <MudPopoverProvider />
@@ -54,49 +52,27 @@
     private bool _dark;
     private ErrorBoundary? _errors;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // A navigation clears a previous error so the next page renders normally.
         Nav.LocationChanged += (_, _) => { _errors?.Recover(); };
+        // This learner's tutor settings (incl. the decrypted API key) are loaded BEFORE the first render of any page
+        // in this layout, so no page ever sees the registry's defaults - that is the one place the per-circuit
+        // cache gets filled. Every route on this layout sits behind the login (fallback policy + [Authorize]);
+        // the static pages (Account/*, /Error, /not-found) use AccountLayout and never get here.
+        // TutorRegistry.EnsureCurrentAsync remains as a cheap guard on every provider call: defence in depth,
+        // not the mechanism.
+        await Tutors.InitializeAsync();
     }
-
-    private string? _tutorsInitializedForUserId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            var bp = await Viewport.GetCurrentBreakpointAsync();
-            _drawerOpen = bp >= Breakpoint.Md;
-            // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
-            try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
-        }
-        // Loads THIS learner's tutor settings (incl. API key). TutorRegistry is Scoped so this never touches
-        // another account's configuration in principle - but a Scoped instance is per *circuit*, and a circuit can
-        // outlive a logout/login round-trip (observed with Blazor's enhanced navigation reusing one instead of
-        // establishing a fresh one). Re-checking on every render (not just firstRender) instead of trusting a single
-        // first-load call means this banner/settings display never shows a previous learner's stale Tutor state on
-        // a reused circuit; TutorRegistry's own EnsureCurrentAsync is the matching guard on the functional side
-        // (every provider call), so a real request never runs under the wrong account's key even if this were skipped.
-        // /Error and /not-found are [AllowAnonymous] and use this layout too - nothing to load for a visitor
-        // without an account, and CurrentUser would (correctly) throw for one.
-        var auth = await AuthState.GetAuthenticationStateAsync();
-        if (auth.User.Identity?.IsAuthenticated != true)
-        {
-            if (firstRender) StateHasChanged();
-            return;
-        }
-        var userId = await CurrentUser.GetUserIdAsync();
-        if (_tutorsInitializedForUserId != userId)
-        {
-            await Tutors.InitializeAsync();
-            _tutorsInitializedForUserId = userId;
-            StateHasChanged();
-        }
-        else if (firstRender)
-        {
-            StateHasChanged();
-        }
+        if (!firstRender) return;
+        var bp = await Viewport.GetCurrentBreakpointAsync();
+        _drawerOpen = bp >= Breakpoint.Md;
+        // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
+        try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
+        StateHasChanged();
     }
 
     private void Recover()

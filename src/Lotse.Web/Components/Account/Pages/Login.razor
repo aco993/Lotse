@@ -17,9 +17,9 @@
 {
     <AcctAlert Kind="error">@_errorMessage</AcctAlert>
 }
-@if (StatusMessage is { } status)
+@if (_statusMessage is not null)
 {
-    <AcctAlert Kind="success">@status</AcctAlert>
+    <AcctAlert Kind="success">@_statusMessage</AcctAlert>
 }
 
 <EditForm Model="Input" method="post" OnValidSubmit="LoginUserAsync" FormName="login">
@@ -48,6 +48,7 @@
 
 @code {
     private string? _errorMessage;
+    private string? _statusMessage;
 
 #pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
@@ -57,20 +58,23 @@
 
     private string RegisterUrl => "Account/Register" + (string.IsNullOrEmpty(ReturnUrl) ? "" : $"?returnUrl={Uri.EscapeDataString(ReturnUrl)}");
 
-    private string? StatusMessage
+    protected override void OnInitialized()
     {
-        get
+        // One-shot status from a redirect (e.g. "account not found"), same pattern as Manage/ChangePassword.
+        if (HttpContext.Request.Cookies.TryGetValue(IdentityRedirectManager.StatusCookieName, out var message))
         {
-            if (!HttpContext.Request.Cookies.TryGetValue(IdentityRedirectManager.StatusCookieName, out var message)) return null;
             HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
-            return message;
+            _statusMessage = message;
         }
     }
 
     public async Task LoginUserAsync()
     {
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        // lockoutOnFailure: true - five wrong passwords lock the account for five minutes (IdentityOptions.Lockout
+        // defaults), otherwise this form would allow unlimited guessing against any registered address.
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded) RedirectManager.RedirectTo(ReturnUrl ?? "");
+        else if (result.IsLockedOut) _errorMessage = "Zu viele Fehlversuche – dieses Konto ist für fünf Minuten gesperrt.";
         else _errorMessage = "Anmeldung fehlgeschlagen – E-Mail oder Passwort stimmt nicht.";
     }
 

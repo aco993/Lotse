@@ -55,8 +55,15 @@ public sealed class LearningServiceTests : IAsyncLifetime
         public Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
             => Task.FromResult<Exercise?>(new Exercise
             {
-                Id = $"gen.{node.Id}.r1", Type = ExerciseType.Reading, NodeId = node.Id, Band = band, Prompt = "Lesen", Text = "Text", AudioOnly = audioOnly,
-                Questions = [new ReadingQuestion("F?", ["a", "b"], 1)], Source = ExerciseSource.Generated,
+                Id = $"gen.{node.Id}.r1",
+                Type = ExerciseType.Reading,
+                NodeId = node.Id,
+                Band = band,
+                Prompt = "Lesen",
+                Text = "Text",
+                AudioOnly = audioOnly,
+                Questions = [new ReadingQuestion("F?", ["a", "b"], 1)],
+                Source = ExerciseSource.Generated,
             });
     }
 

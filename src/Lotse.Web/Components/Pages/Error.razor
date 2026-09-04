@@ -1,17 +1,21 @@
 @page "/Error"
+@using Lotse.Web.Components.Account.Shared
+@layout AccountLayout
 @using System.Diagnostics
 @attribute [AllowAnonymous]
 
+@* On AccountLayout (static, no circuit, no MudBlazor): an error page must not depend on the very circuit that may
+   just have failed - see App.razor's IsStaticPage. *@
+
 <PageTitle>Fehler – Lotse</PageTitle>
 
-<MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mt-4">
-    <MudText Typo="Typo.h6">Da ist etwas schiefgelaufen.</MudText>
-    <MudText>Lade die Seite neu. Wenn der Fehler bleibt, hilft das Server-Log weiter.</MudText>
-    @if (ShowRequestId)
-    {
-        <MudText Typo="Typo.caption" Class="mono">Request-ID: @RequestId</MudText>
-    }
-</MudAlert>
+<h1>Da ist etwas schiefgelaufen</h1>
+<AcctAlert Kind="error">Lade die Seite neu. Wenn der Fehler bleibt, hilft das Server-Log weiter.</AcctAlert>
+@if (ShowRequestId)
+{
+    <p class="acct-hint">Request-ID: <code>@RequestId</code></p>
+}
+<a class="acct-btn" href="" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Zur Übersicht</a>
 
 @code {
     [CascadingParameter] private HttpContext? HttpContext { get; set; }

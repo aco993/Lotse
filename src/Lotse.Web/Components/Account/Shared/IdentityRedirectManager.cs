@@ -25,13 +25,14 @@ internal sealed class IdentityRedirectManager(NavigationManager navigationManage
 
     public void RedirectTo(string? uri)
     {
-        uri ??= "";
-        if (!Uri.IsWellFormedUriString(uri, UriKind.Relative))
-        {
-            // Prevent open redirects to another host.
-            uri = navigationManager.ToBaseRelativePath(uri);
-        }
-        navigationManager.NavigateTo(uri);
+        // Open-redirect guard. The template's check (Uri.IsWellFormedUriString(uri, UriKind.Relative)) is not
+        // enough: a protocol-relative "//evil.example" IS a well-formed relative URI, resolves to
+        // https://evil.example/ against the base and would send a freshly signed-in learner off-site via a crafted
+        // ?returnUrl=. So resolve first and only accept what stays under our own base; anything else goes home.
+        var target = navigationManager.ToAbsoluteUri(uri ?? "");
+        if (!target.AbsoluteUri.StartsWith(navigationManager.BaseUri, StringComparison.Ordinal))
+            target = new Uri(navigationManager.BaseUri);
+        navigationManager.NavigateTo(navigationManager.ToBaseRelativePath(target.AbsoluteUri));
     }
 
     public void RedirectTo(string uri, Dictionary<string, object?> queryParameters)

@@ -11,6 +11,9 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="bunit" />
+    <!-- In-process host for the few things bUnit cannot see: the real middleware pipeline (static assets vs. the
+         fallback authorization policy), the static Identity pages, and UserManager with the configured password policy. -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lotse.Web\Lotse.Web.csproj" />

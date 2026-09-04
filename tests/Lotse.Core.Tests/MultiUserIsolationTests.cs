@@ -3,6 +3,7 @@ using Lotse.Core.Model;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Ai;
 using Lotse.Infrastructure.Content;
+using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
 using Lotse.Infrastructure.Services;
 using Microsoft.AspNetCore.DataProtection;
@@ -97,17 +98,76 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
         Assert.NotEqual(dashA.OpenSession!.Id, dashB.OpenSession!.Id);
     }
 
+    /// <summary>
+    /// Reset is eight scoped bulk deletes; this checks every one of them, not just the first. Each learner gets a
+    /// session, a wrong answer (attempt + error event + skill/review state) and a profile row; A additionally
+    /// stores tutor settings, which a reset must NOT touch. After A's reset: A has no learning rows left in any
+    /// table, B has lost nothing, and A's tutor row is still there.
+    /// </summary>
     [Fact]
-    public async Task Reset_wipes_only_the_calling_learners_own_data()
+    public async Task Reset_empties_every_table_of_the_caller_and_none_of_the_other()
     {
-        var exA = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze);
-        await _svcA.SubmitAnswerAsync(null, 0, exA.Id, "x", 1000, false);
-        await _svcB.SubmitAnswerAsync(null, 0, exA.Id, "x", 1000, false);
+        var ex = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
+        foreach (var svc in new[] { _svcA, _svcB })
+        {
+            await svc.StartSessionAsync(10);
+            await svc.SubmitAnswerAsync(null, 0, ex.Id, "völlig falsch", 1000, false);
+            await svc.GetProfileAsync();
+        }
+        var dp = new EphemeralDataProtectionProvider();
+        await new TutorRegistry(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserA), env: _ => null)
+            .SaveAsync(new TutorSettings("groq", null, "llama-3.3-70b-versatile", "gsk_A_secret"));
 
         await _svcA.ResetAllDataAsync();
 
-        Assert.Empty(await _svcA.GetSkillStatesAsync());
-        Assert.NotEmpty(await _svcB.GetSkillStatesAsync()); // untouched
+        await using var db = _factory.CreateDbContext();
+        var skillOwners = await db.SkillStates.Select(s => EF.Property<string>(s, LotseDbContext.UserIdShadow)).ToListAsync();
+        var reviewOwners = await db.ReviewStates.Select(r => EF.Property<string>(r, LotseDbContext.UserIdShadow)).ToListAsync();
+        var owners = new Dictionary<string, List<string>>
+        {
+            ["SkillStates"] = skillOwners,
+            ["ReviewStates"] = reviewOwners,
+            ["Sessions"] = await db.Sessions.Select(s => s.UserId).ToListAsync(),
+            ["Attempts"] = await db.Attempts.Select(a => a.UserId).ToListAsync(),
+            ["ErrorEvents"] = await db.ErrorEvents.Select(e => e.UserId).ToListAsync(),
+            ["Profiles"] = await db.Profiles.Select(p => p.UserId).ToListAsync(),
+        };
+        foreach (var (table, ids) in owners)
+        {
+            Assert.DoesNotContain(UserA, ids); // A: gone from every table
+            Assert.Contains(UserB, ids);       // B: untouched in every table
+        }
+        Assert.Single(await db.Settings.Where(s => s.UserId == UserA).ToListAsync()); // tutor setup survives a reset
+    }
+
+    /// <summary>
+    /// <see cref="TutorRegistry"/> caches a built tutor per instance. If the learner behind its accessor ever
+    /// changes (the "circuit outlives a login" scenario the guard exists for), the next check must reload - the
+    /// previous learner's API key must not be used for the next one.
+    /// </summary>
+    [Fact]
+    public async Task Tutor_registry_follows_the_signed_in_learner_when_the_accessor_switches()
+    {
+        var dp = new EphemeralDataProtectionProvider();
+        TutorRegistry Build(ICurrentUserAccessor accessor) => new(_factory, dp, NullLoggerFactory.Instance, accessor, env: _ => null);
+        await Build(new FakeCurrentUserAccessor(UserA)).SaveAsync(new TutorSettings("groq", null, "llama-3.3-70b-versatile", "gsk_A_secret"));
+        await Build(new FakeCurrentUserAccessor(UserB)).SaveAsync(new TutorSettings("groq", null, "llama-3.3-70b-versatile", "gsk_B_secret"));
+
+        var accessor = new FakeCurrentUserAccessor(UserA);
+        var registry = Build(accessor);
+        Assert.Null(registry.Settings.ApiKey); // nothing loaded yet - defaults, never someone else's row
+
+        await registry.EnsureCurrentAsync();
+        Assert.Equal("gsk_A_secret", registry.Settings.ApiKey);
+        Assert.True(registry.IsAvailable);
+
+        accessor.UserId = UserB;
+        await registry.EnsureCurrentAsync();
+        Assert.Equal("gsk_B_secret", registry.Settings.ApiKey);
+
+        accessor.UserId = UserA;
+        await registry.EnsureCurrentAsync();
+        Assert.Equal("gsk_A_secret", registry.Settings.ApiKey);
     }
 
     [Fact]

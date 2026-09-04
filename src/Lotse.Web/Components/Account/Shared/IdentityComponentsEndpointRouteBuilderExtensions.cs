@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Lotse.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 
         var accountGroup = endpoints.MapGroup("/Account");
 
-        accountGroup.MapPost("/Logout", async (ClaimsPrincipal _, SignInManager<ApplicationUser> signInManager, [FromForm] string returnUrl) =>
+        accountGroup.MapPost("/Logout", async (SignInManager<ApplicationUser> signInManager, [FromForm] string returnUrl) =>
         {
             await signInManager.SignOutAsync();
             return TypedResults.LocalRedirect($"~/{returnUrl}");

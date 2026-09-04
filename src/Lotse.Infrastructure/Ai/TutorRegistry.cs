@@ -20,10 +20,12 @@ public sealed record TutorProbe(bool Ok, string Message, int LatencyMs, string? 
 ///
 /// <b>Registered Scoped, not Singleton</b>: one instance per Blazor Server circuit, i.e. per signed-in learner.
 /// A shared Singleton would mean whichever user last called <see cref="SaveAsync"/> or <see cref="InitializeAsync"/>
-/// overwrites the one in-memory <see cref="Current"/> tutor for literally every other learner's circuit — the
-/// in-memory cache would leak across accounts even with the DB row correctly scoped.
+/// overwrites the one in-memory tutor for literally every other learner's circuit — the in-memory cache would
+/// leak across accounts even with the DB row correctly scoped. And because a circuit can outlive a logout/login
+/// round-trip, every provider call and every cached read goes through <see cref="EnsureCurrentAsync"/> first
+/// (see <see cref="ILearnerBound"/>) rather than trusting a single load at circuit start.
 /// </summary>
-public sealed class TutorRegistry : ITutor
+public sealed class TutorRegistry : ITutor, ILearnerBound
 {
     private const string SettingsKey = "tutor.settings";
     private const string ProtectorPurpose = "Lotse.Tutor.ApiKey.v1";
@@ -35,8 +37,12 @@ public sealed class TutorRegistry : ITutor
     private readonly ICurrentUserAccessor _currentUser;
     private readonly TutorSettings _defaults;
     private readonly Func<string, string?> _env;
-    private volatile ITutor _current = new NullTutor();
-    private string? _initializedForUserId;
+
+    /// <summary>Everything that must change together when the learner (or their settings) changes, swapped as ONE
+    /// reference — a reader can never see the previous learner's tutor next to the next one's settings.
+    /// <c>UserId</c> null = not loaded for anyone yet (or the last load failed), so the next check reloads.</summary>
+    private sealed record Active(string? UserId, TutorSettings Settings, ITutor Tutor);
+    private volatile Active _active;
 
     /// <param name="env">Environment lookup for key fallbacks; injectable so tests are independent of the machine.</param>
     public TutorRegistry(IDbContextFactory<LotseDbContext> dbFactory, IDataProtectionProvider protection, ILoggerFactory loggerFactory, ICurrentUserAccessor currentUser, TutorSettings? defaults = null, Func<string, string?>? env = null)
@@ -48,43 +54,30 @@ public sealed class TutorRegistry : ITutor
         _currentUser = currentUser;
         _env = env ?? Environment.GetEnvironmentVariable;
         _defaults = defaults ?? TutorSettings.Default;
-        Settings = _defaults;
-        _current = Build(Settings);
+        _active = new Active(null, _defaults, Build(_defaults));
     }
 
-    public TutorSettings Settings { get; private set; }
-    public ITutor Current => _current;
+    public TutorSettings Settings => _active.Settings;
+    public ITutor Current => _active.Tutor;
 
-    public bool IsAvailable => _current.IsAvailable;
-    public string Description => _current.Description;
+    public bool IsAvailable => _active.Tutor.IsAvailable;
+    public string Description => _active.Tutor.Description;
 
-    /// <summary>Loads this learner's stored settings (if any) and activates them. Called once per circuit
-    /// (<c>MainLayout</c>, on first render); safe to call again. Also called automatically (see
-    /// <see cref="EnsureCurrentAsync"/>) before every provider call, in case the signed-in learner changed on a
-    /// circuit that <c>MainLayout</c> did not re-initialize (observed with Blazor's enhanced navigation reusing a
-    /// circuit across a logout/login round-trip - the previous learner's cached <see cref="Settings"/>, API key
-    /// included, must never be used for the next one).</summary>
+    /// <summary>Loads this learner's stored settings (if any) and activates them. Safe to call any time; normally
+    /// reached through <see cref="EnsureCurrentAsync"/>.</summary>
     public async Task InitializeAsync(CancellationToken ct = default)
     {
-        string userId;
+        // Outside the try on purpose: no signed-in learner here is a defect (a page slipped past the login gate,
+        // see ICurrentUserAccessor) and must surface as such, not be logged away as "Einstellungen unlesbar".
+        var userId = await _currentUser.GetUserIdAsync();
         try
         {
-            userId = await _currentUser.GetUserIdAsync();
             await using var db = await _dbFactory.CreateDbContextAsync(ct);
             var row = await db.Settings.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == userId && s.Key == SettingsKey, ct);
-            if (row is null)
-            {
-                Settings = _defaults;
-                _current = Build(Settings);
-                _initializedForUserId = userId;
-                return;
-            }
-            var stored = JsonSerializer.Deserialize<StoredSettings>(row.Value);
+            var stored = row is null ? null : JsonSerializer.Deserialize<StoredSettings>(row.Value);
             if (stored is null)
             {
-                Settings = _defaults;
-                _current = Build(Settings);
-                _initializedForUserId = userId;
+                _active = new Active(userId, _defaults, Build(_defaults));
                 return;
             }
             string? key = null;
@@ -93,32 +86,25 @@ public sealed class TutorRegistry : ITutor
                 try { key = _protector.Unprotect(stored.ProtectedApiKey); }
                 catch (Exception e) { _logger.LogWarning(e, "Gespeicherter API-Schlüssel konnte nicht entschlüsselt werden (Schlüsselring gewechselt?). Bitte neu eingeben."); }
             }
-            Settings = new TutorSettings(stored.PresetId, stored.BaseUrl, stored.Model, key, stored.Effort ?? "medium", stored.TimeoutSeconds > 0 ? stored.TimeoutSeconds : 120);
-            _current = Build(Settings);
-            _initializedForUserId = userId;
+            var settings = new TutorSettings(stored.PresetId, stored.BaseUrl, stored.Model, key, stored.Effort ?? "medium", stored.TimeoutSeconds > 0 ? stored.TimeoutSeconds : 120);
+            _active = new Active(userId, settings, Build(settings));
             _logger.LogInformation("Tutor aktiv: {Description}", Description);
         }
         catch (Exception e)
         {
-            // Never let a broken settings row take the whole app down – fall back to defaults.
+            // Never let a broken settings row take the whole app down – fall back to defaults, and leave UserId
+            // null so the next call retries rather than pinning this failure to the circuit.
             _logger.LogWarning(e, "Tutor-Einstellungen unlesbar, Standard wird verwendet.");
-            Settings = _defaults;
-            _current = Build(Settings);
-            _initializedForUserId = null; // unknown - force a retry on the next call rather than pinning this failure.
+            _active = new Active(null, _defaults, Build(_defaults));
         }
     }
 
-    /// <summary>Re-runs <see cref="InitializeAsync"/> if the signed-in learner for this circuit is not the one
-    /// <see cref="Settings"/> was last loaded for. Cheap when nothing changed (one claims lookup, no DB round trip).
-    /// Public so a page that displays <see cref="IsAvailable"/>/<see cref="Description"/> (Einstellungen, Themen,
-    /// Sprechen, ProductionExercise) can call this in its own <c>OnInitializedAsync</c> and be sure its first render
-    /// already reflects the signed-in learner's settings - MainLayout also calls it, but that runs in
-    /// <c>OnAfterRenderAsync</c> (after the page's own first render) and updating this Scoped instance's state there
-    /// does not, on its own, make an already-rendered sibling page's markup re-evaluate.</summary>
+    /// <inheritdoc cref="ILearnerBound.EnsureCurrentAsync" />
+    /// <remarks>Cheap when nothing changed (one claims lookup, no DB round trip).</remarks>
     public async Task EnsureCurrentAsync(CancellationToken ct = default)
     {
         var userId = await _currentUser.GetUserIdAsync();
-        if (userId != _initializedForUserId) await InitializeAsync(ct);
+        if (userId != _active.UserId) await InitializeAsync(ct);
     }
 
     public async Task SaveAsync(TutorSettings settings, CancellationToken ct = default)
@@ -131,9 +117,7 @@ public sealed class TutorRegistry : ITutor
         if (row is null) db.Settings.Add(new SettingEntity { UserId = userId, Key = SettingsKey, Value = JsonSerializer.Serialize(stored) });
         else row.Value = JsonSerializer.Serialize(stored);
         await db.SaveChangesAsync(ct);
-        Settings = settings;
-        _current = Build(settings);
-        _initializedForUserId = userId;
+        _active = new Active(userId, settings, Build(settings));
         _logger.LogInformation("Tutor umkonfiguriert: {Description}", Description);
     }
 
@@ -143,9 +127,7 @@ public sealed class TutorRegistry : ITutor
         await using var db = await _dbFactory.CreateDbContextAsync(ct);
         var row = await db.Settings.FirstOrDefaultAsync(s => s.UserId == userId && s.Key == SettingsKey, ct);
         if (row is not null) { db.Settings.Remove(row); await db.SaveChangesAsync(ct); }
-        Settings = _defaults;
-        _current = Build(_defaults);
-        _initializedForUserId = userId;
+        _active = new Active(userId, _defaults, Build(_defaults));
     }
 
     /// <summary>Sends one tiny request through a throw-away tutor built from <paramref name="settings"/> and reports what happened.</summary>
@@ -215,31 +197,30 @@ public sealed class TutorRegistry : ITutor
     }
 
     // ---- ITutor delegation ------------------------------------------------------------------------
-    // Each entry point re-checks the signed-in learner first (see EnsureCurrentAsync): the one place an actual
-    // provider call - and the API key that pays for it - could otherwise run under a stale, previously-loaded
-    // account's settings on a reused circuit.
+    // Each entry point re-checks the signed-in learner first: the one place an actual provider call - and the API
+    // key that pays for it - could otherwise run under a stale, previously-loaded account's settings.
     public async Task<ProductionEvaluation> EvaluateAsync(Exercise exercise, string learnerText, ProductionMode mode, LearnerContext context, CancellationToken ct = default)
     {
         await EnsureCurrentAsync(ct);
-        return await _current.EvaluateAsync(exercise, learnerText, mode, context, ct);
+        return await _active.Tutor.EvaluateAsync(exercise, learnerText, mode, context, ct);
     }
 
     public async Task<IReadOnlyList<Exercise>> GenerateExercisesAsync(SkillNode node, CefrBand band, int count, ExerciseContext exerciseContext, LearnerContext context, IReadOnlyList<Exercise> examples, CancellationToken ct = default)
     {
         await EnsureCurrentAsync(ct);
-        return await _current.GenerateExercisesAsync(node, band, count, exerciseContext, context, examples, ct);
+        return await _active.Tutor.GenerateExercisesAsync(node, band, count, exerciseContext, context, examples, ct);
     }
 
     public async Task<string> DiscussAsync(string thesis, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
     {
         await EnsureCurrentAsync(ct);
-        return await _current.DiscussAsync(thesis, history, context, ct);
+        return await _active.Tutor.DiscussAsync(thesis, history, context, ct);
     }
 
     public async Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
     {
         await EnsureCurrentAsync(ct);
-        return await _current.GenerateReadingAsync(node, band, audioOnly, context, ct);
+        return await _active.Tutor.GenerateReadingAsync(node, band, audioOnly, context, ct);
     }
 
     private sealed record StoredSettings(string PresetId, string? BaseUrl, string Model, string? ProtectedApiKey, string? Effort, int TimeoutSeconds);

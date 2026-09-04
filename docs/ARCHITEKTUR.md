@@ -37,7 +37,9 @@
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-Dependencies point downwards only. The engine has no reference to EF Core, Blazor or the Anthropic SDK, which is what makes it unit-testable in milliseconds and reusable behind another host. `ICurrentUserAccessor` is the one seam through which "which account is this?" enters Infrastructure: a plain interface there, implemented in Web against `AuthenticationStateProvider`, so Infrastructure still has no ASP.NET Core Identity dependency of its own beyond the `IdentityDbContext` base class.
+Dependencies point downwards only. The engine has no reference to EF Core, Blazor or the Anthropic SDK, which is what makes it unit-testable in milliseconds and reusable behind another host. `ICurrentUserAccessor` is the one seam through which "which account is this?" enters Infrastructure: a plain interface there, implemented in Web against `AuthenticationStateProvider`, so Infrastructure's only Identity dependency is the store itself (`IdentityDbContext<ApplicationUser>` and `ApplicationUser : IdentityUser` in `LotseDbContext.cs`) - no cookie, claims or sign-in types. `ILearnerBound` is its companion for Scoped services that cache per-learner state (`TutorRegistry`): the cache is filled once, before the first render, in `MainLayout.OnInitializedAsync`, and re-checked cheaply before every provider call.
+
+Databases from before 0.7.0 (single-user, no `UserId` columns) are migrated structurally but their rows are not assigned to any account - they belong to the empty owner `""` and stay invisible. The author started fresh; anyone else upgrading a real pre-0.7.0 database would run a one-off `UPDATE <table> SET UserId = '<their AspNetUsers.Id>' WHERE UserId = ''` over the nine scoped tables.
 
 ## The daily loop
 
@@ -103,7 +105,7 @@ SQLite file `data/lotse.db`. `LotseDbContext : IdentityDbContext<ApplicationUser
 
 ## Multi-user accounts
 
-Every account is fully isolated: separate skill state, sessions, error journal, productions, and Tutor settings (provider, model, encrypted API key). `MultiUserIsolationTests` (`tests/Lotse.Core.Tests`) asserts this directly rather than by inspection - it registers two learners, has each save different Tutor settings and answer different exercises, and checks neither can see the other's rows, including through `TutorRegistry`'s in-memory cache. "Alle Lerndaten löschen" on the settings page deletes only the signed-in account's rows (scoped `ExecuteDeleteAsync` per table) - never the whole database, which is what an earlier, single-user version of this reset did.
+Every account is fully isolated: separate skill state, sessions, error journal, productions, and Tutor settings (provider, model, encrypted API key). `MultiUserIsolationTests` (`tests/Lotse.Core.Tests`) asserts this directly rather than by inspection - it registers two learners, has each save different Tutor settings and answer different exercises, and checks neither can see the other's rows, including through `TutorRegistry`'s in-memory cache. "Alle Lerndaten löschen" on the settings page deletes only the signed-in account's rows (eight scoped `ExecuteDeleteAsync` calls in one transaction) - never the whole database, which is what an earlier, single-user version of this reset did - and leaves the shared generated-exercise bank and the account's tutor settings alone. `MultiUserIsolationTests` checks every one of the eight tables.
 
 ## AI integration
 
