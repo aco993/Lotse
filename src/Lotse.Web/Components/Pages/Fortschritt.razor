@@ -9,6 +9,50 @@
 @if (_states is null) { <MudSkeleton Height="200px" /> }
 else
 {
+    @* Three honest numbers straight from the FSRS state - what sticks, what is coming, how much is still in reach. *@
+    <MudGrid Spacing="2" Class="mb-4">
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
+                <MudText Typo="Typo.h4" Style="font-weight:600">@(_stats?.Stuck ?? 0)</MudText>
+                <MudText Typo="Typo.subtitle2">Wörter, die sitzen</MudText>
+                <MudText Typo="Typo.caption" Style="opacity:.75">
+                    Erinnerung hält länger als @ProgressStatsCalculator.StuckDays.ToString("0") Tage@(_stats is { StuckReviewedThisWeek: > 0 } s ? $" · {s.StuckReviewedThisWeek} davon diese Woche wiederholt" : "").
+                </MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
+                <MudText Typo="Typo.subtitle2" Class="mb-1">Fällig in den nächsten 7 Tagen</MudText>
+                @if (_stats is null || _stats.DueNext7Days.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch nichts geplant.</MudText> }
+                else
+                {
+                    <div style="display:flex; align-items:flex-end; gap:6px; height:70px">
+                        @{ var maxDue = Math.Max(1, _stats.DueNext7Days.Max(d => d.Count)); }
+                        @foreach (var d in _stats.DueNext7Days)
+                        {
+                            var h = d.Count == 0 ? 2 : Math.Max(6, 62.0 * d.Count / maxDue);
+                            <MudTooltip Text="@($"{d.Day:dd.MM.}: {d.Count} fällig")">
+                                <div style="@($"width:20px;height:{h:F0}px;background:{(d.Count == 0 ? "var(--mud-palette-lines-default)" : "var(--mud-palette-primary)")};border-radius:3px")"></div>
+                            </MudTooltip>
+                        }
+                    </div>
+                    <MudText Typo="Typo.caption" Style="opacity:.75">Heute enthält alles Überfällige. Gesamt: @_stats.DueNext7Days.Sum(d => d.Count).</MudText>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
+                <MudText Typo="Typo.h4" Style="font-weight:600">@((_stats?.AverageRetrievability ?? 0).ToString("P0"))</MudText>
+                <MudText Typo="Typo.subtitle2">Behalten</MudText>
+                <MudText Typo="Typo.caption" Style="opacity:.75">
+                    @(_stats is null || _stats.Scheduled == 0
+                        ? "Noch keine geplanten Wiederholungen."
+                        : $"So viel von deinen {_stats.Scheduled} geplanten Aufgaben würdest du gerade auf Anhieb können.")
+                </MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
     <MudPaper Class="pa-4 mb-4" Elevation="1">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Letzte 30 Tage</MudText>
         @if (_history.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine Aufgaben bearbeitet.</MudText> }
@@ -58,11 +102,13 @@ else
 @code {
     private IReadOnlyDictionary<string, SkillState>? _states;
     private IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)> _history = [];
+    private ProgressStats? _stats;
 
     protected override async Task OnInitializedAsync()
     {
         _states = await Learning.GetSkillStatesAsync();
         _history = await Learning.GetDailyHistoryAsync();
+        _stats = await Learning.GetProgressStatsAsync();
     }
 
     private static string AreaLabel(SkillArea a) => a switch

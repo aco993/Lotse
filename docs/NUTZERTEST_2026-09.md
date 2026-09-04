@@ -53,7 +53,11 @@ Erledigt in 0.9.0:
 - **Vorname im Profil statt des festen Namens** (Ana) – der Kurs trägt jetzt Tokens; wer seinen Namen einträgt, wird
   im Dialog und in Musterlösungen so angesprochen. Leere Felder behalten den Namen des Autors.
 
-Offen (bewusst): Gamification jenseits von Streak und Zielen (Tamara, Ana).
+- **Motivation jenseits des Streaks** (Tamara, Ana, Petar) – Wochenziel in Minuten, montags ein Wochenrückblick,
+  und auf Fortschritt drei Karten aus dem FSRS-Zustand (was sitzt, was in sieben Tagen fällig wird, wie viel gerade
+  abrufbar ist).
+
+Offen (bewusst): Punkte, Abzeichen und Bestenlisten – begründet in `docs/KONZEPT.md` §5.
 
 ## Methode, kurz
 

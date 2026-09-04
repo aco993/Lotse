@@ -40,6 +40,10 @@ public sealed record DashboardModel(
     ReadinessReport Readiness,
     /// <summary>Mastery of the C1 and B2.2 nodes; null unless the learner aims at C1.</summary>
     ModuleReadiness? C1Proximity,
+    /// <summary>Finished minutes since Monday, against <see cref="LearnerProfile.WeeklyGoalMinutes"/>.</summary>
+    int MinutesThisWeek,
+    /// <summary>Two lines about the week that just ended - Mondays only, and only with data.</summary>
+    WeeklyReview? WeeklyReview,
     IReadOnlyList<WeakArea> WeakAreas,
     IReadOnlyList<(string Code, string Title, int Count, string NodeTitle)> TopErrors,
     int StreakDays,
@@ -52,6 +56,9 @@ public sealed record DashboardModel(
     string NextSessionPreview,
     bool TutorAvailable,
     string TutorDescription);
+
+/// <summary>Deterministic Monday summary of the previous week - no tutor, no cloud, just what the tables say.</summary>
+public sealed record WeeklyReview(int Attempts, double Accuracy, int Stuck, string? WeakestNodeTitle);
 
 public sealed record LessonCard(Lesson Lesson, LessonProgressEntity? Progress, bool IsRecommended)
 {
@@ -152,6 +159,11 @@ public sealed class LearningService(
         var todaySessions = await db.Sessions.Where(s => s.UserId == userId && s.StartedUtc >= todayStart).ToListAsync(ct);
         // Only finished sessions count; an open tab left overnight must not inflate the number.
         var minutesToday = (int)todaySessions.Where(s => s.EndedUtc != null).Sum(s => Math.Min(60, (s.EndedUtc!.Value - s.StartedUtc).TotalMinutes));
+        // The week starts on Monday (German calendar), and only finished sessions count - same rule as the day.
+        var weekStart = now.Date.AddDays(-(((int)now.DayOfWeek + 6) % 7));
+        var weekSessions = await db.Sessions.Where(s => s.UserId == userId && s.EndedUtc != null && s.StartedUtc >= weekStart).ToListAsync(ct);
+        var minutesThisWeek = (int)weekSessions.Sum(s => Math.Min(60, (s.EndedUtc!.Value - s.StartedUtc).TotalMinutes));
+        var weeklyReview = await WeeklyReviewAsync(db, userId, now, ct);
         var open = await db.Sessions.Where(s => s.UserId == userId && s.EndedUtc == null && s.StartedUtc >= now.AddHours(-12)).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
         var totalAttempts = await db.Attempts.CountAsync(a => a.UserId == userId, ct);
 
@@ -166,7 +178,7 @@ public sealed class LearningService(
         var preview = planner.Plan(input with { Seed = now.DayOfYear }).Summary;
 
         var t = await TutorAsync(ct);
-        return new DashboardModel(profile, readiness, c1, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
+        return new DashboardModel(profile, readiness, c1, minutesThisWeek, weeklyReview, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
     }
 
     private static async Task<int> ComputeStreakAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
@@ -424,6 +436,40 @@ public sealed class LearningService(
         db.Sessions.Add(session);
         await db.SaveChangesAsync(ct);
         return session;
+    }
+
+    public async Task<ProgressStats> GetProgressStatsAsync(CancellationToken ct = default)
+    {
+        var userId = await UserIdAsync();
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var reviews = await db.ReviewStates.AsNoTracking()
+            .Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId).ToListAsync(ct);
+        return ProgressStatsCalculator.Compute(reviews, Now);
+    }
+
+    /// <summary>Monday morning's two lines about the week that just ended; null on every other day.</summary>
+    private async Task<WeeklyReview?> WeeklyReviewAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
+    {
+        if (now.DayOfWeek != DayOfWeek.Monday) return null;
+        var from = now.Date.AddDays(-7);
+        var to = now.Date;
+        var attempts = await db.Attempts.AsNoTracking()
+            .Where(a => a.UserId == userId && a.Utc >= from && a.Utc < to)
+            .Select(a => new { a.Score, a.NodeId }).ToListAsync(ct);
+        if (attempts.Count == 0) return null;
+
+        var weakest = attempts.GroupBy(a => a.NodeId)
+            .Where(g => g.Count() >= 3)
+            .OrderBy(g => g.Average(a => a.Score))
+            .Select(g => g.Key).FirstOrDefault();
+        var reviews = await db.ReviewStates.AsNoTracking()
+            .Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId).ToListAsync(ct);
+
+        return new WeeklyReview(
+            attempts.Count,
+            attempts.Average(a => a.Score),
+            ProgressStatsCalculator.Compute(reviews, now).Stuck,
+            weakest is null ? null : Catalog.NodeTitle(weakest));
     }
 
     /// <summary>The learner's own name for the content tokens; empty fields fall back inside <see cref="NameTemplate"/>.</summary>

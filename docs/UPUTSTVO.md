@@ -97,6 +97,24 @@ Ako polja ostaviš prazna, ostaje autorovo ime (Aleksandar Micić) — ništa se
 
 Tehnički: u sadržaju stoje `{Vorname}`, `{Nachname}` i `{Name}`, a ime se ubacuje tek kad se lekcija ili zadatak predaju **tebi**. Zajednička baza zadataka ostaje neutralna, pa se imena ne mešaju između naloga na istom računaru.
 
+## 1g. Nedeljni cilj i tri broja o pamćenju
+
+U **Einstellungen** biraš **Wochenziel** (30–300 minuta nedeljno, podrazumevano 60). Na strani **Heute** stoji traka: „48 von 60 Minuten diese Woche". Nedelja počinje ponedeljkom, broje se samo završene sesije.
+
+**Ponedeljkom** iznad toga dobiješ dvoredni **Wochenrückblick** o prethodnoj nedelji: koliko zadataka, koliki procenat tačno, koliko reči „sedi" i koja ti je tema bila najteža. Bez tutora i bez interneta — sve se računa iz tvojih tabela.
+
+Na strani **Fortschritt** su tri kartice iz FSRS-stanja:
+
+| Kartica | Šta znači |
+|---|---|
+| **Wörter, die sitzen** | stavke čija stabilnost pamćenja prelazi 21 dan |
+| **Fällig in den nächsten 7 Tagen** | koliko ponavljanja stiže po danima; sve zaostalo se broji na „danas" da se ne sakrije |
+| **Behalten** | koliki deo zakazanog gradiva bi upravo sada pogodio iz prve |
+
+Nema poena, bedževa ni rang-liste — ovo je alat za jednog čoveka, pa nema koga da prestigneš (obrazloženje u `docs/KONZEPT.md` §5).
+
+> Sitnica radi poštenja: piše „davon diese Woche wiederholt", a ne „novo ove nedelje". Istorija starih stabilnosti se ne čuva, pa se ne može znati kada je tačno neka stavka prešla granicu od 21 dana — a izmišljen precizan broj je gori od dosadnog tačnog.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

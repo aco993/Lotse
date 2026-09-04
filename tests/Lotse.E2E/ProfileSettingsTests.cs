@@ -79,6 +79,30 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
     });
 
     [Fact]
+    public Task Weekly_goal_and_the_retention_cards_show_up_without_any_practice() => app.RunAsync(nameof(Weekly_goal_and_the_retention_cards_show_up_without_any_practice), async page =>
+    {
+        await RegisterAsync(page, LotseE2EFixture.UniqueEmail("ziel2"));
+
+        // Default goal, nothing done yet - the bar has to render at zero rather than break.
+        await Expect(page.GetByText("0 von 60 Minuten diese Woche")).ToBeVisibleAsync();
+
+        await page.GotoAsync("/einstellungen");
+        await OpenSelectAsync(page, "Wochenziel");
+        await page.Locator(".mud-list-item", new() { HasTextString = "120 Minuten pro Woche" }).First.ClickAsync();
+        await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
+        await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
+
+        await page.GotoAsync("/");
+        await Expect(page.GetByText("0 von 120 Minuten diese Woche")).ToBeVisibleAsync();
+
+        // The three FSRS cards must be honest, not empty, for a learner with no schedule yet.
+        await page.GotoAsync("/fortschritt");
+        await Expect(page.GetByText("Wörter, die sitzen")).ToBeVisibleAsync();
+        await Expect(page.GetByText("Fällig in den nächsten 7 Tagen")).ToBeVisibleAsync();
+        await Expect(page.GetByText("Noch keine geplanten Wiederholungen.")).ToBeVisibleAsync();
+    });
+
+    [Fact]
     public Task Occupation_is_saved_explained_and_survives_a_reload() => app.RunAsync(nameof(Occupation_is_saved_explained_and_survives_a_reload), async page =>
     {
         await RegisterAsync(page, LotseE2EFixture.UniqueEmail("beruf"));

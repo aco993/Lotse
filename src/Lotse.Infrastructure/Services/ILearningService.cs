@@ -1,3 +1,4 @@
+using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Data;
@@ -43,6 +44,9 @@ public interface ILearningService
     Task<IReadOnlyList<(string Code, string Title, string NodeTitle, int Count)>> GetSessionErrorsAsync(Guid sessionId, CancellationToken ct = default);
     Task<IReadOnlyList<ErrorJournalEntry>> GetErrorJournalAsync(int days = 30, int take = 100, CancellationToken ct = default);
     Task<IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)>> GetDailyHistoryAsync(int days = 30, CancellationToken ct = default);
+
+    /// <summary>Retention figures for Fortschritt, straight from the FSRS state.</summary>
+    Task<ProgressStats> GetProgressStatsAsync(CancellationToken ct = default);
 
     Task<IReadOnlyList<Exercise>> GenerateForNodeAsync(string nodeId, int count = 6, CancellationToken ct = default);
     Task<Exercise?> GenerateReadingForNodeAsync(string nodeId, CancellationToken ct = default);

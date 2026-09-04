@@ -63,6 +63,11 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     await Expect(page.GetByText("C1-Nähe")).ToBeVisibleAsync();
                     await Shoot(page, $"heute-c1-{viewport}-{theme}");
 
+                    // Fortschritt with the three retention cards
+                    await page.GotoAsync("/fortschritt");
+                    await Expect(page.GetByText("Wörter, die sitzen")).ToBeVisibleAsync();
+                    await Shoot(page, $"fortschritt-karten-{viewport}-{theme}");
+
                     // A lesson addressed to the learner instead of to the author
                     await page.GotoAsync("/kurs/L02");
                     await Expect(page.GetByText("Sehr geehrter Herr Petrović", new() { Exact = false }).First).ToBeVisibleAsync();
