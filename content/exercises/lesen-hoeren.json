@@ -53,12 +53,12 @@
       ], "tags": ["pruefung", "teil1", "durchsage"] },
     { "id": "hv.mc.002", "type": "Reading", "nodeId": "HV.HOEREN_ALLTAG", "band": "B2_1", "context": "Beruf", "audioOnly": true,
       "prompt": "Hören: Sie hören eine Sprachnachricht eines Kollegen. Beantworten Sie die Fragen.",
-      "text": "Hallo Aleksandar, hier ist Jonas. Ich wollte dich kurz wegen des Kundentermins am Donnerstag anrufen. Frau Wagner hat gerade abgesagt, sie ist krank, und schlägt stattdessen nächsten Dienstag um zehn vor. Könntest du prüfen, ob das bei dir passt, und mir bis heute Nachmittag Bescheid geben? Und noch etwas: Sie hätte gern vor dem Termin die aktualisierte Version des Angebots, am besten schon morgen. Ich bin heute ab zwei im Meeting, schreib mir am besten eine Nachricht. Danke dir, bis später.",
+      "text": "Hallo {Vorname}, hier ist Jonas. Ich wollte dich kurz wegen des Kundentermins am Donnerstag anrufen. Frau Wagner hat gerade abgesagt, sie ist krank, und schlägt stattdessen nächsten Dienstag um zehn vor. Könntest du prüfen, ob das bei dir passt, und mir bis heute Nachmittag Bescheid geben? Und noch etwas: Sie hätte gern vor dem Termin die aktualisierte Version des Angebots, am besten schon morgen. Ich bin heute ab zwei im Meeting, schreib mir am besten eine Nachricht. Danke dir, bis später.",
       "questions": [
         { "question": "Warum ruft Jonas an?", "options": ["Der Kundentermin wurde verschoben.", "Er ist selbst krank.", "Er braucht das Angebot für sich."], "correctIndex": 0 },
         { "question": "Wann soll der neue Termin stattfinden?", "options": ["Donnerstag um zehn.", "Dienstag um zehn.", "Heute Nachmittag."], "correctIndex": 1 },
-        { "question": "Was soll Aleksandar bis morgen tun?", "options": ["Frau Wagner anrufen.", "Das aktualisierte Angebot schicken.", "Ins Meeting kommen."], "correctIndex": 1 },
-        { "question": "Wie soll Aleksandar Jonas antworten?", "options": ["Per Telefon nach zwei Uhr.", "Persönlich im Meeting.", "Per Nachricht."], "correctIndex": 2 }
+        { "question": "Was soll {Vorname} bis morgen tun?", "options": ["Frau Wagner anrufen.", "Das aktualisierte Angebot schicken.", "Ins Meeting kommen."], "correctIndex": 1 },
+        { "question": "Wie soll {Vorname} Jonas antworten?", "options": ["Per Telefon nach zwei Uhr.", "Persönlich im Meeting.", "Per Nachricht."], "correctIndex": 2 }
       ], "tags": ["beruf", "sprachnachricht"] },
     { "id": "hv.mc.003", "type": "Reading", "nodeId": "HV.HOEREN_VORTRAG", "band": "B2_1", "context": "Pruefung", "audioOnly": true,
       "prompt": "Hören Teil 4: Sie hören einen Ausschnitt aus einem Vortrag. Beantworten Sie die Fragen.",

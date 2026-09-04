@@ -4,7 +4,7 @@
     "theme": "Alltag", "band": "B2_1", "scene": "weekend", "minutes": 15,
     "intro": "Donnerstagabend, Teamstammtisch im „Schnoor“. Kein Meeting, keine Agenda – nur Menschen, die sich unterhalten. Für viele Zugezogene die schwerste Situation: Smalltalk, der über „Wie geht’s?“ hinausgeht.",
     "story": [
-      { "speaker": "Lena", "text": "Aleksandar, du bist doch der, der immer mit dem Rad kommt, oder? Bei dem Wetter!" },
+      { "speaker": "Lena", "text": "{Vorname}, du bist doch der, der immer mit dem Rad kommt, oder? Bei dem Wetter!" },
       { "speaker": "Du", "text": "…", "options": ["Ja, ich bin der Verrückte, der bei Regen radelt. Ich habe letztes Jahr angefangen, weil die Bahn ständig ausgefallen ist – und jetzt will ich nicht mehr zurück.", "Ja, ich bin der Verrückte, der bei Regen radelt. Ich habe letztes Jahr angefangen, weil die Bahn ist ständig ausgefallen – und jetzt will ich nicht mehr zurück.", "Ja. Rad. Immer."],
         "correctIndex": 0, "feedback": ["Relativsatz mit Selbstironie, weil-Satz mit Verb am Ende, eine kleine Geschichte statt einer Antwort. So entsteht ein Gespräch.", "„weil die Bahn ist ständig ausgefallen“ – im Nebensatz steht das konjugierte Verb am Ende: „… ständig ausgefallen ist“.", "Smalltalk lebt von einem Satz mehr. Ein Wort pro Antwort erstickt jedes Gespräch."] },
       { "speaker": "Lena", "text": "Ha! Und was macht man in Bremen am Wochenende, wenn man aus Belgrad kommt?" },

@@ -43,7 +43,7 @@
     { "id": "l06.dlg.001", "type": "Dialogue", "nodeId": "RM.BESCHWERDE_BITTE", "band": "B2_1", "context": "Alltag",
       "prompt": "Die Hausverwaltung ruft endlich zurück. Bleib freundlich, aber halte die Frist.",
       "lines": [
-        { "speaker": "Hausverwaltung", "text": "Guten Tag, Herr Micić, Weber von der Hausverwaltung. Sie haben wegen der Heizung geschrieben?" },
+        { "speaker": "Hausverwaltung", "text": "Guten Tag, Herr {Nachname}, Weber von der Hausverwaltung. Sie haben wegen der Heizung geschrieben?" },
         { "speaker": "Du", "text": "…", "options": ["Guten Tag, Frau Weber, danke für den Rückruf. Ja, die Heizung im Wohnzimmer tropft seit dem 3. September. Ich hatte um einen Reparaturtermin bis Ende dieser Woche gebeten.", "Guten Tag. Ja, endlich! Seit drei Wochen warte ich. Wann kommt jemand?", "Guten Tag, Frau Weber. Ja, es tropft. Was schlagen Sie vor?"],
           "correctIndex": 0, "feedback": ["Dank, Fakten mit Datum, Erinnerung an die gesetzte Frist – freundlich und unmissverständlich.", "„endlich!“ ist verständlich, aber die Verwaltung macht danach dicht.", "Zu passiv; du hast schon eine Frist gesetzt, daran erinnerst du."] },
         { "speaker": "Hausverwaltung", "text": "Der Handwerker könnte am Montag in zwei Wochen kommen, früher ist nichts frei." },

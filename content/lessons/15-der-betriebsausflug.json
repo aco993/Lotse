@@ -44,7 +44,7 @@
       "prompt": "Telefonat mit dem Kanuverleih: Reservierung ändern.",
       "lines": [
         { "speaker": "Kanuverleih", "text": "Wümme-Kanu, Brandt, hallo?" },
-        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Micić von der Nordlicht GmbH. Ich hatte mich letzte Woche nach 20 Booten für den 20. erkundigt – wir würden jetzt gern auf den 27. umbuchen. Wäre das möglich?", "Guten Tag, Micić. Ich habe mich letzte Woche über 20 Boote für den 20. erkundigt. Können wir am 27.?", "Hallo, wir wollen 20 Boote am 27. statt 20. Geht das?"],
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, {Nachname} von der Nordlicht GmbH. Ich hatte mich letzte Woche nach 20 Booten für den 20. erkundigt – wir würden jetzt gern auf den 27. umbuchen. Wäre das möglich?", "Guten Tag, {Nachname}. Ich habe mich letzte Woche über 20 Boote für den 20. erkundigt. Können wir am 27.?", "Hallo, wir wollen 20 Boote am 27. statt 20. Geht das?"],
           "correctIndex": 0, "feedback": ["sich erkundigen nach, umbuchen auf, Konjunktiv II – und der Bezug zur letzten Anfrage.", "„sich erkundigen NACH“ – nicht „über“. Sonst verständlich.", "Kein Name, kein Bezug, kein Konjunktiv. Für einen Anbieter, bei dem man etwas will, zu ruppig."] },
         { "speaker": "Kanuverleih", "text": "Der 27. – ja, das passt. Ich brauche dafür eine Anzahlung von 300 Euro, und ich bitte Sie, mir die Teilnehmerzahl bis zum 20. zu bestätigen." },
         { "speaker": "Du", "text": "…", "options": ["Die Anzahlung überweisen wir diese Woche. Ich verlasse mich darauf, dass 22 Boote reserviert sind – könnten Sie mir das kurz per Mail bestätigen?", "Die Anzahlung überweisen wir diese Woche. Ich verlasse mich auf dass 22 Boote reserviert sind.", "Okay, 300 Euro, 22 Boote, tschüss."],

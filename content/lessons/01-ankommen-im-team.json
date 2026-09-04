@@ -4,8 +4,8 @@
     "theme": "Beruf", "band": "B1_2", "scene": "team", "minutes": 15,
     "intro": "Erster Tag bei der Nordlicht GmbH in Bremen. Teamleiterin Sabine Berger stellt dir das Team vor, Kollege Jonas holt Kaffee. Du willst einen guten Eindruck machen – ohne dich zu verstellen.",
     "story": [
-      { "speaker": "Sabine Berger", "text": "Guten Morgen! Sie müssen Aleksandar sein. Herzlich willkommen bei uns." },
-      { "speaker": "Du", "text": "…", "options": ["Guten Morgen, Frau Berger. Ja, ich bin Aleksandar. Freut mich sehr, Sie kennenzulernen.", "Hallo Sabine! Ja, das bin ich. Cool, endlich da.", "Morgen. Ich bin Aleksandar Micić, Softwareentwickler, 34 Jahre, aus Serbien."],
+      { "speaker": "Sabine Berger", "text": "Guten Morgen! Sie müssen {Vorname} sein. Herzlich willkommen bei uns." },
+      { "speaker": "Du", "text": "…", "options": ["Guten Morgen, Frau Berger. Ja, ich bin {Vorname}. Freut mich sehr, Sie kennenzulernen.", "Hallo Sabine! Ja, das bin ich. Cool, endlich da.", "Morgen. Ich bin {Name}, Softwareentwickler, 34 Jahre, aus Serbien."],
         "correctIndex": 0, "feedback": ["Genau richtig: Sie-Form, Nachname, eine warme Formel. So beginnt man in Deutschland mit einer Vorgesetzten.", "Zu vertraut für den ersten Kontakt mit der Chefin. Duzen bietet meist die andere Seite an – warte darauf.", "Zu viel auf einmal und ohne Gruß zurück. Ein Lebenslauf ist keine Begrüßung."] },
       { "speaker": "Sabine Berger", "text": "Das ist Jonas, er wird Sie in den ersten Wochen begleiten. Bei uns duzen sich übrigens alle im Team – ich bin Sabine." },
       { "speaker": "Jonas", "text": "Hi! Kaffee? Und erzähl mal: Wo hast du vorher gearbeitet?" },
@@ -37,7 +37,7 @@
       "prompt": "In der Kaffeeküche: Eine Kollegin aus der Buchhaltung spricht dich an. Wähle jeweils die beste Antwort.",
       "lines": [
         { "speaker": "Frau Kaya", "text": "Sie sind neu hier, oder? Ich bin Frau Kaya aus der Buchhaltung." },
-        { "speaker": "Du", "text": "…", "options": ["Ja, seit heute. Aleksandar Micić, ich bin im Entwicklungsteam bei Sabine.", "Ja, ich bin neu. Und Sie?", "Ja. Neu."],
+        { "speaker": "Du", "text": "…", "options": ["Ja, seit heute. {Name}, ich bin im Entwicklungsteam bei Sabine.", "Ja, ich bin neu. Und Sie?", "Ja. Neu."],
           "correctIndex": 0, "feedback": ["Name, Abteilung, Bezug zur Chefin – genau die drei Informationen, die ein Kollege braucht.", "„Und Sie?“ passt nicht – sie hat sich gerade vorgestellt.", "Zu knapp; wirkt abweisend."] },
         { "speaker": "Frau Kaya", "text": "Ah, bei Sabine! Dann sehen wir uns öfter, ich schicke Ihnen die Rechnungsdaten. Woher kommen Sie denn?" },
         { "speaker": "Du", "text": "…", "options": ["Aus Serbien, aus Belgrad. Ich lebe aber schon seit zwei Jahren in Bremen.", "Aus Serbien, aus Belgrad. Ich lebe aber schon zwei Jahre vor in Bremen.", "Aus Serbien, aus Belgrad. Ich habe aber schon seit zwei Jahren in Bremen gelebt."],
@@ -50,7 +50,7 @@
       "explanation": "sein: Bewegung von A nach B, Zustandswechsel, plus bleiben/sein/werden/passieren. Alles andere: haben." },
     { "id": "l01.spot.001", "type": "SpotError", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B1_2", "context": "Beruf",
       "prompt": "Jonas’ Nachricht an das Team hat einen Fehler. Tippe auf das falsche Wort.",
-      "options": ["Aleksandar", "hat", "heute", "bei", "uns", "angefangen", "und", "hat", "gestern", "schon", "nach", "Bremen", "umgezogen."],
+      "options": ["{Vorname}", "hat", "heute", "bei", "uns", "angefangen", "und", "hat", "gestern", "schon", "nach", "Bremen", "umgezogen."],
       "correctIndex": 7, "answers": ["ist"], "explanation": "umziehen → sein: „… und ist gestern schon nach Bremen umgezogen“." },
     { "id": "l01.dlg.002", "type": "Dialogue", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B2_1", "context": "Alltag",
       "prompt": "Montagmorgen, Jonas fragt nach dem Wochenende. Erzähle im Perfekt – wähle die korrekte Version.",

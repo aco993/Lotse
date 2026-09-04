@@ -5,7 +5,7 @@
     "intro": "Herr Wagner von der Firma Hansa Logistik ruft an: Seit dem Update fehlen in seinen Rechnungen die Positionen aus dem Import. Er ist sauer. Jonas ist im Meeting – du nimmst das Gespräch an.",
     "story": [
       { "speaker": "Herr Wagner", "text": "Wagner, Hansa Logistik. Seit Ihrem Update fehlen mir in jeder Rechnung die Importpositionen! Wissen Sie, was das für uns bedeutet?" },
-      { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, Micić am Apparat. Das tut mir leid, ich verstehe, dass das für Sie ein ernstes Problem ist. Damit ich es sofort weitergeben kann: Seit wann genau fehlen die Positionen?", "Guten Tag. Das ist nicht mein Bereich, Herr Bauer ist im Meeting.", "Guten Tag, Herr Wagner. Das kann nicht sein, das Update wurde getestet."],
+      { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, {Nachname} am Apparat. Das tut mir leid, ich verstehe, dass das für Sie ein ernstes Problem ist. Damit ich es sofort weitergeben kann: Seit wann genau fehlen die Positionen?", "Guten Tag. Das ist nicht mein Bereich, Herr Bauer ist im Meeting.", "Guten Tag, Herr Wagner. Das kann nicht sein, das Update wurde getestet."],
           "correctIndex": 0, "feedback": ["Entschuldigung, Verständnis, dann eine präzise Rückfrage – das nimmt dem Gespräch die Hitze.", "Zuständigkeit abschieben ist das Schlimmste, was ein verärgerter Kunde hören kann.", "Widerspruch als erste Reaktion. Selbst wenn du recht hast: erst zuhören."] },
       { "speaker": "Herr Wagner", "text": "Seit Montag. Drei Rechnungen sind schon falsch rausgegangen. Ich muss die alle stornieren!" },
       { "speaker": "Du", "text": "…", "options": ["Verstanden. Das Problem wird von uns mit höchster Priorität behandelt. Ich nehme es jetzt auf und Sie erhalten bis 16 Uhr eine Rückmeldung mit dem Stand.", "Verstanden. Wir behandeln das Problem mit höchster Priorität und ich rufe Sie irgendwann zurück.", "Verstanden. Man wird sich kümmern."],
@@ -13,7 +13,7 @@
       { "speaker": "Herr Wagner", "text": "Bis 16 Uhr, gut. Und was ist mit den falschen Rechnungen?" },
       { "speaker": "Du", "text": "…", "options": ["Die betroffenen Rechnungen können nach der Korrektur neu erzeugt werden – das übernehmen wir, Sie müssen nichts manuell stornieren.", "Die betroffenen Rechnungen können nach der Korrektur neu erzeugt. Das machen wir.", "Die Rechnungen müssen Sie stornieren, das ist ja Ihr System."],
           "correctIndex": 0, "feedback": ["Passiv mit Modalverb (können … erzeugt werden) und die Zusage, die Arbeit abzunehmen.", "Passiv mit Modalverb braucht „werden“ am Ende: können … erzeugt WERDEN.", "Verantwortung zurückwerfen – inhaltlich vielleicht, im Ton nie."] },
-      { "speaker": "Herr Wagner", "text": "In Ordnung. Dann warte ich auf Ihre Nachricht. Danke, Herr Micić." }
+      { "speaker": "Herr Wagner", "text": "In Ordnung. Dann warte ich auf Ihre Nachricht. Danke, Herr {Nachname}." }
     ],
     "grammar": {
       "title": "Passiv: Wenn der Vorgang wichtiger ist als der Täter",
@@ -44,12 +44,12 @@
       "prompt": "Rückruf um 15:50: Der Fehler ist gefunden, die Korrektur wird heute Nacht ausgeliefert. Informiere Herrn Wagner.",
       "lines": [
         { "speaker": "Herr Wagner", "text": "Wagner." },
-        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, Micić von Nordlicht. Ich melde mich wie versprochen: Die Ursache ist gefunden, die Korrektur wird heute Nacht eingespielt. Ab morgen früh werden die Positionen wieder korrekt übernommen.", "Hallo Herr Wagner, hier Micić. Also, wir haben den Bug gefixt, wird heute Nacht deployed.", "Guten Tag, Herr Wagner. Der Fehler war übrigens nicht bei uns, sondern in Ihren Daten."],
+        { "speaker": "Du", "text": "…", "options": ["Guten Tag, Herr Wagner, {Nachname} von Nordlicht. Ich melde mich wie versprochen: Die Ursache ist gefunden, die Korrektur wird heute Nacht eingespielt. Ab morgen früh werden die Positionen wieder korrekt übernommen.", "Hallo Herr Wagner, hier {Nachname}. Also, wir haben den Bug gefixt, wird heute Nacht deployed.", "Guten Tag, Herr Wagner. Der Fehler war übrigens nicht bei uns, sondern in Ihren Daten."],
           "correctIndex": 0, "feedback": ["„wie versprochen“, Passiv ohne Täter, konkreter Zeitpunkt – der Kunde weiß genau, was passiert.", "Denglisch am Telefon mit einem Logistik-Kunden – Bug, gefixt, deployed. Er versteht es vielleicht, aber es wirkt unprofessionell.", "Selbst wenn es stimmt: Schuldzuweisung als Einstieg zerstört das Gespräch. Erst Lösung, dann sachlich Ursache."] },
         { "speaker": "Herr Wagner", "text": "Das freut mich. Und die drei falschen Rechnungen?" },
         { "speaker": "Du", "text": "…", "options": ["Die werden morgen Vormittag von uns neu erzeugt und Ihnen zugeschickt. Ich bitte Sie, die alten Nummern noch nicht zu verwenden.", "Die machen wir morgen neu, und die alten Nummern bitte nicht nehmen.", "Die werden morgen Vormittag von uns neu erzeugen."],
           "correctIndex": 0, "feedback": ["Passiv Präsens für Zukünftiges, klare Bitte mit „Ich bitte Sie, … zu …“.", "Verständlich, aber „machen“ und „nehmen“ sind zu allgemein für ein Kundengespräch: erzeugen, verwenden.", "Passiv braucht das Partizip II: werden … erzeugT."] },
-        { "speaker": "Herr Wagner", "text": "Sehr gut. Danke für die schnelle Reaktion, Herr Micić. Das habe ich anders erwartet." }
+        { "speaker": "Herr Wagner", "text": "Sehr gut. Danke für die schnelle Reaktion, Herr {Nachname}. Das habe ich anders erwartet." }
       ], "explanation": "Rückmeldung nach einer Beschwerde: Bezug („wie versprochen“), Stand im Passiv, nächster Schritt mit Zeit." }
   ]
 }

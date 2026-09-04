@@ -50,8 +50,10 @@ Erledigt in 0.9.0:
   und ein Stichentscheid unter gleich geeigneten Aufgaben, im Begründungstext benannt. Jelenas Pflege-Wortschatz
   kommt damit von selbst dran.
 
-Offen (bewusst): Gamification jenseits von Streak und Zielen (Tamara, Ana), Vorname im Profil statt des festen
-Namens in Musterlösungen (Ana).
+- **Vorname im Profil statt des festen Namens** (Ana) – der Kurs trägt jetzt Tokens; wer seinen Namen einträgt, wird
+  im Dialog und in Musterlösungen so angesprochen. Leere Felder behalten den Namen des Autors.
+
+Offen (bewusst): Gamification jenseits von Streak und Zielen (Tamara, Ana).
 
 ## Methode, kurz
 

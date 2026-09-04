@@ -52,6 +52,8 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     await page.Locator(".mud-list-item", new() { HasTextString = "C1 – darüber hinaus" }).First.ClickAsync();
                     await page.Locator("div.mud-input-control:has(input[aria-label='Branche'])").ClickAsync();
                     await page.Locator(".mud-list-item", new() { HasTextString = "Pflege" }).First.ClickAsync();
+                    await page.GetByLabel("Vorname").First.FillAsync("Marko");
+                    await page.GetByLabel("Nachname").First.FillAsync("Petrović");
                     await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
                     await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
                     await Shoot(page, $"einstellungen-zielniveau-{viewport}-{theme}");
@@ -60,6 +62,11 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     await page.GotoAsync("/");
                     await Expect(page.GetByText("C1-Nähe")).ToBeVisibleAsync();
                     await Shoot(page, $"heute-c1-{viewport}-{theme}");
+
+                    // A lesson addressed to the learner instead of to the author
+                    await page.GotoAsync("/kurs/L02");
+                    await Expect(page.GetByText("Sehr geehrter Herr Petrović", new() { Exact = false }).First).ToBeVisibleAsync();
+                    await Shoot(page, $"lektion-name-{viewport}-{theme}");
                 }
                 finally
                 {

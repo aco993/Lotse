@@ -4,7 +4,7 @@
     "theme": "Beruf", "band": "B2_1", "scene": "customer", "minutes": 18,
     "intro": "Hansa Logistik will die neue Version sehen, bevor sie verlängern. Herr Wagner und seine Chefin, Frau Ostermann, sitzen im Besprechungsraum. Sabine hat gesagt: „Du kennst das System am besten – du präsentierst.“ Zwanzig Minuten, dann Fragen.",
     "story": [
-      { "speaker": "Frau Ostermann", "text": "Herr Micić, wir haben wenig Zeit. Was ist in der neuen Version wirklich anders?" },
+      { "speaker": "Frau Ostermann", "text": "Herr {Nachname}, wir haben wenig Zeit. Was ist in der neuen Version wirklich anders?" },
       { "speaker": "Du", "text": "…", "options": ["Drei Dinge. Erstens ein neuer, deutlich schnellerer Import, zweitens eine überarbeitete Rechnungsübersicht mit allen offenen Positionen, drittens ein automatischer Test, der jede Änderung vor der Auslieferung prüft.", "Drei Dinge. Erstens ein neu, schneller Import, zweitens eine überarbeitete Rechnungsübersicht mit alle offene Positionen, drittens ein automatisch Test.", "Es gibt viele Verbesserungen, ich zeige Ihnen einfach alles."],
         "correctIndex": 0, "feedback": ["Drei Punkte, jeder mit korrekt deklinierten Adjektiven (ein neuer, schnellerer Import; mit allen offenen Positionen; ein automatischer Test). Frau Ostermann hat die Struktur nach zehn Sekunden.", "Adjektive ohne Endung („ein neu Import“, „automatisch Test“) und „mit alle offene“ statt „mit allen offenen“: Dativ Plural bekommt -en.", "„Ich zeige einfach alles“ ist das Gegenteil von Struktur – und von wenig Zeit."] },
       { "speaker": "Herr Wagner", "text": "Der Import – ist das derselbe, der uns im Frühjahr die Rechnungen kaputt gemacht hat?" },
