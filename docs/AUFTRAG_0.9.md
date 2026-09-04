@@ -9,10 +9,16 @@ the languages the repo already uses (English docs/comments, German UI, Serbian `
 ## State you start from
 
 - `main` at `4adf606` (0.8.0): FSRS-5, rule-based text analyzer, idempotent sessions, quick placement, eleven
-  vocabulary packs (2,048 exercises, 919 lemmas, 59 nodes), 167 tests green, `dotnet format` gate green.
-- The working tree may hold uncommitted work on **Piper TTS** (CHANGELOG "Unreleased", `SpeechService.cs`,
-  `speech.js`, `Program.cs`, `TextToSpeechTests.cs`). If that is yours, finish and commit it first. Never revert
-  or "clean up" changes you did not make; if they block you, say so.
+  vocabulary packs (2,048 exercises, 919 lemmas, 59 nodes), `dotnet format` gate green. 167 tests at that
+  commit; the Piper work below brings it to 177 (Core 129, Web 48).
+- **Piper TTS** (local neural voice, `ITextToSpeech` / `PiperTtsService`, `/api/tts/{key}.wav` behind the login,
+  `SpeakerVoices` male/female per speaker label, `tools/install-piper.ps1`): its first cut was swept into
+  `4adf606` by a repo-wide `git add`; the rest (CHANGELOG "Unreleased", `Program.cs`, `SpeechService.cs`,
+  `speech.js`, `Lektion.razor`, `DialogueExercise.razor`, `SpeakerVoices.cs`, `TextToSpeechTests.cs`,
+  `docs/UPUTSTVO.md` §1c, `docs/GITHUB.md`) is uncommitted in the tree. If that is your session, finish and
+  commit it first, as its own commit. Never revert or "clean up" changes you did not make; if they block you,
+  say so. Piper is optional at runtime: without `%LOCALAPPDATA%\Lotse` the browser voices are used and every
+  test that needs Piper skips loudly - keep it that way.
 - Dev server: `.claude/launch.json` entry `lotse` (port 5310), plain `dotnet run` (no watch). **Stop it before
   any `dotnet build`, `dotnet test`, `dotnet ef`** - the running app locks the DLLs (MSB3021/3026/3027 is the lock,
   not a code error). Restart it afterwards; the app reads `content/` from the source folder, so content edits
@@ -78,9 +84,11 @@ dotnet format --no-restore && dotnet build && dotnet test --no-build && dotnet f
 - `LearnerProfile.FirstName` / `LastName` (migration), set on `Einstellungen`; defaults when empty:
   "Aleksandar" / "Aleksandar Micić" (the author's own experience is unchanged).
 - One `NameTemplate.Render(text, profile)` in Core, applied at the render boundary: lesson story lines
-  (`Lektion.razor`, `DialogueExercise`), `ModelAnswer`, `Prompt`/`Text`/`Instruction` of exercises, TTS text.
-  `AnswerChecker` compares learner input against `Answers` - check whether any answer contains a token (it
-  should not; assert in the content test).
+  (`Lektion.razor`, `DialogueExercise` - both just changed for the Piper voice mapping, build on that version),
+  `ModelAnswer`, `Prompt`/`Text`/`Instruction` of exercises, and **before** every `SpeechService.SpeakAsync`
+  call, because speech is now rendered on the server by Piper and cached by a hash of the text - a token must
+  never reach the synthesiser. `AnswerChecker` compares learner input against `Answers` - check whether any
+  answer contains a token (it should not; assert in the content test).
 - Tests: render substitutes; content contains no literal name; a lesson test still passes.
 
 ### 4. Motivation beyond the streak (Tamara, Ana, Petar) - "Fortschritt" that people look at
@@ -128,9 +136,12 @@ dotnet format --no-restore && dotnet build && dotnet test --no-build && dotnet f
 
 - No new NuGet packages without a reason and an MIT/free licence; no gamification frameworks.
 - No AI calls for anything above - every item is deterministic.
-- Do not touch the Piper work, the persona harness scripts, or `content/exercises/wortschatz-*.json` beyond the
-  name-token replacement.
+- Do not redesign the Piper work (voice mapping, cache, endpoint) - touch `SpeechService`/`Lektion.razor`/
+  `DialogueExercise` only where item 3 needs the name rendered before speaking. Do not touch the persona
+  harness scripts or `content/exercises/wortschatz-*.json` beyond the name-token replacement.
 - Do not change FSRS parameters or the analyzer's rules unless a test proves a false positive.
+- Persona/harness runs and E2E: keep `--mute-audio` - with Piper, dictations and "Gespräch anhören" play real
+  audio through the machine's speakers; headless is not silent by itself.
 
 ## Definition of done
 
