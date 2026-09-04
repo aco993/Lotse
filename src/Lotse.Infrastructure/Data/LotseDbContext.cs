@@ -74,6 +74,21 @@ public sealed class AttemptEntity
     public string? AnswerText { get; set; }
 }
 
+/// <summary>
+/// One reading of the readiness number per learner and day, so Heute can say which way it is moving. Written when
+/// the dashboard is opened and no row exists for today - there is no background job in this app, and a number the
+/// learner never looked at does not need to be recorded.
+/// </summary>
+public sealed class ReadinessSnapshotEntity
+{
+    public long Id { get; set; }
+    public required string UserId { get; set; }
+    public DateOnly Day { get; set; }
+    public double Overall { get; set; }
+    /// <summary>Per-module readiness as JSON, so a later version can show the trend per module without a migration.</summary>
+    public string ModulesJson { get; set; } = "{}";
+}
+
 public sealed class ErrorEventEntity
 {
     public long Id { get; set; }
@@ -187,6 +202,7 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
     public DbSet<GeneratedExerciseEntity> GeneratedExercises => Set<GeneratedExerciseEntity>();
     public DbSet<SettingEntity> Settings => Set<SettingEntity>();
     public DbSet<LessonProgressEntity> LessonProgress => Set<LessonProgressEntity>();
+    public DbSet<ReadinessSnapshotEntity> ReadinessSnapshots => Set<ReadinessSnapshotEntity>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -232,6 +248,14 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
             e.HasIndex(a => a.Utc);
             e.HasIndex(a => a.ExerciseId);
             e.Property(a => a.Outcome).HasConversion<string>();
+        });
+
+        b.Entity<ReadinessSnapshotEntity>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            // One row per learner and day - the unique index is what makes "write it once when the dashboard opens"
+            // safe against two tabs racing each other.
+            e.HasIndex(x => new { x.UserId, x.Day }).IsUnique();
         });
 
         b.Entity<ErrorEventEntity>(e =>
