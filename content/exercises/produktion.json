@@ -1,145 +1,721 @@
 {
   "exercises": [
-    { "id": "sw.micro.001", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Beruf", "minWords": 40,
+    {
+      "id": "sw.micro.001",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Beruf",
+      "minWords": 40,
       "prompt": "Sie können morgen nicht zum Team-Meeting kommen. Schreiben Sie Ihrer Vorgesetzten eine kurze Nachricht: Grund, Entschuldigung, Vorschlag (Protokoll lesen oder Ersatztermin).",
-      "rubric": ["Anrede und Gruß formell", "Grund genannt", "Höfliche Entschuldigung (Konjunktiv II)", "Konkreter Vorschlag", "Ein Konjunktiv II der Vergangenheit (Ich hätte früher Bescheid geben sollen)"],
-      "modelAnswer": "Sehr geehrte Frau Berger,\n\nleider kann ich morgen nicht am Team-Meeting teilnehmen, da ich einen Arzttermin habe, der sich nicht verschieben lässt. Ich bitte um Ihr Verständnis. Gern lese ich anschließend das Protokoll und melde mich bei offenen Punkten direkt bei Ihnen.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["absage", "email"] },
-    { "id": "sw.micro.002", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B1_2", "context": "Alltag", "minWords": 40,
+      "rubric": [
+        "Anrede und Gruß formell",
+        "Grund genannt",
+        "Höfliche Entschuldigung (Konjunktiv II)",
+        "Konkreter Vorschlag",
+        "Ein Konjunktiv II der Vergangenheit (Ich hätte früher Bescheid geben sollen)"
+      ],
+      "modelAnswer": "Sehr geehrte Frau Berger,\n\nleider kann ich morgen nicht am Team-Meeting teilnehmen, da ich einen Arzttermin habe, der sich nicht verschieben lässt. Ich bitte um Ihr Verständnis. Gern lese ich anschließend das Protokoll und melde mich bei offenen Punkten direkt bei Ihnen.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "absage",
+        "email"
+      ]
+    },
+    {
+      "id": "sw.micro.002",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B1_2",
+      "context": "Alltag",
+      "minWords": 40,
       "prompt": "Ihr Nachbar hört jeden Abend bis Mitternacht laute Musik. Schreiben Sie ihm eine höfliche, aber klare Nachricht (Problem, Wirkung auf Sie, Bitte).",
-      "rubric": ["Höflicher Einstieg", "Problem konkret beschrieben", "Bitte mit Konjunktiv II", "Kein Vorwurfston", "Eine Teilnegation: nicht …, sondern … (nicht die Musik, sondern die Uhrzeit)"],
-      "modelAnswer": "Hallo Herr Schmidt,\n\nich wohne direkt unter Ihnen und muss früh aufstehen. In den letzten Wochen war Ihre Musik oft bis Mitternacht deutlich zu hören, sodass ich kaum schlafen konnte. Wäre es möglich, die Musik ab 22 Uhr leiser zu stellen? Vielen Dank für Ihr Verständnis.\n\nFreundliche Grüße\n{Name}", "tags": ["beschwerde"] },
-    { "id": "sw.micro.003", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Beruf", "minWords": 50,
+      "rubric": [
+        "Höflicher Einstieg",
+        "Problem konkret beschrieben",
+        "Bitte mit Konjunktiv II",
+        "Kein Vorwurfston",
+        "Eine Teilnegation: nicht …, sondern … (nicht die Musik, sondern die Uhrzeit)"
+      ],
+      "modelAnswer": "Hallo Herr Schmidt,\n\nich wohne direkt unter Ihnen und muss früh aufstehen. In den letzten Wochen war Ihre Musik oft bis Mitternacht deutlich zu hören, sodass ich kaum schlafen konnte. Wäre es möglich, die Musik ab 22 Uhr leiser zu stellen? Vielen Dank für Ihr Verständnis.\n\nFreundliche Grüße\n{Name}",
+      "tags": [
+        "beschwerde"
+      ]
+    },
+    {
+      "id": "sw.micro.003",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Beruf",
+      "minWords": 50,
       "prompt": "Ein Kunde fragt per E-Mail, wann der von ihm gemeldete Fehler behoben ist. Antworten Sie: aktueller Stand, voraussichtlicher Termin, Dank für die Geduld.",
-      "rubric": ["Bezug auf die Anfrage", "Stand klar formuliert (Passiv/Perfekt)", "Realistischer Termin mit Vorbehalt", "Freundlicher Abschluss", "Ein Passiversatz statt eines zweiten Passivs (lässt sich beheben / ist zu beheben / behebbar)"],
-      "modelAnswer": "Sehr geehrter Herr Wagner,\n\nvielen Dank für Ihre Nachfrage. Der von Ihnen gemeldete Fehler wurde bereits analysiert; die Ursache liegt in der Schnittstelle zum Buchhaltungssystem. Die Korrektur wird derzeit getestet und voraussichtlich am Donnerstag bereitgestellt. Sollte sich der Termin verschieben, informiere ich Sie umgehend. Vielen Dank für Ihre Geduld.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["kunde", "email", "it"] },
-    { "id": "sw.micro.004", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B1_2", "context": "Alltag", "minWords": 50,
+      "rubric": [
+        "Bezug auf die Anfrage",
+        "Stand klar formuliert (Passiv/Perfekt)",
+        "Realistischer Termin mit Vorbehalt",
+        "Freundlicher Abschluss",
+        "Ein Passiversatz statt eines zweiten Passivs (lässt sich beheben / ist zu beheben / behebbar)"
+      ],
+      "modelAnswer": "Sehr geehrter Herr Wagner,\n\nvielen Dank für Ihre Nachfrage. Der von Ihnen gemeldete Fehler wurde bereits analysiert; die Ursache liegt in der Schnittstelle zum Buchhaltungssystem. Die Korrektur wird derzeit getestet und voraussichtlich am Donnerstag bereitgestellt. Sollte sich der Termin verschieben, informiere ich Sie umgehend. Vielen Dank für Ihre Geduld.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "kunde",
+        "email",
+        "it"
+      ]
+    },
+    {
+      "id": "sw.micro.004",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B1_2",
+      "context": "Alltag",
+      "minWords": 50,
       "prompt": "Sie möchten Ihren Vertrag im Fitnessstudio kündigen. Schreiben Sie eine kurze formelle Kündigung: Vertragsnummer (erfinden), Kündigung zum nächstmöglichen Termin, Bitte um schriftliche Bestätigung.",
-      "rubric": ["Betreff/Anlass eindeutig", "Kündigung zum nächstmöglichen Termin formuliert", "Bitte um Bestätigung", "Formeller Gruß", "Genitiv im formellen Teil (zum Ende des Monats, gemäß der Vereinbarung)"],
-      "modelAnswer": "Sehr geehrte Damen und Herren,\n\nhiermit kündige ich meinen Mitgliedsvertrag (Nr. 48213) fristgerecht zum nächstmöglichen Termin. Bitte bestätigen Sie mir die Kündigung sowie das Vertragsende schriftlich.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["kuendigung"] },
-    { "id": "sw.micro.005", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Beruf", "minWords": 45,
+      "rubric": [
+        "Betreff/Anlass eindeutig",
+        "Kündigung zum nächstmöglichen Termin formuliert",
+        "Bitte um Bestätigung",
+        "Formeller Gruß",
+        "Genitiv im formellen Teil (zum Ende des Monats, gemäß der Vereinbarung)"
+      ],
+      "modelAnswer": "Sehr geehrte Damen und Herren,\n\nhiermit kündige ich meinen Mitgliedsvertrag (Nr. 48213) fristgerecht zum nächstmöglichen Termin. Bitte bestätigen Sie mir die Kündigung sowie das Vertragsende schriftlich.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "kuendigung"
+      ]
+    },
+    {
+      "id": "sw.micro.005",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Beruf",
+      "minWords": 45,
       "prompt": "Bitten Sie einen Kollegen aus einem anderen Team schriftlich um Zugriff auf ein System: Zweck, Zeitraum, Dank. Duzen ist im Unternehmen üblich.",
-      "rubric": ["Klarer Zweck", "Zeitraum genannt", "Höfliche Bitte trotz Du-Form", "Verben mit Präposition korrekt (Zugriff auf)", "Ein Infinitivsatz mit um … zu für den Zweck"],
-      "modelAnswer": "Hallo Jonas,\n\nfür die Analyse des Import-Fehlers bräuchte ich bis Ende nächster Woche Lesezugriff auf die Testdatenbank (Server TST-02). Könntest du mir den Zugang einrichten oder mir sagen, wer dafür zuständig ist? Vielen Dank im Voraus!\n\nViele Grüße\n{Vorname}", "tags": ["it", "bitte"] },
-    { "id": "sw.micro.006", "type": "FreeWrite", "nodeId": "GR.PERFEKT_PRAETERITUM", "band": "B1_2", "context": "Alltag", "minWords": 40,
+      "rubric": [
+        "Klarer Zweck",
+        "Zeitraum genannt",
+        "Höfliche Bitte trotz Du-Form",
+        "Verben mit Präposition korrekt (Zugriff auf)",
+        "Ein Infinitivsatz mit um … zu für den Zweck"
+      ],
+      "modelAnswer": "Hallo Jonas,\n\nfür die Analyse des Import-Fehlers bräuchte ich bis Ende nächster Woche Lesezugriff auf die Testdatenbank (Server TST-02). Könntest du mir den Zugang einrichten oder mir sagen, wer dafür zuständig ist? Vielen Dank im Voraus!\n\nViele Grüße\n{Vorname}",
+      "tags": [
+        "it",
+        "bitte"
+      ]
+    },
+    {
+      "id": "sw.micro.006",
+      "type": "FreeWrite",
+      "nodeId": "GR.PERFEKT_PRAETERITUM",
+      "band": "B1_2",
+      "context": "Alltag",
+      "minWords": 40,
       "prompt": "Schreiben Sie fünf bis sechs Sätze über Ihren gestrigen Arbeitstag – im Perfekt. Nutzen Sie mindestens ein Verb mit „sein“ (fahren, gehen, bleiben, aufstehen).",
-      "rubric": ["Alle Verben im Perfekt", "haben/sein korrekt", "Partizip II am Satzende", "Mindestens ein Satz beginnt nicht mit „Ich“", "Ein temporaler Nebensatz mit nachdem + Plusquamperfekt"],
-      "modelAnswer": "Gestern bin ich um halb sieben aufgestanden. Nach dem Frühstück bin ich mit dem Zug ins Büro gefahren. Dort habe ich zuerst meine E-Mails gelesen und dann an einem Import-Fehler gearbeitet. Mittags haben wir in der Kantine gegessen. Am Nachmittag habe ich mit einem Kunden telefoniert. Um sechs bin ich nach Hause gegangen.", "tags": ["grammatik"] },
-    { "id": "sw.micro.007", "type": "FreeWrite", "nodeId": "GR.KONJUNKTIV2", "band": "B2_1", "context": "Alltag", "minWords": 45,
+      "rubric": [
+        "Alle Verben im Perfekt",
+        "haben/sein korrekt",
+        "Partizip II am Satzende",
+        "Mindestens ein Satz beginnt nicht mit „Ich“",
+        "Ein temporaler Nebensatz mit nachdem + Plusquamperfekt"
+      ],
+      "modelAnswer": "Gestern bin ich um halb sieben aufgestanden. Nach dem Frühstück bin ich mit dem Zug ins Büro gefahren. Nachdem ich dort meine E-Mails gelesen hatte, habe ich an einem Import-Fehler gearbeitet. Mittags haben wir in der Kantine gegessen. Am Nachmittag habe ich mit einem Kunden telefoniert. Um sechs bin ich nach Hause gegangen.",
+      "tags": [
+        "grammatik"
+      ]
+    },
+    {
+      "id": "sw.micro.007",
+      "type": "FreeWrite",
+      "nodeId": "GR.KONJUNKTIV2",
+      "band": "B2_1",
+      "context": "Alltag",
+      "minWords": 45,
       "prompt": "Was würden Sie tun, wenn Sie einen Monat frei hätten und Geld keine Rolle spielte? Fünf Sätze im Konjunktiv II (würde, hätte, wäre, könnte).",
-      "rubric": ["Durchgehend Konjunktiv II", "Mindestens ein wenn-Satz mit korrekter Wortstellung", "hätte/wäre statt würde haben/sein", "Variation der Satzanfänge", "Ein irrealer Wunsch oder Vergleich (Wenn ich nur … / als ob …)"],
-      "modelAnswer": "Wenn ich einen Monat frei hätte, würde ich zuerst nach Serbien fahren und meine Familie besuchen. Danach würde ich mit dem Zug durch Italien reisen. Ich hätte endlich Zeit, jeden Tag zu lesen. Am liebsten wäre ich zwei Wochen am Meer. Wenn Geld keine Rolle spielte, könnte ich sogar einen Kochkurs in Japan machen.", "tags": ["grammatik"] },
-    { "id": "sw.micro.008", "type": "FreeWrite", "nodeId": "GR.PASSIV", "band": "B2_1", "context": "Beruf", "minWords": 45,
+      "rubric": [
+        "Durchgehend Konjunktiv II",
+        "Mindestens ein wenn-Satz mit korrekter Wortstellung",
+        "hätte/wäre statt würde haben/sein",
+        "Variation der Satzanfänge",
+        "Ein irrealer Wunsch oder Vergleich (Wenn ich nur … / als ob …)"
+      ],
+      "modelAnswer": "Wenn ich einen Monat frei hätte, würde ich zuerst nach Serbien fahren und meine Familie besuchen. Danach würde ich mit dem Zug durch Italien reisen. Ich hätte endlich Zeit, jeden Tag zu lesen. Am liebsten wäre ich zwei Wochen am Meer. Wenn Geld keine Rolle spielte, könnte ich sogar einen Kochkurs in Japan machen.",
+      "tags": [
+        "grammatik"
+      ]
+    },
+    {
+      "id": "sw.micro.008",
+      "type": "FreeWrite",
+      "nodeId": "GR.PASSIV",
+      "band": "B2_1",
+      "context": "Beruf",
+      "minWords": 45,
       "prompt": "Beschreiben Sie in fünf Sätzen, wie in Ihrer Firma eine neue Softwareversion ausgeliefert wird – im Passiv (werden + Partizip II). Nutzen Sie: testen, freigeben, bereitstellen, informieren, prüfen.",
-      "rubric": ["Passiv korrekt gebildet", "Mindestens ein Passiv mit Modalverb (muss … werden)", "Fachbegriffe auf Deutsch", "Logische Reihenfolge mit Konnektoren (zuerst, danach, schließlich)", "Ein Zustandspassiv für das Ergebnis (Danach ist die Version freigegeben)"],
-      "modelAnswer": "Zuerst wird die neue Version auf dem Testsystem geprüft. Danach müssen alle Änderungen von der Fachabteilung freigegeben werden. Anschließend wird die Version nachts auf dem Produktivsystem bereitgestellt. Die Kunden werden am nächsten Morgen per E-Mail informiert. Schließlich werden die Protokolle kontrolliert, damit Fehler früh erkannt werden.", "tags": ["grammatik", "it"] },
-    { "id": "sw.micro.009", "type": "FreeWrite", "nodeId": "GR.KONNEKTOREN", "band": "B2_1", "context": "Pruefung", "minWords": 50,
+      "rubric": [
+        "Passiv korrekt gebildet",
+        "Mindestens ein Passiv mit Modalverb (muss … werden)",
+        "Fachbegriffe auf Deutsch",
+        "Logische Reihenfolge mit Konnektoren (zuerst, danach, schließlich)",
+        "Ein Zustandspassiv für das Ergebnis (Danach ist die Version freigegeben)"
+      ],
+      "modelAnswer": "Zuerst wird die neue Version auf dem Testsystem geprüft. Danach müssen alle Änderungen von der Fachabteilung freigegeben werden. Anschließend wird die Version nachts auf dem Produktivsystem bereitgestellt. Die Kunden werden am nächsten Morgen per E-Mail informiert. Schließlich werden die Protokolle kontrolliert, damit Fehler früh erkannt werden.",
+      "tags": [
+        "grammatik",
+        "it"
+      ]
+    },
+    {
+      "id": "sw.micro.009",
+      "type": "FreeWrite",
+      "nodeId": "GR.KONNEKTOREN",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 50,
       "prompt": "Thema Homeoffice: Schreiben Sie fünf Sätze, jeder mit einem anderen Konnektor: obwohl, deshalb, trotzdem, außerdem, während.",
-      "rubric": ["Alle fünf Konnektoren verwendet", "Wortstellung nach jedem Konnektor korrekt", "Inhaltlich sinnvolle Verbindungen", "Komma vor Nebensätzen", "Zusätzlich ein zweiteiliger Konnektor (nicht nur … sondern auch / je … desto / weder … noch)"],
-      "modelAnswer": "Obwohl ich gern im Büro arbeite, schätze ich die Ruhe zu Hause. Im Homeoffice spare ich täglich eine Stunde Fahrzeit, deshalb bin ich abends weniger müde. Manche Kollegen fühlen sich allein, trotzdem möchten sie nicht jeden Tag ins Büro. Außerdem sparen Firmen Büroflächen. Während die einen die Flexibilität loben, vermissen die anderen den direkten Austausch.", "tags": ["grammatik"] },
-    { "id": "sw.micro.010", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_1", "context": "Pruefung", "minWords": 60,
+      "rubric": [
+        "Alle fünf Konnektoren verwendet",
+        "Wortstellung nach jedem Konnektor korrekt",
+        "Inhaltlich sinnvolle Verbindungen",
+        "Komma vor Nebensätzen",
+        "Zusätzlich ein zweiteiliger Konnektor (nicht nur … sondern auch / je … desto / weder … noch)"
+      ],
+      "modelAnswer": "Obwohl ich gern im Büro arbeite, schätze ich die Ruhe zu Hause. Im Homeoffice spare ich täglich eine Stunde Fahrzeit, deshalb bin ich abends weniger müde. Manche Kollegen fühlen sich allein, trotzdem möchten sie nicht jeden Tag ins Büro. Außerdem sparen Firmen Büroflächen. Während die einen die Flexibilität loben, vermissen die anderen den direkten Austausch.",
+      "tags": [
+        "grammatik"
+      ]
+    },
+    {
+      "id": "sw.micro.010",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 60,
       "prompt": "Kurzstatement für ein Forum (60–80 Wörter): „Sollten Unternehmen ihren Mitarbeitern Sprachkurse bezahlen?“ Meinung, ein Argument, ein Beispiel aus Ihrer Erfahrung.",
-      "rubric": ["Meinung mit Redemittel eingeleitet", "Argument mit Begründung", "Konkretes Beispiel", "Schlusssatz", "Mindestens ein Relativsatz mit Präposition (…, von denen / für die …)"],
-      "modelAnswer": "Meiner Meinung nach sollten Unternehmen Sprachkurse zumindest anteilig finanzieren. Ein wichtiges Argument dafür ist, dass gute Sprachkenntnisse direkt der Firma nutzen: Missverständnisse mit Kunden werden seltener und die Zusammenarbeit im Team wird einfacher. Ich habe selbst erlebt, wie viel Zeit ein unklar formulierter Auftrag kosten kann. Zusammenfassend lässt sich sagen, dass die Investition sich für beide Seiten lohnt.", "tags": ["meinung"] },
-
-    { "id": "sw.t2.001", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Pruefung", "minWords": 100,
+      "rubric": [
+        "Meinung mit Redemittel eingeleitet",
+        "Argument mit Begründung",
+        "Konkretes Beispiel",
+        "Schlusssatz",
+        "Mindestens ein Relativsatz mit Präposition (…, von denen / für die …)"
+      ],
+      "modelAnswer": "Meiner Meinung nach sollten Unternehmen Sprachkurse zumindest anteilig finanzieren. Ein wichtiges Argument dafür ist, dass gute Sprachkenntnisse direkt der Firma nutzen: Missverständnisse mit Kunden werden seltener und die Zusammenarbeit im Team wird einfacher. Gerade Kolleginnen und Kollegen, für die Deutsch eine Fremdsprache ist, gewinnen dadurch schnell an Sicherheit. Ich habe selbst erlebt, wie viel Zeit ein unklar formulierter Auftrag kosten kann. Zusammenfassend lässt sich sagen, dass die Investition sich für beide Seiten lohnt.",
+      "tags": [
+        "meinung"
+      ]
+    },
+    {
+      "id": "sw.t2.001",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 100,
       "prompt": "Schreiben Teil 2 (ca. 100 Wörter, 25 Minuten): Sie haben sich für einen Deutschkurs an der Volkshochschule angemeldet, können aber am ersten Kurstermin nicht teilnehmen. Schreiben Sie an die Kursleitung: Grund für Ihr Fehlen, Bitte um die Unterlagen des ersten Termins, Frage nach einer Möglichkeit, den Stoff nachzuholen.",
-      "rubric": ["Alle drei Inhaltspunkte", "Formelles Register (Anrede, Gruß, Sie-Form)", "Höfliche Bitten im Konjunktiv II", "Kohärenz durch Konnektoren", "Eine indirekte Frage (Ich würde gern wissen, ob …)"],
-      "modelAnswer": "Sehr geehrte Frau Hoffmann,\n\nich habe mich für den Kurs „Deutsch B2“ ab dem 15. September angemeldet. Leider kann ich am ersten Termin nicht teilnehmen, da ich an diesem Tag beruflich in München bin und der Termin sich nicht verschieben lässt.\n\nDaher möchte ich Sie bitten, mir die Unterlagen des ersten Abends per E-Mail zuzusenden, damit ich den Stoff selbstständig vorbereiten kann. Außerdem wäre ich Ihnen dankbar, wenn Sie mir sagen könnten, ob es eine Möglichkeit gibt, die verpasste Stunde nachzuholen – zum Beispiel in einem Parallelkurs.\n\nVielen Dank im Voraus für Ihr Verständnis.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["pruefung", "teil2"] },
-    { "id": "sw.t2.002", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Pruefung", "minWords": 100,
+      "rubric": [
+        "Alle drei Inhaltspunkte",
+        "Formelles Register (Anrede, Gruß, Sie-Form)",
+        "Höfliche Bitten im Konjunktiv II",
+        "Kohärenz durch Konnektoren",
+        "Eine indirekte Frage (Ich würde gern wissen, ob …)"
+      ],
+      "modelAnswer": "Sehr geehrte Frau Hoffmann,\n\nich habe mich für den Kurs „Deutsch B2“ ab dem 15. September angemeldet. Leider kann ich am ersten Termin nicht teilnehmen, da ich an diesem Tag beruflich in München bin und der Termin sich nicht verschieben lässt.\n\nDaher möchte ich Sie bitten, mir die Unterlagen des ersten Abends per E-Mail zuzusenden, damit ich den Stoff selbstständig vorbereiten kann. Außerdem wäre ich Ihnen dankbar, wenn Sie mir sagen könnten, ob es eine Möglichkeit gibt, die verpasste Stunde nachzuholen – zum Beispiel in einem Parallelkurs.\n\nVielen Dank im Voraus für Ihr Verständnis.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    },
+    {
+      "id": "sw.t2.002",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 100,
       "prompt": "Schreiben Teil 2 (ca. 100 Wörter): Ihr Vorgesetzter hat Sie gebeten, am kommenden Samstag zu arbeiten. Sie haben an diesem Tag eine wichtige private Verpflichtung. Schreiben Sie ihm eine Nachricht: Absage mit Begründung, Verständnis für die Situation, Alternative anbieten.",
-      "rubric": ["Höfliche, klare Absage", "Verständnis für die Firma gezeigt", "Konkrete Alternative", "Formelles Register", "Eine irreale Bedingung (Wenn ich es früher gewusst hätte, …)", "Ein Infinitivsatz mit statt … zu (statt am Samstag zu arbeiten, …)"],
-      "modelAnswer": "Sehr geehrter Herr Krüger,\n\nvielen Dank für Ihre Nachricht. Ich verstehe, dass die Auslieferung am Samstag für das Projekt sehr wichtig ist. Leider kann ich an diesem Tag nicht arbeiten, da ich seit Langem eine familiäre Verpflichtung habe, die ich nicht verschieben kann.\n\nGern biete ich Ihnen an, stattdessen am Freitag länger zu bleiben und die Vorbereitung vollständig abzuschließen. Außerdem könnte ich am Sonntagvormittag telefonisch erreichbar sein, falls Probleme auftreten sollten.\n\nIch hoffe, dass wir so eine gute Lösung finden, und bitte um Ihr Verständnis.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["pruefung", "teil2"] },
-    { "id": "sw.t2.003", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_2", "context": "Pruefung", "minWords": 100,
+      "rubric": [
+        "Höfliche, klare Absage",
+        "Verständnis für die Firma gezeigt",
+        "Konkrete Alternative",
+        "Formelles Register",
+        "Eine irreale Bedingung (Wenn ich es früher gewusst hätte, …)",
+        "Ein Infinitivsatz mit statt … zu (statt am Samstag zu arbeiten, …)"
+      ],
+      "modelAnswer": "Sehr geehrter Herr Krüger,\n\nvielen Dank für Ihre Nachricht. Ich verstehe, dass die Auslieferung am Samstag für das Projekt sehr wichtig ist. Leider kann ich an diesem Tag nicht arbeiten, da ich seit Langem eine familiäre Verpflichtung habe, die ich nicht verschieben kann.\n\nGern biete ich Ihnen an, stattdessen am Freitag länger zu bleiben und die Vorbereitung vollständig abzuschließen. Außerdem könnte ich am Sonntagvormittag telefonisch erreichbar sein, falls Probleme auftreten sollten.\n\nIch hoffe, dass wir so eine gute Lösung finden, und bitte um Ihr Verständnis.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    },
+    {
+      "id": "sw.t2.003",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_2",
+      "context": "Pruefung",
+      "minWords": 100,
       "prompt": "Schreiben Teil 2 (ca. 100 Wörter): In Ihrer Abteilung wurde ein neues Zeiterfassungssystem eingeführt, das mehrmals täglich abstürzt. Schreiben Sie an die IT-Leitung: Problem sachlich beschreiben, Auswirkungen auf die Arbeit, Bitte um Lösung mit Termin.",
-      "rubric": ["Sachliche Problembeschreibung (Passiv, Fachwortschatz)", "Auswirkungen konkret", "Bitte mit Zeitrahmen", "Kein Vorwurfston", "Nominalstil an einer Stelle (seit der Einführung des Systems statt seit das System eingeführt wurde)", "Eine Teilnegation (nicht das System ist das Problem, sondern die Erfassung)"],
-      "modelAnswer": "Sehr geehrte Frau Lindner,\n\nseit der Einführung des neuen Zeiterfassungssystems am 1. September kommt es in unserer Abteilung mehrmals täglich zu Abstürzen, meist beim Speichern der Einträge. Bereits erfasste Zeiten gehen dabei verloren und müssen erneut eingegeben werden.\n\nDadurch verlieren die Kolleginnen und Kollegen täglich etwa eine halbe Stunde, und die Monatsabrechnung ist gefährdet. Ich möchte Sie daher bitten, das Problem zu prüfen und uns bis Ende der Woche mitzuteilen, wann mit einer Lösung zu rechnen ist. Gern stelle ich Ihnen Protokolle und Screenshots zur Verfügung.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["pruefung", "teil2", "it"] },
-    { "id": "sw.t2.004", "type": "FreeWrite", "nodeId": "SC.FORMELLE_NACHRICHT", "band": "B2_1", "context": "Pruefung", "minWords": 100,
+      "rubric": [
+        "Sachliche Problembeschreibung (Passiv, Fachwortschatz)",
+        "Auswirkungen konkret",
+        "Bitte mit Zeitrahmen",
+        "Kein Vorwurfston",
+        "Nominalstil an einer Stelle (seit der Einführung des Systems statt seit das System eingeführt wurde)",
+        "Eine Teilnegation (nicht das System ist das Problem, sondern die Erfassung)"
+      ],
+      "modelAnswer": "Sehr geehrte Frau Lindner,\n\nseit der Einführung des neuen Zeiterfassungssystems am 1. September kommt es in unserer Abteilung mehrmals täglich zu Abstürzen, meist beim Speichern der Einträge. Bereits erfasste Zeiten gehen dabei verloren und müssen erneut eingegeben werden.\n\nDadurch verlieren die Kolleginnen und Kollegen täglich etwa eine halbe Stunde, und die Monatsabrechnung ist gefährdet. Ich möchte Sie daher bitten, das Problem zu prüfen und uns bis Ende der Woche mitzuteilen, wann mit einer Lösung zu rechnen ist. Gern stelle ich Ihnen Protokolle und Screenshots zur Verfügung.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "pruefung",
+        "teil2",
+        "it"
+      ]
+    },
+    {
+      "id": "sw.t2.004",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORMELLE_NACHRICHT",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 100,
       "prompt": "Schreiben Teil 2 (ca. 100 Wörter): Sie wohnen seit einem Jahr zur Miete. Die Heizung funktioniert seit zwei Wochen nur unregelmäßig, der Hausmeister hat nicht reagiert. Schreiben Sie an die Hausverwaltung: Problem und bisherige Schritte, Bitte um schnelle Reparatur, Hinweis auf mögliche Mietminderung.",
-      "rubric": ["Chronologie klar (Perfekt/Präteritum, Plusquamperfekt)", "Höfliche, aber bestimmte Bitte", "Formeller Hinweis auf Konsequenz", "Anrede/Gruß korrekt", "Eine Genitivpräposition (trotz mehrfacher Hinweise, wegen der Kälte)"],
-      "modelAnswer": "Sehr geehrte Damen und Herren,\n\nseit etwa zwei Wochen funktioniert die Heizung in meiner Wohnung (Hauptstraße 12, 3. OG) nur unregelmäßig; an mehreren Tagen blieb sie ganz kalt. Ich hatte den Hausmeister bereits am 20. September informiert, leider ohne Ergebnis.\n\nIch bitte Sie daher, die Reparatur umgehend zu veranlassen und mir einen Termin mitzuteilen. Sollte das Problem nicht innerhalb der nächsten Woche behoben werden, sehe ich mich leider gezwungen, die Miete entsprechend zu mindern.\n\nFür Rückfragen stehe ich Ihnen gern zur Verfügung.\n\nMit freundlichen Grüßen\n{Name}", "tags": ["pruefung", "teil2", "wohnen"] },
-
-    { "id": "sw.t1.001", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_1", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Chronologie klar (Perfekt/Präteritum, Plusquamperfekt)",
+        "Höfliche, aber bestimmte Bitte",
+        "Formeller Hinweis auf Konsequenz",
+        "Anrede/Gruß korrekt",
+        "Eine Genitivpräposition (trotz mehrfacher Hinweise, wegen der Kälte)"
+      ],
+      "modelAnswer": "Sehr geehrte Damen und Herren,\n\nseit etwa zwei Wochen funktioniert die Heizung in meiner Wohnung (Hauptstraße 12, 3. OG) nur unregelmäßig; an mehreren Tagen blieb sie ganz kalt. Ich hatte den Hausmeister bereits am 20. September informiert, leider ohne Ergebnis.\n\nIch bitte Sie daher, die Reparatur umgehend zu veranlassen und mir einen Termin mitzuteilen. Sollte das Problem nicht innerhalb der nächsten Woche behoben werden, sehe ich mich leider gezwungen, die Miete entsprechend zu mindern.\n\nFür Rückfragen stehe ich Ihnen gern zur Verfügung.\n\nMit freundlichen Grüßen\n{Name}",
+      "tags": [
+        "pruefung",
+        "teil2",
+        "wohnen"
+      ]
+    },
+    {
+      "id": "sw.t1.001",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter, 50 Minuten): Forumsbeitrag zum Thema „Homeoffice – Fluch oder Segen?“. Gehen Sie auf alle vier Punkte ein: 1) Ihre eigene Erfahrung mit Homeoffice, 2) Vorteile für Arbeitnehmer, 3) Nachteile für Unternehmen oder Teams, 4) Ihre Meinung: Sollte es ein Recht auf Homeoffice geben?",
-      "rubric": ["Alle vier Leitpunkte behandelt", "Klarer Aufbau: Einleitung, Hauptteil mit Absätzen, Schluss", "Meinung begründet, Redemittel genutzt", "Variation in Wortschatz und Satzbau (Nebensätze, Konnektoren)", "Zwei verschiedene zweiteilige Konnektoren (einerseits … andererseits, nicht nur … sondern auch, zwar … aber)"],
-      "modelAnswer": "Homeoffice ist seit einigen Jahren ein Dauerthema, und auch in meinem Team wird darüber oft diskutiert.\n\nIch selbst arbeite als Softwareentwickler zwei Tage pro Woche von zu Hause. Anfangs fiel es mir schwer, Arbeit und Privatleben zu trennen; inzwischen habe ich feste Zeiten, die ich einhalte.\n\nFür Arbeitnehmer liegen die Vorteile auf der Hand: Man spart Fahrzeit, kann konzentrierter arbeiten und ist flexibler, zum Beispiel wenn ein Handwerker kommt. Außerdem sinken die Kosten für Fahrten und Mittagessen.\n\nAllerdings gibt es auch Nachteile, vor allem für Teams. Spontane Absprachen finden seltener statt, neue Kolleginnen und Kollegen werden langsamer integriert, und manche fühlen sich isoliert. Unternehmen müssen zudem in sichere Technik investieren.\n\nMeiner Meinung nach sollte es ein Recht auf Homeoffice geben, jedoch mit klaren Grenzen: Wo die Tätigkeit es erlaubt, sollten Beschäftigte mindestens einen Tag pro Woche zu Hause arbeiten dürfen. Zusammenfassend überwiegen für mich die Vorteile, sofern beide Seiten Regeln vereinbaren.", "tags": ["pruefung", "teil1"] },
-    { "id": "sw.t1.002", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_1", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Alle vier Leitpunkte behandelt",
+        "Klarer Aufbau: Einleitung, Hauptteil mit Absätzen, Schluss",
+        "Meinung begründet, Redemittel genutzt",
+        "Variation in Wortschatz und Satzbau (Nebensätze, Konnektoren)",
+        "Zwei verschiedene zweiteilige Konnektoren (einerseits … andererseits, nicht nur … sondern auch, zwar … aber)"
+      ],
+      "modelAnswer": "Homeoffice ist seit einigen Jahren ein Dauerthema, und auch in meinem Team wird darüber oft diskutiert.\n\nIch selbst arbeite als Softwareentwickler zwei Tage pro Woche von zu Hause. Anfangs fiel es mir schwer, Arbeit und Privatleben zu trennen; inzwischen habe ich feste Zeiten, die ich einhalte.\n\nFür Arbeitnehmer liegen die Vorteile auf der Hand: Man spart Fahrzeit, kann konzentrierter arbeiten und ist flexibler, zum Beispiel wenn ein Handwerker kommt. Außerdem sinken die Kosten für Fahrten und Mittagessen.\n\nAllerdings gibt es auch Nachteile, vor allem für Teams. Spontane Absprachen finden seltener statt, neue Kolleginnen und Kollegen werden langsamer integriert, und manche fühlen sich isoliert. Unternehmen müssen zudem in sichere Technik investieren.\n\nMeiner Meinung nach sollte es ein Recht auf Homeoffice geben, jedoch mit klaren Grenzen: Wo die Tätigkeit es erlaubt, sollten Beschäftigte mindestens einen Tag pro Woche zu Hause arbeiten dürfen. Zusammenfassend überwiegen für mich die Vorteile, sofern beide Seiten Regeln vereinbaren.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sw.t1.002",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter): Forumsbeitrag „Sollten Kinder schon in der Grundschule programmieren lernen?“ Leitpunkte: 1) Wie ist die Situation in Ihrem Heimatland? 2) Welche Vorteile hätte das? 3) Welche Nachteile oder Risiken sehen Sie? 4) Ihre Meinung mit Begründung.",
-      "rubric": ["Alle vier Leitpunkte", "Absätze und Struktur", "Argumente mit Beispielen", "Sprachliche Variation, korrekte Nebensätze", "Mindestens zwei Relativsätze, davon einer mit Präposition"],
-      "modelAnswer": "In Serbien gehört Informatik zwar zum Lehrplan, richtiges Programmieren beginnt aber meist erst in der Oberstufe. In der Grundschule lernen die Kinder vor allem den Umgang mit dem Computer.\n\nEin früher Einstieg hätte klare Vorteile: Kinder lernen, Probleme in kleine Schritte zu zerlegen und logisch zu denken. Diese Fähigkeit hilft nicht nur in der IT, sondern auch in Mathematik oder beim Schreiben. Außerdem verlieren Kinder die Angst vor Technik, wenn sie früh selbst etwas erschaffen.\n\nAndererseits sehe ich Risiken. Wenn Programmieren nur bedeutet, noch mehr Zeit vor dem Bildschirm zu verbringen, bringt es wenig. Zudem fehlen an vielen Schulen qualifizierte Lehrkräfte, sodass der Unterricht oberflächlich bleibt.\n\nMeiner Ansicht nach sollten Grundschulen spielerisch mit dem Thema beginnen, etwa mit Robotern oder Blockprogrammierung, ohne Notendruck. Als Entwickler weiß ich: Nicht die Sprache ist entscheidend, sondern das Denken dahinter. Genau das lässt sich früh und mit Freude lernen.", "tags": ["pruefung", "teil1"] },
-    { "id": "sw.t1.003", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_2", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Alle vier Leitpunkte",
+        "Absätze und Struktur",
+        "Argumente mit Beispielen",
+        "Sprachliche Variation, korrekte Nebensätze",
+        "Mindestens zwei Relativsätze, davon einer mit Präposition"
+      ],
+      "modelAnswer": "In Serbien gehört Informatik zwar zum Lehrplan, richtiges Programmieren beginnt aber meist erst in der Oberstufe. In der Grundschule lernen die Kinder vor allem den Umgang mit dem Computer.\n\nEin früher Einstieg hätte klare Vorteile: Kinder lernen, Probleme in kleine Schritte zu zerlegen und logisch zu denken. Diese Fähigkeit hilft nicht nur in der IT, sondern auch in Mathematik oder beim Schreiben. Außerdem verlieren Kinder die Angst vor Technik, wenn sie früh selbst etwas erschaffen.\n\nAndererseits sehe ich Risiken. Wenn Programmieren nur bedeutet, noch mehr Zeit vor dem Bildschirm zu verbringen, bringt es wenig. Zudem fehlen an vielen Schulen qualifizierte Lehrkräfte, sodass der Unterricht oberflächlich bleibt.\n\nMeiner Ansicht nach sollten Grundschulen spielerisch mit dem Thema beginnen, etwa mit Robotern oder Blockprogrammierung, ohne Notendruck. Als Entwickler weiß ich: Nicht die Sprache ist entscheidend, sondern das Denken dahinter. Genau das lässt sich früh und mit Freude lernen.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sw.t1.003",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_2",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter): Forumsbeitrag „Immer erreichbar – brauchen wir ein Recht auf Nichterreichbarkeit nach Feierabend?“ Leitpunkte: 1) Ihre Erfahrung, 2) Folgen ständiger Erreichbarkeit, 3) Verantwortung der Arbeitgeber, 4) Ihr Vorschlag.",
-      "rubric": ["Alle vier Leitpunkte", "Einleitung mit Bezug zum Thema, Schluss mit Fazit", "Nominalstil/Passiv passend eingesetzt", "Konnektoren: obwohl, dennoch, daher, zudem", "Ein Passiversatz statt eines dritten Passivs (lässt sich, -bar, sein + zu)"],
-      "modelAnswer": "Das Diensthandy auf dem Nachttisch kennen viele – auch ich. In meinem ersten Jahr in Deutschland habe ich abends regelmäßig Mails beantwortet, weil ich einen guten Eindruck machen wollte.\n\nDie Folgen ständiger Erreichbarkeit sind gut belegt: Wer nie abschaltet, erholt sich schlechter, schläft unruhiger und macht langfristig mehr Fehler. Zudem verschwimmt die Grenze zwischen Arbeit und Privatleben, was Familien belastet.\n\nMeiner Meinung nach tragen Arbeitgeber hier eine klare Verantwortung. Es reicht nicht, Erreichbarkeit offiziell nicht zu verlangen, wenn Vorgesetzte selbst um 23 Uhr Nachrichten schicken. Führungskräfte müssen mit gutem Beispiel vorangehen.\n\nEin gesetzliches Recht auf Nichterreichbarkeit halte ich dennoch für zu starr, da Notfälle in manchen Branchen unvermeidbar sind. Ich schlage stattdessen verbindliche Betriebsvereinbarungen vor: feste Ruhezeiten, in denen Mails erst am nächsten Morgen zugestellt werden, sowie klare Regeln für echte Notfälle. So bleibt Flexibilität erhalten, ohne dass die Gesundheit leidet.", "tags": ["pruefung", "teil1"] },
-    { "id": "sw.t1.004", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_1", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Alle vier Leitpunkte",
+        "Einleitung mit Bezug zum Thema, Schluss mit Fazit",
+        "Nominalstil/Passiv passend eingesetzt",
+        "Konnektoren: obwohl, dennoch, daher, zudem",
+        "Ein Passiversatz statt eines dritten Passivs (lässt sich, -bar, sein + zu)"
+      ],
+      "modelAnswer": "Das Diensthandy auf dem Nachttisch kennen viele – auch ich. In meinem ersten Jahr in Deutschland habe ich abends regelmäßig Mails beantwortet, weil ich einen guten Eindruck machen wollte.\n\nDie Folgen ständiger Erreichbarkeit sind gut belegt: Wer nie abschaltet, erholt sich schlechter, schläft unruhiger und macht langfristig mehr Fehler. Zudem verschwimmt die Grenze zwischen Arbeit und Privatleben, was Familien belastet.\n\nMeiner Meinung nach tragen Arbeitgeber hier eine klare Verantwortung. Es reicht nicht, Erreichbarkeit offiziell nicht zu verlangen, wenn Vorgesetzte selbst um 23 Uhr Nachrichten schicken. Führungskräfte müssen mit gutem Beispiel vorangehen.\n\nEin gesetzliches Recht auf Nichterreichbarkeit halte ich dennoch für zu starr, da Notfälle in manchen Branchen unvermeidbar sind. Ich schlage stattdessen verbindliche Betriebsvereinbarungen vor: feste Ruhezeiten, in denen Mails erst am nächsten Morgen zugestellt werden, sowie klare Regeln für echte Notfälle. So bleibt Flexibilität erhalten, ohne dass die Gesundheit leidet.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sw.t1.004",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter): Forumsbeitrag „Deutsch lernen als Erwachsener – was hilft wirklich?“ Leitpunkte: 1) Ihre eigene Erfahrung, 2) Rolle des Arbeitsplatzes, 3) Sprachkurse im Vergleich zum Lernen im Alltag, 4) Ihr wichtigster Tipp.",
-      "rubric": ["Alle vier Leitpunkte", "Persönliche Erfahrung konkret", "Vergleich strukturiert (einerseits/andererseits, während)", "Tipp begründet", "Komparativ und Superlativ korrekt (leichter als …, am hilfreichsten)"],
-      "modelAnswer": "Als ich vor drei Jahren nach Deutschland kam, konnte ich Deutsch lesen, aber kaum sprechen. Heute arbeite ich fast ausschließlich auf Deutsch – trotzdem merke ich täglich, wie viel noch fehlt.\n\nDen größten Fortschritt habe ich am Arbeitsplatz gemacht. Wer jeden Tag Meetings, E-Mails und Smalltalk auf Deutsch bewältigen muss, lernt schneller als in jedem Kurs. Allerdings korrigiert einen im Job niemand, sodass sich Fehler festsetzen können.\n\nSprachkurse haben dagegen den Vorteil der Struktur: Grammatik wird systematisch erklärt, und man bekommt Rückmeldung. Andererseits fehlt oft der Bezug zum echten Leben, während man im Alltag genau die Sprache lernt, die man wirklich braucht.\n\nMein wichtigster Tipp lautet daher: beides verbinden. Jeden Tag ein wenig produzieren – schreiben oder sprechen –, die Fehler sammeln und gezielt daran arbeiten. Zusammenfassend würde ich sagen: Nicht die Stundenzahl entscheidet, sondern die Regelmäßigkeit und der Mut, Fehler zu machen.", "tags": ["pruefung", "teil1"] },
-    { "id": "sw.t1.005", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_1", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Alle vier Leitpunkte",
+        "Persönliche Erfahrung konkret",
+        "Vergleich strukturiert (einerseits/andererseits, während)",
+        "Tipp begründet",
+        "Komparativ und Superlativ korrekt (leichter als …, am hilfreichsten)"
+      ],
+      "modelAnswer": "Als ich vor drei Jahren nach Deutschland kam, konnte ich Deutsch lesen, aber kaum sprechen. Heute arbeite ich fast ausschließlich auf Deutsch – trotzdem merke ich täglich, wie viel noch fehlt.\n\nDen größten Fortschritt habe ich am Arbeitsplatz gemacht. Wer jeden Tag Meetings, E-Mails und Smalltalk auf Deutsch bewältigen muss, lernt schneller als in jedem Kurs. Allerdings korrigiert einen im Job niemand, sodass sich Fehler festsetzen können.\n\nSprachkurse haben dagegen den Vorteil der Struktur: Grammatik wird systematisch erklärt, und man bekommt Rückmeldung. Andererseits fehlt oft der Bezug zum echten Leben, während man im Alltag genau die Sprache lernt, die man wirklich braucht.\n\nMein wichtigster Tipp lautet daher: beides verbinden. Jeden Tag ein wenig produzieren – schreiben oder sprechen –, die Fehler sammeln und gezielt daran arbeiten. Zusammenfassend würde ich sagen: Nicht die Stundenzahl entscheidet, sondern die Regelmäßigkeit und der Mut, Fehler zu machen.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sw.t1.005",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter): Forumsbeitrag „Sollte das Bargeld abgeschafft werden?“ Leitpunkte: 1) Wie wird in Ihrem Heimatland bezahlt? 2) Vorteile des digitalen Bezahlens, 3) Risiken und Nachteile, 4) Ihre Meinung.",
-      "rubric": ["Alle vier Leitpunkte", "Absatzstruktur", "Wortschatz zum Thema (Datenschutz, Kontrolle, Gebühren)", "Begründete Meinung", "Zwei Genitivattribute (die Abschaffung des Bargelds, der Schutz der Daten)", "Ein Infinitivsatz mit ohne … zu (ohne Spuren zu hinterlassen)"],
-      "modelAnswer": "In Serbien ist Bargeld nach wie vor sehr verbreitet, vor allem auf Märkten und in kleineren Geschäften. Kartenzahlung nimmt zwar zu, aber viele ältere Menschen vertrauen weiterhin nur Scheinen und Münzen.\n\nDigitales Bezahlen hat unbestreitbare Vorteile: Es ist schnell, hygienisch und bequem, und man muss keinen Geldautomaten suchen. Für Unternehmen sinken zudem die Kosten für den Umgang mit Bargeld.\n\nAllerdings gibt es erhebliche Risiken. Jede Zahlung hinterlässt Daten, was Fragen des Datenschutzes aufwirft. Bei einem Stromausfall oder einer technischen Störung kann niemand mehr bezahlen. Außerdem würden Menschen ohne Bankkonto oder Smartphone ausgeschlossen.\n\nMeiner Meinung nach sollte Bargeld daher nicht abgeschafft werden. Ich bin überzeugt, dass Wahlfreiheit der richtige Weg ist: Wer digital zahlen möchte, soll das überall können, doch Bargeld muss als Alternative erhalten bleiben. Zusammenfassend geht es weniger um Technik als um Vertrauen und Freiheit.", "tags": ["pruefung", "teil1"] },
-    { "id": "sw.t1.006", "type": "FreeWrite", "nodeId": "SC.FORUMSBEITRAG", "band": "B2_2", "context": "Pruefung", "minWords": 150,
+      "rubric": [
+        "Alle vier Leitpunkte",
+        "Absatzstruktur",
+        "Wortschatz zum Thema (Datenschutz, Kontrolle, Gebühren)",
+        "Begründete Meinung",
+        "Zwei Genitivattribute (die Abschaffung des Bargelds, der Schutz der Daten)",
+        "Ein Infinitivsatz mit ohne … zu (ohne Spuren zu hinterlassen)"
+      ],
+      "modelAnswer": "In Serbien ist Bargeld nach wie vor sehr verbreitet, vor allem auf Märkten und in kleineren Geschäften. Kartenzahlung nimmt zwar zu, aber viele ältere Menschen vertrauen weiterhin nur Scheinen und Münzen.\n\nDigitales Bezahlen hat unbestreitbare Vorteile: Es ist schnell, hygienisch und bequem, und man muss keinen Geldautomaten suchen. Für Unternehmen sinken zudem die Kosten für den Umgang mit Bargeld.\n\nAllerdings gibt es erhebliche Risiken. Jede Zahlung hinterlässt Daten, was Fragen des Datenschutzes aufwirft. Bei einem Stromausfall oder einer technischen Störung kann niemand mehr bezahlen. Außerdem würden Menschen ohne Bankkonto oder Smartphone ausgeschlossen.\n\nMeiner Meinung nach sollte Bargeld daher nicht abgeschafft werden. Ich bin überzeugt, dass Wahlfreiheit der richtige Weg ist: Wer digital zahlen möchte, soll das überall können, doch Bargeld muss als Alternative erhalten bleiben. Zusammenfassend geht es weniger um Technik als um Vertrauen und Freiheit.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sw.t1.006",
+      "type": "FreeWrite",
+      "nodeId": "SC.FORUMSBEITRAG",
+      "band": "B2_2",
+      "context": "Pruefung",
+      "minWords": 150,
       "prompt": "Schreiben Teil 1 (ca. 150 Wörter): Forumsbeitrag „Vier-Tage-Woche bei vollem Gehalt – realistisch oder Utopie?“ Leitpunkte: 1) Wie würde sich das auf Ihre Arbeit auswirken? 2) Vorteile für Beschäftigte, 3) Herausforderungen für Unternehmen, 4) Ihre Meinung.",
-      "rubric": ["Alle vier Leitpunkte", "Konjunktiv II für Hypothesen", "Gegenargumente aufgegriffen", "Schluss mit klarer Position", "Ein Partizipialattribut (die bereits eingeführte Regelung, steigende Kosten)", "Vermutungen mit Modalverben abstufen (dürfte, könnte) statt „vielleicht“"],
-      "modelAnswer": "Wenn meine Firma die Vier-Tage-Woche einführen würde, müsste ich meine Arbeit deutlich stärker priorisieren. Viele Meetings, die heute selbstverständlich sind, würden vermutlich entfallen – was der Konzentration guttäte.\n\nFür Beschäftigte liegen die Vorteile auf der Hand: mehr Zeit für Familie, Sport und Erholung, weniger Stress und oft sogar eine höhere Produktivität, wie mehrere Studien zeigen. Zudem würden Unternehmen für Fachkräfte attraktiver.\n\nAllerdings stehen viele Betriebe vor echten Herausforderungen. In der Pflege oder im Kundenservice muss die Erreichbarkeit gesichert bleiben, sodass zusätzliches Personal nötig wäre. Kleine Firmen könnten sich das kaum leisten, und in Branchen mit knappen Margen würde das volle Gehalt zum Problem.\n\nMeiner Ansicht nach ist die Vier-Tage-Woche kein Modell für alle, aber auch keine Utopie. In Bürojobs wie meinem halte ich sie für realistisch, sofern Ergebnisse statt Anwesenheit zählen. Zusammenfassend sollte jedes Unternehmen das Modell testen dürfen, statt es pauschal abzulehnen.", "tags": ["pruefung", "teil1"] },
-
-    { "id": "sp.alltag.001", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B1_2", "context": "Beruf", "targetSeconds": 60,
+      "rubric": [
+        "Alle vier Leitpunkte",
+        "Konjunktiv II für Hypothesen",
+        "Gegenargumente aufgegriffen",
+        "Schluss mit klarer Position",
+        "Ein Partizipialattribut (die bereits eingeführte Regelung, steigende Kosten)",
+        "Vermutungen mit Modalverben abstufen (dürfte, könnte) statt „vielleicht“"
+      ],
+      "modelAnswer": "Wenn meine Firma die Vier-Tage-Woche einführen würde, müsste ich meine Arbeit deutlich stärker priorisieren. Viele Meetings, die heute selbstverständlich sind, würden vermutlich entfallen – was der Konzentration guttäte.\n\nFür Beschäftigte liegen die Vorteile auf der Hand: mehr Zeit für Familie, Sport und Erholung, weniger Stress und oft sogar eine höhere Produktivität, wie mehrere Studien zeigen. Zudem würden Unternehmen für Fachkräfte attraktiver.\n\nAllerdings stehen viele Betriebe vor echten Herausforderungen. In der Pflege oder im Kundenservice muss die Erreichbarkeit gesichert bleiben, sodass zusätzliches Personal nötig wäre. Kleine Firmen könnten sich das kaum leisten, und in Branchen mit knappen Margen würde das volle Gehalt zum Problem.\n\nMeiner Ansicht nach ist die Vier-Tage-Woche kein Modell für alle, aber auch keine Utopie. In Bürojobs wie meinem halte ich sie für realistisch, sofern Ergebnisse statt Anwesenheit zählen. Zusammenfassend sollte jedes Unternehmen das Modell testen dürfen, statt es pauschal abzulehnen.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sp.alltag.001",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B1_2",
+      "context": "Beruf",
+      "targetSeconds": 60,
       "prompt": "Stand-up: Berichten Sie in etwa 60 Sekunden, woran Sie gestern gearbeitet haben, was heute ansteht und ob es Blocker gibt.",
-      "rubric": ["Drei Teile: gestern / heute / Blocker", "Perfekt für gestern korrekt", "Flüssig, ohne lange Pausen", "Fachbegriffe auf Deutsch", "Ein Präpositionaladverb statt Wortwiederholung (Ich arbeite daran, dazu fehlt mir …)"],
-      "modelAnswer": "Gestern habe ich den Import-Fehler analysiert und die Ursache in der Schnittstelle gefunden. Heute schreibe ich die Korrektur und die Tests dazu. Einen Blocker habe ich nicht, ich brauche aber bis Mittag die Freigabe von Jonas für den Testserver.", "tags": ["standup", "it"] },
-    { "id": "sp.alltag.002", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B1_2", "context": "Alltag", "targetSeconds": 60,
+      "rubric": [
+        "Drei Teile: gestern / heute / Blocker",
+        "Perfekt für gestern korrekt",
+        "Flüssig, ohne lange Pausen",
+        "Fachbegriffe auf Deutsch",
+        "Ein Präpositionaladverb statt Wortwiederholung (Ich arbeite daran, dazu fehlt mir …)"
+      ],
+      "modelAnswer": "Gestern habe ich den Import-Fehler analysiert und die Ursache in der Schnittstelle gefunden. Heute schreibe ich die Korrektur und die Tests dazu. Einen Blocker habe ich nicht, ich brauche aber bis Mittag die Freigabe von Jonas für den Testserver.",
+      "tags": [
+        "standup",
+        "it"
+      ]
+    },
+    {
+      "id": "sp.alltag.002",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B1_2",
+      "context": "Alltag",
+      "targetSeconds": 60,
       "prompt": "Sie rufen in einer Arztpraxis an und brauchen kurzfristig einen Termin wegen Rückenschmerzen. Sprechen Sie, was Sie sagen würden – und reagieren Sie auf die Antwort „Diese Woche ist leider alles voll“.",
-      "rubric": ["Höflicher Einstieg mit Namen und Anliegen", "Beschwerden klar beschrieben", "Auf die Absage reagiert (Nachfrage, Alternative, Dringlichkeit)", "Konjunktiv II für Bitten", "Eine indirekte Frage (Ich wollte fragen, ob …)"],
-      "modelAnswer": "Guten Tag, mein Name ist {Nachname}. Ich bin Patient bei Ihnen und habe seit drei Tagen starke Rückenschmerzen. Hätten Sie diese Woche noch einen Termin? – Ich verstehe. Gäbe es vielleicht eine Möglichkeit, in die offene Sprechstunde zu kommen, oder könnten Sie mich anrufen, falls jemand absagt? Die Schmerzen sind wirklich stark.", "tags": ["telefon", "arzt"] },
-    { "id": "sp.alltag.003", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B1_2", "context": "Alltag", "targetSeconds": 60,
+      "rubric": [
+        "Höflicher Einstieg mit Namen und Anliegen",
+        "Beschwerden klar beschrieben",
+        "Auf die Absage reagiert (Nachfrage, Alternative, Dringlichkeit)",
+        "Konjunktiv II für Bitten",
+        "Eine indirekte Frage (Ich wollte fragen, ob …)"
+      ],
+      "modelAnswer": "Guten Tag, mein Name ist {Nachname}. Ich bin Patient bei Ihnen und habe seit drei Tagen starke Rückenschmerzen. Hätten Sie diese Woche noch einen Termin? – Ich verstehe. Gäbe es vielleicht eine Möglichkeit, in die offene Sprechstunde zu kommen, oder könnten Sie mich anrufen, falls jemand absagt? Die Schmerzen sind wirklich stark.",
+      "tags": [
+        "telefon",
+        "arzt"
+      ]
+    },
+    {
+      "id": "sp.alltag.003",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B1_2",
+      "context": "Alltag",
+      "targetSeconds": 60,
       "prompt": "Ein neuer Kollege fragt Sie in der Kaffeeküche, was Sie am Wochenende gemacht haben. Erzählen Sie etwa 60 Sekunden – mit mindestens drei konkreten Details.",
-      "rubric": ["Perfekt korrekt (haben/sein)", "Mindestens drei Details", "Eine Rückfrage an den Kollegen", "Natürlicher Ton", "Ein temporaler Nebensatz (als, nachdem, bevor)"],
-      "modelAnswer": "Das Wochenende war ganz entspannt. Am Samstag bin ich mit Freunden an den Chiemsee gefahren, wir haben gegrillt und sind sogar kurz schwimmen gegangen – das Wasser war eiskalt. Am Sonntag habe ich ausgeschlafen und dann endlich das Regal aufgebaut, das seit Wochen im Flur stand. Und du? Hast du etwas Schönes gemacht?", "tags": ["smalltalk"] },
-    { "id": "sp.alltag.004", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B2_1", "context": "Beruf", "targetSeconds": 90,
+      "rubric": [
+        "Perfekt korrekt (haben/sein)",
+        "Mindestens drei Details",
+        "Eine Rückfrage an den Kollegen",
+        "Natürlicher Ton",
+        "Ein temporaler Nebensatz (als, nachdem, bevor)"
+      ],
+      "modelAnswer": "Das Wochenende war ganz entspannt. Am Samstag bin ich mit Freunden an den Chiemsee gefahren; bevor wir gegrillt haben, sind wir sogar kurz schwimmen gegangen – das Wasser war eiskalt. Am Sonntag habe ich ausgeschlafen und dann endlich das Regal aufgebaut, das seit Wochen im Flur stand. Und du? Hast du etwas Schönes gemacht?",
+      "tags": [
+        "smalltalk"
+      ]
+    },
+    {
+      "id": "sp.alltag.004",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B2_1",
+      "context": "Beruf",
+      "targetSeconds": 90,
       "prompt": "Erklären Sie einer Kollegin ohne IT-Kenntnisse in etwa 90 Sekunden, was ein Backup ist und warum es wichtig ist. Nutzen Sie einen Vergleich aus dem Alltag.",
-      "rubric": ["Verständlich ohne Fachjargon", "Vergleich aus dem Alltag", "Struktur: Was – Warum – Was tun", "Relativsätze / Konnektoren", "Zwei Relativsätze (…, die/das …) und ein Vergleich mit wie"],
-      "modelAnswer": "Ein Backup ist eine Sicherheitskopie deiner Daten, die an einem anderen Ort gespeichert wird – so wie ein Ersatzschlüssel, den man beim Nachbarn hinterlegt. Wenn dein Laptop kaputtgeht oder gestohlen wird, sind die Dateien nicht verloren, weil es die Kopie noch gibt. Wichtig ist, dass das Backup regelmäßig und automatisch läuft, sonst vergisst man es. Am besten speicherst du also einmal pro Woche auf einer externen Festplatte oder in der Cloud.", "tags": ["erklaeren", "it"] },
-    { "id": "sp.alltag.005", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B2_1", "context": "Beruf", "targetSeconds": 45,
+      "rubric": [
+        "Verständlich ohne Fachjargon",
+        "Vergleich aus dem Alltag",
+        "Struktur: Was – Warum – Was tun",
+        "Relativsätze / Konnektoren",
+        "Zwei Relativsätze (…, die/das …) und ein Vergleich mit wie"
+      ],
+      "modelAnswer": "Ein Backup ist eine Sicherheitskopie deiner Daten, die an einem anderen Ort gespeichert wird – so wie ein Ersatzschlüssel, den man beim Nachbarn hinterlegt. Wenn dein Laptop kaputtgeht oder gestohlen wird, sind die Dateien nicht verloren, weil es die Kopie noch gibt. Wichtig ist, dass das Backup regelmäßig und automatisch läuft, sonst vergisst man es. Am besten speicherst du also einmal pro Woche auf einer externen Festplatte oder in der Cloud.",
+      "tags": [
+        "erklaeren",
+        "it"
+      ]
+    },
+    {
+      "id": "sp.alltag.005",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B2_1",
+      "context": "Beruf",
+      "targetSeconds": 45,
       "prompt": "Ihr Zug hatte Verspätung, und Sie kommen 20 Minuten zu spät zu einem Kundentermin. Was sagen Sie beim Ankommen? (Entschuldigung, kurze Erklärung, Übergang zum Thema)",
-      "rubric": ["Angemessene Entschuldigung", "Erklärung kurz, keine Ausrede", "Souveräner Übergang", "Formelles Register", "Plusquamperfekt für die Vorgeschichte (Der Zug hatte Verspätung, nachdem …)"],
-      "modelAnswer": "Guten Tag, Herr Wagner – bitte entschuldigen Sie vielmals die Verspätung. Mein Zug hatte wegen einer Störung zwanzig Minuten Verspätung, und ich konnte Sie leider nicht früher erreichen. Vielen Dank, dass Sie gewartet haben. Wenn es Ihnen recht ist, steige ich direkt in die Präsentation ein, damit wir die Zeit gut nutzen.", "tags": ["kunde", "entschuldigung"] },
-    { "id": "sp.alltag.006", "type": "Speak", "nodeId": "SP.ALLTAG_BERUF", "band": "B1_2", "context": "Alltag", "targetSeconds": 60,
+      "rubric": [
+        "Angemessene Entschuldigung",
+        "Erklärung kurz, keine Ausrede",
+        "Souveräner Übergang",
+        "Formelles Register",
+        "Plusquamperfekt für die Vorgeschichte (Der Zug hatte Verspätung, nachdem …)"
+      ],
+      "modelAnswer": "Guten Tag, Herr Wagner – bitte entschuldigen Sie vielmals die Verspätung. Mein Zug hatte wegen einer Störung zwanzig Minuten Verspätung, und ich konnte Sie leider nicht früher erreichen. Vielen Dank, dass Sie gewartet haben. Wenn es Ihnen recht ist, steige ich direkt in die Präsentation ein, damit wir die Zeit gut nutzen.",
+      "tags": [
+        "kunde",
+        "entschuldigung"
+      ]
+    },
+    {
+      "id": "sp.alltag.006",
+      "type": "Speak",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "band": "B1_2",
+      "context": "Alltag",
+      "targetSeconds": 60,
       "prompt": "Beschreiben Sie Ihren Arbeitsweg: Wie fahren Sie, wie lange dauert es, was machen Sie unterwegs, was nervt Sie daran?",
-      "rubric": ["Präsens korrekt, trennbare Verben (umsteigen, ankommen)", "Zeitangaben und Reihenfolge", "Eine Meinung/Bewertung", "Flüssigkeit", "Komparativ beim Vergleich der Verkehrsmittel (schneller als, am bequemsten)"],
-      "modelAnswer": "Ich fahre meistens mit der S-Bahn. Ich gehe zehn Minuten zur Haltestelle, steige einmal um und bin nach etwa vierzig Minuten im Büro. Unterwegs höre ich Podcasts auf Deutsch oder lese Nachrichten. Was mich nervt, sind die Verspätungen – mindestens einmal pro Woche fällt eine Bahn aus.", "tags": ["alltag"] },
-
-    { "id": "sp.vortrag.001", "type": "Speak", "nodeId": "SP.VORTRAG", "band": "B2_1", "context": "Pruefung", "targetSeconds": 210,
+      "rubric": [
+        "Präsens korrekt, trennbare Verben (umsteigen, ankommen)",
+        "Zeitangaben und Reihenfolge",
+        "Eine Meinung/Bewertung",
+        "Flüssigkeit",
+        "Komparativ beim Vergleich der Verkehrsmittel (schneller als, am bequemsten)"
+      ],
+      "modelAnswer": "Ich fahre meistens mit der S-Bahn. Ich gehe zehn Minuten zur Haltestelle, steige einmal um und bin nach etwa vierzig Minuten im Büro. Unterwegs höre ich Podcasts auf Deutsch oder lese Nachrichten. Was mich nervt, sind die Verspätungen – mindestens einmal pro Woche fällt eine Bahn aus.",
+      "tags": [
+        "alltag"
+      ]
+    },
+    {
+      "id": "sp.vortrag.001",
+      "type": "Speak",
+      "nodeId": "SP.VORTRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 210,
       "prompt": "Sprechen Teil 1 – Vortrag (3–4 Minuten): „Duzen oder Siezen im Beruf?“ Beschreiben Sie verschiedene Möglichkeiten, nennen Sie Vor- und Nachteile, berichten Sie von eigenen Erfahrungen, und bewerten Sie die Situation in Ihrem Heimatland.",
-      "rubric": ["Einleitung mit Themennennung und Gliederung", "Alle vier Leitpunkte", "Redemittel für Übergänge und Fazit", "Grammatische Bandbreite: Nebensätze, Konjunktiv II, Passiv", "Fremde Meinungen wiedergeben (Viele sagen, das Duzen sei … / Man hört oft, dass …)"],
-      "modelAnswer": "Ich möchte heute über die Frage sprechen, ob man im Beruf duzen oder siezen sollte. Zunächst stelle ich die Möglichkeiten vor, dann gehe ich auf Vor- und Nachteile ein, berichte von meinen Erfahrungen und schließe mit der Situation in Serbien. (…) Zusammenfassend lässt sich sagen, dass die Anrede weniger wichtig ist als der Respekt dahinter.", "tags": ["pruefung", "teil1"] },
-    { "id": "sp.vortrag.002", "type": "Speak", "nodeId": "SP.VORTRAG", "band": "B2_1", "context": "Pruefung", "targetSeconds": 210,
+      "rubric": [
+        "Einleitung mit Themennennung und Gliederung",
+        "Alle vier Leitpunkte",
+        "Redemittel für Übergänge und Fazit",
+        "Grammatische Bandbreite: Nebensätze, Konjunktiv II, Passiv",
+        "Fremde Meinungen wiedergeben (Viele sagen, das Duzen sei … / Man hört oft, dass …)"
+      ],
+      "modelAnswer": "Ich möchte heute über die Frage sprechen, ob man im Beruf duzen oder siezen sollte. Zunächst stelle ich die Möglichkeiten vor, dann gehe ich auf Vor- und Nachteile ein, berichte von meinen Erfahrungen und schließe mit der Situation in Serbien. (…) Zusammenfassend lässt sich sagen, dass die Anrede weniger wichtig ist als der Respekt dahinter.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sp.vortrag.002",
+      "type": "Speak",
+      "nodeId": "SP.VORTRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 210,
       "prompt": "Sprechen Teil 1 – Vortrag (3–4 Minuten): „Leben in der Großstadt oder auf dem Land?“ Beschreiben Sie beide Möglichkeiten, nennen Sie Vor- und Nachteile, berichten Sie von eigenen Erfahrungen, und bewerten Sie die Situation in Ihrem Heimatland.",
-      "rubric": ["Struktur: Einleitung – Hauptteil – Fazit", "Alle Leitpunkte", "Vergleichsstrukturen (während, im Gegensatz zu, je … desto)", "Flüssigkeit über 3 Minuten", "Superlativ mindestens einmal (am günstigsten, die größte Belastung)"],
-      "modelAnswer": "Mein Vortrag gliedert sich in vier Teile. (…) Abschließend würde ich sagen: Je jünger man ist, desto stärker zieht die Stadt – mit Familie sieht die Rechnung anders aus.", "tags": ["pruefung", "teil1"] },
-    { "id": "sp.vortrag.003", "type": "Speak", "nodeId": "SP.VORTRAG", "band": "B2_2", "context": "Pruefung", "targetSeconds": 210,
+      "rubric": [
+        "Struktur: Einleitung – Hauptteil – Fazit",
+        "Alle Leitpunkte",
+        "Vergleichsstrukturen (während, im Gegensatz zu, je … desto)",
+        "Flüssigkeit über 3 Minuten",
+        "Superlativ mindestens einmal (am günstigsten, die größte Belastung)"
+      ],
+      "modelAnswer": "Mein Vortrag gliedert sich in vier Teile. (…) Abschließend würde ich sagen: Je jünger man ist, desto stärker zieht die Stadt – mit Familie sieht die Rechnung anders aus.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sp.vortrag.003",
+      "type": "Speak",
+      "nodeId": "SP.VORTRAG",
+      "band": "B2_2",
+      "context": "Pruefung",
+      "targetSeconds": 210,
       "prompt": "Sprechen Teil 1 – Vortrag (3–4 Minuten): „Künstliche Intelligenz am Arbeitsplatz – Chance oder Bedrohung?“ Beschreiben Sie Einsatzmöglichkeiten, nennen Sie Vor- und Nachteile, berichten Sie von eigenen Erfahrungen, und bewerten Sie die Entwicklung.",
-      "rubric": ["Fachbezug ohne Denglisch", "Alle Leitpunkte", "Abwägung mit Konnektoren (zwar … aber, einerseits … andererseits)", "Klares Fazit", "Modalverben der Vermutung statt „vielleicht“ (dürfte, könnte, müsste)"],
-      "modelAnswer": "Als Softwareentwickler nutze ich KI täglich, deshalb möchte ich über Chancen und Risiken am Arbeitsplatz sprechen. (…) Alles in allem sehe ich KI als Werkzeug, das Routine abnimmt, aber Verantwortung nicht ersetzt.", "tags": ["pruefung", "teil1", "it"] },
-    { "id": "sp.vortrag.004", "type": "Speak", "nodeId": "SP.VORTRAG", "band": "B2_1", "context": "Pruefung", "targetSeconds": 210,
+      "rubric": [
+        "Fachbezug ohne Denglisch",
+        "Alle Leitpunkte",
+        "Abwägung mit Konnektoren (zwar … aber, einerseits … andererseits)",
+        "Klares Fazit",
+        "Modalverben der Vermutung statt „vielleicht“ (dürfte, könnte, müsste)"
+      ],
+      "modelAnswer": "Als Softwareentwickler nutze ich KI täglich, deshalb möchte ich über Chancen und Risiken am Arbeitsplatz sprechen. (…) Alles in allem sehe ich KI als Werkzeug, das Routine abnimmt, aber Verantwortung nicht ersetzt.",
+      "tags": [
+        "pruefung",
+        "teil1",
+        "it"
+      ]
+    },
+    {
+      "id": "sp.vortrag.004",
+      "type": "Speak",
+      "nodeId": "SP.VORTRAG",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 210,
       "prompt": "Sprechen Teil 1 – Vortrag (3–4 Minuten): „Wie wichtig ist es, die Sprache des Landes zu sprechen, in dem man arbeitet?“ Beschreiben Sie verschiedene Situationen, nennen Sie Vor- und Nachteile von Englisch als Arbeitssprache, berichten Sie von eigenen Erfahrungen, und bewerten Sie.",
-      "rubric": ["Persönliche Erfahrung konkret", "Alle Leitpunkte", "Redemittel Meinung und Fazit", "Aussprache verständlich, Tempo angemessen", "Eine irreale Bedingung aus eigener Erfahrung (Hätte ich damals …, wäre …)"],
-      "modelAnswer": "Ich spreche aus eigener Erfahrung: Ohne Deutsch hätte ich meinen Job bekommen, aber nicht das Vertrauen der Kollegen. (…) Abschließend lässt sich sagen, dass Englisch Türen öffnet, Deutsch aber die Räume dahinter.", "tags": ["pruefung", "teil1"] },
-
-    { "id": "sp.disk.001", "type": "Speak", "nodeId": "SP.DISKUSSION", "band": "B2_1", "context": "Pruefung", "targetSeconds": 120,
+      "rubric": [
+        "Persönliche Erfahrung konkret",
+        "Alle Leitpunkte",
+        "Redemittel Meinung und Fazit",
+        "Aussprache verständlich, Tempo angemessen",
+        "Eine irreale Bedingung aus eigener Erfahrung (Hätte ich damals …, wäre …)"
+      ],
+      "modelAnswer": "Ich spreche aus eigener Erfahrung: Ohne Deutsch hätte ich meinen Job bekommen, aber nicht das Vertrauen der Kollegen. (…) Abschließend lässt sich sagen, dass Englisch Türen öffnet, Deutsch aber die Räume dahinter.",
+      "tags": [
+        "pruefung",
+        "teil1"
+      ]
+    },
+    {
+      "id": "sp.disk.001",
+      "type": "Speak",
+      "nodeId": "SP.DISKUSSION",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 120,
       "prompt": "Sprechen Teil 2 – Diskussion: „Überstunden sollten immer mit Freizeit statt mit Geld ausgeglichen werden.“ Nehmen Sie Stellung, nennen Sie zwei Argumente und gehen Sie auf ein mögliches Gegenargument ein.",
-      "rubric": ["Klare Position", "Zwei Argumente mit Begründung", "Gegenargument aufgegriffen und entkräftet", "Redemittel Zustimmung/Widerspruch", "Passiv oder Passiversatz beim Vorschlag (sollte ausgeglichen werden / ließe sich regeln)", "Argumente mit Präpositionaladverb einleiten (dafür spricht …, dagegen spricht …)"],
-      "modelAnswer": "Ich bin der Meinung, dass Freizeitausgleich grundsätzlich besser ist, weil Erholung nicht käuflich ist. Allerdings kann ich verstehen, dass jemand mit knappem Budget das Geld vorzieht. Könnten wir uns darauf einigen, dass Beschäftigte wählen dürfen?", "tags": ["pruefung", "teil2"] },
-    { "id": "sp.disk.002", "type": "Speak", "nodeId": "SP.DISKUSSION", "band": "B2_1", "context": "Pruefung", "targetSeconds": 120,
+      "rubric": [
+        "Klare Position",
+        "Zwei Argumente mit Begründung",
+        "Gegenargument aufgegriffen und entkräftet",
+        "Redemittel Zustimmung/Widerspruch",
+        "Passiv oder Passiversatz beim Vorschlag (sollte ausgeglichen werden / ließe sich regeln)",
+        "Argumente mit Präpositionaladverb einleiten (dafür spricht …, dagegen spricht …)"
+      ],
+      "modelAnswer": "Ich bin der Meinung, dass Freizeitausgleich grundsätzlich besser ist, weil Erholung nicht käuflich ist. Überstunden sollten also in erster Linie durch freie Tage ausgeglichen werden. Allerdings kann ich verstehen, dass jemand mit knappem Budget das Geld vorzieht. Könnten wir uns darauf einigen, dass Beschäftigte wählen dürfen?",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    },
+    {
+      "id": "sp.disk.002",
+      "type": "Speak",
+      "nodeId": "SP.DISKUSSION",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 120,
       "prompt": "Sprechen Teil 2 – Diskussion: „Soziale Medien sollten für Kinder unter 16 verboten werden.“ Nehmen Sie Stellung und reagieren Sie auf das Gegenargument „Verbote funktionieren nie“.",
-      "rubric": ["Position mit Begründung", "Auf das Gegenargument eingegangen", "Kompromissvorschlag", "Wortschatz zum Thema (Sucht, Datenschutz, Medienkompetenz)", "Studien und Aussagen wiedergeben (Laut einer Studie sei … / Fachleute sagen, dass …)", "Ein Präpositionaladverb statt Wortwiederholung (darüber, dagegen, dafür)"],
-      "modelAnswer": "Da haben Sie sicher Recht, dass Verbote schwer durchzusetzen sind. Trotzdem glaube ich, dass eine Altersgrenze ein wichtiges Signal wäre. Vielleicht wäre ein Kompromiss, Plattformen zu verpflichten, kindgerechte Versionen anzubieten.", "tags": ["pruefung", "teil2"] },
-    { "id": "sp.disk.003", "type": "Speak", "nodeId": "SP.DISKUSSION", "band": "B2_1", "context": "Pruefung", "targetSeconds": 120,
+      "rubric": [
+        "Position mit Begründung",
+        "Auf das Gegenargument eingegangen",
+        "Kompromissvorschlag",
+        "Wortschatz zum Thema (Sucht, Datenschutz, Medienkompetenz)",
+        "Studien und Aussagen wiedergeben (Laut einer Studie sei … / Fachleute sagen, dass …)",
+        "Ein Präpositionaladverb statt Wortwiederholung (darüber, dagegen, dafür)"
+      ],
+      "modelAnswer": "Da haben Sie sicher Recht, dass Verbote schwer durchzusetzen sind. Trotzdem glaube ich, dass eine Altersgrenze ein wichtiges Signal wäre. Vielleicht wäre ein Kompromiss, Plattformen zu verpflichten, kindgerechte Versionen anzubieten.",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    },
+    {
+      "id": "sp.disk.003",
+      "type": "Speak",
+      "nodeId": "SP.DISKUSSION",
+      "band": "B2_1",
+      "context": "Pruefung",
+      "targetSeconds": 120,
       "prompt": "Sprechen Teil 2 – Diskussion: „Jedes Unternehmen sollte seinen Mitarbeitern kostenlose Sprachkurse anbieten.“ Argumentieren Sie aus Sicht eines Arbeitnehmers UND nennen Sie, was ein Arbeitgeber einwenden könnte.",
-      "rubric": ["Beide Perspektiven", "Argumente mit Beispielen", "Höfliche Redemittel", "Fazit/Kompromiss", "Ein Relativsatz mit Genitiv oder Präposition (Kollegen, deren Deutsch … / Menschen, für die …)", "Ein Zweck mit um … zu (um Fachkräfte zu halten)"],
-      "modelAnswer": "Aus meiner Sicht als Arbeitnehmer ist das eine Investition, die sich schnell auszahlt. Ein Arbeitgeber könnte einwenden, dass die Kosten hoch sind und Mitarbeiter danach kündigen. Darauf würde ich antworten: Wer gefördert wird, bleibt eher.", "tags": ["pruefung", "teil2"] },
-    { "id": "sp.disk.004", "type": "Speak", "nodeId": "SP.DISKUSSION", "band": "B2_2", "context": "Pruefung", "targetSeconds": 120,
+      "rubric": [
+        "Beide Perspektiven",
+        "Argumente mit Beispielen",
+        "Höfliche Redemittel",
+        "Fazit/Kompromiss",
+        "Ein Relativsatz mit Genitiv oder Präposition (Kollegen, deren Deutsch … / Menschen, für die …)",
+        "Ein Zweck mit um … zu (um Fachkräfte zu halten)"
+      ],
+      "modelAnswer": "Aus meiner Sicht als Arbeitnehmer ist das eine Investition, die sich schnell auszahlt. Ein Arbeitgeber könnte einwenden, dass die Kosten hoch sind und Mitarbeiter danach kündigen. Darauf würde ich antworten: Wer gefördert wird, bleibt eher.",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    },
+    {
+      "id": "sp.disk.004",
+      "type": "Speak",
+      "nodeId": "SP.DISKUSSION",
+      "band": "B2_2",
+      "context": "Pruefung",
+      "targetSeconds": 120,
       "prompt": "Sprechen Teil 2 – Diskussion: „Autos sollten aus den Innenstädten verbannt werden.“ Nehmen Sie Stellung, gehen Sie auf die Situation von Pendlern und Handwerkern ein und schlagen Sie einen Kompromiss vor.",
-      "rubric": ["Differenzierte Position", "Konkrete Gruppen berücksichtigt", "Kompromiss formuliert", "Konjunktiv II für Vorschläge", "Nominalstil in mindestens einem Argument (die Sperrung der Innenstadt, angesichts der Belastung)"],
-      "modelAnswer": "Einerseits würde die Lebensqualität steigen, andererseits sind Handwerker und Pendler aus dem Umland auf das Auto angewiesen. Ich würde vorschlagen, Innenstädte schrittweise autoarm zu machen und gleichzeitig den Nahverkehr auszubauen.", "tags": ["pruefung", "teil2"] }
+      "rubric": [
+        "Differenzierte Position",
+        "Konkrete Gruppen berücksichtigt",
+        "Kompromiss formuliert",
+        "Konjunktiv II für Vorschläge",
+        "Nominalstil in mindestens einem Argument (die Sperrung der Innenstadt, angesichts der Belastung)"
+      ],
+      "modelAnswer": "Einerseits würde die Lebensqualität steigen, andererseits sind Handwerker und Pendler aus dem Umland auf das Auto angewiesen. Ich würde vorschlagen, Innenstädte schrittweise autoarm zu machen und gleichzeitig den Nahverkehr auszubauen.",
+      "tags": [
+        "pruefung",
+        "teil2"
+      ]
+    }
   ]
 }

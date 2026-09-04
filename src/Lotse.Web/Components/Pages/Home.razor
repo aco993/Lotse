@@ -17,7 +17,7 @@ else
             @if (_m.OpenSession is { Kind: SessionKind.Placement } placement)
             {
                 <MudText Typo="Typo.body2">Deine Einstufung ist angefangen – @placement.StepsDone von @placement.StepsTotal Aufgaben sind geschafft. Du kannst jederzeit weitermachen; nichts geht verloren.</MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="@(() => Nav.NavigateTo($"session/{placement.Id}"))" Disabled="_busy">Einstufung fortsetzen</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="@(() => Go($"session/{placement.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }Einstufung fortsetzen</MudButton>
             }
             else
             {
@@ -92,7 +92,7 @@ else
                 <MudText Typo="Typo.h6">Session läuft noch</MudText>
                 <MudText Typo="Typo.body2" Class="mb-2">@_m.OpenSession.Summary · @_m.OpenSession.StepsDone / @_m.OpenSession.StepsTotal erledigt</MudText>
                 <MudStack Row="true" Spacing="2">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Nav.NavigateTo($"session/{_m.OpenSession.Id}"))">Weitermachen</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Go($"session/{_m.OpenSession.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }Weitermachen</MudButton>
                     <MudButton Variant="Variant.Text" OnClick="AbandonAsync">Abbrechen</MudButton>
                 </MudStack>
             }
@@ -101,7 +101,7 @@ else
                 <MudText Typo="Typo.h6">Deine Session heute</MudText>
                 <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">Der Lotse schlägt vor: <b>@_m.NextSessionPreview</b></MudText>
                 <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@_m.Profile.DailyMinutes Minuten starten</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@(_busy ? null : Icons.Material.Filled.PlayArrow)" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }@_m.Profile.DailyMinutes Minuten starten</MudButton>
                     @foreach (var m in new[] { 5, 10, 15, 30 }.Where(x => x != _m.Profile.DailyMinutes))
                     {
                         var minutes = m;
@@ -188,6 +188,13 @@ else
     private DashboardModel? _m;
     private CourseOverview? _course;
     private bool _busy;
+
+    /// <summary>Navigating to a session takes a second or two; the button has to say that it heard the click.</summary>
+    private void Go(string url)
+    {
+        _busy = true;
+        Nav.NavigateTo(url);
+    }
 
     protected override async Task OnInitializedAsync()
     {

@@ -36,7 +36,9 @@ public class DailyLoopTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixture
         await page.GetByRole(AriaRole.Button, new() { Name = "Beenden" }).ClickAsync();
         await Expect(page.GetByText("Einstufung unterbrechen?")).ToBeVisibleAsync();
         await page.GetByRole(AriaRole.Button, new() { Name = "Pausieren" }).ClickAsync();
-        await Expect(page.GetByText("1 von 28 Aufgaben")).ToBeVisibleAsync();
+        // Two of 28, not one: "Weiß ich nicht" on the easy item of a topic also settles its harder sibling,
+        // which the placement now marks as skipped instead of asking anyway (0.9.0).
+        await Expect(page.GetByText("2 von 28 Aufgaben")).ToBeVisibleAsync();
 
         // The account link in the nav leads to the static Manage page - a full navigation, not a circuit render
         await page.GetByRole(AriaRole.Link, new() { Name = email }).ClickAsync();
@@ -51,7 +53,7 @@ public class DailyLoopTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixture
         await page.Locator("#email").FillAsync(email);
         await page.Locator("#password").FillAsync(Password);
         await page.GetByRole(AriaRole.Button, new() { Name = "Anmelden", Exact = true }).ClickAsync();
-        await Expect(page.GetByText("1 von 28 Aufgaben")).ToBeVisibleAsync();
+        await Expect(page.GetByText("2 von 28 Aufgaben")).ToBeVisibleAsync();
         await page.GetByRole(AriaRole.Button, new() { Name = "Einstufung fortsetzen" }).ClickAsync();
         await Expect(page.GetByText("2 / 28")).ToBeVisibleAsync();
     });

@@ -63,6 +63,13 @@ Erledigt in 0.9.0:
 - **Fachjargon auf der Startseite** (Nikola, Tamara) – jeder Grammatikknoten hat jetzt einen Klartextnamen; Heute
   benutzt ihn, Themen und Fortschritt behalten den Fachbegriff.
 
+- **Kein echtes Überspringen in der Einstufung** (Stefan) – wer die leichte Aufgabe eines Themas verfehlt, bekommt
+  die schwere nicht mehr gestellt.
+- **Warten ohne Rückmeldung** (Tamara) – die Startknöpfe zeigen jetzt einen Spinner.
+- **Fortschritt zu lang** (Nikola) – was sitzt, klappt in eine Gruppe „Sitzt (n)“ zusammen.
+- **Musterlösung gegen Rubrik** (Milica) – ein Inhaltstest erzwingt, dass die Musterlösung die verlangten
+  Strukturen auch zeigt; 13 Lösungen wurden dafür überarbeitet.
+
 Offen (bewusst): Punkte, Abzeichen und Bestenlisten – begründet in `docs/KONZEPT.md` §5.
 
 ## Methode, kurz
