@@ -40,6 +40,8 @@ public sealed record DashboardModel(
     ReadinessReport Readiness,
     /// <summary>Mastery of the C1 and B2.2 nodes; null unless the learner aims at C1.</summary>
     ModuleReadiness? C1Proximity,
+    /// <summary>Change in readiness against roughly a week ago; null while there is no comparable snapshot.</summary>
+    double? ReadinessTrend,
     /// <summary>Finished minutes since Monday, against <see cref="LearnerProfile.WeeklyGoalMinutes"/>.</summary>
     int MinutesThisWeek,
     /// <summary>Two lines about the week that just ended - Mondays only, and only with data.</summary>
@@ -169,6 +171,7 @@ public sealed class LearningService(
 
         var streak = await ComputeStreakAsync(db, userId, now, ct);
         var readiness = LearnerAnalysis.Readiness(Catalog, states);
+        var readinessTrend = await ReadinessTrendAsync(db, userId, readiness.Overall, readiness.Modules, now, ct);
         // Only computed for a C1 learner: a B2 learner has no use for a number about material they are not aiming at.
         var c1 = profile.TargetLevel == TargetLevel.C1 ? LearnerAnalysis.C1Proximity(Catalog, states) : null;
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, now);
@@ -178,7 +181,7 @@ public sealed class LearningService(
         var preview = planner.Plan(input with { Seed = now.DayOfYear }).Summary;
 
         var t = await TutorAsync(ct);
-        return new DashboardModel(profile, readiness, c1, minutesThisWeek, weeklyReview, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
+        return new DashboardModel(profile, readiness, c1, readinessTrend, minutesThisWeek, weeklyReview, weak, topErrors, streak, due, rechecks, minutesToday, sessions7, totalAttempts, open, preview, t.IsAvailable, t.Description);
     }
 
     private static async Task<int> ComputeStreakAsync(LotseDbContext db, string userId, DateTime now, CancellationToken ct)
@@ -445,6 +448,44 @@ public sealed class LearningService(
         var reviews = await db.ReviewStates.AsNoTracking()
             .Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId).ToListAsync(ct);
         return ProgressStatsCalculator.Compute(reviews, Now);
+    }
+
+    /// <summary>
+    /// Records today's readiness once and returns the change against a snapshot from six to eight days ago.
+    /// The window is a range, not exactly seven days: the learner does not open the app on a fixed schedule, and a
+    /// strict equality would show a trend only to someone who never misses a day. Null when nothing comparable exists.
+    /// </summary>
+    private async Task<double?> ReadinessTrendAsync(LotseDbContext db, string userId, double overall, IReadOnlyList<ModuleReadiness> modules, DateTime now, CancellationToken ct)
+    {
+        var today = DateOnly.FromDateTime(now);
+        if (!await db.ReadinessSnapshots.AnyAsync(s => s.UserId == userId && s.Day == today, ct))
+        {
+            db.ReadinessSnapshots.Add(new ReadinessSnapshotEntity
+            {
+                UserId = userId,
+                Day = today,
+                Overall = overall,
+                ModulesJson = JsonSerializer.Serialize(modules.ToDictionary(m => m.Module, m => m.Readiness)),
+            });
+            try
+            {
+                await db.SaveChangesAsync(ct);
+            }
+            catch (DbUpdateException)
+            {
+                // Two tabs opened the dashboard at once; the unique index did its job and today is already recorded.
+                db.ChangeTracker.Clear();
+            }
+        }
+
+        var from = today.AddDays(-8);
+        var to = today.AddDays(-6);
+        var earlier = await db.ReadinessSnapshots.AsNoTracking()
+            .Where(s => s.UserId == userId && s.Day >= from && s.Day <= to)
+            .OrderByDescending(s => s.Day)
+            .Select(s => (double?)s.Overall)
+            .FirstOrDefaultAsync(ct);
+        return earlier is null ? null : overall - earlier.Value;
     }
 
     /// <summary>Monday morning's two lines about the week that just ended; null on every other day.</summary>

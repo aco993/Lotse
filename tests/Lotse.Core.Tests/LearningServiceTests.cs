@@ -366,6 +366,51 @@ public sealed class LearningServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Readiness_trend_stays_silent_until_there_is_something_to_compare()
+    {
+        // Day one: a snapshot is written, but there is nothing a week old, so no arrow is claimed.
+        Assert.Null((await _svc.GetDashboardAsync()).ReadinessTrend);
+
+        await using (var db = _factory.CreateDbContext())
+        {
+            Assert.Single(await db.ReadinessSnapshots.Where(s => s.UserId == UserId).ToListAsync());
+            // Opening the dashboard again on the same day must not add a second row.
+            await _svc.GetDashboardAsync();
+            Assert.Single(await db.ReadinessSnapshots.Where(s => s.UserId == UserId).ToListAsync());
+        }
+
+        // Three days on is still inside the window's blind spot - the comparison is to *about* a week ago.
+        _clock.Now = _clock.Now.AddDays(3);
+        Assert.Null((await _svc.GetDashboardAsync()).ReadinessTrend);
+
+        // Seven days after the first snapshot the trend exists. Nothing was practised, so it is flat, not absent.
+        _clock.Now = _clock.Now.AddDays(4);
+        var trend = (await _svc.GetDashboardAsync()).ReadinessTrend;
+        Assert.NotNull(trend);
+        Assert.Equal(0, trend!.Value, 3);
+    }
+
+    [Fact]
+    public async Task Readiness_trend_reports_the_change_it_measured()
+    {
+        await _svc.GetDashboardAsync();   // day 0 snapshot
+
+        // Rewrite the old snapshot to a lower value: the same effect as a week of real improvement, without
+        // having to simulate a week of answers.
+        await using (var db = _factory.CreateDbContext())
+        {
+            var snap = await db.ReadinessSnapshots.SingleAsync(s => s.UserId == UserId);
+            snap.Overall -= 0.03;
+            await db.SaveChangesAsync();
+        }
+
+        _clock.Now = _clock.Now.AddDays(7);
+        var trend = (await _svc.GetDashboardAsync()).ReadinessTrend;
+        Assert.NotNull(trend);
+        Assert.Equal(0.03, trend!.Value, 3);
+    }
+
+    [Fact]
     public async Task Session_error_summary_lists_codes_made_in_that_session()
     {
         var session = await _svc.StartSessionAsync(5);

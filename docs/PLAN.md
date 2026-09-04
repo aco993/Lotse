@@ -65,7 +65,7 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ✅ Occupation as a profile setting, 0.9.0: a +0.15 nudge for the matching vocabulary nodes and a tie-break among equally suitable exercises, named in the reason when it decided; unset is a no-op.
 - ✅ Name in the profile, 0.9.0: the content carries `{Vorname}`/`{Nachname}`/`{Name}` tokens, filled in per learner at the render boundary; empty fields keep the author's own name.
 - ✅ Motivation beyond the streak, 0.9.0: weekly goal in minutes on Heute, a Monday Wochenrückblick, and three FSRS cards on Fortschritt (stuck items, seven-day due forecast, current retention). No XP or leaderboard - see KONZEPT §5.
-- ⬜ Readiness trend: keep a daily snapshot so "B2-Bereitschaft" can show its change over seven days (Marko, Dragan).
+- ✅ Readiness trend, 0.9.0: a daily snapshot per learner, compared against one six to eight days old; Heute shows ▲/▼/= or stays silent.
 - ⬜ Plain-language names next to node titles on Heute ("Verb an Position 2" → "Satzbau: das Verb kommt an zweiter Stelle") for A2/B1 learners (Nikola, Tamara).
 - ⬜ Optional: Web API + minimal React client to demonstrate the engine's independence from Blazor.
 

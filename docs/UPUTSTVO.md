@@ -115,6 +115,12 @@ Nema poena, bedževa ni rang-liste — ovo je alat za jednog čoveka, pa nema ko
 
 > Sitnica radi poštenja: piše „davon diese Woche wiederholt", a ne „novo ove nedelje". Istorija starih stabilnosti se ne čuva, pa se ne može znati kada je tačno neka stavka prešla granicu od 21 dana — a izmišljen precizan broj je gori od dosadnog tačnog.
 
+## 1h. Kuda ide „B2-Bereitschaft"
+
+Pored procenta spremnosti na strani **Heute** stoji i strelica: **▲ 3 % seit letzter Woche**, ▼ ako je palo, ili „unverändert".
+
+App svaki dan kad otvoriš Heute zapiše jedno očitavanje i poredi ga sa onim od pre otprilike nedelju dana (6–8 dana). Dok takvog zapisa nema, linija se **ne prikazuje** — bolje ništa nego izmišljen trend.
+
 ## 2. Prvi dan: Einstufung
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.

@@ -57,6 +57,9 @@ Erledigt in 0.9.0:
   und auf Fortschritt drei Karten aus dem FSRS-Zustand (was sitzt, was in sieben Tagen fällig wird, wie viel gerade
   abrufbar ist).
 
+- **Bereitschaft „bewegt sich nicht"** (Marko, Dragan) – taeglicher Schnappschuss, Heute zeigt die Veraenderung
+  gegenueber etwa einer Woche; ohne Vergleichswert bleibt die Zeile weg.
+
 Offen (bewusst): Punkte, Abzeichen und Bestenlisten – begründet in `docs/KONZEPT.md` §5.
 
 ## Methode, kurz

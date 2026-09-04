@@ -47,6 +47,13 @@ else
                 <div class="v">@_m.Readiness.Overall.ToString("P0")</div>
                 <div class="l">
                     B2-Bereitschaft<br /><span class="kpi-sub">@ReadinessConfidence</span>
+                    @if (_m.ReadinessTrend is { } trend)
+                    {
+                        @* Only shown once a snapshot from about a week ago exists; before that there is nothing to compare. *@
+                        var pp = trend * 100;
+                        var arrow = pp >= 0.5 ? "▲" : pp <= -0.5 ? "▼" : "=";
+                        <br /><span class="kpi-sub">@arrow @(Math.Abs(pp) < 0.5 ? "unverändert" : $"{Math.Abs(pp):F0} % ") seit letzter Woche</span>
+                    }
                     @if (_m.C1Proximity is { } c1)
                     {
                         @* Only for a C1 learner. Not a second readiness: the app has no C1 exam blueprint, so this
