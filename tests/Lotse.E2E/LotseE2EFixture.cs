@@ -49,7 +49,9 @@ public sealed class LotseE2EFixture : IAsyncLifetime
             ?? throw new InvalidOperationException("Kestrel started without an address.");
         BaseUrl = $"http://localhost:{new Uri(address).Port}";
         _playwright = await Playwright.CreateAsync();
-        _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
+        // Headless is not silent: a dictation auto-plays on render and "Gespräch anhören" streams a WAV rendered
+        // by Piper, so without --mute-audio a test run talks German through the machine's speakers.
+        _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true, Args = ["--mute-audio"] });
     }
 
     public async ValueTask DisposeAsync()

@@ -150,7 +150,7 @@ else
             foreach (var line in _lesson.Story)
             {
                 var text = line.IsLearnerTurn ? line.Options![line.CorrectIndex!.Value] : line.Text;
-                await Speech.SpeakAsync($"{line.Speaker.Split('(')[0].Trim()}: {text}");
+                await Speech.SpeakAsync($"{line.Speaker.Split('(')[0].Trim()}: {text}", voice: SpeakerVoices.For(line.Speaker));
             }
         }
         finally { _reading = false; }

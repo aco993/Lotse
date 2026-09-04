@@ -94,6 +94,19 @@ builder.Services.AddSingleton<SessionPlanner>();
 builder.Services.AddScoped<ILearningService, LearningService>();
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddHealthChecks();
+
+// ---- Sprachausgabe -----------------------------------------------------------------------------------------------
+// Piper rendert die Stimme lokal (neuronal, MIT-Lizenz, Stimme de_DE-thorsten CC0) - eingerichtet mit
+// tools/install-piper.ps1. Ist es nicht installiert, meldet der Dienst schlicht Available=false und die App nutzt
+// weiter die Browser-Stimmen; das ist der Normalfall in CI und auf fremden Rechnern, kein Fehler.
+var ttsDefaults = PiperTtsOptions.Defaults(Path.Combine(dataDir, "tts-cache"));
+builder.Services.AddSingleton(ttsDefaults with
+{
+    PiperPath = builder.Configuration["Lotse:Tts:PiperPath"] ?? ttsDefaults.PiperPath,
+    VoicePath = builder.Configuration["Lotse:Tts:VoicePath"] ?? ttsDefaults.VoicePath,
+    VoiceFemalePath = builder.Configuration["Lotse:Tts:VoiceFemalePath"] ?? ttsDefaults.VoiceFemalePath,
+});
+builder.Services.AddSingleton<ITextToSpeech, PiperTtsService>();
 builder.Services.AddScoped<Lotse.Web.Components.Shared.SpeechService>();
 
 // ---- UI --------------------------------------------------------------------------------------------------------------
@@ -115,6 +128,9 @@ using (var scope = app.Services.CreateScope())
     await using var db = await factory.CreateDbContextAsync();
     foreach (var line in await DatabaseInitializer.InitializeAsync(db, app.Logger)) app.Logger.LogInformation("{Line}", line);
     await scope.ServiceProvider.GetRequiredService<ContentCatalogProvider>().RefreshAsync();
+    // Resolved here purely so its "local voice active / not set up" line appears at boot rather than only once
+    // the first learner presses Vorlesen - which voice you get is exactly the kind of thing you want in the log.
+    scope.ServiceProvider.GetRequiredService<ITextToSpeech>();
     app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Konten: ASP.NET Core Identity (Registrierung offen).", dbPath);
 }
 
@@ -134,6 +150,16 @@ app.UseAntiforgery();
 // screen. Public by design; there is nothing account-specific in wwwroot.
 app.MapStaticAssets().AllowAnonymous();
 app.MapHealthChecks("/health").AllowAnonymous(); // infra probe, not a learner-facing page
+
+// Rendered speech. Deliberately an endpoint rather than a static-file folder: the fallback "must be signed in"
+// policy above applies to endpoints, so audio stays behind the login - a spoken tutor reply belongs to a private
+// conversation. The key is a SHA-256 hash and ResolveCached refuses anything that is not one, so no request can
+// walk out of the cache directory.
+app.MapGet("/api/tts/{key}.wav", (string key, ITextToSpeech tts) =>
+{
+    var path = tts.ResolveCached(key);
+    return path is null ? Results.NotFound() : Results.File(path, "audio/wav", enableRangeProcessing: true);
+});
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapAdditionalIdentityEndpoints();
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **German that sounds German.** Listening tasks are now rendered by [Piper](https://github.com/rhasspy/piper) (MIT) with the voice `de_DE-thorsten-medium` (CC0) instead of the browser's Windows voices, which are the older concatenative Hedda/Katja/Stefan and audibly robotic. Piper runs as a short-lived child process on this machine - no API key, no network call, nothing sent to a third party - and renders a sentence in well under a second. Set up once with `tools/install-piper.ps1` (~140 MB into `%LOCALAPPDATA%\Lotse`, nothing in the repo); where it is not installed, `ITextToSpeech.Available` is false and the browser voices are used exactly as before, so CI and a fresh clone are unaffected.
+- **A voice per character.** `de_DE-kerstin-low` speaks the women of the story, `de_DE-thorsten` everyone else, chosen from the speaker label of the line (`SpeakerVoices`), which is why "Sabine (im Stand-up)" and "Herr Krüger (Mail)" resolve as well as the plain names. Unrecognised speakers - a new character, or an institution like "IT-Hotline" - keep the default voice rather than being guessed at from a name. Reading a lesson aloud and the per-line Vorlesen button both use it; without the second voice installed, every role speaks with the default one.
+- Rendered audio is cached as WAV under the data directory, keyed by a hash of voice + speed + text, and served from `GET /api/tts/{key}.wav`. Deliberately an endpoint rather than a static folder: the fallback authorization policy covers endpoints, so a spoken tutor reply stays behind the login, and the key is validated as one of our own hashes before it is combined into a path.
+- `playAudio()` reports three outcomes rather than a boolean. "stopped" is the one that matters: treating a deliberate interruption as a failure would have made the browser voice start talking again right after the learner pressed stop. Stopping also resolves the pending promise, so an interrupted playback can never leave `SpeakAsync` awaiting forever.
+- Startup logs which voice is active (`Lokale Sprachausgabe aktiv: ...`) instead of leaving it to be discovered on the first Vorlesen.
+- Tests: 198 (Core 129, Web 69). The Piper tests render for real where it is installed - umlauts and `ć` included, which is what proves stdin is written as UTF-8 - and skip loudly with `Assert.SkipWhen` where it is not, which is also what keeps CI on Ubuntu green.
+- Docs: setup step in README, `docs/UPUTSTVO.md` (1c) and `docs/GITHUB.md` (what stays out of the repo, what to run after a fresh clone).
+
 ## 0.8.0 – 2026-09-04
 
 The release shaped by a test with ten simulated learners (`docs/NUTZERTEST_2026-09.md`, average 7.0/10): every finding

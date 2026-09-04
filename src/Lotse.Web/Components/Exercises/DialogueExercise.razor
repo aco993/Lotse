@@ -47,7 +47,7 @@
                 else
                 {
                     <div>@line.Text</div>
-                    <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" Class="dlg-tts" OnClick="async () => await Speech.SpeakAsync(line.Text)" aria-label="Vorlesen" />
+                    <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" Class="dlg-tts" OnClick="async () => await Speech.SpeakAsync(line.Text, voice: SpeakerVoices.For(line.Speaker))" aria-label="Vorlesen" />
                 }
             </div>
         </div>
