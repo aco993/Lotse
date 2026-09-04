@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.2 – 2026-09-04
+
+- **Passkeys (WebAuthn).** Sign in with a fingerprint, face or device PIN instead of a password, and manage passkeys under Konto → Passkeys (add, name, delete). Built on what .NET 10 Identity ships (schema v3 with the `AspNetUserPasskeys` table, `SignInManager.PasskeySignInAsync` / `PerformPasskeyAttestationAsync`, `UserManager.AddOrUpdatePasskeyAsync`); the ceremony runs in the browser via the `<passkey-submit>` custom element from the official template (German messages) and posts the credential back through the same static form, so the login page stays a plain HTML page - its one script. The two option endpoints validate the antiforgery token explicitly. `LotseDbContext` pins the Identity schema version itself, so tests and the EF tools build the same model as the app (migration `AddPasskeys`). Passkeys need a secure origin: `localhost` or HTTPS - not the LAN-IP address used from the phone.
+- **Playwright end-to-end tests** (`tests/Lotse.E2E`): the real app on Kestrel - `WebApplicationFactory.UseKestrel()`, new in .NET 10 - driven by a real Chromium. The learner's day (register → placement → answer → feedback → logout → login → resume), the German refusal of a wrong password, and the complete passkey ceremony using Chromium's virtual authenticator (CDP `WebAuthn.*`): add, rename, sign in without a password. A trace (screenshots, DOM, network) is written only when a test fails.
+- **CI:** `dotnet format --verify-no-changes` gate, Playwright Chromium install, the E2E suite, traces uploaded as an artifact on failure. Dependabot for NuGet (one grouped weekly PR against `Directory.Packages.props`) and GitHub Actions.
+- Tests: 146.
+
 ## 0.7.1 – 2026-09-04
 
 - **Fix: signed-out visitors got an unstyled login page.** The fallback "must be signed in" authorization policy applied to the static-asset endpoints too, so `app.css`, MudBlazor's css/js, `blazor.web.js` and the favicon were all answered with a redirect to the login page (HTML instead of CSS/JS) for anyone without a cookie - i.e. for every first-time visitor. `MapStaticAssets().AllowAnonymous()`; nothing account-specific lives in `wwwroot`. Found only after the fact because every earlier check of these pages ran with a session cookie present.

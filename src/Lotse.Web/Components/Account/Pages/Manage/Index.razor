@@ -16,6 +16,7 @@
 
 <div class="acct-kv"><b>E-Mail</b><span>@_email</span></div>
 <div class="acct-kv"><b>Passwort</b><a href="Account/Manage/ChangePassword">Ändern</a></div>
+<div class="acct-kv"><b>Passkeys</b><a href="Account/Manage/Passkeys">@(_passkeyCount == 0 ? "Einrichten" : $"{_passkeyCount} verwalten")</a></div>
 
 <div class="acct-links">
     <a href="einstellungen">← Zurück zu den Einstellungen</a>
@@ -24,11 +25,13 @@
 @code {
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
     private string? _email;
+    private int _passkeyCount;
 
     protected override async Task OnInitializedAsync()
     {
         var user = await UserAccessor.GetRequiredUserAsync(HttpContext);
         if (user is null) return;
         _email = await UserManager.GetEmailAsync(user);
+        _passkeyCount = (await UserManager.GetPasskeysAsync(user)).Count;
     }
 }

@@ -25,6 +25,8 @@ pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfi
 
 Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 karaktera), nema potvrde mejlom, odmah si ulogovan/a. Svaki sledeći nalog (npr. na drugom uređaju, ili neko drugi ko proba app) dobija potpuno svoj, prazan napredak – ništa se ne meša sa tvojim. Podaci ostaju samo na ovom računaru (lokalna SQLite baza), nikuda se ne šalju.
 
+**Passkey umesto lozinke:** u Konto (klik na svoj email u meniju) → Passkeys → „Passkey hinzufügen“ – otisak prsta, lice ili PIN uređaja. Posle toga na login strani samo email + „Mit Passkey anmelden“. Radi na `localhost` ili preko HTTPS-a; sa telefona preko IP-adrese u lokalnoj mreži (http://192.168…) browser to ne dozvoljava – tu ostaje lozinka.
+
 Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
 
 „Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).

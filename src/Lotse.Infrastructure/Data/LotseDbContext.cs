@@ -2,6 +2,8 @@ using Lotse.Core.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lotse.Infrastructure.Data;
 
@@ -146,6 +148,25 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
     /// (pure Core types, no UserId member of their own) to an account. Every <c>EF.Property&lt;string&gt;</c> /
     /// <c>Entry(x).Property(...)</c> access goes through this constant - the string exists exactly once.</summary>
     public const string UserIdShadow = "UserId";
+
+    /// <summary>Identity store schema this context is built for: v3 adds the passkey (WebAuthn) table. Program.cs
+    /// feeds the same value into <c>IdentityOptions.Stores.SchemaVersion</c>.</summary>
+    public static readonly Version IdentitySchemaVersion = IdentitySchemaVersions.Version3;
+
+    private static readonly IServiceProvider IdentityStoreDefaults = new ServiceCollection()
+        .Configure<IdentityOptions>(o => o.Stores.SchemaVersion = IdentitySchemaVersion)
+        .BuildServiceProvider();
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // IdentityDbContext decides whether the passkey table exists by reading IdentityOptions.Stores.SchemaVersion
+        // from the APPLICATION service provider behind the options. A context built outside the app (tests, the EF
+        // tools, a script) has none, would silently fall back to schema v1 and disagree with the migrations - so it
+        // gets a minimal provider carrying exactly that one setting. The schema is a property of this context, not
+        // of whoever happened to build the options.
+        if (optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider is null)
+            optionsBuilder.UseApplicationServiceProvider(IdentityStoreDefaults);
+    }
 
     public DbSet<LearnerProfile> Profiles => Set<LearnerProfile>();
     public DbSet<SkillState> SkillStates => Set<SkillState>();

@@ -1,0 +1,37 @@
+@using Microsoft.AspNetCore.Antiforgery
+@inject IServiceProvider Services
+
+@* A submit button whose companion custom element (PasskeySubmit.razor.js, loaded by App.razor on the static
+   Account pages) intercepts the submit, runs the WebAuthn ceremony against /Account/Passkey*Options and posts the
+   resulting credential back through the same form as "{Name}.CredentialJson" - so the static SSR page handles it
+   with a normal [SupplyParameterFromForm] binding. Standard .NET 10 Identity template pattern. *@
+<button type="submit" name="__passkeySubmit" @attributes="AdditionalAttributes">@ChildContent</button>
+<passkey-submit
+    operation="@Operation"
+    name="@Name"
+    email-name="@EmailName"
+    request-token-name="@_tokens?.HeaderName"
+    request-token-value="@_tokens?.RequestToken">
+</passkey-submit>
+
+@code {
+    private AntiforgeryTokenSet? _tokens;
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    [Parameter, EditorRequired] public PasskeyOperation Operation { get; set; }
+
+    /// <summary>Form field prefix the credential is posted under (e.g. "Input.Passkey").</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = default!;
+
+    /// <summary>For <see cref="PasskeyOperation.Request"/>: the form field holding the e-mail, so the request can be
+    /// narrowed to that account's passkeys.</summary>
+    [Parameter] public string? EmailName { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    protected override void OnInitialized()
+        => _tokens = Services.GetService<IAntiforgery>()?.GetTokens(HttpContext);
+}

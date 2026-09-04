@@ -1,0 +1,72 @@
+@page "/Account/Manage/RenamePasskey/{Id}"
+@layout AccountLayout
+@attribute [Authorize]
+
+@using System.Buffers.Text
+@using Lotse.Infrastructure.Data
+@inject UserManager<ApplicationUser> UserManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Passkey benennen – Lotse</PageTitle>
+
+<h1>@(_passkey?.Name is { } name ? $"Passkey „{name}“ umbenennen" : "Passkey benennen")</h1>
+<p class="acct-sub">Ein Name wie „Laptop“ oder „Handy“ hilft, ihn später wiederzuerkennen.</p>
+
+<EditForm Model="Input" OnValidSubmit="RenameAsync" FormName="rename-passkey" method="post">
+    <DataAnnotationsValidator />
+    <div class="acct-field">
+        <label class="acct-label" for="name">Name</label>
+        <InputText id="name" @bind-Value="Input.Name" placeholder="z. B. Laptop" autofocus />
+        <ValidationMessage For="() => Input.Name" class="acct-error" />
+    </div>
+    <button type="submit" class="acct-btn">Speichern</button>
+</EditForm>
+
+<div class="acct-alt"><a href="Account/Manage/Passkeys">← Zurück zu den Passkeys</a></div>
+
+@code {
+    private ApplicationUser? _user;
+    private UserPasskeyInfo? _passkey;
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [Parameter] public string? Id { get; set; }
+#pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+#pragma warning restore BL0008
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (_user is null) return;
+
+        byte[] credentialId;
+        try { credentialId = Base64Url.DecodeFromChars(Id); }
+        catch (FormatException)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Manage/Passkeys", "Fehler: Ungültige Passkey-ID.", HttpContext);
+            return;
+        }
+
+        _passkey = await UserManager.GetPasskeyAsync(_user, credentialId);
+        if (_passkey is null)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Manage/Passkeys", "Fehler: Diesen Passkey gibt es nicht (mehr).", HttpContext);
+        }
+    }
+
+    private async Task RenameAsync()
+    {
+        if (_user is null || _passkey is null) return;
+        _passkey.Name = Input.Name.Trim();
+        var result = await UserManager.AddOrUpdatePasskeyAsync(_user, _passkey);
+        RedirectManager.RedirectToWithStatus("Account/Manage/Passkeys", result.Succeeded ? "Passkey gespeichert." : "Fehler: Der Passkey konnte nicht gespeichert werden.", HttpContext);
+    }
+
+    private sealed class InputModel
+    {
+        [Required(ErrorMessage = "Bitte einen Namen eingeben.")]
+        [StringLength(60, ErrorMessage = "Höchstens {1} Zeichen.")]
+        public string Name { get; set; } = "";
+    }
+}

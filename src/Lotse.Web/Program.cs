@@ -49,6 +49,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     // lock every new registration out immediately, so registration signs the learner in right away instead.
     options.SignIn.RequireConfirmedAccount = false;
     options.User.RequireUniqueEmail = true;
+    // Identity schema v3 = passkeys (WebAuthn) table. Declared on the DbContext so that tests and the EF tools,
+    // which build the context without this service provider, still see the same schema.
+    options.Stores.SchemaVersion = LotseDbContext.IdentitySchemaVersion;
     // Length over composition rules (NIST SP 800-63B): 8+ characters, no forced digit/symbol/case mix and no
     // unique-character minimum either. The registration form promises exactly "Mindestens 8 Zeichen", so the
     // two must stay in step - any rule added here needs a matching hint in Register/ResetPassword/ChangePassword.

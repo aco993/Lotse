@@ -1,0 +1,154 @@
+@page "/Account/Manage/Passkeys"
+@layout AccountLayout
+@attribute [Authorize]
+
+@using System.Buffers.Text
+@using Lotse.Infrastructure.Data
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+
+@* Static SSR like every Account page; the WebAuthn part runs in PasskeySubmit.razor.js and posts back here. *@
+
+<PageTitle>Passkeys – Lotse</PageTitle>
+
+<h1>Passkeys</h1>
+<p class="acct-sub">Anmelden ohne Passwort – mit Fingerabdruck, Gesicht oder Geräte-PIN (WebAuthn). Ein Passkey gehört zu diesem Gerät bzw. deinem Passwort-Manager; das Passwort bleibt als Ersatz bestehen.</p>
+
+@if (_status is not null)
+{
+    <AcctAlert Kind="@(_statusIsError ? "error" : "success")">@_status</AcctAlert>
+}
+
+@if (_passkeys is { Count: > 0 })
+{
+    @foreach (var passkey in _passkeys)
+    {
+        var credentialId = Base64Url.EncodeToString(passkey.CredentialId);
+        <form class="acct-kv" @formname="@($"update-passkey-{credentialId}")" @onsubmit="UpdatePasskeyAsync" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="CredentialId" value="@credentialId" />
+            <span>@(passkey.Name ?? "Unbenannter Passkey")</span>
+            <span class="acct-inline-actions">
+                <button type="submit" name="Action" value="rename" class="acct-link-btn" title="Diesen Passkey umbenennen">Umbenennen</button>
+                <button type="submit" name="Action" value="delete" class="acct-link-btn danger" title="Diesen Passkey vom Konto entfernen">Löschen</button>
+            </span>
+        </form>
+    }
+}
+else
+{
+    <p class="acct-hint" style="margin-bottom:16px">Noch kein Passkey hinterlegt.</p>
+}
+
+<form @formname="add-passkey" @onsubmit="AddPasskeyAsync" method="post" style="margin-top:18px">
+    <AntiforgeryToken />
+    @if (_passkeys is { Count: >= MaxPasskeyCount })
+    {
+        <p class="acct-error">Maximale Anzahl an Passkeys erreicht – bitte zuerst einen löschen.</p>
+    }
+    else
+    {
+        <PasskeySubmit Operation="PasskeyOperation.Create" Name="Input" class="acct-btn">Passkey hinzufügen</PasskeySubmit>
+    }
+</form>
+
+<div class="acct-alt"><a href="Account/Manage">← Zurück zum Konto</a></div>
+
+@code {
+    private const int MaxPasskeyCount = 20;
+
+    private ApplicationUser? _user;
+    private IList<UserPasskeyInfo>? _passkeys;
+    private string? _status;
+    private bool _statusIsError;
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm] private string? Action { get; set; }
+    [SupplyParameterFromForm] private string? CredentialId { get; set; }
+#pragma warning disable BL0008 // Safe: the add-passkey form always carries every field.
+    [SupplyParameterFromForm(FormName = "add-passkey")] private PasskeyInputModel Input { get; set; } = new();
+#pragma warning restore BL0008
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpContext.Request.Cookies.TryGetValue(IdentityRedirectManager.StatusCookieName, out var message))
+        {
+            HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+            _status = message;
+            _statusIsError = message.StartsWith("Fehler", StringComparison.Ordinal);
+        }
+        _user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (_user is null) return;
+        _passkeys = await UserManager.GetPasskeysAsync(_user);
+    }
+
+    private async Task AddPasskeyAsync()
+    {
+        if (_user is null) return;
+        if (!string.IsNullOrEmpty(Input.Error))
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus($"Fehler: {Input.Error}", HttpContext);
+            return;
+        }
+        if (string.IsNullOrEmpty(Input.CredentialJson))
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus("Fehler: Der Browser hat keinen Passkey geliefert.", HttpContext);
+            return;
+        }
+        if (_passkeys!.Count >= MaxPasskeyCount)
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus("Fehler: Maximale Anzahl an Passkeys erreicht.", HttpContext);
+            return;
+        }
+
+        var attestation = await SignInManager.PerformPasskeyAttestationAsync(Input.CredentialJson);
+        if (!attestation.Succeeded)
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus($"Fehler: Der Passkey konnte nicht geprüft werden ({attestation.Failure.Message}).", HttpContext);
+            return;
+        }
+        var added = await UserManager.AddOrUpdatePasskeyAsync(_user, attestation.Passkey);
+        if (!added.Succeeded)
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus("Fehler: Der Passkey konnte dem Konto nicht hinzugefügt werden.", HttpContext);
+            return;
+        }
+
+        // Straight on to naming it ("Laptop", "Handy", ...), so a list of several stays readable.
+        RedirectManager.RedirectTo($"Account/Manage/RenamePasskey/{Base64Url.EncodeToString(attestation.Passkey.CredentialId)}");
+    }
+
+    private async Task UpdatePasskeyAsync()
+    {
+        switch (Action)
+        {
+            case "rename":
+                RedirectManager.RedirectTo($"Account/Manage/RenamePasskey/{CredentialId}");
+                break;
+            case "delete":
+                await DeletePasskeyAsync();
+                break;
+            default:
+                RedirectManager.RedirectToCurrentPageWithStatus($"Fehler: Unbekannte Aktion '{Action}'.", HttpContext);
+                break;
+        }
+    }
+
+    private async Task DeletePasskeyAsync()
+    {
+        if (_user is null) return;
+        byte[] credentialId;
+        try { credentialId = Base64Url.DecodeFromChars(CredentialId); }
+        catch (FormatException)
+        {
+            RedirectManager.RedirectToCurrentPageWithStatus("Fehler: Ungültige Passkey-ID.", HttpContext);
+            return;
+        }
+
+        var result = await UserManager.RemovePasskeyAsync(_user, credentialId);
+        RedirectManager.RedirectToCurrentPageWithStatus(result.Succeeded ? "Passkey gelöscht." : "Fehler: Der Passkey konnte nicht gelöscht werden.", HttpContext);
+    }
+}
