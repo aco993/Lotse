@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 – 2026-09-04
+
+The release shaped by a test with ten simulated learners (`docs/NUTZERTEST_2026-09.md`, average 7.0/10): every finding
+below names the personas that hit it.
+
+- **FSRS-5 spaced repetition** (`Fsrs`, `ReviewScheduler`). Each item carries a memory stability and a difficulty; it comes due when its recall probability falls to 90 %, a hard-won recall of a nearly-forgotten item grows stability most, a lapse shrinks it without throwing it away. Published default weights, no training; SM-2 states convert on their next review (migration `AddFsrsMemoryModel`). Retrievability is available per item (`ReviewState.RetrievabilityAt`).
+- **Rule-based text analyzer without a tutor key** (`FreeTextAnalyzer`) - the gap eight of ten personas named first. Perfect with haben/sein, verb position after subordinators and fronted adverbials, the comma before dass/weil, umlaut and ß spelling, case after prepositions (gender from the vocabulary bank), n-declension, missing articles, verb + preposition, formal register, the greeting formula, length, coherence; false friends as hints. Every finding carries a catalogue code and lands in the journal and the learner model. Chosen for precision: a clean B2 text produces nothing.
+- **Sessions are idempotent** (Dragan, Milica, Stefan): starting resumes an open session of the same kind instead of stacking a second one; finishing a placement closes every other open placement. "Beenden" asks - pause, finish, keep going (Tamara); a paused placement resumes from the dashboard, and daily sessions run beside an open placement (Jelena).
+- **Quick placement** - 14 items, about eight minutes (Jelena, Nikola, Tamara).
+- **Account link no longer crashes the circuit** (Marko): static pages are handed to the browser as a full navigation from the interactive router (`Routes.razor`, `StaticPages`).
+- **Drafts survive a reload** (Marko, Nikola, Ana): the text is kept in the browser until submitted; a submitted text waits for its self-check in the database; the own text is shown next to the model answer.
+- **Focus sessions focus** (Milica): a requested topic gets its own planner branch - only that node, its due reviews first.
+- **Keyboard and screen reader** (Ivana): a visible focus ring on every control, a skip link, focus on "Weiter" after checking, a live region announcing the verdict, `main` landmark.
+- **Themen legend filters** (Jelena); node cards count every task type, not only drills (Petar).
+- **Readiness says how sure it is** (Petar, Dragan, Marko): "Schätzung - noch wenig Daten" under the number.
+- **Journal shows the chosen option** instead of its index (Marko); "1 Minute" (Stefan); passkey autofill rejection no longer logs an error (Ivana).
+- **Eleven vocabulary packs** (~1,200 entries: 770 words with article, plural, example and Serbian gloss, 330 context gaps, 110 collocation matches) on ten new nodes - Arbeit & Karriere, Gesundheit/Körper/Pflege, Umwelt & Energie, Medien & Digitales, Bildung & Wissenschaft, Geld & Konsum, Wohnen & Mobilität, Charakter & Gefühle, Präfixverben, C1 gehoben - plus a deepened IT & Beruf node. Authored by parallel agents against a validator (`tools/persona-harness/validate-vocab.mjs`), reviewed as DaF editors, checked by the content tests.
+- `tools/persona-harness`: the Playwright layer behind the persona test and `verify-fixes.mjs`, which re-checks every persona bug against the running app. Audio is muted - headless Chromium still speaks through the machine's speakers otherwise.
+- E2E: pause/resume, the account link, writing with analyzer findings and a draft across reloads. Tests: 167. Content: 2,048 exercises (from 838), 919 vocabulary lemmas (from 154), 59 skill nodes (from 49).
+
 ## 0.7.2 – 2026-09-04
 
 - **Passkeys (WebAuthn).** Sign in with a fingerprint, face or device PIN instead of a password, and manage passkeys under Konto → Passkeys (add, name, delete). Built on what .NET 10 Identity ships (schema v3 with the `AspNetUserPasskeys` table, `SignInManager.PasskeySignInAsync` / `PerformPasskeyAttestationAsync`, `UserManager.AddOrUpdatePasskeyAsync`); the ceremony runs in the browser via the `<passkey-submit>` custom element from the official template (German messages) and posts the credential back through the same static form, so the login page stays a plain HTML page - its one script. The two option endpoints validate the antiforgery token explicitly. `LotseDbContext` pins the Identity schema version itself, so tests and the EF tools build the same model as the app (migration `AddPasskeys`). Passkeys need a secure origin: `localhost` or HTTPS - not the LAN-IP address used from the phone.

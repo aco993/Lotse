@@ -1,6 +1,7 @@
 @* Free writing or speaking. With a tutor: rubric feedback + tagged errors. Without: self-check against the rubric + model answer. *@
 @inject ILearningService Learning
 @inject SpeechService Speech
+@inject IJSRuntime JS
 @implements IDisposable
 
 <MudText Class="ex-prompt mb-2">@Exercise.Prompt</MudText>
@@ -47,7 +48,7 @@
         }
     }
 
-    <MudTextField @bind-Value="_text" Lines="@(IsSpeaking ? 6 : 12)" Variant="Variant.Outlined" Immediate="true"
+    <MudTextField @bind-Value="_text" @bind-Value:after="MarkDirty" Lines="@(IsSpeaking ? 6 : 12)" Variant="Variant.Outlined" Immediate="true"
                   Label="@(IsSpeaking ? "Transkript" : "Dein Text")" HelperText="@WordInfo" />
 
     <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Spacing="2">
@@ -135,12 +136,37 @@ else
             var idx = i;
             <MudCheckBox T="bool" Value="_checks[idx]" ValueChanged="v => _checks[idx] = v" Label="@_production.Rubric[idx]" Color="Color.Tertiary" Dense="true" />
         }
-        @if (!string.IsNullOrWhiteSpace(_production.ModelAnswer))
+        @if (_production.Findings.Count > 0 || _production.Hints.Count > 0)
         {
-            <MudExpansionPanels Elevation="0" Class="mt-2">
-                <MudExpansionPanel Text="Musterlösung zum Vergleich"><MudText Class="preline">@_production.ModelAnswer</MudText></MudExpansionPanel>
-            </MudExpansionPanels>
+            <MudText Typo="Typo.subtitle2" Class="mt-3 mb-1">Automatisch gefunden – ohne Tutor, nach festen Regeln</MudText>
+            @if (_production.Findings.Count > 0)
+            {
+                <MudSimpleTable Dense="true" Hover="true" Elevation="0" Style="background:transparent" Class="mb-2">
+                    <tbody>
+                    @foreach (var f in _production.Findings)
+                    {
+                        <tr>
+                            <td style="white-space:nowrap"><MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@f.Code</MudChip></td>
+                            <td><s style="opacity:.7">@f.Snippet</s> → <b>@f.Correction</b><br /><span style="opacity:.8">@f.Explanation</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </MudSimpleTable>
+                <MudText Typo="Typo.caption" Class="d-block mb-2" Style="opacity:.75">Diese Fehler stehen jetzt in deinem Fehlerjournal. Was die Regeln nicht sehen (Inhalt, Aufbau, Wortwahl), bleibt dein Selbstcheck.</MudText>
+            }
+            @foreach (var h in _production.Hints)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Text" Class="mb-1">@h</MudAlert>
+            }
         }
+        <MudExpansionPanels Elevation="0" Class="mt-2" MultiExpansion="true">
+            @* Own text next to the model answer, so comparing does not depend on memory. *@
+            <MudExpansionPanel Text="Dein Text" Expanded="true"><MudText Class="preline">@_production.Text</MudText></MudExpansionPanel>
+            @if (!string.IsNullOrWhiteSpace(_production.ModelAnswer))
+            {
+                <MudExpansionPanel Text="Musterlösung zum Vergleich"><MudText Class="preline">@_production.ModelAnswer</MudText></MudExpansionPanel>
+            }
+        </MudExpansionPanels>
         <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.75">Tipp: Mit einem API-Schlüssel (Einstellungen) bewertet Claude deinen Text nach den Prüfungskriterien und markiert jeden Fehler.</MudText>
     </MudPaper>
     <MudStack Row="true" Class="mt-3" Justify="Justify.FlexEnd">
@@ -170,6 +196,12 @@ else
     private int Words => AnswerChecker.CountWords(_text);
     private string WordInfo => Exercise.MinWords is > 0 ? $"{Words} / ca. {Exercise.MinWords} Wörter" : $"{Words} Wörter";
 
+    // The draft lives in the browser (localStorage) until it is submitted: a reload, a sleeping laptop or a dropped
+    // circuit must never cost the learner 150 words. Saved on the timer tick, so typing is not slowed down.
+    private string DraftKey => $"lotse.draft.{SessionId?.ToString() ?? "free"}.{Exercise.Id}";
+    private bool _dirty;
+    private void MarkDirty() => _dirty = true;
+
     protected override void OnParametersSet()
     {
         if (_lastId == Exercise.Id) return;
@@ -178,7 +210,17 @@ else
         _production = null;
         _secondsElapsed = 0;
         _timer?.Dispose();
-        _timer = new System.Threading.Timer(_ => { _secondsElapsed++; _ = InvokeAsync(StateHasChanged); }, null, 1000, 1000);
+        _timer = new System.Threading.Timer(_ => { _secondsElapsed++; _ = InvokeAsync(TickAsync); }, null, 1000, 1000);
+    }
+
+    private async Task TickAsync()
+    {
+        if (_dirty && _production is null)
+        {
+            _dirty = false;
+            try { await JS.InvokeVoidAsync("localStorage.setItem", DraftKey, _text); } catch (JSException) { }
+        }
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -187,11 +229,28 @@ else
         Speech.Transcript += OnTranscript;
         Speech.RecognitionEnded += OnRecognitionEnded;
         Speech.RecognitionError += OnRecognitionError;
-        if (IsSpeaking)
+        if (IsSpeaking) _sttSupported = await Speech.SttSupportedAsync();
+        await RestoreAsync();
+        StateHasChanged();
+    }
+
+    /// <summary>After a reload: a submitted-but-unchecked text comes back from the database, an unsubmitted draft from the browser.</summary>
+    private async Task RestoreAsync()
+    {
+        if (SessionId is { } sid && await Learning.GetPendingProductionAsync(sid, Exercise.Id) is { } pending)
         {
-            _sttSupported = await Speech.SttSupportedAsync();
-            StateHasChanged();
+            _production = pending;
+            _checks = new bool[pending.Rubric.Count];
+            _text = pending.Text;
+            _timer?.Dispose();
+            return;
         }
+        try
+        {
+            var draft = await JS.InvokeAsync<string?>("localStorage.getItem", DraftKey);
+            if (!string.IsNullOrWhiteSpace(draft) && string.IsNullOrWhiteSpace(_text)) _text = draft;
+        }
+        catch (JSException) { }
     }
 
     private void OnTranscript(string text, bool isFinal) { _text = text; _ = InvokeAsync(StateHasChanged); }
@@ -238,6 +297,7 @@ else
             if (_recording) await StopRecordingAsync();
             _production = await Learning.SubmitProductionAsync(SessionId, StepIndex, Exercise.Id, _text, IsSpeaking);
             _checks = new bool[_production.Rubric.Count];
+            try { await JS.InvokeVoidAsync("localStorage.removeItem", DraftKey); } catch (JSException) { }
         }
         finally { _busy = false; }
     }

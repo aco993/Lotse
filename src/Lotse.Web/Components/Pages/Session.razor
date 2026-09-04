@@ -2,6 +2,7 @@
 @inject ILearningService Learning
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
+@inject IDialogService Dialogs
 
 <PageTitle>Session – Lotse</PageTitle>
 
@@ -21,7 +22,7 @@ else if (_finished || _view.IsComplete)
                     <MudText Typo="Typo.subtitle1" Style="font-weight:600">„@lesson.Merksatz“</MudText>
                 </MudPaper>
             }
-            <MudText Typo="Typo.body1" Class="mb-3">@Correct von @Done Aufgaben gelöst (@Accuracy.ToString("P0")) · @Duration Minuten@(Done < _view.Steps.Count ? $" · {_view.Steps.Count - Done} übersprungen" : "")</MudText>
+            <MudText Typo="Typo.body1" Class="mb-3">@Correct von @Done Aufgaben gelöst (@Accuracy.ToString("P0")) · @Duration @(Duration == 1 ? "Minute" : "Minuten")@(Done < _view.Steps.Count ? $" · {_view.Steps.Count - Done} übersprungen" : "")</MudText>
             @if (_view.Session.Kind == SessionKind.Placement)
             {
                 <MudText Typo="Typo.body2" Class="mb-3">Das Lernermodell ist jetzt kalibriert. Ab morgen plant der Lotse jede Session nach deinen Schwachstellen – und prüft später nach, ob sie wirklich sitzen.</MudText>
@@ -153,18 +154,30 @@ else
     private async Task FinishEarlyAsync()
     {
         if (_view is null) return;
-        if (_view.Steps.Any(s => s.Done))
-        {
-            await Learning.FinishSessionAsync(Id);
-            _view = await Learning.GetSessionAsync(Id);
-            BuildSummary();
-            _finished = true;
-        }
-        else
+        var done = _view.Steps.Count(s => s.Done);
+        if (done == 0)
         {
             await Learning.AbandonSessionAsync(Id);
             Nav.NavigateTo("");
+            return;
         }
+
+        // Never end a session on a single stray tap: ask, and offer to pause instead - a placement in particular
+        // is worth resuming (its answers stay), not restarting from scratch.
+        var isPlacement = _view.Session.Kind == SessionKind.Placement;
+        var choice = await Dialogs.ShowMessageBoxAsync(
+            isPlacement ? "Einstufung unterbrechen?" : "Session beenden?",
+            isPlacement
+                ? $"{done} von {_view.Steps.Count} Aufgaben sind geschafft. Du kannst pausieren und später genau hier weitermachen – oder jetzt mit diesen {done} Antworten abschließen."
+                : $"{done} von {_view.Steps.Count} Schritten sind geschafft. Pausieren behält den Stand für heute; Abschließen wertet die Session mit dem aus, was da ist.",
+            yesText: "Pausieren", noText: "Abschließen", cancelText: "Weiterüben");
+        if (choice is null) return;          // Weiterüben
+        if (choice == true) { Nav.NavigateTo(""); return; } // Pausieren: stays open, the dashboard offers "Weitermachen"
+
+        await Learning.FinishSessionAsync(Id);
+        _view = await Learning.GetSessionAsync(Id);
+        BuildSummary();
+        _finished = true;
     }
 
     private async Task LoadSessionErrorsAsync()

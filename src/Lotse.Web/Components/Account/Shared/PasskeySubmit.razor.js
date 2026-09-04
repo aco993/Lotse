@@ -86,10 +86,10 @@ customElements.define('passkey-submit', class extends HTMLElement {
             if (error.name === 'AbortError') {
                 return; // the learner cancelled - nothing to report
             }
-            console.error(error);
             if (useConditionalMediation) {
-                return; // autofill attempt, not user-initiated - stay quiet
+                return; // autofill attempt, not user-initiated - stay quiet (headless/older browsers reject it with NotSupportedError)
             }
+            console.error(error);
             const errorMessage = error.name === 'NotAllowedError'
                 ? 'Der Authenticator hat keinen Passkey geliefert.'
                 : error.message;

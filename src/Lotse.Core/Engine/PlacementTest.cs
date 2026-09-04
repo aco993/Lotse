@@ -27,11 +27,17 @@ public static class PlacementTest
         "RM.FORMELLE_EMAIL",
     ];
 
-    public static IReadOnlyList<Exercise> Build(ContentCatalog catalog, int seed = 42)
+    /// <param name="quick">
+    /// One item per node instead of two (about eight minutes): the lower item for the first half of the nodes and
+    /// the upper for the second, so the quick pass still straddles the boundary. Meant for learners who cannot sit
+    /// down for twenty minutes; the model simply starts with less confidence and catches up in the daily sessions.
+    /// </param>
+    public static IReadOnlyList<Exercise> Build(ContentCatalog catalog, int seed = 42, bool quick = false)
     {
         var rng = new Random(seed);
         var easyPass = new List<Exercise>();
         var hardPass = new List<Exercise>();
+        var index = 0;
         foreach (var nodeId in CoreNodeIds)
         {
             // Only single-answer items: the placement must be quick and comparable across nodes.
@@ -39,6 +45,12 @@ public static class PlacementTest
             if (pool.Count == 0) continue;
             var lower = pool.Where(e => e.Band <= CefrBand.B1_2).OrderBy(_ => rng.Next()).FirstOrDefault();
             var upper = pool.Where(e => e.Band >= CefrBand.B2_1).OrderBy(_ => rng.Next()).FirstOrDefault();
+            if (quick)
+            {
+                var pick = index++ % 2 == 0 ? lower ?? upper : upper ?? lower;
+                easyPass.Add(pick ?? pool[rng.Next(pool.Count)]);
+                continue;
+            }
             if (lower is not null) easyPass.Add(lower);
             if (upper is not null && upper != lower) hardPass.Add(upper);
             if (lower is null && upper is null) easyPass.Add(pool[rng.Next(pool.Count)]);

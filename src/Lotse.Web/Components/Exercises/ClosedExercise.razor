@@ -92,9 +92,11 @@ else
     <FeedbackPanel Result="_result" />
     <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
         <MudText Typo="Typo.caption" Class="kbd-hint" Style="opacity:.6">Enter = weiter</MudText>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
+        <MudButton @ref="_nextButton" Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
     </MudStack>
 }
+@* Permanent live region: screen readers announce the verdict the moment it is checked, without moving focus. *@
+<div class="sr-only" role="status" aria-live="polite">@_announcement</div>
 
 @code {
     [Parameter, EditorRequired] public Exercise Exercise { get; set; } = default!;
@@ -111,6 +113,9 @@ else
     private bool _playing;
     private AnswerResult? _result;
     private DateTime _shownAt = DateTime.UtcNow;
+    private MudButton? _nextButton;
+    private string _announcement = "";
+    private bool _focusNext;
 
     protected override void OnParametersSet()
     {
@@ -121,6 +126,7 @@ else
         _placed.Clear();
         _hintShown = false;
         _result = null;
+        _announcement = "";
         _shownAt = DateTime.UtcNow;
         var rng = new Random(Exercise.Id.GetHashCode());
         _pool = Exercise.Type == ExerciseType.WordOrder ? Exercise.Options.OrderBy(_ => rng.Next()).ToList() : [];
@@ -131,6 +137,13 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (_focusNext && _nextButton is not null)
+        {
+            // After "Prüfen" the answer controls disappear and focus would fall back to <body>; put it on "Weiter"
+            // so Enter/Space continue and a keyboard user is never lost.
+            _focusNext = false;
+            await _nextButton.FocusAsync();
+        }
         if (!firstRender) return;
         Speech.GlobalKey += OnGlobalKey;
         await Speech.RegisterKeysAsync();
@@ -200,6 +213,13 @@ else
             };
             var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
             _result = await Learning.SubmitAnswerAsync(SessionId, StepIndex, Exercise.Id, answer, ms, _hintShown);
+            _announcement = _result.Check.Outcome switch
+            {
+                Outcome.Correct => "Richtig.",
+                Outcome.AlmostCorrect => $"Fast richtig. {_result.Check.Feedback}",
+                _ => $"Leider falsch. Richtig wäre: {_result.Check.Expected}. {_result.Check.Feedback}",
+            };
+            _focusNext = true;
         }
         finally { _busy = false; }
     }

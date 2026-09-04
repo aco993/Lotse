@@ -13,10 +13,12 @@
         <MudText Typo="Typo.body2" Style="opacity:.85">Normalerweise entscheidet der Lotse. Wenn du ein Thema gezielt willst – etwa vor einem Meeting –, starte hier eine Fokus-Session. Mit Tutor kannst du die Übungsbank zu einem Thema erweitern lassen.</MudText>
     </div>
 </div>
-<div class="task-legend">
+@* The legend doubles as a filter: one tap narrows the list to that area, a second tap clears it. *@
+<div class="task-legend" role="group" aria-label="Nach Bereich filtern">
     @foreach (var area in Enum.GetValues<SkillArea>())
     {
-        <span class="@AreaClass(area)">@AreaLabel(area)</span>
+        var a = area;
+        <button type="button" class="@AreaClass(a)" aria-pressed="@(_area == a ? "true" : "false")" @onclick="() => _area = _area == a ? null : a">@AreaLabel(a)</button>
     }
 </div>
 
@@ -41,7 +43,7 @@
     @foreach (var node in group)
     {
         var n = node;
-        var drills = CatalogProvider.Catalog.ForNode(n.Id).Count(e => !e.IsProduction && !e.IsReceptive);
+        var drills = CatalogProvider.Catalog.ForNode(n.Id).Count(); // every task type counts - a writing node has writing tasks, not drills
         var s = _states?.GetValueOrDefault(n.Id);
         <MudPaper @key="n.Id" Class="@($"task-card task-static topic-card pa-3 mb-2 {AreaClass(n.Area)}")" Elevation="1">
             <div class="task-row">
@@ -96,9 +98,12 @@
 
     protected override async Task OnInitializedAsync() => _states = await Learning.GetSkillStatesAsync();
 
-    private bool Matches(SkillNode n) => string.IsNullOrWhiteSpace(_search)
-        || n.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
-        || n.Description.Contains(_search, StringComparison.OrdinalIgnoreCase);
+    private SkillArea? _area;
+
+    private bool Matches(SkillNode n) => (_area is null || n.Area == _area)
+        && (string.IsNullOrWhiteSpace(_search)
+            || n.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+            || n.Description.Contains(_search, StringComparison.OrdinalIgnoreCase));
 
     // One hue per skill area, used for the stripe, icon tile, section header and legend (see .area-* in app.css).
     private static string AreaClass(SkillArea a) => a switch

@@ -56,6 +56,17 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 - ✅ CI (GitHub Actions): format gate, build, all test tiers incl. Playwright, traces on failure; Dependabot. ⬜ Release artefact (self-contained win-x64).
 - ✅ Playwright end-to-end: the daily loop (register → placement → answer → logout → login → resume) and the passkey ceremony, on Kestrel via `WebApplicationFactory.UseKestrel`.
 - ✅ Passkeys (WebAuthn) next to the password (0.7.2).
+- ✅ Persona test with ten simulated learners (`docs/NUTZERTEST_2026-09.md`), harness in `tools/persona-harness` (0.8.0).
+- ✅ FSRS-5 scheduler, rule-based text analyzer without a key, idempotent sessions, quick placement, pause dialog, drafts, keyboard access, eleven vocabulary packs (0.8.0).
+
+## From the persona test – next
+
+- ⬜ Target level as a profile setting (B2 / C1): the planner's focus ranking caps at B2.2 today; a C1 learner (Ana, Petar) should get `WS.C1_GEHOBEN` and the B2.2 grammar in focus, and a "C1" label on the exam page.
+- ⬜ Occupation as a profile setting (IT / Pflege / Bau / Medizin / Büro) steering which contexts the planner prefers; the Gesundheit pack already carries the Pflege vocabulary Jelena missed.
+- ⬜ First name in the profile, substituted into model answers and the story instead of the fixed name (Ana).
+- ⬜ Motivation beyond the streak: weekly goal, "words that stick" (FSRS stability ≥ 21 days), a due-load forecast for the next seven days on Fortschritt (Tamara, Ana, Petar).
+- ⬜ Readiness trend: keep a daily snapshot so "B2-Bereitschaft" can show its change over seven days (Marko, Dragan).
+- ⬜ Plain-language names next to node titles on Heute ("Verb an Position 2" → "Satzbau: das Verb kommt an zweiter Stelle") for A2/B1 learners (Nikola, Tamara).
 - ⬜ Optional: Web API + minimal React client to demonstrate the engine's independence from Blazor.
 
 ## Deliberate non-goals

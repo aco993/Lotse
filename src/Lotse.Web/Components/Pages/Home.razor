@@ -14,8 +14,19 @@ else
     {
         <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Class="mb-4" Icon="@Icons.Material.Filled.Explore">
             <MudText Typo="Typo.subtitle1" Style="font-weight:600">Willkommen an Bord.</MudText>
-            <MudText Typo="Typo.body2">Bevor der Lotse steuern kann, braucht er eine Standortbestimmung: 28 kurze Aufgaben zu den 14 Kernthemen, etwa 15–20 Minuten. Danach weiß das System, wo du stehst – und jede Session ist auf dich zugeschnitten.</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="StartPlacementAsync" Disabled="_busy">Einstufung starten</MudButton>
+            @if (_m.OpenSession is { Kind: SessionKind.Placement } placement)
+            {
+                <MudText Typo="Typo.body2">Deine Einstufung ist angefangen – @placement.StepsDone von @placement.StepsTotal Aufgaben sind geschafft. Du kannst jederzeit weitermachen; nichts geht verloren.</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="@(() => Nav.NavigateTo($"session/{placement.Id}"))" Disabled="_busy">Einstufung fortsetzen</MudButton>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2">Bevor der Lotse steuern kann, braucht er eine Standortbestimmung über die 14 Kernthemen. Danach weiß das System, wo du stehst – und jede Session ist auf dich zugeschnitten. Du kannst jederzeit unterbrechen und später weitermachen.</MudText>
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" Class="mt-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => StartPlacementAsync(false)" Disabled="_busy">Einstufung starten · 28 Aufgaben, ~20 min</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Inherit" OnClick="() => StartPlacementAsync(true)" Disabled="_busy">Kurze Einstufung · 14 Aufgaben, ~8 min</MudButton>
+                </MudStack>
+            }
         </MudAlert>
     }
 
@@ -31,12 +42,12 @@ else
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.StreakDays 🔥</div><div class="l">Tage in Folge</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.MinutesToday</div><div class="l">Minuten heute</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.DueReviews</div><div class="l">Wiederholungen fällig</div></MudPaper></MudItem>
-        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.Readiness.Overall.ToString("P0")</div><div class="l">B2-Bereitschaft</div></MudPaper></MudItem>
+        <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.Readiness.Overall.ToString("P0")</div><div class="l">B2-Bereitschaft<br /><span class="kpi-sub">@ReadinessConfidence</span></div></MudPaper></MudItem>
     </MudGrid>
 
     <MudCard Elevation="2" Class="mb-4">
         <MudCardContent>
-            @if (_m.OpenSession is not null)
+            @if (_m.OpenSession is { } open && !(open.Kind == SessionKind.Placement && _m.Profile.PlacementCompletedUtc is null))
             {
                 <MudText Typo="Typo.h6">Session läuft noch</MudText>
                 <MudText Typo="Typo.body2" Class="mb-2">@_m.OpenSession.Summary · @_m.OpenSession.StepsDone / @_m.OpenSession.StepsTotal erledigt</MudText>
@@ -151,11 +162,26 @@ else
         Nav.NavigateTo($"session/{s.Id}");
     }
 
-    private async Task StartPlacementAsync()
+    private async Task StartPlacementAsync(bool quick)
     {
         _busy = true;
-        var s = await Learning.StartPlacementAsync();
+        var s = await Learning.StartPlacementAsync(quick);
         Nav.NavigateTo($"session/{s.Id}");
+    }
+
+    /// <summary>The readiness number is shrunk towards a prior until there is evidence; say so instead of looking stuck.</summary>
+    private string ReadinessConfidence
+    {
+        get
+        {
+            var coverage = _m is null ? 0 : _m.Readiness.Modules.Count == 0 ? 0 : _m.Readiness.Modules.Average(m => m.Coverage);
+            return coverage switch
+            {
+                < 0.15 => "Schätzung – noch wenig Daten",
+                < 0.5 => $"Sicherheit {coverage:P0} – wird täglich genauer",
+                _ => $"Sicherheit {coverage:P0}",
+            };
+        }
     }
 
     private async Task AbandonAsync()

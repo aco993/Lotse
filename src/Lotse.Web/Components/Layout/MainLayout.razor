@@ -8,6 +8,7 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<a class="skip-link" href="@(Nav.Uri.Split('#')[0] + "#main")">Zum Inhalt springen</a>
 <MudLayout>
     <MudAppBar Elevation="0" Dense="true" Class="lotse-appbar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" aria-label="Menü" />
@@ -21,7 +22,7 @@
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Md" ClipMode="DrawerClipMode.Always">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="lotse-main">
+    <MudMainContent Class="lotse-main" id="main" tabindex="-1">
         <MudContainer MaxWidth="MaxWidth.Medium" Class="py-4 px-3 px-sm-6">
             <ErrorBoundary @ref="_errors">
                 <ChildContent>

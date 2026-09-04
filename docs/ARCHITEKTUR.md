@@ -70,7 +70,9 @@ Session page ◀─────┘  renders step i via ExerciseRunner
 | Decision | Alternatives considered | Why |
 |---|---|---|
 | Logistic (Rasch-style) ability per node with Elo update | Bayesian Knowledge Tracing, deep knowledge tracing | One interpretable scale shared by learners and items (CEFR bands map to difficulty), no offline fitting, confidence is explicit. |
-| SM-2 family for items, separate from node ability | FSRS | Simpler to reason about and test; grades derived from behaviour remove self-rating. FSRS can replace it behind the same `ReviewScheduler` API later. |
+| FSRS-5 memory model for items (`Fsrs`, `ReviewScheduler`), separate from node ability | SM-2 (what 0.1–0.7 used), per-learner parameter fitting | Stability + difficulty per card and a real forgetting curve: an item is due when its recall probability falls to 90 %, a recall of a nearly-forgotten item strengthens it most, a lapse shrinks stability instead of resetting it. Published default weights, so nothing has to be trained; the scheduler keeps the practical rules (grades from behaviour, wrong answers back in ten minutes, jitter, 120-day cap) and converts SM-2 states on their next review. |
+| Rule-based `FreeTextAnalyzer` when no tutor is configured | Self-check only; require a key | Eight of ten test personas named "no correction without a key" as their main gap. The analyzer trades recall for precision: only patterns a Serbian speaker's text reliably trips over, each mapped to a catalogue code, so findings feed the journal and the learner model like AI-tagged errors. The self-check stays the score; the rules add evidence. |
+| Static pages are handed to the browser from the interactive router (`Routes.razor`) | `data-enhance-nav`, separate layouts with their own routers | A link from the interactive nav to `Account/Manage` used to make the circuit's router render a static page with a null `HttpContext` (crash). `OnNavigateAsync` forces a full navigation for `Account/*`, `/Error`, `/not-found` - only when the router itself is interactive, because during static rendering the same callback fires for the initial request and would loop. `StaticPages.IsStatic` is the one definition both `App.razor` and `Routes.razor` use. |
 | Errors as coded events, aggregated in windows | Only per-node accuracy | Free production (the main gap) yields errors, not right/wrong; codes let AI feedback and deterministic checks feed the same model. |
 | Planner with fixed slot order and reasons | Pure priority queue | Predictable sessions, explicit pedagogy (re-check → review → production → focus → input), transparent to the learner. |
 | Deterministic core + optional AI | AI-only chat tutor | Works offline and for free every day; AI adds what only AI can (judging free text). Structured output keeps AI results machine-readable. |
@@ -107,6 +109,27 @@ SQLite file `data/lotse.db`. `LotseDbContext : IdentityDbContext<ApplicationUser
 ## Passkeys (WebAuthn)
 
 Identity schema v3 (`IdentityDbContext` adds `AspNetUserPasskeys` when `IdentityOptions.Stores.SchemaVersion` says so). That option is read from the *application* service provider behind the DbContext options, so `LotseDbContext.OnConfiguring` supplies a minimal provider carrying exactly that one setting whenever nobody else did - tests and `dotnet ef` build the same model as the app, and `DatabaseInitializerTests` checks that the migrations agree. The browser side is the official template's `<passkey-submit>` custom element (`PasskeySubmit.razor.js`): it fetches creation/request options from two minimal-API endpoints (antiforgery token in a header, validated explicitly), runs `navigator.credentials.create/get`, and posts the credential back through the surrounding static form - the login page keeps working exactly like a plain HTML form, this is its only script. The E2E test drives the whole ceremony with Chromium's virtual authenticator (CDP `WebAuthn.addVirtualAuthenticator`), so it runs headless in CI without hardware.
+
+## Sessions are idempotent
+
+`StartSessionAsync` and `StartPlacementAsync` return the session that is already open (same kind, last twelve hours)
+instead of stacking a new one - a second click, a replayed request or a reload never produces two placements, which
+is what left "Session läuft noch · 17/28" on the dashboard after a learner had visibly finished. Finishing a placement
+also closes every other open placement. "Beenden" asks (pause / finish / keep going); a paused placement resumes from
+the dashboard. A requested topic (`RequestedNodeId`) is the one deliberate new start and gets its own planner branch
+(`PlanFocus`): only that node, its due reviews first, a gentle climb in difficulty.
+
+## Drafts and the reload
+
+A production text lives in `localStorage` (`lotse.draft.{session}.{exercise}`, written on the component's one-second
+tick) until it is submitted; a submitted text whose self-check was not saved yet comes back from the database
+(`GetPendingProductionAsync`) with its findings recomputed. Three personas lost a text to a reload before this existed.
+
+## Persona testing
+
+`tools/persona-harness` drives the running app with Playwright the way a person would; ten scripted personas
+(`docs/NUTZERTEST_2026-09.md`) produced the 0.8.0 backlog. Their findings are verified in code or with
+`verify-fixes.mjs` before anything is changed - personas err like people do.
 
 ## Multi-user accounts
 

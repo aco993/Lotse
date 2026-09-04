@@ -1,12 +1,16 @@
+using Lotse.Infrastructure.Services;
 using Microsoft.JSInterop;
 
 namespace Lotse.Web.Components.Shared;
 
 /// <summary>
-/// Thin wrapper over the browser's Web Speech API (see wwwroot/js/speech.js). Scoped per circuit; the JS module is
-/// imported lazily on first use and disposed with the circuit.
+/// Speech for the UI (see wwwroot/js/speech.js). Scoped per circuit; the JS module is imported lazily on first use
+/// and disposed with the circuit.
+///
+/// Output has two sources: the local Piper engine when it is installed (neural, near-native German) and the
+/// browser's own voices otherwise. Input (recognition) is browser-only.
 /// </summary>
-public sealed class SpeechService(IJSRuntime js) : IAsyncDisposable
+public sealed class SpeechService(IJSRuntime js, ITextToSpeech tts) : IAsyncDisposable
 {
     private IJSObjectReference? _module;
     private DotNetObjectReference<SpeechService>? _self;
@@ -21,7 +25,26 @@ public sealed class SpeechService(IJSRuntime js) : IAsyncDisposable
     public async ValueTask<bool> TtsSupportedAsync() => await (await ModuleAsync()).InvokeAsync<bool>("ttsSupported");
     public async ValueTask<bool> SttSupportedAsync() => await (await ModuleAsync()).InvokeAsync<bool>("sttSupported");
 
-    public async ValueTask<bool> SpeakAsync(string text, double rate = 0.95) => await (await ModuleAsync()).InvokeAsync<bool>("speak", text, rate);
+    /// <summary>
+    /// Speaks German text and completes when playback finished. Prefers the locally rendered Piper voice and falls
+    /// back to the browser voices whenever rendering or playback did not work out - every failure path here is a
+    /// fallback, never an exception, because a hiccup in the audio must not interrupt an exercise.
+    /// </summary>
+    public async ValueTask<bool> SpeakAsync(string text, double rate = 0.95)
+    {
+        if (tts.Available)
+        {
+            string? key = null;
+            try { key = await tts.SynthesizeAsync(text, rate); }
+            catch (OperationCanceledException) { /* circuit or request gone; fall back */ }
+
+            if (key is not null && await (await ModuleAsync()).InvokeAsync<bool>("playAudio", $"/api/tts/{key}.wav"))
+                return true;
+        }
+
+        return await (await ModuleAsync()).InvokeAsync<bool>("speak", text, rate);
+    }
+
     public async ValueTask StopSpeakingAsync() => await (await ModuleAsync()).InvokeVoidAsync("stopSpeaking");
 
     public async ValueTask<bool> StartRecognitionAsync()

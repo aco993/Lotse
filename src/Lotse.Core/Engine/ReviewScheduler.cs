@@ -11,14 +11,19 @@ public enum ReviewGrade
 }
 
 /// <summary>
-/// Spaced repetition in the SM-2 family with a few practical changes: lapses shorten the interval instead of resetting
-/// it to zero, easy answers are capped so a lucky guess cannot push a card out for months, and a small deterministic
-/// jitter spreads due dates so reviews do not pile up on one day.
+/// Spaced repetition on the FSRS-5 memory model (<see cref="Fsrs"/>). The scheduler owns the practical rules around the
+/// model: grades are derived from behaviour (wrong / slip / hint / speed), never self-rated; a wrong answer comes back
+/// within ten minutes so it is retrieved once more before the session ends (relearning step); the next interval is the
+/// point where recall probability would fall to <see cref="DesiredRetention"/>; intervals are capped so an exam-bound
+/// learner never has an item vanish for half a year; and a small deterministic jitter spreads due dates so reviews
+/// do not pile up on one day. States scheduled by the earlier SM-2 scheduler are converted on their next review.
 /// </summary>
 public static class ReviewScheduler
 {
-    private const double MinEase = 1.3;
-    private const double MaxIntervalDays = 120;
+    /// <summary>Target recall probability at the moment an item comes due. 0.9 is the FSRS/Anki default: a good trade-off between workload and retention.</summary>
+    public const double DesiredRetention = 0.9;
+    public const double MaxIntervalDays = 120;
+    private const double RelearnMinutes = 10;
 
     /// <summary>Derives a grade from how the exercise was answered so the learner never has to self-rate.</summary>
     public static ReviewGrade GradeFor(Outcome outcome, bool hintUsed, int durationMs, int estimatedSeconds)
@@ -31,52 +36,59 @@ public static class ReviewScheduler
 
     public static void Apply(ReviewState state, ReviewGrade grade, DateTime nowUtc)
     {
-        switch (grade)
+        var g = (int)grade + 1; // FSRS grades 1..4
+        ConvertLegacyState(state);
+
+        if (state.Stability <= 0)
         {
-            case ReviewGrade.Again:
-                state.Lapses++;
-                state.Repetitions = 0;
-                state.Ease = Math.Max(MinEase, state.Ease - 0.2);
-                state.IntervalDays = state.IntervalDays > 7 ? Math.Max(1, state.IntervalDays * 0.25) : 0;
-                break;
-            case ReviewGrade.Hard:
-                state.Repetitions++;
-                state.Ease = Math.Max(MinEase, state.Ease - 0.15);
-                state.IntervalDays = state.Repetitions switch
-                {
-                    1 => 1,
-                    2 => 3,
-                    _ => Math.Max(state.IntervalDays * 1.2, state.IntervalDays + 1),
-                };
-                break;
-            case ReviewGrade.Good:
-                state.Repetitions++;
-                state.IntervalDays = state.Repetitions switch
-                {
-                    1 => 1,
-                    2 => 4,
-                    _ => Math.Max(state.IntervalDays * state.Ease, state.IntervalDays + 2),
-                };
-                break;
-            case ReviewGrade.Easy:
-                state.Repetitions++;
-                state.Ease = Math.Min(3.0, state.Ease + 0.1);
-                state.IntervalDays = state.Repetitions switch
-                {
-                    1 => 3,
-                    2 => 7,
-                    _ => Math.Max(state.IntervalDays * state.Ease * 1.3, state.IntervalDays + 4),
-                };
-                break;
+            state.Stability = Fsrs.InitialStability(g);
+            state.Difficulty = Fsrs.InitialDifficulty(g);
+        }
+        else
+        {
+            var elapsedDays = state.LastReviewUtc is { } last ? Math.Max(0, (nowUtc - last).TotalDays) : 0;
+            state.Difficulty = Fsrs.NextDifficulty(state.Difficulty, g);
+            if (elapsedDays < 1)
+            {
+                state.Stability = Fsrs.NextShortTermStability(state.Stability, g);
+            }
+            else
+            {
+                var r = Fsrs.Retrievability(state.Stability, elapsedDays);
+                state.Stability = grade == ReviewGrade.Again
+                    ? Fsrs.NextForgetStability(state.Difficulty, state.Stability, r)
+                    : Fsrs.NextRecallStability(state.Difficulty, state.Stability, r, g);
+            }
         }
 
-        state.IntervalDays = Math.Min(MaxIntervalDays, state.IntervalDays);
-        state.LastReviewUtc = nowUtc;
+        if (grade == ReviewGrade.Again)
+        {
+            state.Lapses++;
+            state.Repetitions = 0;
+            state.IntervalDays = 0;
+        }
+        else
+        {
+            state.Repetitions++;
+            state.IntervalDays = Math.Clamp(Math.Round(Fsrs.IntervalDays(state.Stability, DesiredRetention)), 1, MaxIntervalDays);
+        }
 
-        // "Again" comes back within the same day (10 minutes) so it is seen once more before the session ends.
+        state.LastReviewUtc = nowUtc;
         state.DueUtc = state.IntervalDays <= 0
-            ? nowUtc.AddMinutes(10)
+            ? nowUtc.AddMinutes(RelearnMinutes)
             : nowUtc.AddDays(state.IntervalDays * Jitter(state.ExerciseId));
+    }
+
+    /// <summary>
+    /// A state written by the SM-2 scheduler (before 0.8.0) has an interval and an ease factor but no stability. Its
+    /// interval is the best available estimate of stability, and its ease factor (1.3 hard .. 3.0 easy) maps linearly
+    /// onto FSRS difficulty (10 .. 1); a state still in relearning (interval 0) simply starts over as new.
+    /// </summary>
+    private static void ConvertLegacyState(ReviewState state)
+    {
+        if (state.Stability > 0 || state.LastReviewUtc is null || state.IntervalDays <= 0) return;
+        state.Stability = Math.Max(1, state.IntervalDays);
+        state.Difficulty = Math.Clamp(1 + 9 * (3.0 - state.Ease) / (3.0 - 1.3), Fsrs.MinDifficulty, Fsrs.MaxDifficulty);
     }
 
     /// <summary>±8 % deterministic jitter derived from the id, so tests stay reproducible.</summary>

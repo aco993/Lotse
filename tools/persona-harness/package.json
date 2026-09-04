@@ -1,0 +1,1 @@
+{ "name": "lotse-persona-harness", "private": true, "type": "module", "dependencies": { "playwright": "1.62.0" } }

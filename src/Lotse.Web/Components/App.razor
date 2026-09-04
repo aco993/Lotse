@@ -80,7 +80,7 @@
         get
         {
             var page = HttpContext.GetEndpoint()?.Metadata.GetMetadata<ComponentTypeMetadata>()?.Type;
-            return page?.GetCustomAttribute<LayoutAttribute>()?.LayoutType == typeof(Account.Shared.AccountLayout);
+            return Account.Shared.StaticPages.IsStatic(page);
         }
     }
 

@@ -1,3 +1,4 @@
+using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,25 @@ public sealed class ContentCatalogProvider
     }
 
     public ContentCatalog Catalog => _current;
+
+    private Lexicon? _lexicon;
+    private ContentCatalog? _lexiconFor;
+
+    /// <summary>Nouns (gender, countability) and umlaut spellings known from the vocabulary bank, for the rule-based text analyzer. Rebuilt lazily whenever the catalog changes.</summary>
+    public Lexicon Lexicon
+    {
+        get
+        {
+            var current = _current;
+            if (!ReferenceEquals(_lexiconFor, current) || _lexicon is null)
+            {
+                _lexicon = Lexicon.FromCatalog(current);
+                _lexiconFor = current;
+            }
+            return _lexicon;
+        }
+    }
+
     public int SeedExerciseCount => _seed.Exercises.Count;
     public int GeneratedExerciseCount => _current.Exercises.Count - _seed.Exercises.Count;
 
