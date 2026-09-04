@@ -31,12 +31,18 @@ public sealed class SkillState
     public bool IsStrong => Attempts >= 5 && Mastery >= 0.8;
 }
 
-/// <summary>Spaced-repetition state of one exercise ("card").</summary>
+/// <summary>Spaced-repetition state of one exercise ("card"), scheduled by <see cref="Engine.ReviewScheduler"/> on the FSRS model.</summary>
 public sealed class ReviewState
 {
     public required string ExerciseId { get; init; }
     public required string NodeId { get; init; }
+    /// <summary>FSRS memory stability in days: the time after which recall probability has dropped to 90 %. 0 = not scheduled yet.</summary>
+    public double Stability { get; set; }
+    /// <summary>FSRS difficulty 1 (easy) .. 10 (hard); 0 = not scheduled yet.</summary>
+    public double Difficulty { get; set; }
+    /// <summary>Days between the last review and the due date; 0 while the item is in relearning after a lapse.</summary>
     public double IntervalDays { get; set; }
+    /// <summary>SM-2 ease factor written by the scheduler before 0.8.0. Read once, to seed <see cref="Difficulty"/> when such a state is next reviewed.</summary>
     public double Ease { get; set; } = 2.5;
     public int Repetitions { get; set; }
     public int Lapses { get; set; }
@@ -44,6 +50,10 @@ public sealed class ReviewState
     public DateTime? LastReviewUtc { get; set; }
 
     public bool IsNew => Repetitions == 0 && LastReviewUtc is null;
+
+    /// <summary>Current probability of recalling this item, from the FSRS forgetting curve.</summary>
+    public double RetrievabilityAt(DateTime nowUtc)
+        => LastReviewUtc is { } last ? Engine.Fsrs.Retrievability(Stability, (nowUtc - last).TotalDays) : 0;
 }
 
 public enum Outcome

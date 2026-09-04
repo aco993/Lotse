@@ -27,7 +27,17 @@ Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 kar
 
 **Passkey umesto lozinke:** u Konto (klik na svoj email u meniju) → Passkeys → „Passkey hinzufügen“ – otisak prsta, lice ili PIN uređaja. Posle toga na login strani samo email + „Mit Passkey anmelden“. Radi na `localhost` ili preko HTTPS-a; sa telefona preko IP-adrese u lokalnoj mreži (http://192.168…) browser to ne dozvoljava – tu ostaje lozinka.
 
-Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
+Zaboravljena lozinka: **Passwort vergessen?** na login strani.
+
+## 1b. Šta je novo u 0.8.0 (posle testa sa 10 persona)
+
+- **Einstufung:** puna (28 zadataka, ~20 min) ili **kratka** (14, ~8 min). „Beenden“ pita: *Pausieren* (stanje ostaje, nastavljaš sa „Einstufung fortsetzen“ na Heute), *Abschließen* ili *Weiterüben*. Dnevne sesije možeš raditi i dok je Einstufung otvoren.
+- **Pisanje bez API-ključa:** posle „Abgeben und selbst prüfen“ app sama pronalazi tipične greške (haben/sein u Perfektu, glagol na kraju posle *weil/dass*, zarez, ä/ö/ü/ß, padež posle predloga, n-deklinacija, član, glagol + predlog, registar, „Mit freundlichen Grüßen“, dužina, veznici) i upisuje ih u Fehlerjournal. Šta pravila ne vide (sadržaj, struktura, izbor reči) – ostaje Selbstcheck.
+- **Nacrt je siguran:** tekst se čuva u browseru dok pišeš; posle reload-a se vraća. Predat tekst čeka Selbstcheck i posle reload-a.
+- **Themen:** legenda boja sada filtrira po oblasti (klik = filter, drugi klik = sve).
+- **Ponavljanja po FSRS-u:** intervali prate krivu zaborava (stavka dolazi kad verovatnoća sećanja padne na 90 %); ništa ne moraš da menjaš.
+- **Tastatura:** vidljiv fokus, „Zum Inhalt springen“ na prvi Tab, posle „Prüfen“ fokus je na „Weiter“ (Enter nastavlja).
+- **Fond reči:** 11 novih tematskih paketa (Arbeit, Gesundheit/Pflege, Umwelt, Medien, Bildung, Geld, Wohnen/Mobilität, Charakter/Gefühle, Präfixverben, IT-Beruf, C1-gehoben). Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
 
 „Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).
 

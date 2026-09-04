@@ -59,6 +59,9 @@ public sealed class SessionPlanner
 
     public SessionPlan Plan(PlannerInput input)
     {
+        if (input.RequestedNodeId is not null && input.Catalog.Node(input.RequestedNodeId) is not null)
+            return PlanFocus(input);
+
         var rng = new Random(input.Seed);
         var budget = input.TimeBudgetMinutes * 60;
         var steps = new List<SessionStep>();
@@ -180,6 +183,50 @@ public sealed class SessionPlanner
             used.Add(ex.Id);
             steps.Add(new SessionStep(kind, ex, reason));
         }
+    }
+
+    /// <summary>
+    /// A session the learner asked for ("this topic, now - I have a meeting"): the whole budget goes to that node,
+    /// climbing from just below the learner's level to just above it, with the node's own due reviews first.
+    /// No re-checks, no production, no other topics - the daily session does those.
+    /// </summary>
+    private SessionPlan PlanFocus(PlannerInput input)
+    {
+        var rng = new Random(input.Seed);
+        var budget = input.TimeBudgetMinutes * 60;
+        var steps = new List<SessionStep>();
+        var used = new HashSet<string>(StringComparer.Ordinal);
+        var catalog = input.Catalog;
+        var nodeId = input.RequestedNodeId!;
+        var title = catalog.NodeTitle(nodeId);
+        var state = input.SkillStates.GetValueOrDefault(nodeId);
+        var target = Ability.TargetDifficulty(state?.Theta ?? PriorTheta) - 0.15;
+
+        double Remaining() => budget - steps.Sum(s => s.Exercise.EstimatedSeconds);
+
+        foreach (var r in input.DueReviews.Where(r => r.NodeId == nodeId).OrderBy(r => r.DueUtc))
+        {
+            var ex = catalog.Exercise(r.ExerciseId);
+            if (ex is null || ex.IsProduction || ex.IsReceptive || !used.Add(ex.Id)) continue;
+            if (Remaining() < ex.EstimatedSeconds * 0.8) break;
+            steps.Add(new SessionStep(StepKind.Review, ex, $"Wiederholung fällig – {title}."));
+        }
+
+        var guard = 0;
+        while (Remaining() >= 20 && guard++ < 40)
+        {
+            var ex = PickDrill(catalog, nodeId, target, used, input.RecentExerciseIds, rng, avoidRecent: steps.Count < 6);
+            if (ex is null || Remaining() < ex.EstimatedSeconds * 0.8) break;
+            var kind = state is null || state.Attempts < 3 ? StepKind.Explore : StepKind.Focus;
+            steps.Add(new SessionStep(kind, ex, $"Dein Wunschthema: {title}."));
+            used.Add(ex.Id);
+            target += 0.12; // a gentle climb keeps the focus session from feeling flat
+        }
+
+        var summary = state is null || state.Attempts == 0
+            ? $"Fokus: {title} – {steps.Count} Aufgaben, wir schauen erst mal, wo du stehst."
+            : $"Fokus: {title} – {steps.Count} Aufgaben rund um deine aktuelle Stufe (Beherrschung {state.Mastery:P0}).";
+        return new SessionPlan(steps, summary);
     }
 
     /// <summary>Ranks nodes by how much attention they need right now, with a reason string for the UI.</summary>

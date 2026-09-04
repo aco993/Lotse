@@ -29,7 +29,7 @@ public sealed class FakeLearningService : ILearningService
     public Task SaveProfileAsync(LearnerProfile profile, CancellationToken ct = default) => throw Unexpected();
     public Task<DashboardModel> GetDashboardAsync(CancellationToken ct = default) => throw Unexpected();
     public Task<SessionEntity> StartSessionAsync(int minutes, string? requestedNode = null, CancellationToken ct = default) => throw Unexpected();
-    public Task<SessionEntity> StartPlacementAsync(CancellationToken ct = default) => throw Unexpected();
+    public Task<SessionEntity> StartPlacementAsync(bool quick = false, CancellationToken ct = default) => throw Unexpected();
     public Task<SessionEntity> StartSingleAsync(string exerciseId, SessionKind kind, CancellationToken ct = default) => throw Unexpected();
     public Task<SessionView?> GetSessionAsync(Guid id, CancellationToken ct = default) => throw Unexpected();
     public Task<SessionEntity?> GetOpenSessionAsync(CancellationToken ct = default) => throw Unexpected();
@@ -54,6 +54,8 @@ public sealed class FakeLearningService : ILearningService
     public Task<LearnerContext> BuildLearnerContextAsync(CancellationToken ct = default) => throw Unexpected();
     public Task<ProductionResult> SubmitProductionAsync(Guid? sessionId, int stepIndex, string exerciseId, string text, bool speaking, CancellationToken ct = default) => throw Unexpected();
     public Task<double> SubmitSelfCheckAsync(long productionId, Guid? sessionId, int stepIndex, IReadOnlyList<bool> checks, CancellationToken ct = default) => throw Unexpected();
+    /// <summary>Nothing pending by default: the production component asks on every first render.</summary>
+    public Task<ProductionResult?> GetPendingProductionAsync(Guid sessionId, string exerciseId, CancellationToken ct = default) => Task.FromResult<ProductionResult?>(null);
     public Task<IReadOnlyList<ProductionEntity>> RecentProductionsAsync(int take = 20, CancellationToken ct = default) => throw Unexpected();
     public Task<IReadOnlyDictionary<string, SkillState>> GetSkillStatesAsync(CancellationToken ct = default) => throw Unexpected();
     public Task<IReadOnlyList<(string Code, string Title, string NodeTitle, int Count)>> GetSessionErrorsAsync(Guid sessionId, CancellationToken ct = default) => throw Unexpected();

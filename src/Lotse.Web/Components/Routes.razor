@@ -1,8 +1,38 @@
-<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+@using Lotse.Web.Components.Account.Shared
+@inject NavigationManager Nav
+
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)" OnNavigateAsync="OnNavigateAsync">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-            <NotAuthorized><RedirectToLogin /></NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        @if (RendererInfo.IsInteractive && StaticPages.IsStatic(routeData.PageType))
+        {
+            @* Reached from an interactive page (e.g. the account link in the nav): the browser is already loading
+               the page as a full request (see OnNavigateAsync) - render nothing here, a static page has no place
+               inside the circuit. When this router itself renders statically (a direct request to Account/*),
+               the page renders normally. *@
+            <p class="px-4 py-6" style="opacity:.6">Einen Moment …</p>
+        }
+        else
+        {
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized><RedirectToLogin /></NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        }
     </Found>
 </Router>
+
+@code {
+    private Task OnNavigateAsync(Microsoft.AspNetCore.Components.Routing.NavigationContext context)
+    {
+        // Account/* and the other static pages live outside the circuit: a full navigation gives them the real
+        // HTTP request they need. Only from an interactive circuit - during static rendering this callback fires
+        // for the initial request too, and a forced navigation there would be a redirect loop.
+        if (RendererInfo.IsInteractive && (context.Path.StartsWith("Account/", StringComparison.OrdinalIgnoreCase)
+            || context.Path.Equals("Error", StringComparison.OrdinalIgnoreCase)
+            || context.Path.Equals("not-found", StringComparison.OrdinalIgnoreCase)))
+        {
+            Nav.NavigateTo(context.Path, forceLoad: true);
+        }
+        return Task.CompletedTask;
+    }
+}

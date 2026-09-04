@@ -28,7 +28,12 @@ public sealed record SessionView(SessionEntity Session, IReadOnlyList<StepRecord
 
 public sealed record AnswerResult(CheckResult Check, Exercise Exercise, SkillNode? Node, double MasteryAfter, string? InterferenceNote, bool SessionComplete);
 
-public sealed record ProductionResult(long ProductionId, ProductionEvaluation? Evaluation, IReadOnlyList<string> Rubric, string? ModelAnswer, int WordCount, int? MinWords, string? TutorError);
+public sealed record ProductionResult(long ProductionId, ProductionEvaluation? Evaluation, IReadOnlyList<string> Rubric, string? ModelAnswer, int WordCount, int? MinWords, string? TutorError, string Text = "")
+{
+    /// <summary>Rule-based findings when no tutor evaluated the text (see <see cref="FreeTextAnalyzer"/>); empty with an AI evaluation.</summary>
+    public IReadOnlyList<TextFinding> Findings { get; init; } = [];
+    public IReadOnlyList<string> Hints { get; init; } = [];
+}
 
 public sealed record DashboardModel(
     LearnerProfile Profile,
@@ -218,6 +223,11 @@ public sealed class LearningService(
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
+        // Starting is idempotent: a second click (or a reload that replays the click) resumes the session that is
+        // already open instead of stacking a new one on top of it - which is what used to leave "Session läuft noch"
+        // on the dashboard after the learner had visibly finished. A requested topic is a deliberate new start.
+        if (requestedNode is null && await OpenSessionOfKindAsync(db, userId, SessionKind.Daily, ct) is { } open)
+            return open;
         var input = await BuildPlannerInputAsync(db, userId, minutes, requestedNode, ct);
         var plan = planner.Plan(input);
         var steps = plan.Steps.Select(s => new StepRecord { Kind = s.Kind, ExerciseId = s.Exercise.Id, Reason = s.Reason }).ToList();
@@ -238,26 +248,39 @@ public sealed class LearningService(
         return session;
     }
 
-    public async Task<SessionEntity> StartPlacementAsync(CancellationToken ct = default)
+    public async Task<SessionEntity> StartPlacementAsync(bool quick = false, CancellationToken ct = default)
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var items = PlacementTest.Build(Catalog, seed: Random.Shared.Next());
+        if (await OpenSessionOfKindAsync(db, userId, SessionKind.Placement, ct) is { } open)
+            return open; // an interrupted placement is resumed, never duplicated
+        var items = PlacementTest.Build(Catalog, seed: Random.Shared.Next(), quick: quick);
         var steps = items.Select(e => new StepRecord { Kind = StepKind.Explore, ExerciseId = e.Id, Reason = "Einstufung: " + Catalog.NodeTitle(e.NodeId) }).ToList();
         var session = new SessionEntity
         {
             Id = Guid.NewGuid(),
             UserId = userId,
             Kind = SessionKind.Placement,
-            PlannedMinutes = 20,
+            PlannedMinutes = quick ? 8 : 20,
             StartedUtc = Now,
             PlanJson = JsonSerializer.Serialize(steps),
             StepsTotal = steps.Count,
-            Summary = $"Einstufung über {PlacementTest.CoreNodeIds.Count} Kernthemen",
+            Summary = quick
+                ? $"Kurze Einstufung über {PlacementTest.CoreNodeIds.Count} Kernthemen"
+                : $"Einstufung über {PlacementTest.CoreNodeIds.Count} Kernthemen",
         };
         db.Sessions.Add(session);
         await db.SaveChangesAsync(ct);
         return session;
+    }
+
+    private DateTime OpenSessionHorizon => Now.AddHours(-12);
+
+    private async Task<SessionEntity?> OpenSessionOfKindAsync(LotseDbContext db, string userId, SessionKind kind, CancellationToken ct)
+    {
+        var since = OpenSessionHorizon;
+        return await db.Sessions.Where(s => s.UserId == userId && s.Kind == kind && s.EndedUtc == null && s.StartedUtc >= since)
+            .OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
     }
 
     // ------------------------------------------------------------------------------------------
@@ -408,7 +431,7 @@ public sealed class LearningService(
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var since = Now.AddHours(-12);
+        var since = OpenSessionHorizon;
         return await db.Sessions.AsNoTracking().Where(s => s.UserId == userId && s.EndedUtc == null && s.StartedUtc >= since).OrderByDescending(s => s.StartedUtc).FirstOrDefaultAsync(ct);
     }
 
@@ -444,6 +467,11 @@ public sealed class LearningService(
             db.Profiles.Add(profile);
         }
         profile.PlacementCompletedUtc = Now;
+        // One calibration is enough: any other placement still open (from before starts became idempotent, or
+        // from a second device) is closed too, so the dashboard cannot keep offering it.
+        await db.Sessions
+            .Where(s => s.UserId == userId && s.Kind == SessionKind.Placement && s.EndedUtc == null)
+            .ExecuteUpdateAsync(u => u.SetProperty(s => s.EndedUtc, Now), ct);
     }
 
     public async Task AbandonSessionAsync(Guid id, CancellationToken ct = default)
@@ -467,6 +495,11 @@ public sealed class LearningService(
         var check = AnswerChecker.Check(exercise, answer);
         var now = Now;
         var userId = await UserIdAsync();
+        // Choice tasks submit the option index; the journal should show the learner what they actually picked.
+        var answerText = exercise.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError
+            && int.TryParse(answer, out var chosen) && chosen >= 0 && chosen < exercise.Options.Count
+            ? exercise.Options[chosen]
+            : answer;
 
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var attempt = new AttemptEntity
@@ -480,7 +513,7 @@ public sealed class LearningService(
             DurationMs = durationMs,
             HintUsed = hintUsed,
             Utc = now,
-            AnswerText = answer,
+            AnswerText = answerText,
         };
         db.Attempts.Add(attempt);
         await db.SaveChangesAsync(ct);
@@ -502,7 +535,7 @@ public sealed class LearningService(
                 Code = code,
                 NodeId = et?.NodeId ?? exercise.NodeId,
                 Utc = now,
-                Snippet = answer,
+                Snippet = answerText,
                 Correction = check.Expected,
                 FromAi = false,
             });
@@ -685,9 +718,59 @@ public sealed class LearningService(
             await ApplyEvaluationAsync(db, userId, exercise, evaluation, now, ct);
             if (sessionId is not null) await MarkStepDoneAsync(db, userId, sessionId.Value, stepIndex, evaluation.OverallScore, ct);
             await db.SaveChangesAsync(ct);
+            return new ProductionResult(entity.Id, evaluation, exercise.Rubric, exercise.ModelAnswer, words, exercise.MinWords, tutorError, text);
         }
 
-        return new ProductionResult(entity.Id, evaluation, exercise.Rubric, exercise.ModelAnswer, words, exercise.MinWords, tutorError);
+        // No tutor: the rule-based analyzer still finds the mistakes a Serbian speaker's text typically carries, and
+        // they enter the journal and the learner model exactly like AI-tagged ones (marked as not from the AI).
+        var report = FreeTextAnalyzer.Analyze(text, exercise, catalogProvider.Lexicon, spoken: speaking);
+        if (report.Findings.Count > 0)
+        {
+            var touched = new Dictionary<string, SkillState>();
+            foreach (var f in report.Findings)
+            {
+                var et = Catalog.Error(f.Code);
+                if (et is null) continue;
+                db.ErrorEvents.Add(new ErrorEventEntity { UserId = userId, Code = f.Code, NodeId = et.NodeId, Utc = now, Snippet = f.Snippet, Correction = f.Correction, FromAi = false });
+                if (!touched.TryGetValue(et.NodeId, out var s))
+                {
+                    s = await GetOrCreateStateAsync(db, userId, et.NodeId, ct);
+                    touched[et.NodeId] = s;
+                }
+                LearnerAnalysis.ApplyAttempt(s, exercise with { Band = CefrBand.B2_1 }, et.Severity >= 3 ? 0.0 : 0.3, now);
+            }
+            await db.SaveChangesAsync(ct);
+        }
+        return new ProductionResult(entity.Id, null, exercise.Rubric, exercise.ModelAnswer, words, exercise.MinWords, tutorError, text)
+        {
+            Findings = report.Findings,
+            Hints = report.Hints,
+        };
+    }
+
+    /// <summary>
+    /// A text that was submitted for self-check but whose self-check was never saved (reload, lost connection,
+    /// laptop went to sleep). The step is still open, the text is safe in the database - hand it back so the
+    /// learner continues where they were instead of facing an empty editor.
+    /// </summary>
+    public async Task<ProductionResult?> GetPendingProductionAsync(Guid sessionId, string exerciseId, CancellationToken ct = default)
+    {
+        var userId = await UserIdAsync();
+        var exercise = Catalog.Exercise(exerciseId);
+        if (exercise is null) return null;
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var entity = await db.Productions.AsNoTracking()
+            .Where(p => p.UserId == userId && p.SessionId == sessionId && p.ExerciseId == exerciseId && p.Score == null && !p.EvaluatedByAi)
+            .OrderByDescending(p => p.Utc)
+            .FirstOrDefaultAsync(ct);
+        if (entity is null) return null;
+        // The analysis is deterministic, so it is simply run again instead of being stored.
+        var report = FreeTextAnalyzer.Analyze(entity.Text, exercise, catalogProvider.Lexicon, spoken: entity.IsSpeaking);
+        return new ProductionResult(entity.Id, null, exercise.Rubric, exercise.ModelAnswer, entity.WordCount, exercise.MinWords, null, entity.Text)
+        {
+            Findings = report.Findings,
+            Hints = report.Hints,
+        };
     }
 
     private async Task ApplyEvaluationAsync(LotseDbContext db, string userId, Exercise exercise, ProductionEvaluation evaluation, DateTime now, CancellationToken ct)

@@ -14,7 +14,8 @@ public interface ILearningService
     Task<DashboardModel> GetDashboardAsync(CancellationToken ct = default);
 
     Task<SessionEntity> StartSessionAsync(int minutes, string? requestedNode = null, CancellationToken ct = default);
-    Task<SessionEntity> StartPlacementAsync(CancellationToken ct = default);
+    /// <param name="quick">One item per core node (~8 minutes) instead of two (~20). An open placement is resumed either way.</param>
+    Task<SessionEntity> StartPlacementAsync(bool quick = false, CancellationToken ct = default);
     Task<SessionEntity> StartSingleAsync(string exerciseId, SessionKind kind, CancellationToken ct = default);
     Task<SessionView?> GetSessionAsync(Guid id, CancellationToken ct = default);
     Task<SessionEntity?> GetOpenSessionAsync(CancellationToken ct = default);
@@ -34,6 +35,8 @@ public interface ILearningService
     Task<LearnerContext> BuildLearnerContextAsync(CancellationToken ct = default);
     Task<ProductionResult> SubmitProductionAsync(Guid? sessionId, int stepIndex, string exerciseId, string text, bool speaking, CancellationToken ct = default);
     Task<double> SubmitSelfCheckAsync(long productionId, Guid? sessionId, int stepIndex, IReadOnlyList<bool> checks, CancellationToken ct = default);
+    /// <summary>A submitted text whose self-check was never saved (page reload) - so the step can resume with it.</summary>
+    Task<ProductionResult?> GetPendingProductionAsync(Guid sessionId, string exerciseId, CancellationToken ct = default);
     Task<IReadOnlyList<ProductionEntity>> RecentProductionsAsync(int take = 20, CancellationToken ct = default);
 
     Task<IReadOnlyDictionary<string, SkillState>> GetSkillStatesAsync(CancellationToken ct = default);

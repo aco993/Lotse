@@ -171,14 +171,23 @@ public class ReviewSchedulerTests
     }
 
     [Fact]
-    public void Lapse_after_long_interval_shortens_but_does_not_reset_to_zero()
+    public void Lapse_after_long_interval_shortens_stability_but_does_not_throw_it_away()
     {
         var s = New();
-        for (var i = 0; i < 6; i++) ReviewScheduler.Apply(s, ReviewGrade.Good, T0);
-        var before = s.IntervalDays;
-        ReviewScheduler.Apply(s, ReviewGrade.Again, T0);
-        Assert.True(s.IntervalDays < before);
-        Assert.True(s.IntervalDays >= 1);
+        var t = T0;
+        for (var i = 0; i < 5; i++) { ReviewScheduler.Apply(s, ReviewGrade.Good, t); t = t.AddDays(s.IntervalDays); }
+        var before = s.Stability;
+        Assert.True(before > 20);
+
+        ReviewScheduler.Apply(s, ReviewGrade.Again, t);
+        Assert.Equal(1, s.Lapses);
+        Assert.True(s.Stability < before);
+        Assert.True(s.Stability > 1, "a lapse must not reset the memory model to zero");
+        Assert.True(s.DueUtc <= t.AddMinutes(15), "a wrong answer is re-asked within the session");
+
+        // Getting it right ten minutes later puts it back on a multi-day interval, shorter than before the lapse.
+        ReviewScheduler.Apply(s, ReviewGrade.Good, t.AddMinutes(10));
+        Assert.InRange(s.IntervalDays, 2, before);
     }
 
     [Fact]
@@ -186,7 +195,111 @@ public class ReviewSchedulerTests
     {
         var s = New();
         for (var i = 0; i < 30; i++) ReviewScheduler.Apply(s, ReviewGrade.Easy, T0);
-        Assert.True(s.IntervalDays <= 120);
+        Assert.True(s.IntervalDays <= ReviewScheduler.MaxIntervalDays);
+    }
+
+    [Fact]
+    public void Recall_after_a_long_gap_grows_stability_more_than_an_early_recall()
+    {
+        // Desirable difficulty: retrieving something that was nearly forgotten strengthens it most.
+        var late = New();
+        var early = New();
+        ReviewScheduler.Apply(late, ReviewGrade.Good, T0);
+        ReviewScheduler.Apply(early, ReviewGrade.Good, T0);
+        ReviewScheduler.Apply(late, ReviewGrade.Good, T0.AddDays(late.IntervalDays * 3));
+        ReviewScheduler.Apply(early, ReviewGrade.Good, T0.AddDays(1));
+        Assert.True(late.Stability > early.Stability);
+    }
+
+    [Fact]
+    public void Repeated_lapses_make_an_item_harder_and_its_intervals_shorter()
+    {
+        var steady = New();
+        var shaky = New();
+        var t = T0;
+        for (var i = 0; i < 4; i++)
+        {
+            ReviewScheduler.Apply(steady, ReviewGrade.Good, t);
+            ReviewScheduler.Apply(shaky, i % 2 == 0 ? ReviewGrade.Again : ReviewGrade.Good, t);
+            t = t.AddDays(3);
+        }
+        Assert.True(shaky.Difficulty > steady.Difficulty);
+        Assert.True(shaky.IntervalDays < steady.IntervalDays);
+        Assert.Equal(2, shaky.Lapses);
+    }
+
+    [Fact]
+    public void A_state_from_the_sm2_scheduler_is_converted_on_its_next_review()
+    {
+        var s = new ReviewState { ExerciseId = "x", NodeId = "n", IntervalDays = 30, Ease = 1.3, Repetitions = 4, LastReviewUtc = T0, DueUtc = T0.AddDays(30) };
+        ReviewScheduler.Apply(s, ReviewGrade.Good, T0.AddDays(30));
+        Assert.True(s.Stability > 30, "the old interval seeds stability, a recall at the due date grows it");
+        Assert.True(s.Difficulty > 7, "an ease factor of 1.3 was the hardest SM-2 card - it stays hard");
+        Assert.Equal(5, s.Repetitions);
+    }
+
+    [Fact]
+    public void Retrievability_follows_the_forgetting_curve()
+    {
+        var s = New();
+        ReviewScheduler.Apply(s, ReviewGrade.Good, T0);
+        Assert.InRange(s.RetrievabilityAt(T0), 0.999, 1.0);
+        Assert.InRange(s.RetrievabilityAt(T0.AddDays(s.Stability)), 0.899, 0.901);
+        Assert.True(s.RetrievabilityAt(T0.AddDays(s.Stability * 10)) < 0.6);
+    }
+}
+
+public class FsrsTests
+{
+    [Fact]
+    public void Interval_at_ninety_percent_retention_equals_stability()
+    {
+        Assert.Equal(12.0, Fsrs.IntervalDays(12.0, 0.9), 6);
+        Assert.True(Fsrs.IntervalDays(12.0, 0.95) < 12.0);
+        Assert.True(Fsrs.IntervalDays(12.0, 0.8) > 12.0);
+    }
+
+    [Fact]
+    public void Initial_values_order_by_grade()
+    {
+        Assert.True(Fsrs.InitialStability(1) < Fsrs.InitialStability(2));
+        Assert.True(Fsrs.InitialStability(2) < Fsrs.InitialStability(3));
+        Assert.True(Fsrs.InitialStability(3) < Fsrs.InitialStability(4));
+        Assert.True(Fsrs.InitialDifficulty(1) > Fsrs.InitialDifficulty(4));
+    }
+
+    [Fact]
+    public void Difficulty_stays_within_bounds_under_extreme_histories()
+    {
+        var d = 5.0;
+        for (var i = 0; i < 50; i++) d = Fsrs.NextDifficulty(d, 1);
+        Assert.InRange(d, Fsrs.MinDifficulty, Fsrs.MaxDifficulty);
+        Assert.True(d > 9);
+        for (var i = 0; i < 50; i++) d = Fsrs.NextDifficulty(d, 4);
+        Assert.InRange(d, Fsrs.MinDifficulty, Fsrs.MaxDifficulty);
+        Assert.True(d < 3);
+    }
+
+    [Fact]
+    public void Forgetting_never_increases_stability_and_recall_never_decreases_it()
+    {
+        for (var s = 1.0; s < 200; s *= 3)
+        {
+            for (var r = 0.3; r <= 0.99; r += 0.2)
+            {
+                Assert.True(Fsrs.NextForgetStability(5, s, r) <= s);
+                Assert.True(Fsrs.NextRecallStability(5, s, r, 3) >= s);
+                Assert.True(Fsrs.NextRecallStability(5, s, r, 4) >= Fsrs.NextRecallStability(5, s, r, 3));
+                Assert.True(Fsrs.NextRecallStability(5, s, r, 2) <= Fsrs.NextRecallStability(5, s, r, 3));
+            }
+        }
+    }
+
+    [Fact]
+    public void Grades_outside_one_to_four_are_rejected()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Fsrs.InitialStability(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Fsrs.NextDifficulty(5, 5));
     }
 
     [Fact]
