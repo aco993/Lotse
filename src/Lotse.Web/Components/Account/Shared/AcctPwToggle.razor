@@ -1,0 +1,12 @@
+@* Show/hide button for a password input. Place inside a div.acct-pw right after the <InputText>. The click
+   handling lives in AccountLayout's small script (event delegation on document) - the Account pages are
+   static SSR without a Blazor circuit, so this cannot be an @onclick. *@
+<button type="button" class="acct-pw-toggle" data-pw-toggle="@Target" aria-pressed="false" aria-label="Passwort anzeigen" title="Passwort anzeigen">
+    <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+    <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6A3 3 0 0 0 13.4 13.4M9.9 5.1A10.6 10.6 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-2.6 3.4M6.2 6.2C3.6 8 2 12 2 12s3.5 7 10 7c1.4 0 2.6-.3 3.7-.7"/></svg>
+</button>
+
+@code {
+    /// <summary>The id of the password input this button toggles.</summary>
+    [Parameter, EditorRequired] public string Target { get; set; } = "";
+}

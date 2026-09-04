@@ -1,3 +1,5 @@
+@* Recently submitted texts / recordings. Same card language as TaskList, but the accent here is the result:
+   green from 60 % (the exam's pass line), orange below, neutral when it was only a self-check without a score. *@
 @inject ILearningService Learning
 @inject ContentCatalogProvider CatalogProvider
 
@@ -8,20 +10,24 @@ else
     <MudStack Spacing="2">
         @foreach (var p in _items)
         {
-            <MudPaper Class="pa-3" Elevation="1">
-                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Wrap="Wrap.Wrap">
-                    <MudText Typo="Typo.caption">@p.Utc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</MudText>
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@p.WordCount Wörter</MudChip>
-                    @if (p.Score is { } s) { <MudChip T="string" Size="Size.Small" Color="@(s >= 0.6 ? Color.Tertiary : Color.Warning)" Variant="Variant.Filled">@s.ToString("P0")</MudChip> }
-                    @if (p.EstimatedLevel is not null) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@p.EstimatedLevel</MudChip> }
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@(p.EvaluatedByAi ? "Tutor" : "Selbstcheck")</MudChip>
-                    <MudSpacer />
-                    <MudText Typo="Typo.caption" Style="opacity:.7">@CatalogProvider.Catalog.NodeTitle(p.NodeId)</MudText>
-                </MudStack>
-                <MudText Typo="Typo.body2" Class="mt-1" Style="opacity:.85">@(CatalogProvider.Catalog.Exercise(p.ExerciseId)?.Prompt)</MudText>
-                <MudExpansionPanels Elevation="0" Dense="true" Class="mt-1">
-                    <MudExpansionPanel Text="Text anzeigen"><MudText Class="preline" Typo="Typo.body2">@p.Text</MudText></MudExpansionPanel>
-                </MudExpansionPanels>
+            <MudPaper Class="@($"task-card static pa-3 {ScoreClass(p)}")" Elevation="1">
+                <div class="task-row">
+                    <div class="task-icon"><MudIcon Icon="@(p.IsSpeaking ? Icons.Material.Filled.Mic : Icons.Material.Filled.Edit)" Size="Size.Small" /></div>
+                    <div class="task-body">
+                        <div class="task-meta">
+                            @if (p.Score is { } s) { <span class="task-ctx">@s.ToString("P0")</span> }
+                            else { <span class="task-ctx">Selbstcheck</span> }
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Outlined.Notes">@p.WordCount Wörter</MudChip>
+                            @if (p.EstimatedLevel is not null) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="task-chip">@p.EstimatedLevel</MudChip> }
+                            @if (p.EvaluatedByAi) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="task-chip" Icon="@Icons.Material.Filled.AutoAwesome">Tutor</MudChip> }
+                            <span class="task-node">@p.Utc.ToLocalTime().ToString("dd.MM.yyyy HH:mm") · @CatalogProvider.Catalog.NodeTitle(p.NodeId)</span>
+                        </div>
+                        <MudText Typo="Typo.body2" Class="task-prompt" Style="opacity:.85">@(CatalogProvider.Catalog.Exercise(p.ExerciseId)?.Prompt)</MudText>
+                        <MudExpansionPanels Elevation="0" Dense="true" Class="mt-1">
+                            <MudExpansionPanel Text="Text anzeigen"><MudText Class="preline" Typo="Typo.body2">@p.Text</MudText></MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </div>
+                </div>
             </MudPaper>
         }
     </MudStack>
@@ -32,4 +38,11 @@ else
     private IReadOnlyList<ProductionEntity>? _items;
     protected override async Task OnInitializedAsync()
         => _items = (await Learning.RecentProductionsAsync(40)).Where(p => p.IsSpeaking == Speaking).ToList();
+
+    private static string ScoreClass(ProductionEntity p) => p.Score switch
+    {
+        null => "score-none",
+        >= 0.6 => "score-good",
+        _ => "score-weak",
+    };
 }

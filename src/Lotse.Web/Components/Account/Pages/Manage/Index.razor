@@ -11,15 +11,15 @@
 
 <PageTitle>Konto – Lotse</PageTitle>
 
-<h1 class="account-title">Dein Konto</h1>
+<h1>Dein Konto</h1>
+<p class="acct-sub">Alles, was du hier lernst, gehört nur zu diesem Konto.</p>
 
-<div class="account-field">
-    <label>E-Mail</label>
-    <div>@_email</div>
+<div class="acct-kv"><b>E-Mail</b><span>@_email</span></div>
+<div class="acct-kv"><b>Passwort</b><a href="Account/Manage/ChangePassword">Ändern</a></div>
+
+<div class="acct-links">
+    <a href="einstellungen">← Zurück zu den Einstellungen</a>
 </div>
-
-<div class="account-links" style="margin-top:20px"><a href="Account/Manage/ChangePassword">Passwort ändern</a></div>
-<div class="account-links"><a href="einstellungen">← Zurück zu den Einstellungen</a></div>
 
 @code {
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;

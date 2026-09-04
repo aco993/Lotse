@@ -1,0 +1,18 @@
+@* Inline status box for the static Account pages (no MudAlert available there). *@
+<div class="acct-alert @Kind" role="@(Kind == "error" ? "alert" : "status")">
+    @if (Kind == "error")
+    {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></svg>
+    }
+    else
+    {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>
+    }
+    <div>@ChildContent</div>
+</div>
+
+@code {
+    /// <summary>"error" or "success".</summary>
+    [Parameter] public string Kind { get; set; } = "error";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

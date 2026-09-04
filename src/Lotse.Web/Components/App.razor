@@ -7,7 +7,10 @@
     <base href="/" />
     <ResourcePreloader />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    @if (!IsAccountPage)
+    {
+        <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    }
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["Lotse.Web.styles.css"]" />
     <ImportMap />
@@ -39,9 +42,15 @@
          Account-vs-regular route split instead. HeadOutlet gets the same value so its interactivity never outlives
          (or falls short of) whatever <Routes/> resolved to for this request. -->
     <Routes @rendermode="@PageRenderMode" />
-    <ReconnectModal />
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    @if (PageRenderMode is not null)
+    {
+        @* Static pages (the Account forms, and /Error or /not-found for a signed-out visitor) get no circuit
+           bootstrap: nothing to reconnect, nothing MudBlazor to run, and for a signed-out visitor blazor.web.js
+           would only try - and fail against the fallback authorization policy - to negotiate a circuit. *@
+        <ReconnectModal />
+        <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+        <script src="@Assets["_framework/blazor.web.js"]"></script>
+    }
 </body>
 
 </html>
@@ -51,6 +60,11 @@
 
     private static readonly InteractiveServerRenderMode NoPrerender = new(prerender: false);
 
-    private IComponentRenderMode? PageRenderMode =>
-        HttpContext.Request.Path.StartsWithSegments("/Account") ? null : NoPrerender;
+    private bool IsAccountPage => HttpContext.Request.Path.StartsWithSegments("/Account");
+    private bool IsSignedIn => HttpContext.User.Identity?.IsAuthenticated == true;
+
+    // Interactive only for a signed-in learner outside /Account: the Account forms must be static (auth cookie),
+    // and a signed-out visitor can only ever see those plus /Error and /not-found - rendering those statically too
+    // saves them a circuit negotiation the fallback authorization policy would refuse anyway.
+    private IComponentRenderMode? PageRenderMode => IsAccountPage || !IsSignedIn ? null : NoPrerender;
 }

@@ -1,15 +1,63 @@
 @inherits LayoutComponentBase
 
-@* Deliberately minimal and MudBlazor-free: Login/Register/reset pages render as static SSR (see each page's
-   doc comment) so the auth cookie can be set from a real HTTP response - the full app shell in MainLayout is
-   InteractiveServer and would either fail to render correctly here or drag the whole page into static mode with
-   it. Styling lives in wwwroot/app.css under ".account-*". *@
-<div class="account-shell">
-    <div class="account-card">
-        <div class="account-brand">
-            <img src="favicon.svg" alt="" width="26" height="26" />
-            <span>Lotse</span>
+@* Deliberately MudBlazor-free: Login/Register/reset pages render as static SSR (see each page's doc comment) so the
+   auth cookie can be set from a real HTTP response - the full app shell in MainLayout is InteractiveServer and
+   would either fail to render correctly here or drag the whole page into static mode with it. App.razor also
+   leaves out blazor.web.js / MudBlazor for these routes, so this is plain HTML + CSS (wwwroot/app.css, ".acct-*")
+   plus the one tiny script at the bottom for the password toggle. *@
+<div class="acct">
+    <aside class="acct-brand" aria-hidden="true">
+        <div>
+            <div class="acct-wordmark">
+                <AcctLogo Size="46" Background="#2C79AE" />
+                <div>
+                    <div class="acct-name">Lotse</div>
+                    <div class="acct-tag">Dein Kurs auf B2</div>
+                </div>
+            </div>
+            <h2 class="acct-claim">Vom unsicheren B1 zum sicheren B2 – Session für Session.</h2>
+            <ul class="acct-points">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>Jede Session aus deinen eigenen Schwachstellen geplant</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>Aufgaben in den Formaten des Goethe-Zertifikats B2</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>24 Lektionen mit einer Geschichte aus dem Berufsalltag</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>Alles bleibt auf diesem Rechner</li>
+            </ul>
         </div>
-        @Body
+        <p class="acct-foot">Serbisch als Muttersprache mitgedacht – jede Interferenz-Falle wird erklärt, nicht nur angestrichen.</p>
+    </aside>
+
+    <div class="acct-main">
+        <header class="acct-topbar">
+            <AcctLogo Size="30" Background="#2C79AE" />
+            <span class="acct-name">Lotse</span>
+            <span class="acct-tag">Dein Kurs auf B2</span>
+        </header>
+        <main class="acct-body">
+            <div class="acct-card">
+                @Body
+            </div>
+        </main>
     </div>
 </div>
+
+<script>
+    // Password show/hide for the static Account forms. One listener on document (guarded against double
+    // registration) so it also survives any client-side navigation that re-renders the form without re-running
+    // inline scripts.
+    (function () {
+        if (window.__lotseAcct) return;
+        window.__lotseAcct = true;
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-pw-toggle]');
+            if (!btn) return;
+            var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+            btn.setAttribute('aria-label', show ? 'Passwort verbergen' : 'Passwort anzeigen');
+            btn.setAttribute('title', show ? 'Passwort verbergen' : 'Passwort anzeigen');
+            input.focus();
+        });
+    })();
+</script>
