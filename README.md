@@ -33,11 +33,12 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 
 ## Screens
 
-| Heute | Session | Fortschritt |
+| Login | Heute | Session |
 |---|---|---|
-| Streak, minutes, due reviews, readiness; one button starts the planned session; weak areas and exam prognosis. | One card per step with a reason chip ("Wiederholung fällig", "Schwerpunkt Passiv: 3 Fehler / 7 Tage"), immediate feedback with explanation and Serbian contrast. | Mastery per node with confidence, 30-day activity, re-check markers. |
+| ![Login](docs/screenshots/login.png) | ![Heute](docs/screenshots/heute.png) | ![Session](docs/screenshots/session.png) |
+| Own account per learner (ASP.NET Core Identity, passkeys supported). | Streak, minutes, due reviews, readiness; one button starts the planned session; weak areas and exam prognosis. | One item per step with topic and CEFR tags, immediate feedback with explanation and Serbian contrast. |
 
-Also: *Schreiben* (micro tasks, exam Teil 1/2), *Sprechen* (spontaneous, Vortrag, discussion with AI partner), *Prüfung B2* (blueprint + simulations), *Fehlerjournal*, *Themen* (focus sessions, generate exercises), *Einstellungen*, *Konto* (register/log in/change password - every other page requires being signed in).
+Also: *Kurs* (24 story-driven lessons), *Schreiben* (micro tasks, exam Teil 1/2), *Sprechen* (spontaneous, Vortrag, discussion with AI partner), *Prüfung B2* (blueprint + simulations), *Fortschritt*, *Fehlerjournal*, *Themen* (focus sessions, generate exercises), *Einstellungen*, *Konto* (register/log in/change password - every other page requires being signed in).
 
 ## Quick start
 
