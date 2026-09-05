@@ -35,7 +35,7 @@ jobs:
 
       - name: Upload Playwright traces (failures only)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-traces
           path: tests/Lotse.E2E/bin/Release/net10.0/playwright-traces/
