@@ -13,6 +13,9 @@ public enum Occupation
     Medizin,
     Buero,
     Handel,
+    // Appended, never inserted: the value is stored as an integer in LearnerProfile, so renumbering would
+    // silently move every existing profile into a different field.
+    Elektrotechnik,
 }
 
 /// <summary>
@@ -33,6 +36,7 @@ public static class OccupationExtensions
         Occupation.Medizin => "Medizin",
         Occupation.Buero => "Büro / Verwaltung",
         Occupation.Handel => "Handel / Verkauf",
+        Occupation.Elektrotechnik => "Elektrotechnik / Energie",
         _ => "Keine Angabe",
     };
 
@@ -45,6 +49,7 @@ public static class OccupationExtensions
         Occupation.Medizin => "weil du in der Medizin arbeitest",
         Occupation.Buero => "weil du im Büro arbeitest",
         Occupation.Handel => "weil du im Handel arbeitest",
+        Occupation.Elektrotechnik => "weil du in der Elektrotechnik arbeitest",
         _ => "",
     };
 
@@ -56,17 +61,24 @@ public static class OccupationExtensions
         Occupation.Bau => ["WS.WOHNEN_MOBILITAET", "WS.ARBEIT_KARRIERE"],
         Occupation.Buero => ["WS.BERUF_BUERO", "WS.ARBEIT_KARRIERE"],
         Occupation.Handel => ["WS.GELD_KONSUM", "WS.ARBEIT_KARRIERE"],
+        // Elektrotechnik lives next door to IT: the same learner reads schematics and PLC code in one shift.
+        Occupation.Elektrotechnik => ["WS.TECHNIK_ELEKTRO", "WS.IT_SOFTWARE"],
         _ => [],
     };
 
-    /// <summary>Exercise tags worth a nudge for this field.</summary>
+    /// <summary>
+    /// Exercise tags worth a nudge for this field. Every tag here must actually occur in the content - a test
+    /// enforces it. Three fields used to name tags no exercise carried ("bau", "buero", "handel"), which quietly
+    /// reduced their nudge to the node half; they now point at tags that exist.
+    /// </summary>
     public static IReadOnlyList<string> PreferredTags(this Occupation o) => o switch
     {
         Occupation.IT => ["it"],
         Occupation.Pflege or Occupation.Medizin => ["gesundheit", "pflege"],
-        Occupation.Bau => ["wohnen", "bau"],
-        Occupation.Buero => ["buero"],
-        Occupation.Handel => ["geld", "handel"],
+        Occupation.Bau => ["wohnen"],
+        Occupation.Buero => ["beruf", "email"],
+        Occupation.Handel => ["kunde"],
+        Occupation.Elektrotechnik => ["elektro", "technik"],
         _ => [],
     };
 

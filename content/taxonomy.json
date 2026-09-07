@@ -403,6 +403,21 @@
       "prerequisites": []
     },
     {
+      "id": "WS.TECHNIK_ELEKTRO",
+      "area": "Wortschatz",
+      "title": "Elektrotechnik, Anlagen & Instandhaltung",
+      "band": "B2_1",
+      "weight": 0.9,
+      "serbianInterference": true,
+      "description": "Die Sprache der Elektrotechnik im deutschen Betrieb: Spannung, Stromkreis und Schaltplan, dazu Inbetriebnahme, Abnahme, Störungsmeldung und Prüfbericht - also nicht nur die Bauteile, sondern die Sätze, mit denen man über sie berichtet.",
+      "interferenceNote": "Fachdeutsch baut lange Komposita, wo das Serbische eine Wortgruppe nimmt: „merni instrument“ wird zu EINEM Wort, „das Messgerät“, und der Artikel richtet sich immer nach dem LETZTEN Teil (die Spannung, aber der Spannungsprüfer). Zweite Falle: „der Strom“ ist die fließende Elektrizität, „die Spannung“ der Druck dahinter – im Serbischen deckt „struja“ beides ab.",
+      "interferenceNoteEn": "English keeps technical terms apart as separate words („measuring device“); German fuses them into one („das Messgerät“) and takes the gender from the LAST part - die Spannung, but der Spannungsprüfer. And note the pair English blurs in casual speech: „Strom“ is the current that flows, „Spannung“ the voltage behind it.",
+      "prerequisites": [
+        "WS.BERUF_BUERO"
+      ],
+      "plainTitle": "Elektrotechnik: Bauteile, Messwerte und Berichte"
+    },
+    {
       "id": "WS.ALLTAG_BEHOERDEN",
       "area": "Wortschatz",
       "title": "Alltag: Behörden, Wohnen, Verträge",
@@ -762,6 +777,38 @@
       "description": "Stand-up, Telefonat, Rückfrage beim Arzt, Smalltalk – flüssig reagieren ohne Vorbereitung.",
       "interferenceNote": null,
       "prerequisites": []
+    },
+    {
+      "id": "GR.C1_SATZVERKNUEPFUNG",
+      "area": "Grammatik",
+      "title": "Gehobene Satzverknüpfung & Verweisstrukturen (C1)",
+      "band": "C1",
+      "weight": 0.9,
+      "serbianInterference": true,
+      "description": "Die Konnektoren, an denen man einen C1-Text erkennt: zumal, sofern, insofern, ungeachtet, wohingegen, geschweige denn, indes – dazu die Verweismittel, die einen Absatz zusammenhalten (dies, jener Umstand, ebendieser, dementsprechend) und die Stellung, die jeder von ihnen verlangt.",
+      "interferenceNote": "Die Falle ist nicht die Bedeutung, sondern die STELLUNG. Serbisch kann fast jeden Verknüpfer voranstellen, ohne dass sich der Satz umbaut; im Deutschen entscheidet jedes Wort einzeln: „zumal“ und „sofern“ leiten einen Nebensatz ein (Verb ans Ende), „indes“ und „gleichwohl“ sind Adverbien (Verb bleibt an Position 2), und „ungeachtet“ regiert den Genitiv. Wer die Bedeutung lernt und die Stellung nicht, schreibt gehobene Wörter in B1-Sätzen.",
+      "interferenceNoteEn": "The meanings are easy to look up; the placement is what separates C1 from B2. „Zumal“ and „sofern“ open a subordinate clause and push the verb to the end, „indes“ and „gleichwohl“ are adverbs and leave the verb in second position, and „ungeachtet“ takes the genitive. English connectors carry no such consequence, so this is a rule you have to build in rather than transfer.",
+      "prerequisites": [
+        "GR.KONNEKTOREN",
+        "GR.NEBENSATZ_WORTSTELLUNG"
+      ],
+      "plainTitle": "Gehobene Verbindungswörter und wo das Verb dann steht"
+    },
+    {
+      "id": "WS.C1_IDIOMATIK",
+      "area": "Wortschatz",
+      "title": "Feste Wendungen, Funktionsverbgefüge & Register (C1)",
+      "band": "C1",
+      "weight": 0.85,
+      "serbianInterference": true,
+      "description": "Wendungen, die man nicht Wort für Wort bauen kann: in Betracht ziehen, zur Sprache bringen, Anklang finden, ins Gewicht fallen – dazu das Gespür dafür, wann eine gehobene Wendung passt und wann sie gestelzt wirkt.",
+      "interferenceNote": "Funktionsverbgefüge lassen sich nicht übersetzen, sondern nur als Ganzes lernen: „doći u obzir“ ist nicht „in Betracht kommen“ Wort für Wort, und wer das Verb frei wählt („in Betracht nehmen“), klingt sofort falsch. Merke immer das komplette Muster mit Präposition und Artikel – „in Betracht ziehen“, nicht „Betracht“.",
+      "interferenceNoteEn": "These are fixed frames, not free combinations: German says „in Betracht ziehen“ and nothing else works – „in Betracht take/make/put“ would all be wrong the same way „take into consideration“ cannot become „grab into consideration“. Learn the whole frame including preposition and article, and note that the noun carries the meaning while the verb is nearly empty.",
+      "prerequisites": [
+        "WS.NOMEN_VERB_VERBINDUNGEN",
+        "WS.C1_GEHOBEN"
+      ],
+      "plainTitle": "Feste Wendungen, die man als Ganzes lernen muss"
     }
   ],
   "errorTypes": [
@@ -1149,6 +1196,20 @@
       "title": "Aussprache",
       "severity": 1,
       "description": "Verständlichkeit leidet (Umlaute, h, Wortakzent)."
+    },
+    {
+      "code": "C1_KONNEKTOR_STELLUNG",
+      "nodeId": "GR.C1_SATZVERKNUEPFUNG",
+      "title": "Verbstellung nach gehobenem Konnektor",
+      "severity": 2,
+      "description": "Nach „zumal“, „sofern“, „wohingegen“ steht das Verb am Ende; nach „gleichwohl“, „indes“, „mithin“ an Position 2. Verwechselt wird die Wortklasse, nicht die Bedeutung."
+    },
+    {
+      "code": "C1_GENITIVPRAEP",
+      "nodeId": "GR.C1_SATZVERKNUEPFUNG",
+      "title": "Genitivpräposition mit falschem Kasus",
+      "severity": 2,
+      "description": "„ungeachtet“, „angesichts“, „zwecks“, „anstelle“ regieren den Genitiv („ungeachtet der Bedenken“), nicht den Dativ."
     }
   ]
 }

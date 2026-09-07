@@ -261,6 +261,38 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     [Fact]
+    public void Elektrotechnik_reaches_its_own_node_and_the_neighbouring_IT_one()
+    {
+        var states = AllEqual();
+        var ohne = new SessionPlanner().RankFocusNodes(Input(15, states)).ToList();
+        var mit = new SessionPlanner().RankFocusNodes(Input(15, states) with { Occupation = Occupation.Elektrotechnik }).ToList();
+
+        int Rank(List<(string NodeId, double Priority, string Reason)> l, string id) => l.FindIndex(r => r.NodeId == id);
+        Assert.True(Rank(mit, "WS.TECHNIK_ELEKTRO") < Rank(ohne, "WS.TECHNIK_ELEKTRO"));
+        // The trade reads schematics and PLC code in the same shift, so IT is lifted too - but only as a nudge.
+        Assert.True(Rank(mit, "WS.IT_SOFTWARE") < Rank(ohne, "WS.IT_SOFTWARE"));
+        Assert.Contains("weil du in der Elektrotechnik arbeitest", mit.First(r => r.NodeId == "WS.TECHNIK_ELEKTRO").Reason);
+    }
+
+    [Fact]
+    public void Every_occupation_can_name_itself_and_points_only_at_nodes_that_exist()
+    {
+        // A field added to the enum without a label, a reason or real content would steer the planner into nothing.
+        var nodeIds = fx.Catalog.Nodes.Select(n => n.Id).ToHashSet();
+        foreach (var o in Enum.GetValues<Occupation>().Where(o => o != Occupation.Unspecified))
+        {
+            Assert.NotEqual("Keine Angabe", o.Label());
+            Assert.False(string.IsNullOrWhiteSpace(o.ReasonTail()), $"{o}: ohne Begründung");
+            Assert.NotEmpty(o.PreferredNodes());
+            Assert.All(o.PreferredNodes(), id => Assert.Contains(id, nodeIds));
+            Assert.All(o.PreferredNodes(), id => Assert.True(fx.Catalog.ForNode(id).Any(), $"{o}: Knoten {id} ohne Übungen"));
+            Assert.NotEmpty(o.PreferredTags());
+            Assert.All(o.PreferredTags(), t => Assert.Contains(fx.Catalog.Exercises,
+                e => e.Tags.Contains(t, StringComparer.OrdinalIgnoreCase)));
+        }
+    }
+
+    [Fact]
     public void Without_an_occupation_nothing_is_pulled_forward()
     {
         var ranked = new SessionPlanner().RankFocusNodes(Input(15, AllEqual())).ToList();
