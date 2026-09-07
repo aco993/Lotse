@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Infrastructure.Content;
@@ -103,6 +104,41 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
             .Select(Path.GetFileName)
             .ToList();
         Assert.True(offenders.Count == 0, "Fester Name statt Token in: " + string.Join(", ", offenders));
+    }
+
+    /// <summary>
+    /// The repository is public, and an absolute path from the machine it was written on carries a real Windows
+    /// account name into it. Three files had one (a prompt doc and the two harness scripts) before this test.
+    /// Tools take their paths from their own location or from an argument instead.
+    /// </summary>
+    [Fact]
+    public void No_file_carries_an_absolute_home_path_of_the_machine_it_was_written_on()
+    {
+        var root = RepositoryRoot();
+        Assert.SkipWhen(root is null, "Quellbaum nicht gefunden (Lauf aus einem Paket ohne Repo).");
+
+        var skipDirs = new[] { "bin", "obj", ".git", "node_modules", "TestResults" };
+        var pattern = new Regex("[A-Za-z]:[\\\\/]Users[\\\\/]", RegexOptions.IgnoreCase);
+        var offenders = Directory.EnumerateFiles(root!, "*.*", SearchOption.AllDirectories)
+            .Where(f => !f.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Any(skipDirs.Contains))
+            .Where(f => TextExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
+            .Where(f => !Path.GetFileName(f).Equals("ContentAndPlannerTests.cs", StringComparison.Ordinal)) // this file states the pattern
+            .Where(f => pattern.IsMatch(File.ReadAllText(f)))
+            .Select(f => Path.GetRelativePath(root!, f))
+            .ToList();
+
+        Assert.True(offenders.Count == 0, "Absoluter Benutzerpfad in: " + string.Join(", ", offenders));
+    }
+
+    private static readonly string[] TextExtensions =
+        [".cs", ".razor", ".json", ".md", ".ps1", ".mjs", ".js", ".css", ".yml", ".yaml", ".props", ".slnx", ".editorconfig"];
+
+    /// <summary>Walks up from the test binary until the solution file appears; null when there is no source tree.</summary>
+    private static string? RepositoryRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Lotse.slnx"))) dir = dir.Parent;
+        return dir?.FullName;
     }
 
     /// <summary>

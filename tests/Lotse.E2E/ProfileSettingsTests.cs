@@ -62,9 +62,11 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
     {
         await RegisterAsync(page, LotseE2EFixture.UniqueEmail("name"));
 
-        // Without a name of their own, the learner gets the author's - the course reads exactly as it always did.
+        // Without a name of their own, the learner gets a stand-in - never the author's name, which the repository
+        // is public enough for to matter. Which stand-in depends on the account id, so only the salutation is fixed.
         await page.GotoAsync("/kurs/L02");
-        await Expect(page.GetByText("Sehr geehrter Herr Micić", new() { Exact = false }).First).ToBeVisibleAsync();
+        await Expect(page.GetByText("Sehr geehrter Herr ", new() { Exact = false }).First).ToBeVisibleAsync();
+        await Expect(page.GetByText("Micić", new() { Exact = false })).ToHaveCountAsync(0);
 
         await page.GotoAsync("/einstellungen");
         await page.GetByLabel("Vorname").First.FillAsync("Marko");

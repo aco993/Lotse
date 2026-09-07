@@ -93,7 +93,7 @@ Bez izbora sve radi tačno kao i pre.
 
 U **Einstellungen** unosiš **Vorname** i **Nachname**. Kurs onda oslovljava tebe: mejl od Herr Krügera glasi „Sehr geehrter Herr *tvoje prezime*", a potpisi u uzornim rešenjima nose tvoje ime.
 
-Ako polja ostaviš prazna, ostaje autorovo ime (Aleksandar Micić) — ništa se ne kvari.
+Ako polja ostaviš prazna, kurs koristi zamensko ime (npr. „Herr Berger"). Ono se bira iz malog spiska po tvom nalogu, pa je uvek isto za tebe — priča ostaje dosledna — a dva naloga na istom računaru retko dobiju isto ime.
 
 Tehnički: u sadržaju stoje `{Vorname}`, `{Nachname}` i `{Name}`, a ime se ubacuje tek kad se lekcija ili zadatak predaju **tebi**. Zajednička baza zadataka ostaje neutralna, pa se imena ne mešaju između naloga na istom računaru.
 

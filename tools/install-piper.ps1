@@ -97,7 +97,7 @@ foreach ($v in $Voices) {
 # ---- 3. Funktionsprobe -----------------------------------------------------------------------------
 Write-Host ""
 Write-Host "Funktionsprobe ..."
-# Nicht in $env:TEMP: dessen Kurzform (C:\Users\A4283~1.MIC\...) enthaelt eine Tilde, und Remove-Item deutet
+# Nicht in $env:TEMP: dessen 8.3-Kurzform enthaelt eine Tilde (…\LOKALE~1\Temp), und Remove-Item deutet
 # "~" als Home-Verzeichnis - der Loeschversuch scheitert dann mit "Objekt im Pfad nicht vorhanden".
 # Zusaetzlich ueberall -LiteralPath, damit gar keine Pfadinterpretation stattfindet.
 $probe = Join-Path $Root 'probe.wav'

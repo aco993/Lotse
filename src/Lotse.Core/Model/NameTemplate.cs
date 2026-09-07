@@ -14,9 +14,13 @@ public static class NameTemplate
     public const string LastNameToken = "{Nachname}";
     public const string FullNameToken = "{Name}";
 
-    /// <summary>Used when the profile leaves a field empty, so the author's own experience is unchanged.</summary>
-    public const string DefaultFirstName = "Aleksandar";
-    public const string DefaultLastName = "Micić";
+    /// <summary>
+    /// Used when a field arrives empty here. This is the last resort only - the per-account stand-in is resolved
+    /// where the learner is known (see <see cref="NameFallback.For"/>), because a name that changes between
+    /// accounts must not be baked into a static.
+    /// </summary>
+    public static string DefaultFirstName => NameFallback.Neutral.First;
+    public static string DefaultLastName => NameFallback.Neutral.Last;
 
     public static readonly string[] AllTokens = [FullNameToken, FirstNameToken, LastNameToken];
 

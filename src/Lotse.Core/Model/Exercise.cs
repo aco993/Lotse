@@ -59,6 +59,15 @@ public sealed record DialogueLine(
     IReadOnlyList<string>? Feedback = null)
 {
     public bool IsLearnerTurn => Options is { Count: > 0 };
+
+    /// <summary>
+    /// What a voice reads for this line: the sentence itself, never the speaker label. Who is talking is already
+    /// carried twice - the name stands beside the line on screen, and each character has their own voice - so
+    /// announcing "Sabine:" before every turn only interrupts the German the learner is here to hear.
+    /// </summary>
+    public string SpokenText => IsLearnerTurn && CorrectIndex is { } i && i >= 0 && i < Options!.Count
+        ? Options[i]
+        : Text;
 }
 
 public sealed record MatchPair(string Left, string Right);

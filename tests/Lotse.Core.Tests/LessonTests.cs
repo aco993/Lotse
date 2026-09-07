@@ -87,4 +87,25 @@ public class LessonContentTests(CatalogFixture fx) : IClassFixture<CatalogFixtur
     [Fact]
     public void Lesson_steps_cover_the_declared_grammar_node()
         => Assert.All(fx.Catalog.Lessons, l => Assert.Contains(l.Steps, id => fx.Catalog.Exercise(id)!.NodeId == l.Grammar.NodeId));
+
+    [Fact]
+    public void Read_aloud_speaks_the_sentence_and_never_the_speaker_label()
+    {
+        // The name stands beside the line on screen and each character has their own voice; speaking "Sabine:"
+        // before every turn only interrupts the German.
+        var told = new DialogueLine("Sabine (im Stand-up)", "Der Sprint beginnt am Montag.");
+        Assert.Equal("Der Sprint beginnt am Montag.", told.SpokenText);
+
+        var mine = new DialogueLine("Du", "", ["Das schaffe ich.", "Weiss nicht.", "Egal."], 0,
+            ["passend", "zu vage", "unhoeflich"]);
+        Assert.Equal("Das schaffe ich.", mine.SpokenText);
+
+        foreach (var l in fx.Catalog.Lessons)
+            foreach (var line in l.Story)
+            {
+                var label = line.Speaker.Split('(')[0].Trim();
+                Assert.False(line.SpokenText.StartsWith(label + ":", StringComparison.Ordinal),
+                    $"{l.Id}: Sprechername im Vorlesetext");
+            }
+    }
 }
