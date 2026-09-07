@@ -95,6 +95,10 @@ else
             {
                 <MudItem xs="12" md="6"><MudTextField @bind-Value="_baseUrl" Label="Server-URL" Variant="Variant.Outlined" Placeholder="@Preset.BaseUrl" HelperText="Leer = Standard des Anbieters" /></MudItem>
             }
+            <MudItem xs="12" md="6">
+                <MudNumericField @bind-Value="_timeout" Label="Zeitlimit je Antwort (Sekunden)" Variant="Variant.Outlined"
+                                 Min="MinTimeoutSeconds" Max="MaxTimeoutSeconds" Step="30" HelperText="@TimeoutHelp" />
+            </MudItem>
         </MudGrid>
         <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.8">@Preset.Note @(Preset.SignupUrl is null ? "" : "Schlüssel: ")@if (Preset.SignupUrl is not null) { <MudLink Href="@Preset.SignupUrl" Target="_blank">@Preset.SignupUrl</MudLink> }</MudText>
 
@@ -167,6 +171,8 @@ else
     private string _model = "";
     private string? _apiKey;
     private string? _baseUrl;
+    private string _effort = "medium";
+    private int _timeout = TutorPresets.Get("groq").DefaultTimeoutSeconds;
     private bool _showKey;
     private bool _probing;
     private TutorProbe? _probe;
@@ -187,6 +193,11 @@ else
     private TutorPreset Preset => TutorPresets.Get(_presetId);
     private string KeyHelp => Preset.KeyEnvVar is { } env ? $"Leer lassen, um {env} aus der Umgebung zu nutzen" : "";
 
+    /// <summary>Names the one number that decides whether a slow local model finishes or is cut off mid-sentence.</summary>
+    private string TimeoutHelp => Preset.DefaultTimeoutSeconds >= 300
+        ? "Eine ganze Bewertung sind rund 800 Wörter Antwort – auf einem lokalen 7B dauert das ein bis drei Minuten. Zu knapp gesetzt bricht sie kurz vor dem Ende ab."
+        : "Gehostete Modelle antworten in Sekunden; mehr als zwei Minuten braucht hier niemand.";
+
     private HealthReport? _health;
     private bool _checking;
     private List<string> _repairLog = [];
@@ -200,13 +211,17 @@ else
         _model = s.Model;
         _apiKey = s.ApiKey;
         _baseUrl = s.BaseUrl;
+        _effort = s.Effort;
+        _timeout = s.TimeoutSeconds;
     }
 
     private void OnPresetChanged(string id)
     {
-        _presetId = id;
-        _model = Preset.DefaultModel;
+        var fresh = TutorSettings.ForPreset(id);
+        _presetId = fresh.PresetId;
+        _model = fresh.Model;
         _baseUrl = null;
+        _timeout = fresh.TimeoutSeconds;
         _probe = null;
     }
 
@@ -217,7 +232,19 @@ else
         return Task.FromResult<IEnumerable<string>>(list);
     }
 
-    private TutorSettings Draft() => new(_presetId, string.IsNullOrWhiteSpace(_baseUrl) ? null : _baseUrl.Trim(), (_model ?? "").Trim(), string.IsNullOrWhiteSpace(_apiKey) ? null : _apiKey.Trim());
+    /// <summary>Every field the record carries – <c>Effort</c> and <c>TimeoutSeconds</c> included. They used to be
+    /// omitted here, so each save silently reset them to the record's defaults and no timeout above 120 s could
+    /// survive; a local model needs about twice that for one evaluation.</summary>
+    private TutorSettings Draft() => new(
+        _presetId,
+        string.IsNullOrWhiteSpace(_baseUrl) ? null : _baseUrl.Trim(),
+        (_model ?? "").Trim(),
+        string.IsNullOrWhiteSpace(_apiKey) ? null : _apiKey.Trim(),
+        _effort,
+        Math.Clamp(_timeout, MinTimeoutSeconds, MaxTimeoutSeconds));
+
+    private const int MinTimeoutSeconds = 20;
+    private const int MaxTimeoutSeconds = 900;
 
     private async Task ProbeAsync()
     {
@@ -236,7 +263,7 @@ else
     {
         await Tutors.ClearAsync();
         var s = Tutors.Settings;
-        _presetId = s.PresetId; _model = s.Model; _apiKey = s.ApiKey; _baseUrl = s.BaseUrl; _probe = null;
+        _presetId = s.PresetId; _model = s.Model; _apiKey = s.ApiKey; _baseUrl = s.BaseUrl; _effort = s.Effort; _timeout = s.TimeoutSeconds; _probe = null;
         Snackbar.Add("Tutor-Einstellungen zurückgesetzt.", Severity.Info);
     }
 
