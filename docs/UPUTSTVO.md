@@ -67,7 +67,10 @@ Ništa ne moraš da podešavaš — app sama pronađe glasove i pri startu u kon
 U **Einstellungen**, pored termina ispita, biraš cilj:
 
 - **B2 – Prüfungsvorbereitung** (podrazumevano): težišta ostaju na B2.2 i ispod. Najkraći put do ispita.
-- **C1 – darüber hinaus**: težišta smeju da idu do C1, pa u dnevne sesije ulaze i `C1 gehoben` (biran rečnik) i B2.2-gramatika.
+- **C1 – darüber hinaus**: težišta smeju da idu do C1, pa u dnevne sesije ulaze i tri C1-teme i B2.2-gramatika. C1-tema ima tri:
+  - `Gehobener Wortschatz & Nominalstil` — biran rečnik (erörtern, gewährleisten, maßgeblich);
+  - `Gehobene Satzverknüpfung` — zumal, sofern, wohingegen, ungeachtet, geschweige denn, „so … auch“. Zamka tu nikad nije značenje nego **položaj glagola**: veznik ga šalje na kraj, prilog ga ostavlja na drugom mestu, a genitivni predlog traži genitiv;
+  - `Feste Wendungen & Funktionsverbgefüge` — sklopovi koji se ne mogu sastaviti reč po reč (*Rechnung tragen*, *ins Gewicht fallen*, *den Ausschlag geben*).
 
 Šta se **ne** menja: Einstufung (ona ionako meri granicu B1/B2), težina zadataka u odnosu na tvoj izmereni nivo, i strana **Prüfung B2** — ona ostaje ispit po Goethe-B2 obrascu i to ti izričito piše kad je cilj C1. Ova app nema C1-ispit i ne pretvara se da ga ima.
 
@@ -75,11 +78,16 @@ Kad je cilj C1, na strani Heute uz „B2-Bereitschaft" stoji i druga linija **C1
 
 ## 1e. Branche (oblast u kojoj radiš)
 
-U **Einstellungen** pored polja „Beruf" (slobodan tekst, koji ide tutoru kao kontekst) sada biraš i **Branche**: IT/Software, Pflege, Bau/Handwerk, Medizin, Büro/Verwaltung, Handel/Verkauf — ili ništa.
+U **Einstellungen** pored polja „Beruf" (slobodan tekst, koji ide tutoru kao kontekst) sada biraš i **Branche**: IT/Software, Pflege, Bau/Handwerk, Medizin, Büro/Verwaltung, Handel/Verkauf, Elektrotechnik/Energie — ili ništa.
+
+Dve branše imaju i sopstveni fond reči:
+
+- **Pflege** — 50 zadataka iz ugla negovatelja, ne pacijenta: `Pflegedokumentation`, `Pflegegrad`, `Schichtübergabe`, razlika `Grundpflege` ↔ `Behandlungspflege`, `Sturzprophylaxe`, plus glagoli kojima se piše izveštaj (*verabreichen*, *abzeichnen*, *anordnen*).
+- **Elektrotechnik** — 59 zadataka na sopstvenoj temi `Elektrotechnik, Anlagen & Instandhaltung`: od `Spannung`, `Stromkreis` i `Schaltplan` do `Inbetriebnahme`, `Abnahmeprüfung`, `Störungsmeldung` i `Prüfbericht`. Ova branša diže i temu `IT & Software`, jer isti čovek u istoj smeni čita i šemu i SPS kod.
 
 Efekat je namerno mali i objašnjiv:
 
-- par rečničkih tema dobije blagu prednost (Pflege/Medizin → `Gesundheit & Körper`, Bau → `Wohnen & Mobilität` i `Arbeit & Karriere`, IT → `IT & Software` …),
+- par rečničkih tema dobije blagu prednost (Pflege/Medizin → `Gesundheit & Körper`, Elektrotechnik → `Elektrotechnik …` i `IT & Software`, Bau → `Wohnen & Mobilität` i `Arbeit & Karriere`, IT → `IT & Software` …),
 - kad su dva zadatka podjednako prikladna, pobeđuje onaj iz tvoje oblasti,
 - kad je to odlučilo, u obrazloženju zadatka piše zašto: *„Vorgezogen, weil du in der Pflege arbeitest."*
 
@@ -162,7 +170,7 @@ Pored dnevnih sesija postoji **Kurs** (meni → Kurs): 24 lekcije u dva dela koj
 - **Teil 2 (L13–L24, B2):** uvodiš novog kolegu Tareka (članovi i rod), roditeljski sastanak u vrtiću (zavisne rečenice), organizuješ Betriebsausflug (glagoli s predlozima), prezentuješ klijentu (deklinacija prideva), rešavaš sukob s Lenom (povratni glagoli, negacija), večernji kurs na VHS (lažni prijatelji, tvorba reči), osporavaš Nebenkostenabrechnung (genitiv), glasine o fuziji (subjektivni modalni glagoli), interna prijava za vođu tima (participi kao pridevi), slušanje vesti (indirektni govor), pa dva ispitna dana: Lesen i Schreiben – i položen B2.
 
 Svaka lekcija ima:
-- **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog – muški i ženski likovi različitim glasom, ako si uradio korak 1c.
+- **Situaciju kao dijalog** u kom biraš svoje replike; svaka od tri opcije dobija objašnjenje zašto je (ne)prikladna. Tu je srž lekcije. Dugme „Gespräch anhören" čita ceo dijalog – muški i ženski likovi različitim glasom, ako si uradio korak 1c. **Ime govornika se ne izgovara**: ko govori već vidiš pored replike, a svaki lik ima svoj glas, pa bi „Sabine:" pred svakom rečenicom samo prekidalo nemački zbog kojeg slušaš.
 - **Objašnjenje gramatike** sa tabelom nemački ↔ srpski i zvučnikom uz svaki primer.
 - **10–11 interaktivnih koraka**: razgovor, „Fehler finden" (klikni pogrešnu reč u kolegin mejl), spajanje parova, praznine, prevodi.
 - **Završni zadatak**: pišeš ili govoriš sam.
@@ -218,11 +226,33 @@ ili `dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."` u folderu `src/L
 
 | Gde | BaseUrl | Ključ | Napomena |
 |---|---|---|---|
-| Ollama (lokalno, besplatno) | `http://localhost:11434/v1` | ne treba | `ollama pull qwen2.5:7b`; na CPU sporo (minuti po oceni), sa GPU brzo |
+| Ollama (lokalno, besplatno) | `http://localhost:11434/v1` | ne treba | `ollama pull qwen2.5:7b`; **obavezno podigni `num_ctx`, vidi dole**; na CPU sporo (minuti po oceni), sa GPU brzo |
 | LM Studio (lokalno) | `http://localhost:1234/v1` | ne treba | učitaj model u LM Studio, uključi server |
 | OpenRouter (cloud, ima besplatne modele) | `https://openrouter.ai/api/v1` | `OPENAI_API_KEY` | modeli sa `:free` sufiksom, npr. `meta-llama/llama-3.3-70b-instruct:free` |
 | Groq (cloud, besplatna kvota, vrlo brzo) | `https://api.groq.com/openai/v1` | `OPENAI_API_KEY` | npr. `llama-3.3-70b-versatile` |
 | Mistral / DeepSeek / OpenAI | njihov `/v1` URL | `OPENAI_API_KEY` | |
+
+### Ollama: podrazumevani kontekst je premali (najskuplja zamka)
+
+Ollama podrazumevano daje modelu prozor od 4096 tokena. Za **test veze** to je dovoljno i sve izgleda zeleno — ali cela ocena teksta je oko 790 ulaznih plus 800 izlaznih tokena i pri tom podešavanju **nikad se ne završi**. Izmereno na ovom računaru (qwen2.5:7b, GPU):
+
+| Podešavanje | Trajanje | Ishod |
+|---|---|---|
+| `num_ctx` 4096 (podrazumevano) | 600 s | ništa |
+| `num_ctx` 8192 | **117 s** | ispravan JSON |
+
+JSON-šema nije kriva (122 s sa njom, 139 s bez) — kontekst jeste. Napravi izvedeni model jednom; to je samo sloj podešavanja nad istim fajlovima i ne troši dodatni disk:
+
+```bash
+printf 'FROM qwen2.5:7b\nPARAMETER num_ctx 8192\n' > Modelfile
+ollama create qwen2.5-lotse -f Modelfile
+```
+
+Zatim u *Einstellungen → KI-Tutor* upiši `qwen2.5-lotse` kao model.
+
+### Zeitlimit je Antwort
+
+Ispod modela stoji i **Zeitlimit je Antwort (Sekunden)**. Lokalni provajderi kreću od **300 s**, cloud od 120 s, jer 7B model na desktop GPU-u traži jedan do tri minuta za punu ocenu. Ako ti se javi „Zeitüberschreitung" posle dva minuta čekanja, to je ovaj broj — podigni ga, ne menjaj model.
 
 Primer pokretanja sa Ollamom:
 

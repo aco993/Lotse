@@ -21,7 +21,7 @@ Adaptation is not a slogan; it is a closed loop with four concrete mechanisms.
 
 ### 2.1 A skill map instead of a course
 
-The language is decomposed into **59 skill nodes** across seven areas (Grammatik, Wortschatz, Redemittel, Lesen, Hören, Schreiben, Sprechen), each placed on a CEFR sub-band (B1.1 … B2.2). Exercises point at nodes; **54 error codes** point at nodes. The learner is described by one ability estimate per node – nothing is ever "lesson 7 of 30".
+The language is decomposed into **62 skill nodes** across seven areas (Grammatik, Wortschatz, Redemittel, Lesen, Hören, Schreiben, Sprechen), each placed on a CEFR sub-band (B1.1 … B2.2, plus three C1 nodes that only a learner with the C1 target reaches). Exercises point at nodes; **57 error codes** point at nodes. The learner is described by one ability estimate per node – nothing is ever "lesson 7 of 30".
 
 ### 2.2 An ability model that speaks CEFR
 

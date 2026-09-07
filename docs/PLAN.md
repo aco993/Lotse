@@ -61,13 +61,16 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 
 ## From the persona test – next
 
-- ✅ Target level as a profile setting (B2 / C1), 0.9.0: the focus ranking's band cap follows the setting, so a C1 learner reaches `WS.C1_GEHOBEN` and the B2.2 grammar; app bar, Themen and Heute ("C1-Nähe") follow it, and the exam page says plainly that it stays Goethe-B2.
-- ✅ Occupation as a profile setting, 0.9.0: a +0.15 nudge for the matching vocabulary nodes and a tie-break among equally suitable exercises, named in the reason when it decided; unset is a no-op.
-- ✅ Name in the profile, 0.9.0: the content carries `{Vorname}`/`{Nachname}`/`{Name}` tokens, filled in per learner at the render boundary; empty fields keep the author's own name.
+- ✅ Target level as a profile setting (B2 / C1), 0.9.0: the focus ranking's band cap follows the setting, so a C1 learner reaches the C1 nodes and the B2.2 grammar; app bar, Themen and Heute ("C1-Nähe") follow it, and the exam page says plainly that it stays Goethe-B2.
+- ✅ Occupation as a profile setting, 0.9.0: a +0.15 nudge for the matching vocabulary nodes and a tie-break among equally suitable exercises, named in the reason when it decided; unset is a no-op. Seven fields incl. `Elektrotechnik`; a test holds every field to a label, a reason, existing nodes *with content* and tags that actually occur (three fields had named tags no exercise carried).
+- ✅ Name in the profile, 0.9.0: the content carries `{Vorname}`/`{Nachname}`/`{Name}` tokens, filled in per learner at the render boundary. Empty fields get a stand-in drawn from a small pool by a stable hash of the account id (`NameFallback`) - stable for one learner, different between learners, and never the author's own name, which is the wrong default in a public repository.
 - ✅ Motivation beyond the streak, 0.9.0: weekly goal in minutes on Heute, a Monday Wochenrückblick, and three FSRS cards on Fortschritt (stuck items, seven-day due forecast, current retention). No XP or leaderboard - see KONZEPT §5.
 - ✅ Readiness trend, 0.9.0: a daily snapshot per learner, compared against one six to eight days old; Heute shows ▲/▼/= or stays silent.
 - ✅ Plain-language names, 0.9.0: `SkillNode.PlainTitle` for all 26 grammar nodes, used on Heute; Themen and Fortschritt keep the terms.
 - ✅ English as a second helper language, 0.9.0: `HelperLanguage` on the profile swaps vocabulary prompts, translation sources, the grammar tables' second column and every contrastive note; the interface stays German. The notes are written for an English first language, not translated from the Serbian ones.
+- ✅ Occupational depth, 0.9.0: 50 care-side exercises on `WS.GESUNDHEIT_KOERPER` (the existing 70 items were the patient's side) and a new field `WS.TECHNIK_ELEKTRO` with 59, wired to `Occupation.Elektrotechnik`.
+- ✅ C1 from one node to three, 0.9.0: `GR.C1_SATZVERKNUEPFUNG` (44 items - the elevated connectors, where the trap is never the meaning but the placement) and `WS.C1_IDIOMATIK` (50 items - the frames you cannot build word by word), each with its own error codes where the journal expects them.
+- ✅ Tutor time budget per provider, 0.9.0: local presets start at 300 s, hosted stay at 120 s, and the value is editable per account. `Draft()` used to drop `Effort` and `TimeoutSeconds`, so no limit above the default could be kept.
 - ⬜ Optional: Web API + minimal React client to demonstrate the engine's independence from Blazor.
 
 ## Deliberate non-goals
