@@ -1,6 +1,6 @@
 # Prompt: Audit gramatičke pokrivenosti za Goethe-Zertifikat B2
 
-Nalepi sve ispod crte u novu sesiju (Claude Code, Opus). Radni direktorijum: `C:\Users\a.micic\Documents\dev AI\Lotse`.
+Nalepi sve ispod crte u novu sesiju (Claude Code, Opus). Radni direktorijum: koren ovog repozitorijuma.
 
 ---
 

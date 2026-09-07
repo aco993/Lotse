@@ -15,12 +15,48 @@ public class NameTemplateTests
         => Assert.Equal(expected, NameTemplate.Render(template, "Marko", "Petrović"));
 
     [Fact]
-    public void Empty_fields_fall_back_to_the_authors_own_name()
-        => Assert.Equal("Aleksandar Micić", NameTemplate.Render("{Name}", "", "   "));
+    public void Empty_fields_fall_back_to_a_neutral_stand_in()
+        => Assert.Equal($"{NameFallback.Neutral.First} {NameFallback.Neutral.Last}", NameTemplate.Render("{Name}", "", "   "));
 
     [Fact]
     public void One_filled_field_still_falls_back_for_the_other()
-        => Assert.Equal("Marko Micić", NameTemplate.Render("{Name}", "Marko", ""));
+        => Assert.Equal($"Marko {NameFallback.Neutral.Last}", NameTemplate.Render("{Name}", "Marko", ""));
+
+    [Fact]
+    public void The_stand_in_is_never_the_authors_own_name()
+    {
+        // The repository is public: a stranger running the app must not be greeted as its author.
+        var names = Enumerable.Range(0, 200).Select(i => NameFallback.For($"user-{i}")).ToList();
+        Assert.All(names, n => Assert.NotEqual("Aleksandar", n.First));
+        Assert.All(names, n => Assert.NotEqual("Micić", n.Last));
+        Assert.NotEqual("Aleksandar", NameTemplate.DefaultFirstName);
+        Assert.NotEqual("Micić", NameTemplate.DefaultLastName);
+    }
+
+    [Fact]
+    public void The_stand_in_is_stable_per_account_but_differs_between_accounts()
+    {
+        // Stable: the same learner must not be renamed by a restart (which string.GetHashCode would do).
+        Assert.Equal(NameFallback.For("account-a"), NameFallback.For("account-a"));
+
+        var distinct = Enumerable.Range(0, 60).Select(i => NameFallback.For($"account-{i}")).Distinct().Count();
+        Assert.True(distinct > 20, $"Zu wenig Streuung: nur {distinct} verschiedene Namen auf 60 Konten");
+    }
+
+    [Fact]
+    public void A_learner_view_fills_only_the_fields_that_are_empty()
+    {
+        var own = new LearnerView("Marko", "Petrović", HelperLanguage.Serbian).WithFallbackFor("acc");
+        Assert.Equal("Marko", own.FirstName);
+        Assert.Equal("Petrović", own.LastName);
+
+        var half = new LearnerView("Marko", "", HelperLanguage.Serbian).WithFallbackFor("acc");
+        Assert.Equal("Marko", half.FirstName);
+        Assert.Equal(NameFallback.For("acc").Last, half.LastName);
+
+        var none = new LearnerView("", "", HelperLanguage.Serbian).WithFallbackFor("acc");
+        Assert.Equal(NameFallback.For("acc"), (none.FirstName, none.LastName));
+    }
 
     [Fact]
     public void Rendering_an_exercise_leaves_the_answers_alone()

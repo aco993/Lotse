@@ -13,7 +13,13 @@ public sealed record TutorPreset(
     string? SignupUrl,
     /// <summary>One line the settings page shows: cost, speed, quality.</summary>
     string Note,
-    IReadOnlyList<string> SuggestedModels);
+    IReadOnlyList<string> SuggestedModels,
+    /// <summary>
+    /// Seconds to allow one completion, chosen per provider rather than globally. A hosted 70B answers a full
+    /// evaluation in seconds; a 7B on this machine needs about two minutes for the same ~800 tokens (measured:
+    /// 6.7 tok/s), which the old flat 120 s cut off just before the end. Local presets therefore start generous.
+    /// </summary>
+    int DefaultTimeoutSeconds = 120);
 
 public static class TutorPresets
 {
@@ -33,12 +39,12 @@ public static class TutorPresets
             ["meta-llama/llama-3.3-70b-instruct:free", "qwen/qwen3-235b-a22b:free", "anthropic/claude-sonnet-4.5", "openai/gpt-5-mini"]),
         new("ollama", "Ollama (lokal, kostenlos)", TutorProvider.OpenAi, "http://localhost:11434/v1", "qwen2.5:7b",
             null, false, "https://ollama.com/download",
-            "Läuft auf deinem Rechner, keine Daten verlassen ihn. Ohne GPU langsam (Minuten pro Bewertung); ab 7B brauchbar.",
-            ["qwen2.5:7b", "gemma3:12b", "mistral:7b", "llama3.1:8b"]),
+            "Läuft auf deinem Rechner, keine Daten verlassen ihn. Ohne GPU langsam (Minuten pro Bewertung); ab 7B brauchbar. Ollamas Standard-Kontext (4096) ist für eine ganze Bewertung zu klein – lege dir ein Modell mit „PARAMETER num_ctx 8192“ an.",
+            ["qwen2.5:7b", "gemma3:12b", "mistral:7b", "llama3.1:8b"], DefaultTimeoutSeconds: 300),
         new("lmstudio", "LM Studio (lokal, kostenlos)", TutorProvider.OpenAi, "http://localhost:1234/v1", "local-model",
             null, false, "https://lmstudio.ai/",
             "Wie Ollama, mit grafischer Oberfläche. Modell in LM Studio laden und den Server starten.",
-            ["local-model"]),
+            ["local-model"], DefaultTimeoutSeconds: 300),
         new("mistral", "Mistral", TutorProvider.OpenAi, "https://api.mistral.ai/v1", "mistral-large-latest",
             "MISTRAL_API_KEY", true, "https://console.mistral.ai/",
             "Europäischer Anbieter, gutes Deutsch, günstig.",
@@ -54,7 +60,7 @@ public static class TutorPresets
         new("custom", "Eigener OpenAI-kompatibler Server", TutorProvider.OpenAi, null, "",
             "OPENAI_API_KEY", false, null,
             "Beliebiger Endpunkt, der /chat/completions spricht.",
-            []),
+            [], DefaultTimeoutSeconds: 300),
     ];
 
     public static TutorPreset Get(string? id) => All.FirstOrDefault(p => p.Id == id) ?? All[0];
@@ -88,5 +94,13 @@ public sealed record TutorSettings(
         TimeoutSeconds = TimeoutSeconds,
     };
 
-    public static TutorSettings Default => new("groq", null, TutorPresets.Get("groq").DefaultModel, null);
+    public static TutorSettings Default => ForPreset("groq");
+
+    /// <summary>A fresh setting for one provider: its model and its timeout, so switching provider never leaves the
+    /// previous provider's budget behind (120 s from a hosted model would cut a local one off mid-answer).</summary>
+    public static TutorSettings ForPreset(string presetId)
+    {
+        var p = TutorPresets.Get(presetId);
+        return new(p.Id, null, p.DefaultModel, null, TimeoutSeconds: p.DefaultTimeoutSeconds);
+    }
 }

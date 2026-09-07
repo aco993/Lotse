@@ -19,7 +19,11 @@ public class LessonContentTests(CatalogFixture fx) : IClassFixture<CatalogFixtur
     public void Course_covers_every_grammar_node_with_a_lesson_explanation()
     {
         var explained = fx.Catalog.Lessons.Select(l => l.Grammar.NodeId).ToHashSet();
-        var grammarNodes = fx.Catalog.Nodes.Where(n => n.Id.StartsWith("GR.", StringComparison.Ordinal)).Select(n => n.Id).ToList();
+        // The course is a B2 course ("Dein Kurs auf B2") and ends there by design; C1 nodes are drilled for
+        // learners who set that target, but no lesson is expected to explain them.
+        var grammarNodes = fx.Catalog.Nodes
+            .Where(n => n.Id.StartsWith("GR.", StringComparison.Ordinal) && n.Band != CefrBand.C1)
+            .Select(n => n.Id).ToList();
         var missing = grammarNodes.Where(n => !explained.Contains(n)).ToList();
         // A handful of small nodes are practised inside other lessons rather than explained on their own.
         Assert.True(missing.Count <= 6, "Nicht erklärte Grammatikknoten: " + string.Join(", ", missing));
@@ -87,4 +91,25 @@ public class LessonContentTests(CatalogFixture fx) : IClassFixture<CatalogFixtur
     [Fact]
     public void Lesson_steps_cover_the_declared_grammar_node()
         => Assert.All(fx.Catalog.Lessons, l => Assert.Contains(l.Steps, id => fx.Catalog.Exercise(id)!.NodeId == l.Grammar.NodeId));
+
+    [Fact]
+    public void Read_aloud_speaks_the_sentence_and_never_the_speaker_label()
+    {
+        // The name stands beside the line on screen and each character has their own voice; speaking "Sabine:"
+        // before every turn only interrupts the German.
+        var told = new DialogueLine("Sabine (im Stand-up)", "Der Sprint beginnt am Montag.");
+        Assert.Equal("Der Sprint beginnt am Montag.", told.SpokenText);
+
+        var mine = new DialogueLine("Du", "", ["Das schaffe ich.", "Weiss nicht.", "Egal."], 0,
+            ["passend", "zu vage", "unhoeflich"]);
+        Assert.Equal("Das schaffe ich.", mine.SpokenText);
+
+        foreach (var l in fx.Catalog.Lessons)
+            foreach (var line in l.Story)
+            {
+                var label = line.Speaker.Split('(')[0].Trim();
+                Assert.False(line.SpokenText.StartsWith(label + ":", StringComparison.Ordinal),
+                    $"{l.Id}: Sprechername im Vorlesetext");
+            }
+    }
 }

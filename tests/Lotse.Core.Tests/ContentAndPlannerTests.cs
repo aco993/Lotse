@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Infrastructure.Content;
@@ -103,6 +104,41 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
             .Select(Path.GetFileName)
             .ToList();
         Assert.True(offenders.Count == 0, "Fester Name statt Token in: " + string.Join(", ", offenders));
+    }
+
+    /// <summary>
+    /// The repository is public, and an absolute path from the machine it was written on carries a real Windows
+    /// account name into it. Three files had one (a prompt doc and the two harness scripts) before this test.
+    /// Tools take their paths from their own location or from an argument instead.
+    /// </summary>
+    [Fact]
+    public void No_file_carries_an_absolute_home_path_of_the_machine_it_was_written_on()
+    {
+        var root = RepositoryRoot();
+        Assert.SkipWhen(root is null, "Quellbaum nicht gefunden (Lauf aus einem Paket ohne Repo).");
+
+        var skipDirs = new[] { "bin", "obj", ".git", "node_modules", "TestResults" };
+        var pattern = new Regex("[A-Za-z]:[\\\\/]Users[\\\\/]", RegexOptions.IgnoreCase);
+        var offenders = Directory.EnumerateFiles(root!, "*.*", SearchOption.AllDirectories)
+            .Where(f => !f.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Any(skipDirs.Contains))
+            .Where(f => TextExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
+            .Where(f => !Path.GetFileName(f).Equals("ContentAndPlannerTests.cs", StringComparison.Ordinal)) // this file states the pattern
+            .Where(f => pattern.IsMatch(File.ReadAllText(f)))
+            .Select(f => Path.GetRelativePath(root!, f))
+            .ToList();
+
+        Assert.True(offenders.Count == 0, "Absoluter Benutzerpfad in: " + string.Join(", ", offenders));
+    }
+
+    private static readonly string[] TextExtensions =
+        [".cs", ".razor", ".json", ".md", ".ps1", ".mjs", ".js", ".css", ".yml", ".yaml", ".props", ".slnx", ".editorconfig"];
+
+    /// <summary>Walks up from the test binary until the solution file appears; null when there is no source tree.</summary>
+    private static string? RepositoryRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Lotse.slnx"))) dir = dir.Parent;
+        return dir?.FullName;
     }
 
     /// <summary>
@@ -222,6 +258,38 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
 
         // An adaptation the learner cannot see is indistinguishable from a whim.
         Assert.Contains("weil du in der Pflege arbeitest", mit.First(r => r.NodeId == "WS.GESUNDHEIT_KOERPER").Reason);
+    }
+
+    [Fact]
+    public void Elektrotechnik_reaches_its_own_node_and_the_neighbouring_IT_one()
+    {
+        var states = AllEqual();
+        var ohne = new SessionPlanner().RankFocusNodes(Input(15, states)).ToList();
+        var mit = new SessionPlanner().RankFocusNodes(Input(15, states) with { Occupation = Occupation.Elektrotechnik }).ToList();
+
+        int Rank(List<(string NodeId, double Priority, string Reason)> l, string id) => l.FindIndex(r => r.NodeId == id);
+        Assert.True(Rank(mit, "WS.TECHNIK_ELEKTRO") < Rank(ohne, "WS.TECHNIK_ELEKTRO"));
+        // The trade reads schematics and PLC code in the same shift, so IT is lifted too - but only as a nudge.
+        Assert.True(Rank(mit, "WS.IT_SOFTWARE") < Rank(ohne, "WS.IT_SOFTWARE"));
+        Assert.Contains("weil du in der Elektrotechnik arbeitest", mit.First(r => r.NodeId == "WS.TECHNIK_ELEKTRO").Reason);
+    }
+
+    [Fact]
+    public void Every_occupation_can_name_itself_and_points_only_at_nodes_that_exist()
+    {
+        // A field added to the enum without a label, a reason or real content would steer the planner into nothing.
+        var nodeIds = fx.Catalog.Nodes.Select(n => n.Id).ToHashSet();
+        foreach (var o in Enum.GetValues<Occupation>().Where(o => o != Occupation.Unspecified))
+        {
+            Assert.NotEqual("Keine Angabe", o.Label());
+            Assert.False(string.IsNullOrWhiteSpace(o.ReasonTail()), $"{o}: ohne Begründung");
+            Assert.NotEmpty(o.PreferredNodes());
+            Assert.All(o.PreferredNodes(), id => Assert.Contains(id, nodeIds));
+            Assert.All(o.PreferredNodes(), id => Assert.True(fx.Catalog.ForNode(id).Any(), $"{o}: Knoten {id} ohne Übungen"));
+            Assert.NotEmpty(o.PreferredTags());
+            Assert.All(o.PreferredTags(), t => Assert.Contains(fx.Catalog.Exercises,
+                e => e.Tags.Contains(t, StringComparer.OrdinalIgnoreCase)));
+        }
     }
 
     [Fact]

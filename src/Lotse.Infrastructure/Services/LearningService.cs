@@ -522,7 +522,8 @@ public sealed class LearningService(
     {
         var row = await db.Profiles.AsNoTracking().Where(p => p.UserId == userId)
             .Select(p => new { p.FirstName, p.LastName, p.HelperLanguage }).FirstOrDefaultAsync(ct);
-        return row is null ? LearnerView.Default : new LearnerView(row.FirstName ?? "", row.LastName ?? "", row.HelperLanguage);
+        var view = row is null ? LearnerView.Default : new LearnerView(row.FirstName ?? "", row.LastName ?? "", row.HelperLanguage);
+        return view.WithFallbackFor(userId);
     }
 
     public async Task<SessionView?> GetSessionAsync(Guid id, CancellationToken ct = default)

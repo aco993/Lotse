@@ -165,7 +165,7 @@ public class PiperTtsServiceTests
         try
         {
             // Umlauts and "ć" are the point: they only survive if stdin is written as UTF-8.
-            const string satz = "Sehr geehrter Herr Micić, Donnerstag um zehn Uhr passt. Viele Grüße, Thomas Krüger.";
+            const string satz = "Sehr geehrter Herr Petrović, Donnerstag um zehn Uhr passt. Viele Grüße, Thomas Krüger.";
             var key = await piper!.SynthesizeAsync(satz);
 
             Assert.NotNull(key);

@@ -23,8 +23,23 @@ public enum HelperLanguage
 /// </summary>
 public sealed record LearnerView(string FirstName, string LastName, HelperLanguage HelperLanguage)
 {
-    /// <summary>The author's own defaults: his name, his language. Used wherever no profile is at hand.</summary>
+    /// <summary>Used wherever no profile is at hand; the empty names fall back inside <see cref="NameFallback"/>.</summary>
     public static readonly LearnerView Default = new("", "", HelperLanguage.Serbian);
+
+    /// <summary>
+    /// The names actually shown, with the account's own stand-in filled in for whatever the learner left empty.
+    /// Resolved here rather than in <see cref="NameTemplate"/> so that the stand-in can differ per account.
+    /// </summary>
+    public LearnerView WithFallbackFor(string? accountId)
+    {
+        if (!string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)) return this;
+        var (first, last) = NameFallback.For(accountId);
+        return this with
+        {
+            FirstName = string.IsNullOrWhiteSpace(FirstName) ? first : FirstName,
+            LastName = string.IsNullOrWhiteSpace(LastName) ? last : LastName,
+        };
+    }
 }
 
 public static class HelperLanguageExtensions

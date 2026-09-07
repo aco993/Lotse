@@ -206,6 +206,42 @@ public sealed class TutorRegistryTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Timeout_and_effort_survive_a_save_and_reload()
+    {
+        var dp = new EphemeralDataProtectionProvider();
+        var reg = NewRegistry(dp);
+        await reg.SaveAsync(new TutorSettings("ollama", null, "qwen2.5-lotse", null, "high", 420));
+
+        var second = NewRegistry(dp);
+        await second.InitializeAsync();
+
+        Assert.Equal(420, second.Settings.TimeoutSeconds);
+        Assert.Equal("high", second.Settings.Effort);
+    }
+
+    [Fact]
+    public void Local_presets_start_with_a_larger_time_budget_than_hosted_ones()
+    {
+        // A hosted 70B answers a full evaluation in seconds; a local 7B needs one to three minutes for the same
+        // ~800 tokens, so one flat budget cannot serve both.
+        Assert.Equal(300, TutorSettings.ForPreset("ollama").TimeoutSeconds);
+        Assert.Equal(300, TutorSettings.ForPreset("lmstudio").TimeoutSeconds);
+        Assert.Equal(120, TutorSettings.ForPreset("groq").TimeoutSeconds);
+        Assert.Equal(120, TutorSettings.ForPreset("anthropic").TimeoutSeconds);
+    }
+
+    [Fact]
+    public void Switching_preset_takes_that_provider_model_and_budget_along()
+    {
+        var fresh = TutorSettings.ForPreset("ollama");
+        Assert.Equal("ollama", fresh.PresetId);
+        Assert.Equal("qwen2.5:7b", fresh.Model);
+        Assert.Equal(300, fresh.TimeoutSeconds);
+        Assert.Null(fresh.ApiKey);
+        Assert.Null(fresh.BaseUrl); // falls back to the preset's own URL
+    }
+
+    [Fact]
     public async Task Probe_reports_unreachable_servers_in_plain_words()
     {
         var reg = NewRegistry(new EphemeralDataProtectionProvider());
