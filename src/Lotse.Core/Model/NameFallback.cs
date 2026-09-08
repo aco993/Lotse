@@ -36,25 +36,11 @@ public static class NameFallback
     public static (string First, string Last) For(string? accountId)
     {
         if (string.IsNullOrWhiteSpace(accountId)) return Neutral;
-        var h = StableHash(accountId);
+        var h = StableHash.Fnv1a(accountId);
         // Two independent draws from one hash: the low half picks the first name, the high half the surname, so
         // "Lukas" is not always followed by "Berger".
         return (FirstNames[(int)(h % (uint)FirstNames.Count)],
                 LastNames[(int)(h / 16 % (uint)LastNames.Count)]);
     }
 
-    /// <summary>
-    /// FNV-1a. Not <see cref="string.GetHashCode()"/> on purpose: that one is randomised per process, so the same
-    /// learner would be handed a different name after every restart of the app.
-    /// </summary>
-    private static uint StableHash(string s)
-    {
-        var hash = 2166136261u;
-        foreach (var c in s)
-        {
-            hash ^= c;
-            hash *= 16777619u;
-        }
-        return hash;
-    }
 }

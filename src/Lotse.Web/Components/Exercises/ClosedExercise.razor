@@ -128,7 +128,8 @@ else
         _result = null;
         _announcement = "";
         _shownAt = DateTime.UtcNow;
-        var rng = new Random(Exercise.Id.GetHashCode());
+        // Stable seed: string.GetHashCode is randomised per process, which re-shuffled the chunks after every restart.
+        var rng = new Random(StableHash.Seed(Exercise.Id));
         _pool = Exercise.Type == ExerciseType.WordOrder ? Exercise.Options.OrderBy(_ => rng.Next()).ToList() : [];
     }
     private string? _lastExerciseId;

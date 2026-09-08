@@ -107,6 +107,58 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     /// <summary>
+    /// Authored keys leaned hard on position (index 1 in 58 % of reading/listening questions, the third
+    /// multiple-choice option right only 9 % of the time, four reading tasks with a constant key). KeyShuffle
+    /// balances them at load; this keeps the balance from drifting back and makes sure only the text moved.
+    /// </summary>
+    [Fact]
+    public void Choice_keys_are_balanced_and_no_reading_task_has_a_constant_key()
+    {
+        var mc = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.MultipleChoice && e.Options.Count == 3).ToList();
+        Assert.True(mc.Count >= 50, $"nur {mc.Count} dreioptionige MC-Aufgaben");
+        for (var i = 0; i < 3; i++)
+        {
+            var share = mc.Count(e => e.CorrectIndex == i) / (double)mc.Count;
+            Assert.InRange(share, 0.20, 0.47);
+        }
+
+        var readings = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.Reading && e.Questions.Count >= 4).ToList();
+        Assert.NotEmpty(readings);
+        Assert.All(readings, r => Assert.True(r.Questions.Select(q => q.CorrectIndex).Distinct().Count() > 1, $"{r.Id}: konstanter Schlüssel"));
+
+        var questions = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.Reading).SelectMany(e => e.Questions).ToList();
+        var topShare = questions.GroupBy(q => q.CorrectIndex).Max(g => g.Count()) / (double)questions.Count;
+        Assert.True(topShare < 0.45, $"eine Position trägt {topShare:P0} der Schlüssel");
+    }
+
+    [Fact]
+    public void Key_shuffle_is_deterministic_and_moves_only_the_text()
+    {
+        var e = new Exercise
+        {
+            Id = "mc.test.001",
+            Type = ExerciseType.MultipleChoice,
+            NodeId = "GR.PASSIV",
+            Band = CefrBand.B2_1,
+            Prompt = "___",
+            Options = ["a", "b", "c", "d"],
+            CorrectIndex = 1,
+        };
+        var once = KeyShuffle.Apply(e);
+        var twice = KeyShuffle.Apply(e);
+        Assert.Equal(once.Options, twice.Options);
+        Assert.Equal(once.CorrectIndex, twice.CorrectIndex);
+        Assert.Equal("b", once.Options[once.CorrectIndex!.Value]);
+        Assert.Equal(e.Options.OrderBy(o => o), once.Options.OrderBy(o => o));
+
+        // Types whose order carries meaning are left alone.
+        var spot = e with { Type = ExerciseType.SpotError, Answers = ["x"] };
+        Assert.Same(spot, KeyShuffle.Apply(spot));
+        var order = e with { Type = ExerciseType.WordOrder, Answers = ["a b c d"] };
+        Assert.Same(order, KeyShuffle.Apply(order));
+    }
+
+    /// <summary>
     /// The stand-in name a learner gets when they leave the profile empty must not belong to anyone in the course.
     /// The first pool had "Berger" in it, and Lesson 1's team lead is Sabine Berger - so a nameless learner read
     /// "Frau Berger hat mir Ihre Einarbeitung übergeben" as Herr Berger. Surnames are checked against the whole
