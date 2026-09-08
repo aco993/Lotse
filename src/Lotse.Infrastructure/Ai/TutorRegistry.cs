@@ -177,10 +177,28 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
         return "Kein KI-Tutor konfiguriert.";
     }
 
-    /// <summary>Turns provider exceptions into a sentence a learner can act on.</summary>
+    /// <summary>Turns provider exceptions into a sentence a learner can act on. Every place that shows a tutor
+    /// error to the learner goes through here - the probe, the evaluation alert, the discussion partner, the
+    /// generators - so nobody reads "The request was canceled due to the configured HttpClient.Timeout".</summary>
     public static string Friendly(Exception e)
     {
         var m = e.Message;
+        if (e is OperationCanceledException)
+            return "Zeitlimit überschritten. In den Einstellungen ein höheres „Zeitlimit je Antwort“ wählen – oder einen kürzeren Text abgeben.";
+        // The Anthropic SDK throws its own hierarchy, not HttpRequestException.
+        switch (e)
+        {
+            case Anthropic.Exceptions.AnthropicUnauthorizedException or Anthropic.Exceptions.AnthropicForbiddenException:
+                return "Schlüssel abgelehnt (401/403). Bitte prüfen, ob er vollständig kopiert wurde und zum gewählten Anbieter gehört.";
+            case Anthropic.Exceptions.AnthropicRateLimitException:
+                return "Ratenlimit erreicht (429). Kurz warten oder ein anderes Modell wählen.";
+            case Anthropic.Exceptions.AnthropicNotFoundException:
+                return "Modell nicht gefunden (404). Modellname in den Einstellungen prüfen.";
+            case Anthropic.Exceptions.Anthropic5xxException:
+                return "Der Anbieter meldet einen Serverfehler. Kurz warten und noch einmal versuchen.";
+            case Anthropic.Exceptions.AnthropicBadRequestException bad:
+                return "Anfrage abgelehnt: " + bad.Message;
+        }
         if (e is HttpRequestException http)
         {
             return http.StatusCode switch

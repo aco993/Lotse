@@ -2,6 +2,7 @@ using System.Text.Json;
 using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Core.Tutor;
+using Lotse.Infrastructure.Ai;
 using Lotse.Infrastructure.Content;
 using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
@@ -839,7 +840,7 @@ public sealed class LearningService(
             catch (Exception e)
             {
                 logger.LogWarning(e, "KI-Bewertung fehlgeschlagen, Selbstcheck als Fallback.");
-                tutorError = e.Message;
+                tutorError = TutorRegistry.Friendly(e);
             }
         }
 

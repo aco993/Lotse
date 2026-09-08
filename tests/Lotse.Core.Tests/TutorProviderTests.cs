@@ -26,11 +26,19 @@ internal sealed class ScriptedHandler(params Func<HttpRequestMessage, HttpRespon
         return step(request);
     }
 
-    public static HttpResponseMessage Chat(string content, HttpStatusCode status = HttpStatusCode.OK)
-        => new(status) { Content = new StringContent(JsonSerializer.Serialize(new { choices = new[] { new { message = new { role = "assistant", content } } } })) };
+    public static HttpResponseMessage Chat(string content, HttpStatusCode status = HttpStatusCode.OK, string finishReason = "stop")
+        => new(status) { Content = new StringContent(JsonSerializer.Serialize(new { choices = new[] { new { message = new { role = "assistant", content }, finish_reason = finishReason } } })) };
 
     public static HttpResponseMessage Error(HttpStatusCode status, string message)
         => new(status) { Content = new StringContent(JsonSerializer.Serialize(new { error = new { message } })) };
+
+    /// <summary>A 429 carrying the provider's requested pause, as Groq's free tier sends after the daily quota.</summary>
+    public static HttpResponseMessage RateLimited(TimeSpan retryAfter)
+    {
+        var r = Error(HttpStatusCode.TooManyRequests, "Rate limit reached for the day");
+        r.Headers.RetryAfter = new System.Net.Http.Headers.RetryConditionHeaderValue(retryAfter);
+        return r;
+    }
 }
 
 public class OpenAiCompatibleTutorTests
@@ -84,6 +92,66 @@ public class OpenAiCompatibleTutorTests
         var reply = await tutor.DiscussAsync("These", [new ChatTurn(true, "Hallo")], Ctx);
         Assert.Equal("bereit", reply);
         Assert.Equal(2, handler.Requests.Count);
+    }
+
+    [Fact]
+    public async Task A_long_retry_after_is_not_waited_out_but_reported()
+    {
+        // Groq's free tier answers a daily-quota hit with Retry-After in the hours. The old loop slept on it.
+        var handler = new ScriptedHandler(_ => ScriptedHandler.RateLimited(TimeSpan.FromHours(1)));
+        var tutor = new OpenAiCompatibleTutor(Options, NullLogger<OpenAiCompatibleTutor>.Instance, handler);
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => tutor.DiscussAsync("t", [new ChatTurn(true, "hi")], Ctx));
+        sw.Stop();
+
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(5), $"hat {sw.Elapsed.TotalSeconds:F0} s gewartet");
+        Assert.Contains("Ratenlimit", ex.Message);
+        Assert.Contains("60 Minuten", ex.Message);
+        Assert.Single(handler.Requests); // no pointless second attempt
+    }
+
+    [Fact]
+    public async Task A_truncated_answer_is_named_instead_of_becoming_a_json_parser_error()
+    {
+        var handler = new ScriptedHandler(_ => ScriptedHandler.Chat("{\"overallScore\":0.5,\"rubric\":[{\"crit", finishReason: "length"));
+        var tutor = new OpenAiCompatibleTutor(Options, NullLogger<OpenAiCompatibleTutor>.Instance, handler);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => tutor.EvaluateAsync(Task, "Text.", ProductionMode.Writing, Ctx));
+        Assert.Contains("abgeschnitten", ex.Message);
+    }
+
+    [Fact]
+    public async Task An_empty_answer_does_not_make_the_tutor_give_up_on_json_schema()
+    {
+        // First call: 200 with empty content (DeepSeek documents these). Second: a proper answer.
+        var handler = new ScriptedHandler(_ => ScriptedHandler.Chat(""), _ => ScriptedHandler.Chat(EvalJson));
+        var tutor = new OpenAiCompatibleTutor(Options, NullLogger<OpenAiCompatibleTutor>.Instance, handler);
+
+        await tutor.EvaluateAsync(Task, "Text.", ProductionMode.Writing, Ctx);
+        // ...and a THIRD evaluation must still lead with json_schema: the empty answer was no verdict on the schema.
+        handler.Requests.Clear();
+        await tutor.EvaluateAsync(Task, "Noch ein Text.", ProductionMode.Writing, Ctx);
+        Assert.Equal("json_schema", handler.Requests[0]["response_format"]!["type"]!.GetValue<string>());
+    }
+
+    [Fact]
+    public async Task A_model_that_rejects_temperature_gets_the_same_request_without_it()
+    {
+        // gpt-5-class models: "Unsupported value: 'temperature' does not support 0.2 with this model."
+        var handler = new ScriptedHandler(
+            _ => ScriptedHandler.Error(HttpStatusCode.BadRequest, "Unsupported value: 'temperature' does not support 0.2 with this model. Only the default (1) is supported."),
+            _ => ScriptedHandler.Chat(EvalJson));
+        var tutor = new OpenAiCompatibleTutor(Options, NullLogger<OpenAiCompatibleTutor>.Instance, handler);
+
+        var eval = await tutor.EvaluateAsync(Task, "Text.", ProductionMode.Writing, Ctx);
+
+        Assert.Equal(0.55, eval.OverallScore, 3);
+        Assert.Equal(2, handler.Requests.Count);
+        Assert.NotNull(handler.Requests[0]["temperature"]);
+        Assert.Null(handler.Requests[1]["temperature"]);
+        // and the response format stayed json_schema - the temperature was the problem, not the schema
+        Assert.Equal("json_schema", handler.Requests[1]["response_format"]!["type"]!.GetValue<string>());
     }
 
     [Fact]

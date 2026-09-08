@@ -121,7 +121,7 @@
             var reply = await Learning.Tutor.DiscussAsync(_thesisText, _history, ctx);
             _history.Add(new ChatTurn(false, reply));
         }
-        catch (Exception e) { _history.Add(new ChatTurn(false, "(Partner nicht erreichbar: " + e.Message + ")")); }
+        catch (Exception e) { _history.Add(new ChatTurn(false, "(Partner nicht erreichbar: " + TutorRegistry.Friendly(e) + ")")); }
         finally { _partnerThinking = false; StateHasChanged(); }
     }
 

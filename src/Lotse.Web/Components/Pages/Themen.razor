@@ -165,7 +165,7 @@
             var result = await Learning.FillWeakestAsync();
             _fillResult = result.Count == 0 ? "Keine schwachen Themen mit Daten gefunden – erst ein paar Sessions machen." : string.Join(" · ", result.Select(r => $"{r.NodeTitle}: {r.Count}"));
         }
-        catch (Exception e) { _fillResult = "Fehler: " + e.Message; }
+        catch (Exception e) { _fillResult = "Fehler: " + TutorRegistry.Friendly(e); }
         finally { _filling = false; }
     }
 
@@ -186,7 +186,7 @@
             var ex = await Learning.GenerateReadingForNodeAsync(nodeId);
             Snackbar.Add(ex is null ? "Keine gültige Aufgabe erhalten." : "Neue Aufgabe in der Bank: " + ex.Prompt, ex is null ? Severity.Warning : Severity.Success);
         }
-        catch (Exception e) { Snackbar.Add("Generierung fehlgeschlagen: " + e.Message, Severity.Error); }
+        catch (Exception e) { Snackbar.Add("Generierung fehlgeschlagen: " + TutorRegistry.Friendly(e), Severity.Error); }
         finally { _generating = null; }
     }
 
@@ -198,7 +198,7 @@
             var made = await Learning.GenerateForNodeAsync(nodeId);
             Snackbar.Add(made.Count == 0 ? "Keine gültigen Übungen erhalten." : $"{made.Count} neue Übungen in der Bank.", made.Count == 0 ? Severity.Warning : Severity.Success);
         }
-        catch (Exception e) { Snackbar.Add("Generierung fehlgeschlagen: " + e.Message, Severity.Error); }
+        catch (Exception e) { Snackbar.Add("Generierung fehlgeschlagen: " + TutorRegistry.Friendly(e), Severity.Error); }
         finally { _generating = null; }
     }
 }
