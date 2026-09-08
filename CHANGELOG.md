@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0 – in Arbeit
+## 0.9.0 – 2026-09-08
 
 ### Aus der Revision vom 08.09.2026
 
