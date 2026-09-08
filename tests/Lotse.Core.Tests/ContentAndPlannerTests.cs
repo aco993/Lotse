@@ -302,6 +302,36 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
         .ToList();
 
     [Fact]
+    public void A_long_session_carries_more_than_one_reading_or_listening_item()
+    {
+        // The exam's Lesen and Hören are thirty items each; one per day did not add up to that.
+        var twenty = new SessionPlanner().Plan(Input(20));
+        Assert.True(twenty.Steps.Count(s => s.Kind == StepKind.Input) >= 2, $"nur {twenty.Steps.Count(s => s.Kind == StepKind.Input)} Input-Schritte in 20 min");
+
+        // A five-minute session stays a five-minute session.
+        var five = new SessionPlanner().Plan(Input(5));
+        Assert.True(five.Steps.Count(s => s.Kind == StepKind.Input) <= 1);
+    }
+
+    [Fact]
+    public void Exam_format_writing_is_reachable_from_twenty_minutes_but_never_below()
+    {
+        // Teil-1 tasks (150 words) estimate at 600 s; under the flat 420 s cap they never entered a daily session.
+        static bool HasLongProduction(SessionPlan p, int seconds) =>
+            p.Steps.Any(s => s.Kind == StepKind.Production && s.Exercise.EstimatedSeconds >= seconds);
+
+        var reachable = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(20) with { Seed = seed }), 600));
+        Assert.True(reachable, "Kein 20-Minuten-Plan von 40 enthielt eine Prüfungs-Schreibaufgabe.");
+
+        // A quarter hour keeps the old cap: with the reading share it would otherwise leave nothing for drills.
+        var fifteen = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(15) with { Seed = seed }), 421));
+        Assert.False(fifteen, "Ein 15-Minuten-Plan trug eine Produktion über 420 s.");
+
+        var ten = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(10) with { Seed = seed }), 241));
+        Assert.False(ten, "Ein 10-Minuten-Plan trug eine Produktion über 240 s.");
+    }
+
+    [Fact]
     public void C1_target_lets_the_focus_reach_above_B2()
     {
         // Guard: the assertion below is only meaningful while the catalogue actually has drillable C1 material.
