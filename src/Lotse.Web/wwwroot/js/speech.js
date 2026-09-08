@@ -88,7 +88,15 @@ export function startRecognition(dotnetRef) {
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
+    // Chrome ends a "continuous" session after a few seconds of silence (error "no-speech", then "end") and after
+    // roughly a minute regardless. For a 60-120 s speaking task that meant: the learner paused to think, the
+    // button silently fell back to "Aufnahme starten", and the rest of the answer was never heard. So the session
+    // is restarted from onend unless the learner pressed stop or a real error happened; the transcript so far is
+    // kept across restarts. The restart cap only guards against a browser that ends every session immediately.
     let finalText = "";
+    let fatal = false;
+    let restarts = 0;
+    const current = recognition;
     recognition.onresult = (event) => {
         let interim = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -99,9 +107,17 @@ export function startRecognition(dotnetRef) {
         dotnetRef.invokeMethodAsync("OnTranscript", (finalText + interim).trim(), false);
     };
     recognition.onerror = (event) => {
-        dotnetRef.invokeMethodAsync("OnRecognitionError", event.error || "unknown");
+        const error = event.error || "unknown";
+        if (error === "no-speech") return;       // a pause, not a fault: onend restarts
+        fatal = true;
+        dotnetRef.invokeMethodAsync("OnRecognitionError", error);
     };
     recognition.onend = () => {
+        const stoppedByUser = recognition !== current; // stopRecognition() nulls or replaces the reference
+        if (!stoppedByUser && !fatal && restarts < 30) {
+            restarts++;
+            try { current.start(); return; } catch (e) { /* fall through and report the end */ }
+        }
         dotnetRef.invokeMethodAsync("OnTranscript", finalText.trim(), true);
         dotnetRef.invokeMethodAsync("OnRecognitionEnded");
     };
@@ -115,8 +131,9 @@ export function startRecognition(dotnetRef) {
 
 export function stopRecognition() {
     if (recognition) {
-        try { recognition.stop(); } catch (e) { /* already stopped */ }
-        recognition = null;
+        const r = recognition;
+        recognition = null;           // onend sees the reference gone and does not restart
+        try { r.stop(); } catch (e) { /* already stopped */ }
     }
 }
 

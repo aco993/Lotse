@@ -253,7 +253,15 @@ else
         catch (JSException) { }
     }
 
-    private void OnTranscript(string text, bool isFinal) { _text = text; _ = InvokeAsync(StateHasChanged); }
+    /// <summary>What the learner had typed before pressing the microphone. The transcript is appended to it: the
+    /// first version replaced the whole text with the first interim result, and eighty typed words were gone.</summary>
+    private string _typedBeforeRecording = "";
+
+    private void OnTranscript(string text, bool isFinal)
+    {
+        _text = string.IsNullOrWhiteSpace(_typedBeforeRecording) ? text : $"{_typedBeforeRecording.TrimEnd()} {text}".TrimEnd();
+        _ = InvokeAsync(StateHasChanged);
+    }
     private void OnRecognitionEnded() { _recording = false; _ = InvokeAsync(StateHasChanged); }
 
     private void OnRecognitionError(string error)
@@ -278,6 +286,7 @@ else
     private async Task StartRecordingAsync()
     {
         _recognitionError = null;
+        _typedBeforeRecording = _text ?? "";
         _recording = await Speech.StartRecognitionAsync();
     }
 

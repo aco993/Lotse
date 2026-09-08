@@ -27,6 +27,8 @@ public class FreeTextAnalyzerTests
             new() { Id = "v3", Type = ExerciseType.Vocab, NodeId = "WS.X", Band = CefrBand.B1_2, Prompt = "firma", Answers = ["die Firma"], Lemma = "Firma", Article = "die", Plural = "die Firmen" },
             new() { Id = "v4", Type = ExerciseType.Vocab, NodeId = "WS.X", Band = CefrBand.B1_2, Prompt = "geld", Answers = ["das Geld"], Lemma = "Geld", Article = "das", Plural = "nur Sg." },
             new() { Id = "v5", Type = ExerciseType.Vocab, NodeId = "WS.X", Band = CefrBand.B1_2, Prompt = "loesung", Answers = ["die Lösung"], Lemma = "Lösung", Article = "die", Plural = "die Lösungen" },
+            // Countable by its card (die Ängste), yet "Angst haben" takes no article - the real bank has this card.
+            new() { Id = "v6", Type = ExerciseType.Vocab, NodeId = "WS.X", Band = CefrBand.B1_2, Prompt = "strah", Answers = ["die Angst"], Lemma = "Angst", Article = "die", Plural = "die Ängste" },
         };
         var node = new SkillNode("WS.X", SkillArea.Wortschatz, "x", "x", CefrBand.B1_2, false, null, []);
         return Lexicon.FromCatalog(new ContentCatalog([node], [], vocab, []));
@@ -40,6 +42,23 @@ public class FreeTextAnalyzerTests
         Assert.Contains("TEMPUS_HILFSVERB", Codes("Gestern habe ich nach Hause gegangen."));
         Assert.Contains("TEMPUS_HILFSVERB", Codes("Ich bin den ganzen Tag gearbeitet."));
         Assert.DoesNotContain("TEMPUS_HILFSVERB", Codes("Ich bin nach Hause gegangen und habe dann gearbeitet."));
+    }
+
+    /// <summary>
+    /// A finding lowers a skill node, so a wrong finding is worse than none. These three sentences are correct
+    /// German the first version marked as errors; they must stay silent.
+    /// </summary>
+    [Fact]
+    public void Correct_german_the_rules_used_to_flag_stays_silent()
+    {
+        Assert.DoesNotContain("TEMPUS_HILFSVERB", Codes("Der Film hat mir gefallen."));            // gefallen takes haben
+        Assert.DoesNotContain("TEMPUS_HILFSVERB", Codes("Ich habe das Auto in die Stadt gefahren.")); // transitive fahren takes haben
+        Assert.DoesNotContain("TEMPUS_HILFSVERB", Codes("Die Arbeit ist beendet."));               // Zustandspassiv
+        Assert.DoesNotContain("TEMPUS_HILFSVERB", Codes("Der Brief ist geschrieben und das Auto ist gekauft."));
+        Assert.DoesNotContain("ART_FEHLT", Codes("Sie hat Angst vor der Prüfung."));                // bare-noun predicate
+        // ...and the genuine mistakes next to them are still caught.
+        Assert.Contains("TEMPUS_HILFSVERB", Codes("Ich bin gestern lange geschlafen."));
+        Assert.Contains("ART_FEHLT", Codes("Ich habe Termin beim Arzt."));
     }
 
     [Fact]
