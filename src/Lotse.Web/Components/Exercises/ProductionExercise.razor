@@ -9,7 +9,13 @@
     @if (Exercise.MinWords is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">ca. @Exercise.MinWords Wörter</MudChip> }
     @if (Exercise.TargetSeconds is > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">ca. @(Exercise.TargetSeconds.Value / 60):@((Exercise.TargetSeconds.Value % 60).ToString("00")) min</MudChip> }
     <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">@(IsSpeaking ? "Sprechen" : "Schreiben")</MudChip>
-    @if (_secondsElapsed > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">⏱ @(_secondsElapsed / 60):@((_secondsElapsed % 60).ToString("00"))</MudChip> }
+    @if (_limit is { } limit)
+    {
+        @* Exam format: the clock runs down. Nothing is submitted for the learner when it reaches zero - losing a
+           150-word draft would be worse than an honest "over time" - but the chip says what the exam would do. *@
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="@(_secondsElapsed >= limit ? Color.Error : limit - _secondsElapsed <= 120 ? Color.Warning : Color.Default)">⏱ @(_secondsElapsed >= limit ? $"Zeit abgelaufen (+{Clock(_secondsElapsed - limit)}) – in der Prüfung wäre jetzt Abgabe" : $"noch {Clock(limit - _secondsElapsed)}")</MudChip>
+    }
+    else if (_secondsElapsed > 0) { <MudChip T="string" Size="Size.Small" Variant="Variant.Text">⏱ @Clock(_secondsElapsed)</MudChip> }
 </MudStack>
 
 @if (_production is null)
@@ -193,6 +199,9 @@ else
     private int _secondsElapsed;
     private string? _lastId;
 
+    private int? _limit;
+    private static string Clock(int seconds) => $"{seconds / 60}:{seconds % 60:00}";
+
     private int Words => AnswerChecker.CountWords(_text);
     private string WordInfo => Exercise.MinWords is > 0 ? $"{Words} / ca. {Exercise.MinWords} Wörter" : $"{Words} Wörter";
 
@@ -209,6 +218,7 @@ else
         _text = "";
         _production = null;
         _secondsElapsed = 0;
+        _limit = ExamTiming.TimeLimitSeconds(Exercise);
         _timer?.Dispose();
         _timer = new System.Threading.Timer(_ => { _secondsElapsed++; _ = InvokeAsync(TickAsync); }, null, 1000, 1000);
     }

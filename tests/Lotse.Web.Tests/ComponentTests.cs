@@ -223,3 +223,83 @@ public class ExerciseRunnerTests : LotseComponentTest
         Assert.Contains("weil", cut.Markup);
     }
 }
+
+/// <summary>Listening and reading in the exam format: play limit, one voice per speaker, the clock.</summary>
+public class ReadingExerciseTests : LotseComponentTest
+{
+    private static Exercise Listening(string prompt, string text, ExerciseContext ctx = ExerciseContext.Pruefung) => new()
+    {
+        Id = "hv1",
+        Type = ExerciseType.Reading,
+        NodeId = "HV.HOEREN_ALLTAG",
+        Band = CefrBand.B2_1,
+        Prompt = prompt,
+        Text = text,
+        AudioOnly = true,
+        Context = ctx,
+        Questions = [new ReadingQuestion("Wer war dagegen?", ["Lena", "Markus"], 1)],
+    };
+
+    [Fact]
+    public void A_conversation_is_spoken_turn_by_turn_with_two_voices_and_without_the_names()
+    {
+        var ex = Listening("Hören Teil 3: Wer sagt was?", "Lena: Ich finde das gut. – Markus: Ich nicht. – Lena: Warum denn nicht?");
+        Learning.Exercises[ex.Id] = ex;
+        var cut = Render<ReadingExercise>(p => p.Add(x => x.Exercise, ex));
+
+        Assert.Contains("Gespräch zwischen Lena und Markus", cut.Markup);
+        cut.FindAll("button").First(b => b.TextContent.Contains("Abspielen")).Click();
+
+        cut.WaitForAssertion(() =>
+        {
+            var spoken = JSInterop.Invocations.Where(i => i.Identifier == "speak").Select(i => (Text: (string)i.Arguments[0]!, Voice: (string)i.Arguments[2]!)).ToList();
+            Assert.Equal(3, spoken.Count);
+            Assert.Equal(["Ich finde das gut.", "Ich nicht.", "Warum denn nicht?"], spoken.Select(s => s.Text));
+            Assert.Equal(["female", "male", "female"], spoken.Select(s => s.Voice));
+        });
+    }
+
+    [Fact]
+    public void An_exam_part_heard_once_locks_the_button_until_it_is_evaluated_and_frees_it_afterwards()
+    {
+        var ex = Listening("Hören Teil 3: Wer sagt was?", "Lena: Ich finde das gut. – Markus: Ich nicht. – Lena: Warum denn nicht?");
+        Learning.Exercises[ex.Id] = ex;
+        var cut = Render<ReadingExercise>(p => p.Add(x => x.Exercise, ex));
+
+        var play = cut.FindAll("button").First(b => b.TextContent.Contains("Abspielen"));
+        Assert.Contains("(0/1)", play.TextContent);
+        Assert.False(play.HasAttribute("disabled"));
+        play.Click();
+
+        cut.WaitForAssertion(() =>
+        {
+            var locked = cut.FindAll("button").First(b => b.TextContent.Contains("Abspielen"));
+            Assert.Contains("(1/1)", locked.TextContent);
+            Assert.True(locked.HasAttribute("disabled"));
+        });
+        Assert.Contains("nur einmal", cut.Markup);
+
+        cut.FindAll("button").First(b => b.TextContent.Trim() == "Markus").Click();
+        cut.FindAll("button").First(b => b.TextContent.Contains("Auswerten")).Click();
+        cut.WaitForAssertion(() => Assert.Contains("Noch einmal hören", cut.Markup));
+        Assert.False(cut.FindAll("button").First(b => b.TextContent.Contains("Noch einmal hören")).HasAttribute("disabled"));
+        Assert.Equal([1], Learning.ReadingChoices.Single());
+    }
+
+    [Fact]
+    public void A_practice_listening_text_allows_two_plays_and_a_timed_reading_part_shows_the_clock()
+    {
+        var practice = Listening("Hören: Sprachnachricht", "Hallo, hier ist Jonas. Ruf mich bitte zurück.", ExerciseContext.Beruf);
+        Learning.Exercises[practice.Id] = practice;
+        var cut = Render<ReadingExercise>(p => p.Add(x => x.Exercise, practice));
+        Assert.Contains("(0/2)", cut.FindAll("button").First(b => b.TextContent.Contains("Abspielen")).TextContent);
+        Assert.DoesNotContain("Gespräch zwischen", cut.Markup);
+        Assert.DoesNotContain("noch ", cut.Markup);
+
+        var reading = practice with { Id = "ls1", AudioOnly = false, Context = ExerciseContext.Pruefung, Prompt = "Lesen Teil 3: Zeitungsartikel" };
+        Learning.Exercises[reading.Id] = reading;
+        var timed = Render<ReadingExercise>(p => p.Add(x => x.Exercise, reading));
+        Assert.Contains("noch 12:00", timed.Markup);
+        Assert.Contains("12 Minuten", timed.Markup);
+    }
+}

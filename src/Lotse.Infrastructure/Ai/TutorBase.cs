@@ -197,7 +197,7 @@ public abstract class TutorBase(ILogger logger) : ITutor
         var system = BuildSystemPrompt(context) + "\n\nDu erstellst jetzt eine Prüfungsaufgabe im Format des Goethe-Zertifikats B2. Der Text muss authentisch klingen (Zeitungsartikel, Forumsbeiträge, Ansage, Interview), inhaltlich aktuell und für einen Berufstätigen in Deutschland relevant sein. Distraktoren müssen plausibel sein und dürfen nicht wörtlich im Text stehen.";
         var kind = audioOnly ? "HÖREN (wird per Sprachausgabe vorgelesen, nicht gezeigt)" : "LESEN";
         var user = $"Aufgabentyp: {kind}. Knoten: {node.Title} – {node.Description}. Niveau {band.Label()}. " +
-                   (audioOnly ? "Wähle Teil 1 (Alltagsansage/Telefonat), Teil 2 (Interview) oder Teil 4 (Radiobeitrag/Vortrag)." : "Wähle Teil 1 (vier Meinungen, Zuordnung), Teil 3 (Artikel, Multiple Choice) oder Teil 5 (Regelwerk, Zuordnung).") +
+                   (audioOnly ? "Wähle Teil 1 (Alltagsansage/Telefonat), Teil 2 (Interview), Teil 3 (Diskussion: Moderator und zwei Gäste mit gegensätzlichen Positionen – wer sagt was?) oder Teil 4 (Radiobeitrag/Vortrag). Bei Gesprächen beginnt jeder Redebeitrag auf einer neuen Zeile mit Sprechernamen und Doppelpunkt („Moderator: …“) – vorgelesen wird mit einer Stimme je Sprecher, der Name selbst nicht." : "Wähle Teil 1 (vier Meinungen, Zuordnung), Teil 3 (Artikel, Multiple Choice) oder Teil 5 (Regelwerk, Zuordnung).") +
                    " Liefere Text und 4–6 Fragen mit genau einer richtigen Antwort.";
         var json = await CompleteJsonAsync(system, user, "leseaufgabe", ReadingSchema, ct);
         var dto = JsonSerializer.Deserialize<ReadingDto>(json, ContentLoader.Options);

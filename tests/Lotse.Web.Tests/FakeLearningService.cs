@@ -37,7 +37,15 @@ public sealed class FakeLearningService : ILearningService
     public Task<SessionEntity> FinishSessionAsync(Guid id, CancellationToken ct = default) => throw Unexpected();
     public Task AbandonSessionAsync(Guid id, CancellationToken ct = default) => throw Unexpected();
     public Task SkipStepAsync(Guid sessionId, int stepIndex, CancellationToken ct = default) => throw Unexpected();
-    public Task<AnswerResult> SubmitReadingAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default) => throw Unexpected();
+    public List<IReadOnlyList<int>> ReadingChoices { get; } = [];
+    public Task<AnswerResult> SubmitReadingAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default)
+    {
+        ReadingChoices.Add(chosen);
+        var ex = Exercises[exerciseId];
+        var correct = ex.Questions.Select((q, i) => i < chosen.Count && chosen[i] == q.CorrectIndex ? 1 : 0).Sum();
+        var check = new CheckResult(correct == ex.Questions.Count ? Outcome.Correct : Outcome.AlmostCorrect, $"{correct} von {ex.Questions.Count} richtig", [], "ok");
+        return Task.FromResult(new AnswerResult(check, ex, null, 0.5, null, false));
+    }
     public List<IReadOnlyList<int>> DialogueChoices { get; } = [];
     public Task<AnswerResult> SubmitDialogueAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default)
     {

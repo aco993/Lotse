@@ -15,8 +15,11 @@ export function sttSupported() {
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
-/** Speaks German text. Resolves when finished (or immediately when TTS is unavailable). */
-export function speak(text, rate) {
+/**
+ * Speaks German text. `voice` is "male" or "female" - a preference, honoured as far as the browser's German voices
+ * allow. Resolves when finished (or immediately when TTS is unavailable).
+ */
+export function speak(text, rate, voice) {
     return new Promise((resolve) => {
         if (!ttsSupported()) { resolve(false); return; }
         const synth = window.speechSynthesis;
@@ -24,14 +27,33 @@ export function speak(text, rate) {
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = "de-DE";
         utter.rate = rate || 0.95;
-        const voices = synth.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
-        // Prefer a natural/online voice when the browser offers one.
-        const preferred = voices.find(v => /natural|online|premium|neural/i.test(v.name)) || voices[0];
-        if (preferred) utter.voice = preferred;
+        const chosen = pickVoice(synth.getVoices(), voice);
+        if (chosen) utter.voice = chosen;
         utter.onend = () => resolve(true);
         utter.onerror = () => resolve(false);
         synth.speak(utter);
     });
+}
+
+// Browser voices carry their gender only as a first name ("Microsoft Katja Online"; "Google Deutsch" carries none).
+// A listening text with a moderator and a guest needs two voices that differ, so when the gender cannot be read
+// the two requests still land on two different German voices wherever the browser has more than one.
+const FEMALE_NAMES = /katja|hedda|anna|petra|marlene|vicki|elke|helena|amala|seraphina|louisa|ingrid|gisela/i;
+const MALE_NAMES = /stefan|conrad|klaus|michael|bernd|christoph|killian|kasper|hans|ralf|florian|markus|yannick/i;
+const natural = (list) => list.find(v => /natural|online|premium|neural/i.test(v.name)) || list[0];
+
+function pickVoice(all, voice) {
+    const german = all.filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
+    if (german.length === 0) return null;
+    const wanted = voice === "female" ? FEMALE_NAMES : MALE_NAMES;
+    const other = voice === "female" ? MALE_NAMES : FEMALE_NAMES;
+    const matching = german.filter(v => wanted.test(v.name));
+    if (matching.length) return natural(matching);
+    const pool = german.filter(v => !other.test(v.name));   // never answer "female" with a voice called Stefan
+    const candidates = pool.length ? pool : german;
+    if (candidates.length === 1 || voice !== "female") return natural(candidates);
+    const first = natural(candidates);
+    return candidates.find(v => v !== first) || first;
 }
 
 /**
