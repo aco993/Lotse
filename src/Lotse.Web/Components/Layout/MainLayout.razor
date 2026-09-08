@@ -114,6 +114,8 @@
         {
             Primary = "#1F5F8B",
             Secondary = "#E07A1F",
+            // White on this orange is 3.0:1 - below AA for the button-sized text it carries. Dark ink reads.
+            SecondaryContrastText = "#1B2733",
             Tertiary = "#2E8B57",
             AppbarBackground = "#1F5F8B",
             Background = "#F6F7F9",
@@ -124,6 +126,12 @@
             Primary = "#6FB1E0",
             Secondary = "#F2A65A",
             Tertiary = "#5CC08A",
+            // The dark accents are light by design, and MudBlazor keeps white text on them: 2.3:1 on the primary
+            // buttons ("Fokus-Session", "10 Minuten starten"). The account pages made the right call already
+            // (--acct-btn-text: #0F1A24); the theme now matches them.
+            PrimaryContrastText = "#0F1A24",
+            SecondaryContrastText = "#0F1A24",
+            TertiaryContrastText = "#0F1A24",
             AppbarBackground = "#16324A",
             Background = "#111820",
             Surface = "#1A2430",
