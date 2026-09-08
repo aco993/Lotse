@@ -108,34 +108,45 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
     public async Task Reset_empties_every_table_of_the_caller_and_none_of_the_other()
     {
         var ex = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
+        var writing = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.FreeWrite);
+        var dictation = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Dictation);
         foreach (var svc in new[] { _svcA, _svcB })
         {
             await svc.StartSessionAsync(10);
             await svc.SubmitAnswerAsync(null, 0, ex.Id, "völlig falsch", 1000, false);
             await svc.GetProfileAsync();
+            // Rows in the tables the first version of this test did not cover - and where a forgotten delete hid.
+            await svc.StartLessonAsync(_provider.Catalog.Lessons[0].Id);                       // LessonProgress
+            await svc.SubmitProductionAsync(null, 0, writing.Id, "Sehr geehrte Damen und Herren, ich schreibe Ihnen wegen der Rechnung.", false); // Productions
+            for (var i = 0; i < 4; i++) await svc.SubmitAnswerAsync(null, 0, dictation.Id, dictation.Answers[0], 1000, false);
+            await svc.GetDashboardAsync();                                                     // ReadinessSnapshots (needs module evidence)
         }
         var dp = new EphemeralDataProtectionProvider();
         await new TutorRegistry(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserA), env: _ => null)
-            .SaveAsync(new TutorSettings("groq", null, "llama-3.3-70b-versatile", "gsk_A_secret"));
+            .SaveAsync(new TutorSettings("groq", null, "openai/gpt-oss-120b", "gsk_A_secret"));
 
         await _svcA.ResetAllDataAsync();
 
         await using var db = _factory.CreateDbContext();
-        var skillOwners = await db.SkillStates.Select(s => EF.Property<string>(s, LotseDbContext.UserIdShadow)).ToListAsync();
-        var reviewOwners = await db.ReviewStates.Select(r => EF.Property<string>(r, LotseDbContext.UserIdShadow)).ToListAsync();
-        var owners = new Dictionary<string, List<string>>
+        // Every entity type with a UserId column, taken from the model rather than a hand-written list: the list
+        // is what let ReadinessSnapshots slip through. Settings is the one per-user table a reset must keep,
+        // GeneratedExercises is shared by design, and the AspNet* tables are the account itself, which a data
+        // reset leaves alone.
+        var perUser = db.Model.GetEntityTypes()
+            .Select(t => (Table: t.GetTableName()!, Column: (t.FindProperty("UserId") ?? t.FindProperty(LotseDbContext.UserIdShadow))?.GetColumnName()))
+            .Where(t => t.Column is not null && t.Table is not "Settings" and not "GeneratedExercises" && !t.Table.StartsWith("AspNet"))
+            .ToList();
+        Assert.True(perUser.Count >= 9, "Modell kennt weniger Konto-Tabellen als erwartet: " + string.Join(", ", perUser.Select(t => t.Table)));
+
+        foreach (var (table, column) in perUser)
         {
-            ["SkillStates"] = skillOwners,
-            ["ReviewStates"] = reviewOwners,
-            ["Sessions"] = await db.Sessions.Select(s => s.UserId).ToListAsync(),
-            ["Attempts"] = await db.Attempts.Select(a => a.UserId).ToListAsync(),
-            ["ErrorEvents"] = await db.ErrorEvents.Select(e => e.UserId).ToListAsync(),
-            ["Profiles"] = await db.Profiles.Select(p => p.UserId).ToListAsync(),
-        };
-        foreach (var (table, ids) in owners)
-        {
-            Assert.DoesNotContain(UserA, ids); // A: gone from every table
-            Assert.Contains(UserB, ids);       // B: untouched in every table
+            // Table and column names come from EF's own model, not from input; the user id is a real parameter.
+#pragma warning disable EF1002
+            var a = await db.Database.SqlQueryRaw<int>($"SELECT COUNT(*) AS \"Value\" FROM \"{table}\" WHERE \"{column}\" = {{0}}", UserA).SingleAsync();
+            var b = await db.Database.SqlQueryRaw<int>($"SELECT COUNT(*) AS \"Value\" FROM \"{table}\" WHERE \"{column}\" = {{0}}", UserB).SingleAsync();
+#pragma warning restore EF1002
+            Assert.True(a == 0, $"{table}: {a} Zeile(n) von A überlebten den Reset");
+            Assert.True(b > 0, $"{table}: B hat keine Zeile mehr - oder der Test hat diese Tabelle nie befüllt");
         }
         Assert.Single(await db.Settings.Where(s => s.UserId == UserA).ToListAsync()); // tutor setup survives a reset
     }

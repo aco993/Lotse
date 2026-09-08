@@ -7,10 +7,17 @@ using Microsoft.Extensions.Logging;
 namespace Lotse.Infrastructure.Ai;
 
 /// <summary>Claude via the official Anthropic SDK. Structured answers use JSON-schema output; effort is configurable.</summary>
-public sealed class ClaudeTutor : TutorBase
+public sealed class ClaudeTutor : TutorBase, IDisposable
 {
     private readonly TutorOptions _options;
     private readonly Lazy<AnthropicClient> _client;
+
+    /// <summary>Releases the SDK client (and the HttpClient it owns) if one was ever created; TutorRegistry calls
+    /// this when the tutor is replaced or the circuit ends.</summary>
+    public void Dispose()
+    {
+        if (_client.IsValueCreated) _client.Value.Dispose();
+    }
 
     public ClaudeTutor(TutorOptions options, ILogger<ClaudeTutor> logger) : base(logger)
     {

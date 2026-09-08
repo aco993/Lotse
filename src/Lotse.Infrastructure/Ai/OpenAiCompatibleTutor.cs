@@ -12,10 +12,18 @@ namespace Lotse.Infrastructure.Ai;
 /// Groq, Mistral, DeepSeek, OpenAI. No SDK – one HTTP call. JSON answers are requested with a json_schema response
 /// format when the server accepts it, and fall back to json_object plus the schema in the prompt otherwise.
 /// </summary>
-public sealed class OpenAiCompatibleTutor : TutorBase
+public sealed class OpenAiCompatibleTutor : TutorBase, IDisposable
 {
     private readonly TutorOptions _options;
     private readonly HttpClient _http;
+
+    /// <summary>
+    /// One connection pool for every tutor instance in the process. A tutor is built per circuit and again on
+    /// every settings save and every "Verbindung testen"; each used to bring its own SocketsHttpHandler (own pool,
+    /// own DNS cache) that was never released - the textbook socket-exhaustion pattern. The pooled lifetime keeps
+    /// DNS changes from being cached forever, which is the one thing a static handler would otherwise get wrong.
+    /// </summary>
+    private static readonly SocketsHttpHandler SharedHandler = new() { PooledConnectionLifetime = TimeSpan.FromMinutes(5) };
     // Both flags are learned from the provider's answers and read from async continuations of several requests
     // at once (FillWeakestAsync fans out), hence volatile.
     private volatile bool _schemaFormatUnsupported;
@@ -33,7 +41,8 @@ public sealed class OpenAiCompatibleTutor : TutorBase
         // OpenAI's gpt-5 line rejects any temperature but the default with a 400; sending none is the only value
         // every current model accepts. Other providers learn it the same way at runtime (see TryCompleteAsync).
         _temperatureUnsupported = baseUrl.Contains("openai.com", StringComparison.OrdinalIgnoreCase);
-        _http = handler is null ? new HttpClient() : new HttpClient(handler);
+        // Tests pass a scripted handler and own it; production shares the static one and must not dispose it.
+        _http = handler is null ? new HttpClient(SharedHandler, disposeHandler: false) : new HttpClient(handler);
         _http.BaseAddress = new Uri(baseUrl);
         _http.Timeout = TimeSpan.FromSeconds(Math.Max(30, options.TimeoutSeconds));
         if (!string.IsNullOrWhiteSpace(options.ResolvedApiKey))
@@ -41,6 +50,8 @@ public sealed class OpenAiCompatibleTutor : TutorBase
         // OpenRouter likes to know who calls; harmless elsewhere.
         _http.DefaultRequestHeaders.TryAddWithoutValidation("X-Title", "Lotse");
     }
+
+    public void Dispose() => _http.Dispose();
 
     public override bool IsAvailable => _options.IsConfigured;
     public override string Description => IsAvailable
