@@ -42,10 +42,10 @@ Also: *Kurs* (24 story-driven lessons), *Schreiben* (micro tasks, exam Teil 1/2)
 
 ## Quick start
 
-Requirements: .NET 10 SDK. Chrome or Edge for speech recognition (any browser for the rest).
+Requirements: .NET 10 SDK **10.0.300 or newer** (`global.json` pins the 10.0.3xx feature band - `dotnet --list-sdks` must show one; a 10.0.1xx from an older installer will not do). Chrome or Edge for speech recognition (any browser for the rest).
 
 ```bash
-git clone <this repo> && cd Lotse
+git clone https://github.com/aco993/Lotse.git && cd Lotse
 dotnet run --project src/Lotse.Web
 ```
 
@@ -59,8 +59,10 @@ Out of the box, listening tasks use the browser's own German voices. On Windows 
 voices and they sound noticeably robotic. One command replaces them with a neural voice that runs locally:
 
 ```powershell
-pwsh -File tools/install-piper.ps1
+powershell -ExecutionPolicy Bypass -File tools/install-piper.ps1
 ```
+
+Windows PowerShell 5.1 is enough - the script was written for it - so nothing needs installing first. (If you downloaded the repository as a ZIP rather than cloning it, run `Get-ChildItem -Recurse tools\*.ps1 | Unblock-File` once: Windows marks extracted files as web content and refuses to run them.) The step is Windows-only for now; on macOS and Linux the browser voices stay in use, or install Piper yourself and point `Lotse:Tts:PiperPath` at it.
 
 It downloads Piper (MIT, ~21 MB) and two German voices (CC0, ~120 MB together) into `%LOCALAPPDATA%\Lotse`:
 `de_DE-thorsten-medium` as the default and male voice, `de_DE-kerstin-low` for the women in the story - so Herr Krüger
@@ -78,9 +80,13 @@ Open **Einstellungen → KI-Tutor**, pick a provider, paste a key, press *Verbin
 
 **Running Ollama? Give the model a bigger context first.** Ollama's default of 4096 tokens is not enough for a whole evaluation: the same request that produced valid JSON in 117 seconds with `num_ctx 8192` ran for ten minutes and returned nothing at the default. The JSON schema is not the problem (122 s with it, 139 s without) - the context is. Create a derived model once; it is a config layer over the same weights and costs no extra disk:
 
-```bash
-printf 'FROM qwen2.5:7b\nPARAMETER num_ctx 8192\n' > Modelfile && ollama create qwen2.5-lotse -f Modelfile
+```powershell
+ollama pull qwen2.5:7b
+"FROM qwen2.5:7b`nPARAMETER num_ctx 8192" | Out-File -Encoding ascii Modelfile
+ollama create qwen2.5-lotse -f Modelfile
 ```
+
+(On macOS/Linux: `printf 'FROM qwen2.5:7b\nPARAMETER num_ctx 8192\n' > Modelfile` for the second line.)
 
 Then enter `qwen2.5-lotse` as the model and leave the time limit at the preset's 300 s.
 
@@ -89,19 +95,22 @@ Keys can also come from environment variables (`GROQ_API_KEY`, `ANTHROPIC_API_KE
 ### Tests
 
 ```bash
-dotnet test
+dotnet test tests/Lotse.Core.Tests tests/Lotse.Web.Tests
 ```
+
+No browser needed for these. (A bare `dotnet test` at the root also runs the Playwright suite below, which is red until Chromium has been downloaded once - do that step first if you want everything in one go.)
 
 255 tests (186 engine/content/service, 69 component/host): lesson and dialogue integrity, grammar coverage and production pressure against the B2 reference inventory, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, migrations vs. model drift, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, multi-user isolation (two accounts, neither can see the other's skill state, sessions or Tutor API key; a reset empties every table for one account and none for the other), the open-redirect guard and the German Identity messages, bUnit component tests for the exercise flow, and the real host in-process (`WebApplicationFactory`: public static assets, static login page, signed-out redirects, password policy). `dotnet format --verify-no-changes` is clean (EF migrations exempted as generated code).
 
 ### End-to-end (Playwright)
 
-```bash
-pwsh tests/Lotse.E2E/bin/Debug/net10.0/playwright.ps1 install chromium   # once, after the first build
+```powershell
+dotnet build
+powershell -ExecutionPolicy Bypass -File tests/Lotse.E2E/bin/Debug/net10.0/playwright.ps1 install chromium   # once (~150 MB)
 dotnet test --project tests/Lotse.E2E
 ```
 
-The real app on Kestrel (`WebApplicationFactory.UseKestrel`, .NET 10) in a real headless Chromium: the learner's day from registration to a resumed session, and the full passkey ceremony via the browser's virtual authenticator. On failure a Playwright trace lands in `tests/Lotse.E2E/bin/.../playwright-traces/` (`playwright show-trace <zip>`). CI runs all of it on every push.
+The real app on Kestrel (`WebApplicationFactory.UseKestrel`, .NET 10) in a real headless Chromium: the learner's day from registration to a resumed session, and the full passkey ceremony via the browser's virtual authenticator. On failure a Playwright trace lands in `tests/Lotse.E2E/bin/.../playwright-traces/` (`playwright show-trace <zip>`). CI runs all of it on every push to `main` and on every pull request.
 
 ## Stack
 

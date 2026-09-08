@@ -16,12 +16,21 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+// The documented home for one machine's own settings (gitignored). It was documented before it was loaded: a
+// learner's permanent Ollama configuration in this file vanished without a word, because only the default
+// appsettings chain applied.
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
 // ---- Persistence: one local SQLite file next to the app (or wherever Lotse:DataDirectory points) --------------------
 var dataDir = builder.Configuration["Lotse:DataDirectory"] ?? Path.Combine(builder.Environment.ContentRootPath, "data");
 Directory.CreateDirectory(dataDir);
 var dbPath = Path.Combine(dataDir, "lotse.db");
-builder.Services.AddDbContextFactory<LotseDbContext>(o => o.UseSqlite($"Data Source={dbPath}"));
+builder.Services.AddDbContextFactory<LotseDbContext>(o => o
+    .UseSqlite($"Data Source={dbPath}")
+    // SQLite rebuilds a table to alter it, and EF wraps that in "PRAGMA foreign_keys = 0", which cannot run inside a
+    // transaction - EF says so with a warning on every start that has such a migration pending. That is how SQLite
+    // works, not a fault of this database, so the one event is ignored rather than the whole Migrations category.
+    .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.NonTransactionalMigrationOperationWarning)));
 
 // ---- Content ---------------------------------------------------------------------------------------------------------
 var contentDir = ContentLoader.ResolveContentDirectory(builder.Configuration["Lotse:ContentDirectory"]);
@@ -74,9 +83,13 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddAuthorization(o => o.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
 // ---- Tutor: configurable at runtime from the settings page; API key encrypted at rest, one row per learner -----------
-builder.Services.AddDataProtection()
+var dataProtection = builder.Services.AddDataProtection()
     .SetApplicationName("Lotse")
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataDir, "keys")));
+// Without this the key ring itself sits in data/keys as plain XML ("No XML encryptor configured" on every start),
+// and "API key encrypted at rest" means "encrypted with a key anyone with file access can read". DPAPI ties the
+// ring to the Windows account running the app; elsewhere the framework's warning stays, honestly.
+if (OperatingSystem.IsWindows()) dataProtection.ProtectKeysWithDpapi();
 var tutorDefaults = builder.Configuration.GetSection("Lotse:Tutor").Get<TutorDefaultsConfig>() ?? new TutorDefaultsConfig();
 // Scoped, not Singleton: one instance per circuit/learner, otherwise one account's saved settings (incl. API key)
 // would overwrite the in-memory tutor for every other signed-in learner. See TutorRegistry's own doc comment.
@@ -141,7 +154,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
+// The local profiles bind plain http only; with no https port to redirect to, the middleware just logs a warning on
+// the first request - the first "something is wrong" line a new user sees, on a start where nothing is.
+if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();

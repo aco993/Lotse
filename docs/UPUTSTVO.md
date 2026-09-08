@@ -46,7 +46,7 @@ Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj maš
 Bez ovog koraka app čita nemački glasovima koje nudi sam pregledač. Na Windowsu su to stare Hedda/Katja/Stefan i zvuče osetno robotski. Jedna komanda to menja:
 
 ```powershell
-pwsh -File tools/install-piper.ps1
+powershell -ExecutionPolicy Bypass -File tools/install-piper.ps1
 ```
 
 Skript preuzima **Piper** (MIT, ~21 MB) i dva nemačka glasa u `%LOCALAPPDATA%\Lotse` (~120 MB ukupno):
