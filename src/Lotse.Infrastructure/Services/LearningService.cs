@@ -171,7 +171,8 @@ public sealed class LearningService(
 
         var streak = await ComputeStreakAsync(db, userId, now, ct);
         var readiness = LearnerAnalysis.Readiness(Catalog, states);
-        var readinessTrend = await ReadinessTrendAsync(db, userId, readiness.Overall, readiness.Modules, now, ct);
+        // No snapshot and no trend before there is a measured number: a trend of the prior against the prior is noise.
+        var readinessTrend = readiness.HasEvidence ? await ReadinessTrendAsync(db, userId, readiness.Overall, readiness.Modules, now, ct) : null;
         // Only computed for a C1 learner: a B2 learner has no use for a number about material they are not aiming at.
         var c1 = profile.TargetLevel == TargetLevel.C1 ? LearnerAnalysis.C1Proximity(Catalog, states) : null;
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, now);

@@ -410,9 +410,37 @@ public sealed class LearningServiceTests : IAsyncLifetime
         Assert.False(after.Steps[sibling].Done);
     }
 
+    /// <summary>
+    /// Four dictations on one Hören node: enough of that module's own evidence (confidence 4/12 over half the
+    /// module's weight) for readiness to have a number at all. Without it the dashboard shows no readiness and
+    /// writes no snapshot - see the test right below.
+    /// </summary>
+    private async Task PractiseOneModuleAsync()
+    {
+        var dictation = First(e => e.Type == ExerciseType.Dictation);
+        for (var i = 0; i < 4; i++)
+            await _svc.SubmitAnswerAsync(null, 0, dictation.Id, dictation.Answers[0], 3000, false);
+    }
+
+    [Fact]
+    public async Task No_readiness_snapshot_is_written_before_an_exam_module_was_practised()
+    {
+        // Grammar drills alone are not exam evidence: the old dashboard snapshotted the 45 % prior on day one and
+        // then reported a "trend" of prior against prior a week later.
+        var cloze = First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
+        await _svc.SubmitAnswerAsync(null, 0, cloze.Id, cloze.Answers[0], 3000, false);
+
+        var dash = await _svc.GetDashboardAsync();
+        Assert.False(dash.Readiness.HasEvidence);
+        Assert.Null(dash.ReadinessTrend);
+        await using var db = _factory.CreateDbContext();
+        Assert.Empty(await db.ReadinessSnapshots.Where(s => s.UserId == UserId).ToListAsync());
+    }
+
     [Fact]
     public async Task Readiness_trend_stays_silent_until_there_is_something_to_compare()
     {
+        await PractiseOneModuleAsync();
         // Day one: a snapshot is written, but there is nothing a week old, so no arrow is claimed.
         Assert.Null((await _svc.GetDashboardAsync()).ReadinessTrend);
 
@@ -438,6 +466,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
     [Fact]
     public async Task Readiness_trend_reports_the_change_it_measured()
     {
+        await PractiseOneModuleAsync();
         await _svc.GetDashboardAsync();   // day 0 snapshot
 
         // Rewrite the old snapshot to a lower value: the same effect as a week of real improvement, without

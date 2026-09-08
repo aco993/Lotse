@@ -437,10 +437,77 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Readiness_verdict_asks_for_data_when_nothing_is_known()
+    public void Readiness_shows_no_number_when_nothing_is_known()
     {
         var r = LearnerAnalysis.Readiness(fx.Catalog, new Dictionary<string, SkillState>());
-        Assert.Contains("wenig Daten", r.Verdict);
+        Assert.False(r.HasEvidence);
+        Assert.Equal(0, r.EvidenceModules);
+        Assert.Contains("keine Prüfungsaufgaben", r.Verdict);
         Assert.Equal(4, r.Modules.Count);
+        Assert.All(r.Modules, m => Assert.False(m.HasEvidence));
+    }
+
+    /// <summary>A node at exactly the given mastery, fully confident: theta is solved from the 1.4-slope logistic
+    /// that <see cref="Ability.SuccessProbability"/> uses against the B2.1 difficulty.</summary>
+    private static SkillState Mastered(string nodeId, double mastery = 0.85) => new()
+    {
+        NodeId = nodeId,
+        Theta = CefrBand.B2_1.Difficulty() + Math.Log(mastery / (1 - mastery)) / 1.4,
+        Attempts = 20,
+        Correct = (int)Math.Round(20 * mastery),
+        LastPracticedUtc = Now.AddDays(-1),
+    };
+
+    /// <summary>
+    /// The finding that mattered most in the 2026-09 review: a learner who drilled vocabulary and grammar to 85 %
+    /// and never read, listened, wrote or spoke once was shown "Lesen 81 %" and told to start exam simulations.
+    /// </summary>
+    [Fact]
+    public void Grammar_and_vocabulary_alone_never_produce_an_exam_number()
+    {
+        var states = fx.Catalog.Nodes
+            .Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+            .ToDictionary(n => n.Id, n => Mastered(n.Id));
+
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+
+        Assert.False(r.HasEvidence, "Ohne eine einzige Modulaufgabe darf es keine Prüfungszahl geben.");
+        Assert.All(r.Modules, m => Assert.False(m.HasEvidence));
+        Assert.All(r.Modules, m => Assert.True(m.Foundation > 0.7, $"{m.Module}: das Fundament muss trotzdem sichtbar sein"));
+        Assert.Contains("keine Prüfungsaufgaben", r.Verdict);
+    }
+
+    [Fact]
+    public void A_module_number_rests_on_the_modules_own_tasks_and_the_foundation_lifts_it_by_at_most_a_step()
+    {
+        var states = fx.Catalog.Nodes
+            .Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+            .ToDictionary(n => n.Id, n => Mastered(n.Id, 0.9));
+        // Reading practised, but weakly: 40 % - the vocabulary behind it is at 90 %.
+        foreach (var n in fx.Catalog.Nodes.Where(n => n.Area == SkillArea.Lesen))
+            states[n.Id] = Mastered(n.Id, 0.4);
+
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+        var lesen = r.Modules.Single(m => m.Module == "Lesen");
+
+        Assert.True(lesen.HasEvidence);
+        Assert.True(r.HasEvidence);
+        Assert.Equal(1, r.EvidenceModules);
+        // Evidence ~0.4 (shrunk a little towards the prior), foundation ~0.9: the number must stay near the evidence.
+        Assert.True(lesen.Readiness <= 0.4 + LearnerAnalysis.FoundationBonus + 0.05, $"Lesen {lesen.Readiness:P0} ist vom Fundament hochgezogen");
+        Assert.True(lesen.Readiness < 0.6, "Ein schwach geübtes Modul darf nicht als bestanden erscheinen");
+        Assert.Contains("1 von 4 Modulen", r.Verdict);
+        Assert.Contains("Hören", r.Verdict); // named as still missing
+    }
+
+    [Fact]
+    public void Four_measured_modules_give_the_old_verdicts_back()
+    {
+        var states = fx.Catalog.Nodes.ToDictionary(n => n.Id, n => Mastered(n.Id, 0.85));
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+        Assert.True(r.HasEvidence);
+        Assert.Equal(4, r.EvidenceModules);
+        Assert.All(r.Modules, m => Assert.True(m.Readiness >= 0.7, $"{m.Module}: {m.Readiness:P0}"));
+        Assert.Contains("Auf Kurs", r.Verdict);
     }
 }

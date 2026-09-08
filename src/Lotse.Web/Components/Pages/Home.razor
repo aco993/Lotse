@@ -44,10 +44,12 @@ else
         <MudItem xs="6" sm="3"><MudPaper Class="kpi" Elevation="1"><div class="v">@_m.DueReviews</div><div class="l">Wiederholungen fällig</div></MudPaper></MudItem>
         <MudItem xs="6" sm="3">
             <MudPaper Class="kpi" Elevation="1">
-                <div class="v">@_m.Readiness.Overall.ToString("P0")</div>
+                @* No percentage before the learner has done a single exam-module task: the old tile showed the
+                   45 % prior on a fresh account, and a number invites trust it has not earned. *@
+                <div class="v">@(_m.Readiness.HasEvidence ? _m.Readiness.Overall.ToString("P0") : "–")</div>
                 <div class="l">
                     B2-Bereitschaft<br /><span class="kpi-sub">@ReadinessConfidence</span>
-                    @if (_m.ReadinessTrend is { } trend)
+                    @if (_m.Readiness.HasEvidence && _m.ReadinessTrend is { } trend)
                     {
                         @* Only shown once a snapshot from about a week ago exists; before that there is nothing to compare. *@
                         var pp = trend * 100;
@@ -60,7 +62,7 @@ else
                            says how well the material above B2 sits, with the same honesty about thin data. *@
                         @* Short on purpose: the caption above already says how thin the data is, and repeating the
                            full sentence made this tile twice as tall as its neighbours. *@
-                        <br /><span class="kpi-sub">C1-Nähe @c1.Readiness.ToString("P0")@(c1.Coverage < 0.15 ? " (Schätzung)" : "")</span>
+                        <br /><span class="kpi-sub">C1-Nähe @(c1.HasEvidence ? c1.Readiness.ToString("P0") : "– noch keine Daten")</span>
                     }
                 </div>
             </MudPaper>
@@ -160,8 +162,17 @@ else
                 {
                     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
                         <MudText Typo="Typo.caption" Style="width:80px">@mod.Module</MudText>
-                        <div style="flex:1"><MasteryBar Value="mod.Readiness" Confidence="mod.Coverage" Threshold="0.6" /></div>
-                        <MudText Typo="Typo.caption" Style="width:38px;text-align:right">@mod.Readiness.ToString("P0")</MudText>
+                        @if (mod.HasEvidence)
+                        {
+                            <div style="flex:1"><MasteryBar Value="mod.Readiness" Confidence="mod.Coverage" Threshold="0.6" /></div>
+                            <MudText Typo="Typo.caption" Style="width:38px;text-align:right">@mod.Readiness.ToString("P0")</MudText>
+                        }
+                        else
+                        {
+                            @* The bar would only show the prior. Say what is missing instead, and what the foundation is. *@
+                            <MudText Typo="Typo.caption" Style="flex:1;opacity:.75">noch nicht geübt · Fundament @mod.Foundation.ToString("P0")</MudText>
+                            <MudText Typo="Typo.caption" Style="width:38px;text-align:right">–</MudText>
+                        }
                     </MudStack>
                 }
             </MudPaper>
@@ -221,18 +232,18 @@ else
         ? 0
         : Math.Min(100, 100.0 * _m.MinutesThisWeek / _m.Profile.WeeklyGoalMinutes);
 
-    /// <summary>The readiness number is shrunk towards a prior until there is evidence; say so instead of looking stuck.</summary>
+    /// <summary>Says how many of the four exam modules the number actually rests on - and that it rests on nothing
+    /// until the first exam-module task has been done.</summary>
     private string ReadinessConfidence
     {
         get
         {
-            var coverage = _m is null ? 0 : _m.Readiness.Modules.Count == 0 ? 0 : _m.Readiness.Modules.Average(m => m.Coverage);
-            return coverage switch
-            {
-                < 0.15 => "Schätzung – noch wenig Daten",
-                < 0.5 => $"Sicherheit {coverage:P0} – wird täglich genauer",
-                _ => $"Sicherheit {coverage:P0}",
-            };
+            if (_m is null || !_m.Readiness.HasEvidence) return "noch keine Prüfungsaufgaben geübt";
+            var measured = _m.Readiness.EvidenceModules;
+            var total = _m.Readiness.Modules.Count;
+            var coverage = _m.Readiness.Modules.Where(m => m.HasEvidence).Average(m => m.Coverage);
+            var basis = measured < total ? $"{measured} von {total} Modulen gemessen" : $"Sicherheit {coverage:P0}";
+            return coverage < 0.5 ? $"{basis} – wird täglich genauer" : basis;
         }
     }
 

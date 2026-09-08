@@ -33,7 +33,8 @@ else
                     @if (_readiness is not null)
                     {
                         var r = _readiness.Modules.FirstOrDefault(x => x.Module == m.Name);
-                        if (r is not null) { <MudChip T="string" Size="Size.Small" Color="@(r.Readiness >= 0.6 ? Color.Tertiary : Color.Warning)">@r.Readiness.ToString("P0")</MudChip> }
+                        if (r is { HasEvidence: true }) { <MudChip T="string" Size="Size.Small" Color="@(r.Readiness >= 0.6 ? Color.Tertiary : Color.Warning)">@r.Readiness.ToString("P0")</MudChip> }
+                        else if (r is not null) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">noch nicht geübt</MudChip> }
                     }
                 </MudStack>
                 <MudExpansionPanels Elevation="0" Dense="true">
