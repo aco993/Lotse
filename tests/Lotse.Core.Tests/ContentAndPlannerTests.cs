@@ -107,6 +107,36 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     /// <summary>
+    /// The stand-in name a learner gets when they leave the profile empty must not belong to anyone in the course.
+    /// The first pool had "Berger" in it, and Lesson 1's team lead is Sabine Berger - so a nameless learner read
+    /// "Frau Berger hat mir Ihre Einarbeitung übergeben" as Herr Berger. Surnames are checked against the whole
+    /// bank (exercises address people too), first names against the lesson speakers the learner actually talks to.
+    /// </summary>
+    [Fact]
+    public void Fallback_names_belong_to_nobody_in_the_content()
+    {
+        var dir = ContentLoader.ResolveContentDirectory(null);
+        var addressed = new Regex(@"(?:Frau|Herr|Herrn|Familie)\s+(\p{Lu}[\p{Ll}]+)");
+        var surnames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var f in Directory.EnumerateFiles(dir, "*.json", SearchOption.AllDirectories))
+            foreach (Match m in addressed.Matches(File.ReadAllText(f)))
+                surnames.Add(m.Groups[1].Value);
+        foreach (var l in fx.Catalog.Lessons)
+            foreach (var parts in l.Story.Select(s => s.Speaker.Split('(')[0].Trim().Split(' ')).Where(p => p.Length >= 2))
+                surnames.Add(parts[^1]);
+
+        var speakerFirstNames = fx.Catalog.Lessons.SelectMany(l => l.Story)
+            .Select(s => s.Speaker.Split('(')[0].Trim().Split(' ')[0])
+            .ToHashSet(StringComparer.Ordinal);
+
+        var takenSurnames = NameFallback.LastNames.Where(surnames.Contains).ToList();
+        var takenFirst = NameFallback.FirstNames.Where(speakerFirstNames.Contains).ToList();
+        Assert.True(takenSurnames.Count == 0, "Platzhalter-Nachname gehört einer Figur: " + string.Join(", ", takenSurnames));
+        Assert.True(takenFirst.Count == 0, "Platzhalter-Vorname gehört einem Sprecher: " + string.Join(", ", takenFirst));
+        Assert.DoesNotContain(NameFallback.Neutral.Last, surnames);
+    }
+
+    /// <summary>
     /// The repository is public, and an absolute path from the machine it was written on carries a real Windows
     /// account name into it. Three files had one (a prompt doc and the two harness scripts) before this test.
     /// Tools take their paths from their own location or from an argument instead.
