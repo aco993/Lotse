@@ -25,18 +25,21 @@ public static class TutorPresets
 {
     public static readonly IReadOnlyList<TutorPreset> All =
     [
-        new("groq", "Groq (kostenlos, sehr schnell)", TutorProvider.OpenAi, "https://api.groq.com/openai/v1", "llama-3.3-70b-versatile",
+        // Model IDs verified against each provider's model/deprecation page on 2026-09-08. The previous default,
+        // llama-3.3-70b-versatile, was shut down for self-serve keys on 2026-08-16 - a new learner following the
+        // README got a 404 from the very first "Verbindung testen". Re-check these whenever a probe starts failing.
+        new("groq", "Groq (kostenlos, sehr schnell)", TutorProvider.OpenAi, "https://api.groq.com/openai/v1", "openai/gpt-oss-120b",
             "GROQ_API_KEY", true, "https://console.groq.com/keys",
-            "Kostenlose Kontingente, Antworten in Sekunden. 70B-Modelle bewerten Deutsch ordentlich – die Empfehlung ohne Budget.",
-            ["llama-3.3-70b-versatile", "openai/gpt-oss-120b", "qwen/qwen3-32b", "llama-3.1-8b-instant"]),
+            "Kostenloser Entwickler-Tarif (30 Anfragen/min, 1.000/Tag), Antworten in Sekunden. gpt-oss-120b bewertet Deutsch ordentlich und liefert striktes JSON – die Empfehlung ohne Budget.",
+            ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]),
         new("anthropic", "Claude (Anthropic)", TutorProvider.Anthropic, null, "claude-sonnet-5",
             "ANTHROPIC_API_KEY", true, "https://console.anthropic.com/",
             "Beste Qualität für Prüfungsbewertung. Pay-per-use, Sonnet ca. 1 Cent, Opus ca. 4 Cent pro bewertetem Text.",
             ["claude-sonnet-5", "claude-opus-5", "claude-haiku-4-5"]),
-        new("openrouter", "OpenRouter (viele Modelle, teils kostenlos)", TutorProvider.OpenAi, "https://openrouter.ai/api/v1", "meta-llama/llama-3.3-70b-instruct:free",
+        new("openrouter", "OpenRouter (viele Modelle, ein Schlüssel)", TutorProvider.OpenAi, "https://openrouter.ai/api/v1", "meta-llama/llama-3.3-70b-instruct",
             "OPENROUTER_API_KEY", true, "https://openrouter.ai/keys",
-            "Ein Schlüssel, hunderte Modelle; Modelle mit „:free“ kosten nichts (Ratenlimit).",
-            ["meta-llama/llama-3.3-70b-instruct:free", "qwen/qwen3-235b-a22b:free", "anthropic/claude-sonnet-4.5", "openai/gpt-5-mini"]),
+            "Ein Schlüssel, hunderte Modelle, Pay-per-use – Llama 3.3 70B kostet Bruchteile eines Cents pro Bewertung. Die früheren „:free“-Varianten gibt es nicht mehr.",
+            ["meta-llama/llama-3.3-70b-instruct", "anthropic/claude-sonnet-4.5", "openai/gpt-5-mini"]),
         new("ollama", "Ollama (lokal, kostenlos)", TutorProvider.OpenAi, "http://localhost:11434/v1", "qwen2.5:7b",
             null, false, "https://ollama.com/download",
             "Läuft auf deinem Rechner, keine Daten verlassen ihn. Ohne GPU langsam (Minuten pro Bewertung); ab 7B brauchbar. Ollamas Standard-Kontext (4096) ist für eine ganze Bewertung zu klein – lege dir ein Modell mit „PARAMETER num_ctx 8192“ an.",
@@ -45,18 +48,22 @@ public static class TutorPresets
             null, false, "https://lmstudio.ai/",
             "Wie Ollama, mit grafischer Oberfläche. Modell in LM Studio laden und den Server starten.",
             ["local-model"], DefaultTimeoutSeconds: 300),
-        new("mistral", "Mistral", TutorProvider.OpenAi, "https://api.mistral.ai/v1", "mistral-large-latest",
+        // Mistral documents only dated IDs; the "-latest" aliases appear nowhere in the current docs.
+        new("mistral", "Mistral", TutorProvider.OpenAi, "https://api.mistral.ai/v1", "mistral-medium-3504",
             "MISTRAL_API_KEY", true, "https://console.mistral.ai/",
             "Europäischer Anbieter, gutes Deutsch, günstig.",
-            ["mistral-large-latest", "mistral-small-latest"]),
-        new("deepseek", "DeepSeek", TutorProvider.OpenAi, "https://api.deepseek.com/v1", "deepseek-chat",
+            ["mistral-medium-3504", "mistral-small-2603"]),
+        // deepseek-chat / deepseek-reasoner were retired on 2026-07-24.
+        new("deepseek", "DeepSeek", TutorProvider.OpenAi, "https://api.deepseek.com/v1", "deepseek-v4-flash",
             "DEEPSEEK_API_KEY", true, "https://platform.deepseek.com/",
             "Sehr günstig, solide Qualität.",
-            ["deepseek-chat", "deepseek-reasoner"]),
-        new("openai", "OpenAI", TutorProvider.OpenAi, "https://api.openai.com/v1", "gpt-5-mini",
+            ["deepseek-v4-flash", "deepseek-v4-pro"]),
+        // gpt-5 / gpt-5-mini are no longer listed; the 5.6 line replaced them. Note these models reject a
+        // non-default temperature, which OpenAiCompatibleTutor takes into account.
+        new("openai", "OpenAI", TutorProvider.OpenAi, "https://api.openai.com/v1", "gpt-5.6-terra",
             "OPENAI_API_KEY", true, "https://platform.openai.com/api-keys",
-            "Pay-per-use.",
-            ["gpt-5-mini", "gpt-5"]),
+            "Pay-per-use. Terra ist die ausgewogene Stufe, Luna die günstige, Sol die stärkste.",
+            ["gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.6-sol"]),
         new("custom", "Eigener OpenAI-kompatibler Server", TutorProvider.OpenAi, null, "",
             "OPENAI_API_KEY", false, null,
             "Beliebiger Endpunkt, der /chat/completions spricht.",
