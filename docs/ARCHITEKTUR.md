@@ -102,7 +102,7 @@ Session page ◀─────┘  renders step i via ExerciseRunner
 | vocab | prompt (helper language), answers (German incl. article), lemma | promptEn, article, plural, exampleDe, explanation, serbianNote/englishNote |
 | freeWrite | prompt, minWords, rubric | modelAnswer, tags |
 | speak | prompt, rubric | targetSeconds, modelAnswer |
-| reading | prompt, text, questions | audioOnly (true = Hören: text is spoken, never shown) |
+| reading | prompt, text, questions | audioOnly (true = Hören: text is spoken, never shown). A conversation is written as `Name: …` turns joined by ` – ` or line breaks; `SpeakerTurns` splits it and each person is read in their own voice, the name itself is not spoken. Items in the `Pruefung` context follow `ExamTiming`: the prompt's "Teil n" decides how often the audio plays (Teil 1/3 once, Teil 2/4 twice) and how long a reading part lasts (18/12/6 min) |
 
 The test suite loads the real content and rejects any item that violates this contract, any answer the checker would not accept, and any core node lacking items on both sides of the B1/B2 boundary.
 
