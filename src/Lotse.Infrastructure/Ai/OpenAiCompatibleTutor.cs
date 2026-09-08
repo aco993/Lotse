@@ -12,17 +12,37 @@ namespace Lotse.Infrastructure.Ai;
 /// Groq, Mistral, DeepSeek, OpenAI. No SDK – one HTTP call. JSON answers are requested with a json_schema response
 /// format when the server accepts it, and fall back to json_object plus the schema in the prompt otherwise.
 /// </summary>
-public sealed class OpenAiCompatibleTutor : TutorBase
+public sealed class OpenAiCompatibleTutor : TutorBase, IDisposable
 {
     private readonly TutorOptions _options;
     private readonly HttpClient _http;
-    private bool _schemaFormatUnsupported;
+
+    /// <summary>
+    /// One connection pool for every tutor instance in the process. A tutor is built per circuit and again on
+    /// every settings save and every "Verbindung testen"; each used to bring its own SocketsHttpHandler (own pool,
+    /// own DNS cache) that was never released - the textbook socket-exhaustion pattern. The pooled lifetime keeps
+    /// DNS changes from being cached forever, which is the one thing a static handler would otherwise get wrong.
+    /// </summary>
+    private static readonly SocketsHttpHandler SharedHandler = new() { PooledConnectionLifetime = TimeSpan.FromMinutes(5) };
+    // Both flags are learned from the provider's answers and read from async continuations of several requests
+    // at once (FillWeakestAsync fans out), hence volatile.
+    private volatile bool _schemaFormatUnsupported;
+    private volatile bool _temperatureUnsupported;
+    /// <summary>The provider's last rejection text, so the final error names the real cause instead of "keine gültige Antwort".</summary>
+    private string? _lastRejection;
+
+    /// <summary>Longest pause a Retry-After header may impose before the attempt is given up instead.</summary>
+    private static readonly TimeSpan MaxRetryWait = TimeSpan.FromSeconds(20);
 
     public OpenAiCompatibleTutor(TutorOptions options, ILogger<OpenAiCompatibleTutor> logger, HttpMessageHandler? handler = null) : base(logger)
     {
         _options = options;
         var baseUrl = (options.BaseUrl ?? "").TrimEnd('/') + "/";
-        _http = handler is null ? new HttpClient() : new HttpClient(handler);
+        // OpenAI's gpt-5 line rejects any temperature but the default with a 400; sending none is the only value
+        // every current model accepts. Other providers learn it the same way at runtime (see TryCompleteAsync).
+        _temperatureUnsupported = baseUrl.Contains("openai.com", StringComparison.OrdinalIgnoreCase);
+        // Tests pass a scripted handler and own it; production shares the static one and must not dispose it.
+        _http = handler is null ? new HttpClient(SharedHandler, disposeHandler: false) : new HttpClient(handler);
         _http.BaseAddress = new Uri(baseUrl);
         _http.Timeout = TimeSpan.FromSeconds(Math.Max(30, options.TimeoutSeconds));
         if (!string.IsNullOrWhiteSpace(options.ResolvedApiKey))
@@ -30,6 +50,8 @@ public sealed class OpenAiCompatibleTutor : TutorBase
         // OpenRouter likes to know who calls; harmless elsewhere.
         _http.DefaultRequestHeaders.TryAddWithoutValidation("X-Title", "Lotse");
     }
+
+    public void Dispose() => _http.Dispose();
 
     public override bool IsAvailable => _options.IsConfigured;
     public override string Description => IsAvailable
@@ -64,27 +86,46 @@ public sealed class OpenAiCompatibleTutor : TutorBase
                 ["type"] = "json_schema",
                 ["json_schema"] = new JsonObject { ["name"] = schemaName, ["strict"] = true, ["schema"] = schema.DeepClone() },
             }, ct);
-            if (strict is not null) return ExtractJsonObject(strict);
-            _schemaFormatUnsupported = true;
-            Logger.LogInformation("{Provider} akzeptiert kein json_schema-Format, nutze json_object.", ProviderName);
+            if (strict.Text is not null) return ExtractJsonObject(strict.Text);
+            // Only a rejected request shape says anything about the schema. An empty answer (DeepSeek documents them
+            // as occasional) used to latch this flag for the rest of the circuit and silently downgrade every later
+            // evaluation to json_object.
+            if (strict.Rejected)
+            {
+                _schemaFormatUnsupported = true;
+                Logger.LogInformation("{Provider} akzeptiert kein json_schema-Format, nutze json_object.", ProviderName);
+            }
         }
 
-        var loose = await TryCompleteAsync(system, userWithSchema, new JsonObject { ["type"] = "json_object" }, ct)
-                    ?? await TryCompleteAsync(system, userWithSchema, null, ct)
-                    ?? throw new InvalidOperationException($"{ProviderName} hat keine gültige Antwort geliefert.");
-        return ExtractJsonObject(loose);
+        var loose = await TryCompleteAsync(system, userWithSchema, new JsonObject { ["type"] = "json_object" }, ct);
+        var text = loose.Text ?? (await TryCompleteAsync(system, userWithSchema, null, ct)).Text
+                   ?? throw new InvalidOperationException($"{ProviderName} hat keine gültige Antwort geliefert{(_lastRejection is null ? "." : $": {_lastRejection}")}");
+        return ExtractJsonObject(text);
     }
 
     protected override async Task<string> CompleteChatAsync(string system, IReadOnlyList<ChatTurn> turns, CancellationToken ct)
     {
         var messages = new JsonArray { new JsonObject { ["role"] = "system", ["content"] = system } };
         foreach (var t in turns) messages.Add(new JsonObject { ["role"] = t.FromLearner ? "user" : "assistant", ["content"] = t.Text });
-        var body = new JsonObject { ["model"] = _options.Model, ["messages"] = messages, ["temperature"] = 0.7 };
-        return await SendAsync(body, ct) ?? throw new InvalidOperationException($"{ProviderName} hat keine Antwort geliefert.");
+        var body = new JsonObject { ["model"] = _options.Model, ["messages"] = messages };
+        if (!_temperatureUnsupported) body["temperature"] = 0.7;
+        try
+        {
+            return await SendAsync(body, ct) ?? throw new InvalidOperationException($"{ProviderName} hat keine Antwort geliefert.");
+        }
+        catch (HttpRequestException e) when (IsTemperatureRejection(e) && !_temperatureUnsupported)
+        {
+            _temperatureUnsupported = true;
+            body.Remove("temperature");
+            return await SendAsync(body, ct) ?? throw new InvalidOperationException($"{ProviderName} hat keine Antwort geliefert.");
+        }
     }
 
-    /// <summary>Returns the assistant text, or null when the server rejected the request shape (so the caller can degrade).</summary>
-    private async Task<string?> TryCompleteAsync(string system, string user, JsonObject? responseFormat, CancellationToken ct)
+    /// <summary>One completion attempt: the text, or why there is none - the caller must tell a rejected request
+    /// shape (try the next stage, remember it) from an empty answer (try the next stage, remember nothing).</summary>
+    private readonly record struct Completion(string? Text, bool Rejected);
+
+    private async Task<Completion> TryCompleteAsync(string system, string user, JsonObject? responseFormat, CancellationToken ct)
     {
         var body = new JsonObject
         {
@@ -94,19 +135,31 @@ public sealed class OpenAiCompatibleTutor : TutorBase
                 new JsonObject { ["role"] = "system", ["content"] = system },
                 new JsonObject { ["role"] = "user", ["content"] = user },
             },
-            ["temperature"] = 0.2,
         };
-        if (responseFormat is not null) body["response_format"] = responseFormat;
+        if (!_temperatureUnsupported) body["temperature"] = 0.2;
+        // A clone: on the temperature retry this method builds a second body, and a JsonNode has exactly one parent.
+        if (responseFormat is not null) body["response_format"] = responseFormat.DeepClone();
         try
         {
-            return await SendAsync(body, ct);
+            return new Completion(await SendAsync(body, ct), false);
         }
         catch (HttpRequestException e) when (e.StatusCode is System.Net.HttpStatusCode.BadRequest or System.Net.HttpStatusCode.UnprocessableEntity)
         {
+            if (IsTemperatureRejection(e) && !_temperatureUnsupported)
+            {
+                // The model minds the temperature, not the response format: drop it and try this very stage again.
+                _temperatureUnsupported = true;
+                Logger.LogInformation("{Provider} akzeptiert keine Temperatur, sende keine mehr.", ProviderName);
+                return await TryCompleteAsync(system, user, responseFormat, ct);
+            }
+            _lastRejection = e.Message;
             Logger.LogDebug(e, "Anfrageform abgelehnt, nächste Stufe.");
-            return null;
+            return new Completion(null, true);
         }
     }
+
+    private static bool IsTemperatureRejection(HttpRequestException e)
+        => e.Message.Contains("temperature", StringComparison.OrdinalIgnoreCase);
 
     private sealed record ChatResponse(List<Choice>? Choices, ErrorInfo? Error);
     private sealed record Choice(ChoiceMessage? Message, string? FinishReason);
@@ -141,7 +194,11 @@ public sealed class OpenAiCompatibleTutor : TutorBase
                     var transient = response.StatusCode == System.Net.HttpStatusCode.TooManyRequests || (int)response.StatusCode >= 500;
                     if (transient && attempt < maxAttempts)
                     {
-                        var wait = response.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(attempt * 3);
+                        var wait = RetryAfter(response) ?? TimeSpan.FromSeconds(attempt * 3);
+                        // Free tiers answer a daily-quota hit with a Retry-After of hours. Honouring that literally
+                        // kept the "Bewertung läuft …" spinner up with nothing the learner could do about it.
+                        if (wait > MaxRetryWait)
+                            throw new InvalidOperationException($"{ProviderName}: Ratenlimit erreicht – der Anbieter bittet um {Math.Ceiling(wait.TotalMinutes)} Minuten Pause. Später noch einmal, oder ein anderes Modell wählen.");
                         Logger.LogWarning("{Provider} antwortete {Status}, neuer Versuch in {Wait}s", ProviderName, (int)response.StatusCode, wait.TotalSeconds);
                         await Task.Delay(wait, ct);
                         continue;
@@ -151,10 +208,25 @@ public sealed class OpenAiCompatibleTutor : TutorBase
                 }
                 var parsed = JsonSerializer.Deserialize<ChatResponse>(text, Wire);
                 if (parsed?.Error?.Message is { } err) throw new InvalidOperationException($"{ProviderName}: {err}");
-                var content = parsed?.Choices?.FirstOrDefault()?.Message?.Content;
+                var choice = parsed?.Choices?.FirstOrDefault();
+                // A cut-off object used to reach ExtractJsonObject, which then failed on an inner brace with a raw
+                // System.Text.Json message in the learner's alert.
+                if (string.Equals(choice?.FinishReason, "length", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException($"{ProviderName}: Die Antwort wurde am Token-Limit abgeschnitten. Ein kürzerer Text hilft, oder ein Modell mit größerem Kontext.");
+                var content = choice?.Message?.Content;
                 return string.IsNullOrWhiteSpace(content) ? null : content;
             }
         }
+    }
+
+    /// <summary>Retry-After as a duration, whether the header carried seconds or an HTTP date.</summary>
+    private static TimeSpan? RetryAfter(HttpResponseMessage response)
+    {
+        var h = response.Headers.RetryAfter;
+        if (h is null) return null;
+        if (h.Delta is { } delta) return delta;
+        if (h.Date is { } date) return date - DateTimeOffset.UtcNow;
+        return null;
     }
 
     private static string Trim(string s)

@@ -1,19 +1,27 @@
-@* Reading passage (shown) or listening passage (spoken only) with multiple-choice questions. *@
+@* Reading passage (shown) or listening passage (spoken only) with multiple-choice questions. Exam-format items keep
+   the exam's rules: a listening text plays as often as the real part allows, each speaker with a voice of their own,
+   and a reading part runs against the clock and is evaluated when it runs out. *@
 @inject ILearningService Learning
 @inject SpeechService Speech
+@implements IDisposable
 
 <MudText Typo="Typo.body2" Class="mb-2" Style="opacity:.8">@Exercise.Prompt</MudText>
 
 @if (Exercise.AudioOnly)
 {
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => PlayAsync()" Disabled="_playing">Abspielen (@_plays/2)</MudButton>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-1" Wrap="Wrap.Wrap">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => PlayAsync()" Disabled="@(_playing || !CanPlay)">@PlayLabel</MudButton>
         <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopAsync">Stopp</MudButton>
         @if (_result is not null)
         {
             <MudButton Variant="Variant.Text" OnClick="() => _showTranscript = !_showTranscript">@(_showTranscript ? "Text verbergen" : "Text anzeigen")</MudButton>
         }
     </MudStack>
+    <MudText Typo="Typo.caption" Class="d-block mb-3" Style="opacity:.7">
+        @if (_turns.Count > 1) { <span>Gespräch zwischen @Speakers – jede Person mit eigener Stimme. </span> }
+        @if (_result is null && !CanPlay) { <span>In der Prüfung hörst du diesen Teil @(MaxPlays == 1 ? "nur einmal" : "zweimal") – jetzt beantworten, danach kannst du beliebig oft nachhören.</span> }
+        else if (_result is null && MaxPlays == 1) { <span>Dieser Teil wird in der Prüfung nur einmal gespielt – lies zuerst die Fragen.</span> }
+    </MudText>
     @if (_showTranscript)
     {
         <MudPaper Elevation="0" Class="pa-3 mb-3 reading-text" Style="background: var(--mud-palette-background-gray)">@Exercise.Text</MudPaper>
@@ -21,7 +29,19 @@
 }
 else
 {
+    @if (_limit is { } limit)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2" Wrap="Wrap.Wrap">
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 120 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
+            <MudText Typo="Typo.caption" Style="opacity:.7">Prüfungszeit für diesen Teil: @(limit / 60) Minuten – danach wird ausgewertet.</MudText>
+        </MudStack>
+    }
     <MudPaper Elevation="0" Class="pa-4 mb-3 reading-text" Style="background: var(--mud-palette-background-gray); max-height: 46vh; overflow:auto">@Exercise.Text</MudPaper>
+}
+
+@if (_timedOut)
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Text" Dense="true" Class="mb-2">Zeit abgelaufen – ausgewertet wie in der Prüfung; unbeantwortete Fragen zählen als falsch.</MudAlert>
 }
 
 @for (var q = 0; q < Exercise.Questions.Count; q++)
@@ -73,6 +93,20 @@ else
     private DateTime _shownAt = DateTime.UtcNow;
     private string? _lastId;
 
+    private IReadOnlyList<SpeakerTurn> _turns = [];
+    private IReadOnlyDictionary<string, SpeechVoice> _voices = new Dictionary<string, SpeechVoice>();
+    private int? _limit;
+    private int _elapsed;
+    private bool _timedOut;
+    private System.Threading.Timer? _timer;
+
+    private int MaxPlays => ExamTiming.MaxPlays(Exercise);
+    private bool CanPlay => _result is not null || _plays < MaxPlays;
+    private string PlayLabel => _result is not null ? "Noch einmal hören" : $"Abspielen ({_plays}/{MaxPlays})";
+    private string Speakers => string.Join(" und ", _turns.Select(t => t.Speaker).Where(s => s is not null).Distinct());
+    private int Remaining => Math.Max(0, (_limit ?? 0) - _elapsed);
+    private static string Clock(int seconds) => $"{seconds / 60}:{seconds % 60:00}";
+
     protected override void OnParametersSet()
     {
         if (_lastId == Exercise.Id) return;
@@ -82,28 +116,59 @@ else
         _plays = 0;
         _showTranscript = false;
         _shownAt = DateTime.UtcNow;
+        _turns = SpeakerTurns.Parse(Exercise.Text);
+        _voices = SpeakerVoices.ForScript(_turns.Select(t => t.Speaker));
+        _limit = ExamTiming.TimeLimitSeconds(Exercise);
+        _elapsed = 0;
+        _timedOut = false;
+        _timer?.Dispose();
+        _timer = _limit is null ? null : new System.Threading.Timer(_ => _ = InvokeAsync(TickAsync), null, 1000, 1000);
+    }
+
+    private async Task TickAsync()
+    {
+        _elapsed++;
+        if (_result is null && !_busy && _limit is { } limit && _elapsed >= limit)
+        {
+            // The exam collects the sheet at this point; whatever is unanswered counts as wrong.
+            _timedOut = true;
+            await SubmitAsync();
+        }
+        StateHasChanged();
     }
 
     private async Task PlayAsync()
     {
-        if (string.IsNullOrWhiteSpace(Exercise.Text) || _playing) return;
+        if (_turns.Count == 0 || _playing || !CanPlay) return;
         _playing = true;
         _plays++;
-        try { await Speech.SpeakAsync(Exercise.Text, 0.95); }
+        try
+        {
+            foreach (var turn in _turns)
+            {
+                if (!_playing) break;   // Stopp pressed between two turns
+                var voice = turn.Speaker is { } speaker && _voices.TryGetValue(speaker, out var v) ? v : SpeechVoice.Male;
+                await Speech.SpeakAsync(turn.Text, 0.95, voice);
+            }
+        }
         finally { _playing = false; StateHasChanged(); }
     }
 
-    private async Task StopAsync() { await Speech.StopSpeakingAsync(); _playing = false; }
+    private async Task StopAsync() { _playing = false; await Speech.StopSpeakingAsync(); }
 
     private async Task SubmitAsync()
     {
         _busy = true;
         try
         {
+            _timer?.Dispose();
+            _timer = null;
             await Speech.StopSpeakingAsync();
             var ms = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - _shownAt).TotalMilliseconds);
             _result = await Learning.SubmitReadingAsync(SessionId, StepIndex, Exercise.Id, _chosen, ms);
         }
         finally { _busy = false; }
     }
+
+    public void Dispose() => _timer?.Dispose();
 }

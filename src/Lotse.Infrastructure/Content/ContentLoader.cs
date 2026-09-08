@@ -60,7 +60,9 @@ public static class ContentLoader
         if (duplicates.Count > 0)
             throw new InvalidDataException($"Doppelte Übungs-IDs: {string.Join(", ", duplicates)}");
 
-        var catalog = new ContentCatalog(taxonomy.Nodes, taxonomy.ErrorTypes, exercises, lessons);
+        // The one place seed content enters the catalogue: choice keys are balanced here (see KeyShuffle) so that
+        // neither the authors' habit of putting the answer second nor a constant key reaches the learner.
+        var catalog = new ContentCatalog(taxonomy.Nodes, taxonomy.ErrorTypes, exercises.Select(KeyShuffle.Apply), lessons);
         var problems = catalog.Validate();
         if (problems.Count > 0)
             throw new InvalidDataException("Ungültiger Content:\n" + string.Join("\n", problems));

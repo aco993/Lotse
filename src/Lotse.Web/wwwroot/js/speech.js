@@ -15,8 +15,11 @@ export function sttSupported() {
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
-/** Speaks German text. Resolves when finished (or immediately when TTS is unavailable). */
-export function speak(text, rate) {
+/**
+ * Speaks German text. `voice` is "male" or "female" - a preference, honoured as far as the browser's German voices
+ * allow. Resolves when finished (or immediately when TTS is unavailable).
+ */
+export function speak(text, rate, voice) {
     return new Promise((resolve) => {
         if (!ttsSupported()) { resolve(false); return; }
         const synth = window.speechSynthesis;
@@ -24,14 +27,33 @@ export function speak(text, rate) {
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = "de-DE";
         utter.rate = rate || 0.95;
-        const voices = synth.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
-        // Prefer a natural/online voice when the browser offers one.
-        const preferred = voices.find(v => /natural|online|premium|neural/i.test(v.name)) || voices[0];
-        if (preferred) utter.voice = preferred;
+        const chosen = pickVoice(synth.getVoices(), voice);
+        if (chosen) utter.voice = chosen;
         utter.onend = () => resolve(true);
         utter.onerror = () => resolve(false);
         synth.speak(utter);
     });
+}
+
+// Browser voices carry their gender only as a first name ("Microsoft Katja Online"; "Google Deutsch" carries none).
+// A listening text with a moderator and a guest needs two voices that differ, so when the gender cannot be read
+// the two requests still land on two different German voices wherever the browser has more than one.
+const FEMALE_NAMES = /katja|hedda|anna|petra|marlene|vicki|elke|helena|amala|seraphina|louisa|ingrid|gisela/i;
+const MALE_NAMES = /stefan|conrad|klaus|michael|bernd|christoph|killian|kasper|hans|ralf|florian|markus|yannick/i;
+const natural = (list) => list.find(v => /natural|online|premium|neural/i.test(v.name)) || list[0];
+
+function pickVoice(all, voice) {
+    const german = all.filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
+    if (german.length === 0) return null;
+    const wanted = voice === "female" ? FEMALE_NAMES : MALE_NAMES;
+    const other = voice === "female" ? MALE_NAMES : FEMALE_NAMES;
+    const matching = german.filter(v => wanted.test(v.name));
+    if (matching.length) return natural(matching);
+    const pool = german.filter(v => !other.test(v.name));   // never answer "female" with a voice called Stefan
+    const candidates = pool.length ? pool : german;
+    if (candidates.length === 1 || voice !== "female") return natural(candidates);
+    const first = natural(candidates);
+    return candidates.find(v => v !== first) || first;
 }
 
 /**
@@ -88,7 +110,15 @@ export function startRecognition(dotnetRef) {
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
+    // Chrome ends a "continuous" session after a few seconds of silence (error "no-speech", then "end") and after
+    // roughly a minute regardless. For a 60-120 s speaking task that meant: the learner paused to think, the
+    // button silently fell back to "Aufnahme starten", and the rest of the answer was never heard. So the session
+    // is restarted from onend unless the learner pressed stop or a real error happened; the transcript so far is
+    // kept across restarts. The restart cap only guards against a browser that ends every session immediately.
     let finalText = "";
+    let fatal = false;
+    let restarts = 0;
+    const current = recognition;
     recognition.onresult = (event) => {
         let interim = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -99,9 +129,17 @@ export function startRecognition(dotnetRef) {
         dotnetRef.invokeMethodAsync("OnTranscript", (finalText + interim).trim(), false);
     };
     recognition.onerror = (event) => {
-        dotnetRef.invokeMethodAsync("OnRecognitionError", event.error || "unknown");
+        const error = event.error || "unknown";
+        if (error === "no-speech") return;       // a pause, not a fault: onend restarts
+        fatal = true;
+        dotnetRef.invokeMethodAsync("OnRecognitionError", error);
     };
     recognition.onend = () => {
+        const stoppedByUser = recognition !== current; // stopRecognition() nulls or replaces the reference
+        if (!stoppedByUser && !fatal && restarts < 30) {
+            restarts++;
+            try { current.start(); return; } catch (e) { /* fall through and report the end */ }
+        }
         dotnetRef.invokeMethodAsync("OnTranscript", finalText.trim(), true);
         dotnetRef.invokeMethodAsync("OnRecognitionEnded");
     };
@@ -115,8 +153,9 @@ export function startRecognition(dotnetRef) {
 
 export function stopRecognition() {
     if (recognition) {
-        try { recognition.stop(); } catch (e) { /* already stopped */ }
-        recognition = null;
+        const r = recognition;
+        recognition = null;           // onend sees the reference gone and does not restart
+        try { r.stop(); } catch (e) { /* already stopped */ }
     }
 }
 

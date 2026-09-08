@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Core.Tutor;
@@ -410,9 +411,79 @@ public sealed class LearningServiceTests : IAsyncLifetime
         Assert.False(after.Steps[sibling].Done);
     }
 
+    /// <summary>
+    /// Four dictations on one Hören node: enough of that module's own evidence (confidence 4/12 over half the
+    /// module's weight) for readiness to have a number at all. Without it the dashboard shows no readiness and
+    /// writes no snapshot - see the test right below.
+    /// </summary>
+    private async Task PractiseOneModuleAsync()
+    {
+        var dictation = First(e => e.Type == ExerciseType.Dictation);
+        for (var i = 0; i < 4; i++)
+            await _svc.SubmitAnswerAsync(null, 0, dictation.Id, dictation.Answers[0], 3000, false);
+    }
+
+    /// <summary>
+    /// A generated exercise can vanish from the catalogue while a session that uses it is open. The view used to
+    /// drop such steps while the plan kept them, so the index the UI sent pointed one step off - the step after
+    /// the gap could never be marked done and the session never ended.
+    /// </summary>
+    [Fact]
+    public async Task A_session_whose_exercise_vanished_is_healed_and_can_still_be_finished()
+    {
+        var session = await _svc.StartSessionAsync(5);
+        await using (var db = _factory.CreateDbContext())
+        {
+            var row = await db.Sessions.SingleAsync(s => s.Id == session.Id);
+            var steps = JsonSerializer.Deserialize<List<StepRecord>>(row.PlanJson)!;
+            steps.Insert(1, new StepRecord { Kind = StepKind.Focus, ExerciseId = "gen.verschwunden.001", Reason = "war mal da" });
+            row.PlanJson = JsonSerializer.Serialize(steps);
+            row.StepsTotal = steps.Count;
+            await db.SaveChangesAsync();
+        }
+
+        var view = (await _svc.GetSessionAsync(session.Id))!;
+        Assert.Equal(view.Steps.Count, view.Exercises.Count);
+        Assert.DoesNotContain(view.Steps, s => s.ExerciseId == "gen.verschwunden.001");
+        Assert.Equal(view.Steps.Count, view.Session.StepsTotal);
+
+        // Answer every remaining step by its VIEW index - the only index the UI has - and the session must end.
+        var complete = false;
+        for (var i = 0; i < view.Steps.Count; i++)
+        {
+            var ex = view.Exercises[i];
+            if (ex.IsProduction)
+            {
+                // The tutor path reports no completion flag; the last step's outcome is read back from the session below.
+                await _svc.SubmitProductionAsync(session.Id, i, ex.Id, "Ich fahre mit der Auto zur Arbeit und das ist gut.", speaking: ex.Type == ExerciseType.Speak);
+                complete = (await _svc.GetSessionAsync(session.Id))!.Session.EndedUtc is not null;
+                continue;
+            }
+            var answer = ex.Type is ExerciseType.MultipleChoice or ExerciseType.SpotError ? ex.CorrectIndex.ToString() : ex.Answers.FirstOrDefault() ?? "";
+            complete = (await _svc.SubmitAnswerAsync(session.Id, i, ex.Id, answer, 1000, false)).SessionComplete;
+        }
+        Assert.True(complete, "Die geheilte Session wurde nie fertig.");
+    }
+
+    [Fact]
+    public async Task No_readiness_snapshot_is_written_before_an_exam_module_was_practised()
+    {
+        // Grammar drills alone are not exam evidence: the old dashboard snapshotted the 45 % prior on day one and
+        // then reported a "trend" of prior against prior a week later.
+        var cloze = First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
+        await _svc.SubmitAnswerAsync(null, 0, cloze.Id, cloze.Answers[0], 3000, false);
+
+        var dash = await _svc.GetDashboardAsync();
+        Assert.False(dash.Readiness.HasEvidence);
+        Assert.Null(dash.ReadinessTrend);
+        await using var db = _factory.CreateDbContext();
+        Assert.Empty(await db.ReadinessSnapshots.Where(s => s.UserId == UserId).ToListAsync());
+    }
+
     [Fact]
     public async Task Readiness_trend_stays_silent_until_there_is_something_to_compare()
     {
+        await PractiseOneModuleAsync();
         // Day one: a snapshot is written, but there is nothing a week old, so no arrow is claimed.
         Assert.Null((await _svc.GetDashboardAsync()).ReadinessTrend);
 
@@ -438,6 +509,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
     [Fact]
     public async Task Readiness_trend_reports_the_change_it_measured()
     {
+        await PractiseOneModuleAsync();
         await _svc.GetDashboardAsync();   // day 0 snapshot
 
         // Rewrite the old snapshot to a lower value: the same effect as a week of real improvement, without

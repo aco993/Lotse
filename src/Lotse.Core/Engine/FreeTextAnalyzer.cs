@@ -85,15 +85,33 @@ public static class FreeTextAnalyzer
         "allerdings", "jedoch", "dennoch", "sodass", "damit", "während", "nachdem", "bevor", "meiner meinung nach", "ich bin der ansicht",
         "ich finde", "zum beispiel", "beispielsweise", "im gegensatz", "sowohl", "nicht nur", "zusammenfassend", "abschließend", "erstens", "zweitens", "schließlich",
     ];
+    // Precision over recall, as everywhere in this file: only participles whose auxiliary is unambiguous.
+    // "gefahren", "geflogen" and "gefallen" are out - "hat das Auto gefahren", "hat die Maschine geflogen" and
+    // "hat mir gefallen" are all correct with haben, and the first version marked "Der Film hat mir gefallen"
+    // wrong, which is textbook B1 German.
     private static readonly HashSet<string> SeinParticiples = new(StringComparer.OrdinalIgnoreCase)
     {
-        "gegangen", "gefahren", "gekommen", "geblieben", "gestiegen", "gelaufen", "geflogen", "aufgestanden", "passiert", "gestorben",
-        "eingeschlafen", "umgezogen", "gewesen", "geworden", "angekommen", "eingestiegen", "ausgestiegen", "gewachsen", "gefallen", "gelungen", "gereist", "gewandert",
+        "gegangen", "gekommen", "geblieben", "gestiegen", "gelaufen", "aufgestanden", "passiert", "gestorben",
+        "eingeschlafen", "umgezogen", "gewesen", "geworden", "angekommen", "eingestiegen", "ausgestiegen", "gewachsen", "gelungen", "gereist", "gewandert",
     };
     private static readonly HashSet<string> HabenParticiples = new(StringComparer.OrdinalIgnoreCase)
     {
         "gearbeitet", "gemacht", "gehabt", "gesagt", "gesehen", "gekauft", "gelernt", "geschrieben", "gelesen", "gegessen", "getrunken",
         "gespielt", "gehört", "gefunden", "genommen", "gegeben", "bekommen", "verstanden", "besucht", "getroffen", "angefangen", "beendet", "geschlafen", "gewohnt", "gefragt", "geantwortet",
+    };
+    // "sein" + one of these is the Zustandspassiv, not a wrong auxiliary: "Die Arbeit ist beendet", "Das Auto
+    // ist gekauft", "Der Brief ist geschrieben". Only intransitive haben-verbs can be flagged after "sein".
+    private static readonly HashSet<string> NoStatePassive = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "gearbeitet", "gehabt", "geschlafen", "gewohnt", "geantwortet",
+    };
+    // Bare-noun predicates: "Angst haben", "Hunger haben", "Zeit haben" take no article even though the noun is
+    // countable elsewhere ("die Ängste"). The vocabulary card for Angst lists a plural, so the countability rule
+    // alone flagged the card's own example sentence.
+    private static readonly HashSet<string> BareNounPredicates = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Angst", "Hunger", "Durst", "Zeit", "Lust", "Recht", "Glück", "Pech", "Urlaub", "Feierabend", "Geburtstag", "Fieber",
+        "Besuch", "Spaß", "Ahnung", "Mut", "Geduld", "Erfolg", "Kontakt", "Platz", "Bedarf", "Vorrang", "Schuld", "Sinn",
     };
     private static readonly Dictionary<string, string> SzSpellings = new(StringComparer.Ordinal)
     {
@@ -210,7 +228,7 @@ public static class FreeTextAnalyzer
                     var phrase = string.Join(' ', tokens[i..(j + 1)]).TrimEnd('.', ',', '!', '?', ';', ':');
                     if (auxIsHaben && isSeinPart)
                         Add("TEMPUS_HILFSVERB", phrase, phrase.Replace(aux, SeinFor(aux)), $"„{word}“ bildet das Perfekt mit „sein“ (Bewegung/Zustandswechsel). Serbisch nutzt immer „biti“ – im Deutschen entscheidet das Verb.");
-                    else if (auxIsSein && isHabenPart)
+                    else if (auxIsSein && isHabenPart && NoStatePassive.Contains(word))
                         Add("TEMPUS_HILFSVERB", phrase, phrase.Replace(aux, HabenFor(aux)), $"„{word}“ bildet das Perfekt mit „haben“ – „sein“ nur bei Bewegung, Zustandswechsel und sein/bleiben/werden.");
                     break;
                 }
@@ -266,6 +284,7 @@ public static class FreeTextAnalyzer
         foreach (Match m in MissingArticleRe.Matches(text))
         {
             var noun = m.Groups["noun"].Value;
+            if (BareNounPredicates.Contains(noun)) continue;
             if (!lexicon.TryGetNoun(noun, out var gender, out var countable) || !countable) continue;
             var verb = m.Groups["verb"].Value;
             var art = gender switch { "der" => "einen", "das" => "ein", _ => "eine" };

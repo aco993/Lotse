@@ -115,7 +115,12 @@ public sealed class SessionPlanner
         {
             var preferSpeaking = input.SessionsCompleted % 2 == 1;
             var maxSeconds = input.TimeBudgetMinutes switch { <= 5 => 150, <= 10 => 240, _ => 420 };
-            var production = PickProduction(catalog, input, used, rng, preferSpeaking, maxSeconds);
+            // The exam's own writing tasks (Teil 1: 150 words) estimate at 600 s and never fitted under 420, so the
+            // single most valuable production in the bank was reachable only by hand from /pruefung. From twenty
+            // minutes on, an exam-format task may take the slot - at fifteen it would, together with the reading
+            // share below, leave nothing for the drills.
+            var examSeconds = input.TimeBudgetMinutes >= 20 ? 600 : maxSeconds;
+            var production = PickProduction(catalog, input, used, rng, preferSpeaking, maxSeconds, examSeconds);
             if (production is not null && Fits(production))
             {
                 var kind = production.Type == ExerciseType.Speak ? "Sprechen" : "Schreiben";
@@ -123,7 +128,36 @@ public sealed class SessionPlanner
             }
         }
 
-        // ---- 4. Focus drills on the weakest nodes -------------------------------------------------
+        // ---- 4. Input (reading / listening) BEFORE the drills take the rest -------------------------
+        // This block used to come after the focus drills, which run until less than 20 s remain - so reading and
+        // listening only ever got leftovers, and a 20-minute plan for a new learner had none at all. The exam's
+        // Lesen and Hören are thirty items each; one receptive item per session, if any, exhausted the bank in
+        // about five weeks without building either stamina. Longer sessions now reserve two or three slots here,
+        // alternating reading and listening where time allows.
+        var daysSinceInput = input.LastInputUtc is null ? 99 : (now - input.LastInputUtc.Value).TotalDays;
+        if (Remaining() >= 120 && (input.TimeBudgetMinutes >= 15 || daysSinceInput >= 3))
+        {
+            // Reading and listening get a share of the session, not the session: about a third, so a 20-minute
+            // plan carries one text and two dictations (300 + 40 + 40 s) and still has its drills.
+            var inputBudget = budget * 0.35;
+            var inputSlots = input.TimeBudgetMinutes >= 20 ? 3 : input.TimeBudgetMinutes >= 15 ? 2 : 1;
+            for (var slot = 0; slot < inputSlots && Remaining() >= 120; slot++)
+            {
+                var inputLeft = inputBudget - steps.Where(s => s.Kind == StepKind.Input).Sum(s => s.Exercise.EstimatedSeconds);
+                var preferReading = slot == 0 && inputLeft >= 300;
+                var inputEx = catalog.Exercises
+                    .Where(e => e.IsReceptive && !used.Contains(e.Id) && !input.RecentExerciseIds.Contains(e.Id) && e.EstimatedSeconds <= inputLeft)
+                    .OrderBy(e => (e.Type == ExerciseType.Reading) == preferReading ? 0 : 1)
+                    .ThenBy(_ => rng.Next())
+                    .FirstOrDefault(e => Fits(e));
+                if (inputEx is null) break;
+                Add(StepKind.Input, inputEx, inputEx.Type == ExerciseType.Reading
+                    ? "Lesen: Prüfungsformat trainieren und Wortschatz im Kontext sehen."
+                    : "Hören: Diktat schult Hörverstehen und Rechtschreibung zugleich.");
+            }
+        }
+
+        // ---- 5. Focus drills on the weakest nodes -------------------------------------------------
         var focusNodes = RankFocusNodes(input).ToList();
         if (input.RequestedNodeId is not null && catalog.Node(input.RequestedNodeId) is not null)
             focusNodes.Insert(0, (input.RequestedNodeId, 99, "Dein Wunschthema."));
@@ -147,21 +181,6 @@ public sealed class SessionPlanner
                 target += 0.15;
             }
             if (Remaining() < 20) break;
-        }
-
-        // ---- 5. Input (reading / listening) when there is room ------------------------------------
-        var daysSinceInput = input.LastInputUtc is null ? 99 : (now - input.LastInputUtc.Value).TotalDays;
-        if (Remaining() >= 120 && (input.TimeBudgetMinutes >= 15 || daysSinceInput >= 3))
-        {
-            var inputEx = catalog.Exercises
-                .Where(e => e.IsReceptive && !used.Contains(e.Id) && !input.RecentExerciseIds.Contains(e.Id))
-                .OrderBy(e => e.Type == ExerciseType.Reading && Remaining() < 300 ? 1 : 0)
-                .ThenBy(_ => rng.Next())
-                .FirstOrDefault(e => Fits(e));
-            if (inputEx is not null)
-                Add(StepKind.Input, inputEx, inputEx.Type == ExerciseType.Reading
-                    ? "Lesen: Prüfungsformat trainieren und Wortschatz im Kontext sehen."
-                    : "Hören: Diktat schult Hörverstehen und Rechtschreibung zugleich.");
         }
 
         // ---- 6. Fill leftover time with short drills, even for new learners with no history --------
@@ -313,14 +332,15 @@ public sealed class SessionPlanner
         _ => 4,
     };
 
-    private static Exercise? PickProduction(ContentCatalog catalog, PlannerInput input, ISet<string> used, Random rng, bool preferSpeaking, int maxSeconds)
+    private static Exercise? PickProduction(ContentCatalog catalog, PlannerInput input, ISet<string> used, Random rng, bool preferSpeaking, int maxSeconds, int examSeconds)
     {
         var writing = input.SkillStates.Values.Where(s => catalog.Node(s.NodeId)?.Area == SkillArea.Schreiben).Select(s => s.Mastery).DefaultIfEmpty(0.5).Average();
         var speaking = input.SkillStates.Values.Where(s => catalog.Node(s.NodeId)?.Area == SkillArea.Sprechen).Select(s => s.Mastery).DefaultIfEmpty(0.5).Average();
         var wantSpeak = preferSpeaking ? speaking <= writing + 0.15 : speaking < writing - 0.15;
 
         Exercise? Pick(ExerciseType type) => catalog.Exercises
-            .Where(e => e.Type == type && !used.Contains(e.Id) && e.EstimatedSeconds <= maxSeconds)
+            .Where(e => e.Type == type && !used.Contains(e.Id)
+                        && e.EstimatedSeconds <= (e.Context == ExerciseContext.Pruefung ? examSeconds : maxSeconds))
             .OrderBy(e => input.RecentExerciseIds.Contains(e.Id) ? 1 : 0)
             .ThenBy(_ => rng.Next())
             .FirstOrDefault();

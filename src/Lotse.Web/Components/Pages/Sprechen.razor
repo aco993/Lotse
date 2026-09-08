@@ -10,7 +10,7 @@
 <div class="page-intro intro-sprechen">
     <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.Mic" /></div>
     <div>
-        <MudText Typo="Typo.h5">Sprechen</MudText>
+        <MudText Typo="Typo.h5" HtmlTag="h1">Sprechen</MudText>
         <MudText Typo="Typo.body2" Style="opacity:.85">Spontan reden ist die härteste Disziplin – und die, die im Alltag am meisten zählt. Der Browser transkribiert, der Tutor bewertet (oder du selbst). Für die Diskussion steht ein KI-Partner bereit.</MudText>
     </div>
 </div>
@@ -121,7 +121,7 @@
             var reply = await Learning.Tutor.DiscussAsync(_thesisText, _history, ctx);
             _history.Add(new ChatTurn(false, reply));
         }
-        catch (Exception e) { _history.Add(new ChatTurn(false, "(Partner nicht erreichbar: " + e.Message + ")")); }
+        catch (Exception e) { _history.Add(new ChatTurn(false, "(Partner nicht erreichbar: " + TutorRegistry.Friendly(e) + ")")); }
         finally { _partnerThinking = false; StateHasChanged(); }
     }
 

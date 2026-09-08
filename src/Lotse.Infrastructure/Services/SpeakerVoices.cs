@@ -15,19 +15,23 @@ public static class SpeakerVoices
         // Recurring cast
         "Sabine", "Lena", "Ana", "Mira",
         // Roles that name themselves in the feminine
-        "Apothekerin", "Prüferin", "Sachbearbeiterin", "Deine Frau",
+        "Apothekerin", "Prüferin", "Sachbearbeiterin", "Deine Frau", "Moderatorin", "Expertin", "Reporterin", "Journalistin",
     };
 
     private static readonly HashSet<string> Male = new(StringComparer.OrdinalIgnoreCase)
     {
         "Jonas", "Tarek", "Yusuf",
         "Du",   // the learner
+        "Moderator", "Experte", "Reporter", "Journalist",
     };
 
-    public static SpeechVoice For(string? speaker)
+    public static SpeechVoice For(string? speaker) => Known(speaker) ?? SpeechVoice.Male;
+
+    /// <summary>The voice a label settles on its own - courtesy title or listed name - or null for a stranger.</summary>
+    public static SpeechVoice? Known(string? speaker)
     {
         var name = Normalize(speaker);
-        if (name.Length == 0) return SpeechVoice.Male;
+        if (name.Length == 0) return null;
 
         // German courtesy titles are the most reliable signal there is, so they win over any name list.
         if (name.StartsWith("Frau ", StringComparison.OrdinalIgnoreCase)) return SpeechVoice.Female;
@@ -41,7 +45,27 @@ public static class SpeakerVoices
         if (Female.Contains(first)) return SpeechVoice.Female;
         if (Male.Contains(first)) return SpeechVoice.Male;
 
-        return SpeechVoice.Male;
+        return null;
+    }
+
+    /// <summary>
+    /// Voices for a whole script, in order of first appearance. Strangers alternate with whoever spoke before them:
+    /// a listening text whose two discussants both fell back to the default voice could not be answered ("wer sagt
+    /// was?" needs two voices to tell apart). With two voices a third person inevitably doubles one - in Teil 3 that
+    /// is the moderator, whose turns are the short ones.
+    /// </summary>
+    public static IReadOnlyDictionary<string, SpeechVoice> ForScript(IEnumerable<string?> speakersInOrder)
+    {
+        var voices = new Dictionary<string, SpeechVoice>(StringComparer.OrdinalIgnoreCase);
+        SpeechVoice? last = null;
+        foreach (var speaker in speakersInOrder)
+        {
+            if (speaker is null || voices.ContainsKey(speaker)) continue;
+            var voice = Known(speaker) ?? (last == SpeechVoice.Male ? SpeechVoice.Female : SpeechVoice.Male);
+            voices[speaker] = voice;
+            last = voice;
+        }
+        return voices;
     }
 
     private static string Normalize(string? speaker)

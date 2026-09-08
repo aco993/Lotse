@@ -2,6 +2,7 @@ using System.Text.Json;
 using Lotse.Core.Engine;
 using Lotse.Core.Model;
 using Lotse.Core.Tutor;
+using Lotse.Infrastructure.Ai;
 using Lotse.Infrastructure.Content;
 using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
@@ -171,7 +172,8 @@ public sealed class LearningService(
 
         var streak = await ComputeStreakAsync(db, userId, now, ct);
         var readiness = LearnerAnalysis.Readiness(Catalog, states);
-        var readinessTrend = await ReadinessTrendAsync(db, userId, readiness.Overall, readiness.Modules, now, ct);
+        // No snapshot and no trend before there is a measured number: a trend of the prior against the prior is noise.
+        var readinessTrend = readiness.HasEvidence ? await ReadinessTrendAsync(db, userId, readiness.Overall, readiness.Modules, now, ct) : null;
         // Only computed for a C1 learner: a B2 learner has no use for a number about material they are not aiming at.
         var c1 = profile.TargetLevel == TargetLevel.C1 ? LearnerAnalysis.C1Proximity(Catalog, states) : null;
         var weak = LearnerAnalysis.WeakAreas(Catalog, states, errors, now);
@@ -530,18 +532,29 @@ public sealed class LearningService(
     {
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
-        var session = await db.Sessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId, ct);
+        var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId, ct);
         if (session is null) return null;
         var steps = JsonSerializer.Deserialize<List<StepRecord>>(session.PlanJson) ?? [];
+
+        // An exercise can leave the catalogue while a session is open (a generated one that no longer validates
+        // is dropped on refresh or repair). The first version filtered such steps out of the VIEW only, while
+        // MarkStepDoneAsync kept indexing the unfiltered plan - answering the step after the gap marked the gap,
+        // and the last real step could never be reached, so the session never ended and was re-served after
+        // every reload. The plan is healed here instead, once and persistently, so every index agrees.
+        if (steps.Any(s => Catalog.Exercise(s.ExerciseId) is null))
+        {
+            steps = steps.Where(s => Catalog.Exercise(s.ExerciseId) is not null).ToList();
+            session.PlanJson = JsonSerializer.Serialize(steps);
+            session.StepsTotal = steps.Count;
+            session.StepsDone = steps.Count(s => s.Done);
+            if (steps.Count == 0 || steps.All(s => s.Done)) session.EndedUtc ??= Now;
+            await db.SaveChangesAsync(ct);
+        }
+
         // The catalogue is a singleton shared by every account, so the learner's name is substituted into copies
         // here - the one boundary where content stops being shared and belongs to one person.
         var view = await LearnerViewAsync(db, userId, ct);
-        var exercises = steps.Select(s => Catalog.Exercise(s.ExerciseId)).Where(e => e is not null)
-            .Select(e => NameTemplate.Render(e!, view)).ToList();
-        if (exercises.Count != steps.Count)
-        {
-            steps = steps.Where(s => Catalog.Exercise(s.ExerciseId) is not null).ToList();
-        }
+        var exercises = steps.Select(s => NameTemplate.Render(Catalog.Exercise(s.ExerciseId)!, view)).ToList();
         return new SessionView(session, steps, exercises);
     }
 
@@ -838,7 +851,7 @@ public sealed class LearningService(
             catch (Exception e)
             {
                 logger.LogWarning(e, "KI-Bewertung fehlgeschlagen, Selbstcheck als Fallback.");
-                tutorError = e.Message;
+                tutorError = TutorRegistry.Friendly(e);
             }
         }
 
@@ -1113,6 +1126,10 @@ public sealed class LearningService(
         await db.Productions.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
         await db.LessonProgress.Where(l => l.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Sessions.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
+        // Forgotten in the first version: the trend on Heute then compared a fresh account against the numbers
+        // it had just deleted. The isolation test now enumerates every per-user entity type, so the next table
+        // cannot be forgotten silently.
+        await db.ReadinessSnapshots.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Profiles.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
         await tx.CommitAsync(ct);
     }

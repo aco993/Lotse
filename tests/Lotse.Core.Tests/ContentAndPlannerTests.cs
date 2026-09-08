@@ -107,6 +107,88 @@ public class ContentTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     /// <summary>
+    /// Authored keys leaned hard on position (index 1 in 58 % of reading/listening questions, the third
+    /// multiple-choice option right only 9 % of the time, four reading tasks with a constant key). KeyShuffle
+    /// balances them at load; this keeps the balance from drifting back and makes sure only the text moved.
+    /// </summary>
+    [Fact]
+    public void Choice_keys_are_balanced_and_no_reading_task_has_a_constant_key()
+    {
+        var mc = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.MultipleChoice && e.Options.Count == 3).ToList();
+        Assert.True(mc.Count >= 50, $"nur {mc.Count} dreioptionige MC-Aufgaben");
+        for (var i = 0; i < 3; i++)
+        {
+            var share = mc.Count(e => e.CorrectIndex == i) / (double)mc.Count;
+            Assert.InRange(share, 0.20, 0.47);
+        }
+
+        var readings = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.Reading && e.Questions.Count >= 4).ToList();
+        Assert.NotEmpty(readings);
+        Assert.All(readings, r => Assert.True(r.Questions.Select(q => q.CorrectIndex).Distinct().Count() > 1, $"{r.Id}: konstanter Schlüssel"));
+
+        var questions = fx.Catalog.Exercises.Where(e => e.Type == ExerciseType.Reading).SelectMany(e => e.Questions).ToList();
+        var topShare = questions.GroupBy(q => q.CorrectIndex).Max(g => g.Count()) / (double)questions.Count;
+        Assert.True(topShare < 0.45, $"eine Position trägt {topShare:P0} der Schlüssel");
+    }
+
+    [Fact]
+    public void Key_shuffle_is_deterministic_and_moves_only_the_text()
+    {
+        var e = new Exercise
+        {
+            Id = "mc.test.001",
+            Type = ExerciseType.MultipleChoice,
+            NodeId = "GR.PASSIV",
+            Band = CefrBand.B2_1,
+            Prompt = "___",
+            Options = ["a", "b", "c", "d"],
+            CorrectIndex = 1,
+        };
+        var once = KeyShuffle.Apply(e);
+        var twice = KeyShuffle.Apply(e);
+        Assert.Equal(once.Options, twice.Options);
+        Assert.Equal(once.CorrectIndex, twice.CorrectIndex);
+        Assert.Equal("b", once.Options[once.CorrectIndex!.Value]);
+        Assert.Equal(e.Options.OrderBy(o => o), once.Options.OrderBy(o => o));
+
+        // Types whose order carries meaning are left alone.
+        var spot = e with { Type = ExerciseType.SpotError, Answers = ["x"] };
+        Assert.Same(spot, KeyShuffle.Apply(spot));
+        var order = e with { Type = ExerciseType.WordOrder, Answers = ["a b c d"] };
+        Assert.Same(order, KeyShuffle.Apply(order));
+    }
+
+    /// <summary>
+    /// The stand-in name a learner gets when they leave the profile empty must not belong to anyone in the course.
+    /// The first pool had "Berger" in it, and Lesson 1's team lead is Sabine Berger - so a nameless learner read
+    /// "Frau Berger hat mir Ihre Einarbeitung übergeben" as Herr Berger. Surnames are checked against the whole
+    /// bank (exercises address people too), first names against the lesson speakers the learner actually talks to.
+    /// </summary>
+    [Fact]
+    public void Fallback_names_belong_to_nobody_in_the_content()
+    {
+        var dir = ContentLoader.ResolveContentDirectory(null);
+        var addressed = new Regex(@"(?:Frau|Herr|Herrn|Familie)\s+(\p{Lu}[\p{Ll}]+)");
+        var surnames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var f in Directory.EnumerateFiles(dir, "*.json", SearchOption.AllDirectories))
+            foreach (Match m in addressed.Matches(File.ReadAllText(f)))
+                surnames.Add(m.Groups[1].Value);
+        foreach (var l in fx.Catalog.Lessons)
+            foreach (var parts in l.Story.Select(s => s.Speaker.Split('(')[0].Trim().Split(' ')).Where(p => p.Length >= 2))
+                surnames.Add(parts[^1]);
+
+        var speakerFirstNames = fx.Catalog.Lessons.SelectMany(l => l.Story)
+            .Select(s => s.Speaker.Split('(')[0].Trim().Split(' ')[0])
+            .ToHashSet(StringComparer.Ordinal);
+
+        var takenSurnames = NameFallback.LastNames.Where(surnames.Contains).ToList();
+        var takenFirst = NameFallback.FirstNames.Where(speakerFirstNames.Contains).ToList();
+        Assert.True(takenSurnames.Count == 0, "Platzhalter-Nachname gehört einer Figur: " + string.Join(", ", takenSurnames));
+        Assert.True(takenFirst.Count == 0, "Platzhalter-Vorname gehört einem Sprecher: " + string.Join(", ", takenFirst));
+        Assert.DoesNotContain(NameFallback.Neutral.Last, surnames);
+    }
+
+    /// <summary>
     /// The repository is public, and an absolute path from the machine it was written on carries a real Windows
     /// account name into it. Three files had one (a prompt doc and the two harness scripts) before this test.
     /// Tools take their paths from their own location or from an argument instead.
@@ -218,6 +300,36 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
         .Where(s => s.Kind is StepKind.Focus or StepKind.Explore)
         .Select(s => fx.Catalog.Node(s.Exercise.NodeId)!)
         .ToList();
+
+    [Fact]
+    public void A_long_session_carries_more_than_one_reading_or_listening_item()
+    {
+        // The exam's Lesen and Hören are thirty items each; one per day did not add up to that.
+        var twenty = new SessionPlanner().Plan(Input(20));
+        Assert.True(twenty.Steps.Count(s => s.Kind == StepKind.Input) >= 2, $"nur {twenty.Steps.Count(s => s.Kind == StepKind.Input)} Input-Schritte in 20 min");
+
+        // A five-minute session stays a five-minute session.
+        var five = new SessionPlanner().Plan(Input(5));
+        Assert.True(five.Steps.Count(s => s.Kind == StepKind.Input) <= 1);
+    }
+
+    [Fact]
+    public void Exam_format_writing_is_reachable_from_twenty_minutes_but_never_below()
+    {
+        // Teil-1 tasks (150 words) estimate at 600 s; under the flat 420 s cap they never entered a daily session.
+        static bool HasLongProduction(SessionPlan p, int seconds) =>
+            p.Steps.Any(s => s.Kind == StepKind.Production && s.Exercise.EstimatedSeconds >= seconds);
+
+        var reachable = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(20) with { Seed = seed }), 600));
+        Assert.True(reachable, "Kein 20-Minuten-Plan von 40 enthielt eine Prüfungs-Schreibaufgabe.");
+
+        // A quarter hour keeps the old cap: with the reading share it would otherwise leave nothing for drills.
+        var fifteen = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(15) with { Seed = seed }), 421));
+        Assert.False(fifteen, "Ein 15-Minuten-Plan trug eine Produktion über 420 s.");
+
+        var ten = Enumerable.Range(0, 40).Any(seed => HasLongProduction(new SessionPlanner().Plan(Input(10) with { Seed = seed }), 241));
+        Assert.False(ten, "Ein 10-Minuten-Plan trug eine Produktion über 240 s.");
+    }
 
     [Fact]
     public void C1_target_lets_the_focus_reach_above_B2()
@@ -407,10 +519,77 @@ public class PlannerTests(CatalogFixture fx) : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Readiness_verdict_asks_for_data_when_nothing_is_known()
+    public void Readiness_shows_no_number_when_nothing_is_known()
     {
         var r = LearnerAnalysis.Readiness(fx.Catalog, new Dictionary<string, SkillState>());
-        Assert.Contains("wenig Daten", r.Verdict);
+        Assert.False(r.HasEvidence);
+        Assert.Equal(0, r.EvidenceModules);
+        Assert.Contains("keine Prüfungsaufgaben", r.Verdict);
         Assert.Equal(4, r.Modules.Count);
+        Assert.All(r.Modules, m => Assert.False(m.HasEvidence));
+    }
+
+    /// <summary>A node at exactly the given mastery, fully confident: theta is solved from the 1.4-slope logistic
+    /// that <see cref="Ability.SuccessProbability"/> uses against the B2.1 difficulty.</summary>
+    private static SkillState Mastered(string nodeId, double mastery = 0.85) => new()
+    {
+        NodeId = nodeId,
+        Theta = CefrBand.B2_1.Difficulty() + Math.Log(mastery / (1 - mastery)) / 1.4,
+        Attempts = 20,
+        Correct = (int)Math.Round(20 * mastery),
+        LastPracticedUtc = Now.AddDays(-1),
+    };
+
+    /// <summary>
+    /// The finding that mattered most in the 2026-09 review: a learner who drilled vocabulary and grammar to 85 %
+    /// and never read, listened, wrote or spoke once was shown "Lesen 81 %" and told to start exam simulations.
+    /// </summary>
+    [Fact]
+    public void Grammar_and_vocabulary_alone_never_produce_an_exam_number()
+    {
+        var states = fx.Catalog.Nodes
+            .Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+            .ToDictionary(n => n.Id, n => Mastered(n.Id));
+
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+
+        Assert.False(r.HasEvidence, "Ohne eine einzige Modulaufgabe darf es keine Prüfungszahl geben.");
+        Assert.All(r.Modules, m => Assert.False(m.HasEvidence));
+        Assert.All(r.Modules, m => Assert.True(m.Foundation > 0.7, $"{m.Module}: das Fundament muss trotzdem sichtbar sein"));
+        Assert.Contains("keine Prüfungsaufgaben", r.Verdict);
+    }
+
+    [Fact]
+    public void A_module_number_rests_on_the_modules_own_tasks_and_the_foundation_lifts_it_by_at_most_a_step()
+    {
+        var states = fx.Catalog.Nodes
+            .Where(n => n.Area is SkillArea.Grammatik or SkillArea.Wortschatz or SkillArea.Redemittel)
+            .ToDictionary(n => n.Id, n => Mastered(n.Id, 0.9));
+        // Reading practised, but weakly: 40 % - the vocabulary behind it is at 90 %.
+        foreach (var n in fx.Catalog.Nodes.Where(n => n.Area == SkillArea.Lesen))
+            states[n.Id] = Mastered(n.Id, 0.4);
+
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+        var lesen = r.Modules.Single(m => m.Module == "Lesen");
+
+        Assert.True(lesen.HasEvidence);
+        Assert.True(r.HasEvidence);
+        Assert.Equal(1, r.EvidenceModules);
+        // Evidence ~0.4 (shrunk a little towards the prior), foundation ~0.9: the number must stay near the evidence.
+        Assert.True(lesen.Readiness <= 0.4 + LearnerAnalysis.FoundationBonus + 0.05, $"Lesen {lesen.Readiness:P0} ist vom Fundament hochgezogen");
+        Assert.True(lesen.Readiness < 0.6, "Ein schwach geübtes Modul darf nicht als bestanden erscheinen");
+        Assert.Contains("1 von 4 Modulen", r.Verdict);
+        Assert.Contains("Hören", r.Verdict); // named as still missing
+    }
+
+    [Fact]
+    public void Four_measured_modules_give_the_old_verdicts_back()
+    {
+        var states = fx.Catalog.Nodes.ToDictionary(n => n.Id, n => Mastered(n.Id, 0.85));
+        var r = LearnerAnalysis.Readiness(fx.Catalog, states);
+        Assert.True(r.HasEvidence);
+        Assert.Equal(4, r.EvidenceModules);
+        Assert.All(r.Modules, m => Assert.True(m.Readiness >= 0.7, $"{m.Module}: {m.Readiness:P0}"));
+        Assert.Contains("Auf Kurs", r.Verdict);
     }
 }

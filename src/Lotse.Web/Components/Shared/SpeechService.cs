@@ -48,7 +48,7 @@ public sealed class SpeechService(IJSRuntime js, ITextToSpeech tts) : IAsyncDisp
             }
         }
 
-        return await (await ModuleAsync()).InvokeAsync<bool>("speak", text, rate);
+        return await (await ModuleAsync()).InvokeAsync<bool>("speak", text, rate, voice == SpeechVoice.Female ? "female" : "male");
     }
 
     public async ValueTask StopSpeakingAsync() => await (await ModuleAsync()).InvokeVoidAsync("stopSpeaking");

@@ -80,7 +80,11 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .dlg-line.me .dlg-bubble { background: rgba(224,122,31,.10); border: 1px solid rgba(224,122,31,.25); }
 .dlg-speaker { font-size: .72rem; opacity: .65; margin-bottom: 2px; font-weight: 600; }
 .dlg-option .mud-button-label { white-space: normal; text-align: left; }
-.dlg-tts { position: absolute; right: 2px; bottom: 0; opacity: .5; }
+/* 40 px touch target on a small icon: every read-aloud button (dialogue bubbles, the vocabulary table on a lesson)
+   measured 26 x 26 on a phone. The icon stays small; the hit area does not. */
+.mud-icon-button[aria-label="Vorlesen"] { width: 40px; height: 40px; }
+.dlg-tts { position: absolute; right: 0; bottom: 0; opacity: .6; }
+.dlg-bubble:has(.dlg-tts) { padding-right: 42px; }
 .dlg-feedback { white-space: normal; }
 .avatar { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; margin-top: 2px; }
 
@@ -261,6 +265,10 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 
 .acct a { color: var(--acct-primary); text-decoration: none; font-weight: 600; }
 .acct a:hover { text-decoration: underline; }
+/* A button that happens to be a link (404, error page, "Zur Anmeldung") must not take the link colour: with the rule
+   above it rendered navy text on a navy button - a blank blue block as the only way off the page. */
+a.acct-btn, .acct a.acct-btn { color: var(--acct-btn-text); }
+a.acct-btn:hover { text-decoration: none; }
 .acct-alt { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--acct-line); text-align: center; font-size: .9rem; color: var(--acct-muted); }
 .acct-note { font-size: .8rem; color: var(--acct-muted); margin: -4px 0 18px; display: flex; gap: 8px; align-items: flex-start; }
 .acct-note svg { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--acct-success); }

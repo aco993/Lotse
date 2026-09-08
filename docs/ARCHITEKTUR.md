@@ -102,7 +102,7 @@ Session page ◀─────┘  renders step i via ExerciseRunner
 | vocab | prompt (helper language), answers (German incl. article), lemma | promptEn, article, plural, exampleDe, explanation, serbianNote/englishNote |
 | freeWrite | prompt, minWords, rubric | modelAnswer, tags |
 | speak | prompt, rubric | targetSeconds, modelAnswer |
-| reading | prompt, text, questions | audioOnly (true = Hören: text is spoken, never shown) |
+| reading | prompt, text, questions | audioOnly (true = Hören: text is spoken, never shown). A conversation is written as `Name: …` turns joined by ` – ` or line breaks; `SpeakerTurns` splits it and each person is read in their own voice, the name itself is not spoken. Items in the `Pruefung` context follow `ExamTiming`: the prompt's "Teil n" decides how often the audio plays (Teil 1/3 once, Teil 2/4 twice) and how long a reading part lasts (18/12/6 min) |
 
 The test suite loads the real content and rejects any item that violates this contract, any answer the checker would not accept, and any core node lacking items on both sides of the B1/B2 boundary.
 
@@ -143,4 +143,4 @@ Every account is fully isolated: separate skill state, sessions, error journal, 
 
 ## AI integration
 
-`ClaudeTutor` uses `client.Messages.Create` with `OutputConfig.Format = JsonOutputFormat(schema)` for evaluation and generation, and plain text for the discussion partner. The system prompt carries the learner context (native language, occupation, known weak nodes, recent error codes) and the full error catalogue so the model tags with known codes only; unknown codes are dropped on ingestion. Effort defaults to `medium`. The API key is read from configuration or `ANTHROPIC_API_KEY` and never persisted by the app.
+`ClaudeTutor` uses `client.Messages.Create` with `OutputConfig.Format = JsonOutputFormat(schema)` for evaluation and generation, and plain text for the discussion partner. The system prompt carries the learner context (native language, occupation, known weak nodes, recent error codes) and the full error catalogue so the model tags with known codes only; unknown codes are dropped on ingestion. Effort defaults to `medium`. The API key comes from the learner's settings row (encrypted with Data Protection, see "Multi-user accounts" above), or - as a fallback - from configuration or the preset's environment variable; it is never logged.

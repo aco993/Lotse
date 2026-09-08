@@ -46,7 +46,7 @@ Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj maš
 Bez ovog koraka app čita nemački glasovima koje nudi sam pregledač. Na Windowsu su to stare Hedda/Katja/Stefan i zvuče osetno robotski. Jedna komanda to menja:
 
 ```powershell
-pwsh -File tools/install-piper.ps1
+powershell -ExecutionPolicy Bypass -File tools/install-piper.ps1
 ```
 
 Skript preuzima **Piper** (MIT, ~21 MB) i dva nemačka glasa u `%LOCALAPPDATA%\Lotse` (~120 MB ukupno):
@@ -101,7 +101,7 @@ Bez izbora sve radi tačno kao i pre.
 
 U **Einstellungen** unosiš **Vorname** i **Nachname**. Kurs onda oslovljava tebe: mejl od Herr Krügera glasi „Sehr geehrter Herr *tvoje prezime*", a potpisi u uzornim rešenjima nose tvoje ime.
 
-Ako polja ostaviš prazna, kurs koristi zamensko ime (npr. „Herr Berger"). Ono se bira iz malog spiska po tvom nalogu, pa je uvek isto za tebe — priča ostaje dosledna — a dva naloga na istom računaru retko dobiju isto ime.
+Ako polja ostaviš prazna, kurs koristi zamensko ime (npr. „Herr Keller"). Spisak namerno ne sadrži nijedno prezime likova iz priče i vežbi — inače bi ti šefica Sabine Berger mogla ispasti rođaka. Ono se bira iz malog spiska po tvom nalogu, pa je uvek isto za tebe — priča ostaje dosledna — a dva naloga na istom računaru retko dobiju isto ime.
 
 Tehnički: u sadržaju stoje `{Vorname}`, `{Nachname}` i `{Name}`, a ime se ubacuje tek kad se lekcija ili zadatak predaju **tebi**. Zajednička baza zadataka ostaje neutralna, pa se imena ne mešaju između naloga na istom računaru.
 
@@ -210,7 +210,7 @@ Tutor ocenjuje pisanje i govor, igra partnera u diskusiji i generiše zadatke.
 
 **Najlakše: u samoj aplikaciji.** *Einstellungen → KI-Tutor*: izaberi provajdera iz liste (Groq je preporučen: besplatan i brz), nalepi ključ, klikni **Verbindung testen** (vidiš latenciju i odgovor), pa **Speichern & aktivieren**. Ključ se čuva šifrovano na tvom računaru (ASP.NET Data Protection) i ne ide nigde osim ka provajderu. Promena važi odmah, bez restarta. Ako nešto ne štima, poruka ti kaže tačno šta (npr. „Schlüssel abgelehnt (401)", „Modell nicht gefunden – ollama pull").
 
-Groq ključ: https://console.groq.com/keys (besplatan nalog, model `llama-3.3-70b-versatile`).
+Groq ključ: https://console.groq.com/keys (besplatan nalog, model `openai/gpt-oss-120b` — 30 zahteva u minutu, 1.000 dnevno; stari Llama modeli su od avgusta 2026 samo za enterprise naloge).
 
 Ispod su alternative preko okruženja/konfiguracije, za one koji to više vole.
 
@@ -228,9 +228,9 @@ ili `dotnet user-secrets set "Lotse:Tutor:ApiKey" "sk-ant-..."` u folderu `src/L
 |---|---|---|---|
 | Ollama (lokalno, besplatno) | `http://localhost:11434/v1` | ne treba | `ollama pull qwen2.5:7b`; **obavezno podigni `num_ctx`, vidi dole**; na CPU sporo (minuti po oceni), sa GPU brzo |
 | LM Studio (lokalno) | `http://localhost:1234/v1` | ne treba | učitaj model u LM Studio, uključi server |
-| OpenRouter (cloud, ima besplatne modele) | `https://openrouter.ai/api/v1` | `OPENAI_API_KEY` | modeli sa `:free` sufiksom, npr. `meta-llama/llama-3.3-70b-instruct:free` |
-| Groq (cloud, besplatna kvota, vrlo brzo) | `https://api.groq.com/openai/v1` | `OPENAI_API_KEY` | npr. `llama-3.3-70b-versatile` |
-| Mistral / DeepSeek / OpenAI | njihov `/v1` URL | `OPENAI_API_KEY` | |
+| Groq (cloud, besplatna kvota, vrlo brzo) | `https://api.groq.com/openai/v1` | `GROQ_API_KEY` | `openai/gpt-oss-120b` (30/min, 1.000/dan); stari Llama modeli su od 16.08.2026 samo enterprise |
+| OpenRouter (cloud, jedan ključ za stotine modela) | `https://openrouter.ai/api/v1` | `OPENROUTER_API_KEY` | `meta-llama/llama-3.3-70b-instruct` — pay-per-use, delić centa po oceni; `:free` varijante više ne postoje |
+| Mistral / DeepSeek / OpenAI | njihov `/v1` URL | `MISTRAL_API_KEY` / `DEEPSEEK_API_KEY` / `OPENAI_API_KEY` | `mistral-medium-3504`, `deepseek-v4-flash`, `gpt-5.6-terra` (stanje 08.09.2026) |
 
 ### Ollama: podrazumevani kontekst je premali (najskuplja zamka)
 

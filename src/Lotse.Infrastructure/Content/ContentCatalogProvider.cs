@@ -60,7 +60,8 @@ public sealed class ContentCatalogProvider
             try
             {
                 var ex = ContentLoader.DeserializeExercise(row.Json);
-                if (ex is not null && ExerciseValidator.Validate(ex, _seed.Nodes.Select(n => n.Id).ToHashSet()).Count == 0) extra.Add(ex);
+                // Same key balancing as the seed files get in ContentLoader - a model's habit is as fixed as an author's.
+                if (ex is not null && ExerciseValidator.Validate(ex, _seed.Nodes.Select(n => n.Id).ToHashSet()).Count == 0) extra.Add(KeyShuffle.Apply(ex));
             }
             catch (Exception e)
             {

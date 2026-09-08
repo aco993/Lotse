@@ -63,7 +63,8 @@ else
     {
         if (_lastId == Exercise.Id) return;
         _lastId = Exercise.Id;
-        var rng = new Random(Exercise.Id.GetHashCode());
+        // Stable seed: the right column must sit in the same order after a restart as before it.
+        var rng = new Random(StableHash.Seed(Exercise.Id));
         _rightOrder = Enumerable.Range(0, Exercise.Pairs.Count).OrderBy(_ => rng.Next()).ToList();
         Reset();
     }

@@ -25,7 +25,7 @@ public sealed record TutorProbe(bool Ok, string Message, int LatencyMs, string? 
 /// round-trip, every provider call and every cached read goes through <see cref="EnsureCurrentAsync"/> first
 /// (see <see cref="ILearnerBound"/>) rather than trusting a single load at circuit start.
 /// </summary>
-public sealed class TutorRegistry : ITutor, ILearnerBound
+public sealed class TutorRegistry : ITutor, ILearnerBound, IDisposable
 {
     private const string SettingsKey = "tutor.settings";
     private const string ProtectorPurpose = "Lotse.Tutor.ApiKey.v1";
@@ -54,7 +54,7 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
         _currentUser = currentUser;
         _env = env ?? Environment.GetEnvironmentVariable;
         _defaults = defaults ?? TutorSettings.Default;
-        _active = new Active(null, _defaults, Build(_defaults));
+        _active = new Active(null, _defaults, Build(_defaults)); // nothing to release yet; every later swap goes through Activate
     }
 
     public TutorSettings Settings => _active.Settings;
@@ -77,7 +77,7 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
             var stored = row is null ? null : JsonSerializer.Deserialize<StoredSettings>(row.Value);
             if (stored is null)
             {
-                _active = new Active(userId, _defaults, Build(_defaults));
+                Activate(userId, _defaults);
                 return;
             }
             string? key = null;
@@ -87,7 +87,7 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
                 catch (Exception e) { _logger.LogWarning(e, "Gespeicherter API-Schlüssel konnte nicht entschlüsselt werden (Schlüsselring gewechselt?). Bitte neu eingeben."); }
             }
             var settings = new TutorSettings(stored.PresetId, stored.BaseUrl, stored.Model, key, stored.Effort ?? "medium", stored.TimeoutSeconds > 0 ? stored.TimeoutSeconds : 120);
-            _active = new Active(userId, settings, Build(settings));
+            Activate(userId, settings);
             _logger.LogInformation("Tutor aktiv: {Description}", Description);
         }
         catch (Exception e)
@@ -95,7 +95,7 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
             // Never let a broken settings row take the whole app down – fall back to defaults, and leave UserId
             // null so the next call retries rather than pinning this failure to the circuit.
             _logger.LogWarning(e, "Tutor-Einstellungen unlesbar, Standard wird verwendet.");
-            _active = new Active(null, _defaults, Build(_defaults));
+            Activate(null, _defaults);
         }
     }
 
@@ -117,7 +117,7 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
         if (row is null) db.Settings.Add(new SettingEntity { UserId = userId, Key = SettingsKey, Value = JsonSerializer.Serialize(stored) });
         else row.Value = JsonSerializer.Serialize(stored);
         await db.SaveChangesAsync(ct);
-        _active = new Active(userId, settings, Build(settings));
+        Activate(userId, settings);
         _logger.LogInformation("Tutor umkonfiguriert: {Description}", Description);
     }
 
@@ -127,13 +127,28 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
         await using var db = await _dbFactory.CreateDbContextAsync(ct);
         var row = await db.Settings.FirstOrDefaultAsync(s => s.UserId == userId && s.Key == SettingsKey, ct);
         if (row is not null) { db.Settings.Remove(row); await db.SaveChangesAsync(ct); }
-        _active = new Active(userId, _defaults, Build(_defaults));
+        Activate(userId, _defaults);
     }
+
+    /// <summary>
+    /// Swaps the active tutor and releases the one it replaces. Every code path that builds a tutor goes through
+    /// here, so a circuit that saves its settings ten times holds one HttpClient, not ten.
+    /// </summary>
+    private void Activate(string? userId, TutorSettings settings)
+    {
+        var previous = _active;
+        _active = new Active(userId, settings, Build(settings));
+        (previous?.Tutor as IDisposable)?.Dispose();
+    }
+
+    /// <summary>Scoped per circuit: DI calls this when the circuit ends, releasing the last active tutor.</summary>
+    public void Dispose() => (_active.Tutor as IDisposable)?.Dispose();
 
     /// <summary>Sends one tiny request through a throw-away tutor built from <paramref name="settings"/> and reports what happened.</summary>
     public async Task<TutorProbe> ProbeAsync(TutorSettings settings, CancellationToken ct = default)
     {
         var tutor = Build(settings);
+        using var release = tutor as IDisposable;
         if (!tutor.IsAvailable) return new TutorProbe(false, tutor.Description, 0);
         var sw = Stopwatch.StartNew();
         try
@@ -177,10 +192,28 @@ public sealed class TutorRegistry : ITutor, ILearnerBound
         return "Kein KI-Tutor konfiguriert.";
     }
 
-    /// <summary>Turns provider exceptions into a sentence a learner can act on.</summary>
+    /// <summary>Turns provider exceptions into a sentence a learner can act on. Every place that shows a tutor
+    /// error to the learner goes through here - the probe, the evaluation alert, the discussion partner, the
+    /// generators - so nobody reads "The request was canceled due to the configured HttpClient.Timeout".</summary>
     public static string Friendly(Exception e)
     {
         var m = e.Message;
+        if (e is OperationCanceledException)
+            return "Zeitlimit überschritten. In den Einstellungen ein höheres „Zeitlimit je Antwort“ wählen – oder einen kürzeren Text abgeben.";
+        // The Anthropic SDK throws its own hierarchy, not HttpRequestException.
+        switch (e)
+        {
+            case Anthropic.Exceptions.AnthropicUnauthorizedException or Anthropic.Exceptions.AnthropicForbiddenException:
+                return "Schlüssel abgelehnt (401/403). Bitte prüfen, ob er vollständig kopiert wurde und zum gewählten Anbieter gehört.";
+            case Anthropic.Exceptions.AnthropicRateLimitException:
+                return "Ratenlimit erreicht (429). Kurz warten oder ein anderes Modell wählen.";
+            case Anthropic.Exceptions.AnthropicNotFoundException:
+                return "Modell nicht gefunden (404). Modellname in den Einstellungen prüfen.";
+            case Anthropic.Exceptions.Anthropic5xxException:
+                return "Der Anbieter meldet einen Serverfehler. Kurz warten und noch einmal versuchen.";
+            case Anthropic.Exceptions.AnthropicBadRequestException bad:
+                return "Anfrage abgelehnt: " + bad.Message;
+        }
         if (e is HttpRequestException http)
         {
             return http.StatusCode switch
