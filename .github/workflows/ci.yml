@@ -12,11 +12,16 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
+
+      # The grammar-coverage report is generated; this fails the build if a content change drops a "Muss" item of
+      # the B2 inventory below four exercises, and keeps the committed report from silently going stale.
+      - name: Grammar coverage gate (tools/grammar-coverage.py --check)
+        run: python3 tools/grammar-coverage.py --check
 
       - name: Restore
         run: dotnet restore Lotse.slnx
@@ -35,7 +40,7 @@ jobs:
 
       - name: Upload Playwright traces (failures only)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-traces
           path: tests/Lotse.E2E/bin/Release/net10.0/playwright-traces/

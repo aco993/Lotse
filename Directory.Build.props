@@ -1,6 +1,8 @@
 <Project>
   <!-- Shared settings for every project: one language level, strict nullability, warning-free build. -->
   <PropertyGroup>
+    <!-- One version for every assembly, matching CHANGELOG.md; bump here, then tag v<Version> on main. -->
+    <Version>0.9.0</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>

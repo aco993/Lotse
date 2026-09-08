@@ -3,7 +3,7 @@
 > Automatisch erzeugt von `tools/grammar-coverage.py` aus `tools/b2-grammar-reference.json`
 > und den Inhalten in `content/`. Nicht von Hand bearbeiten – Skript neu laufen lassen.
 
-Gemessener Bestand: **911 Übungen**, 24 Lektionen, 49 Kompetenzknoten. Referenzinventar: **51 Stellen** (26 Muss, 21 Soll, 4 Kann).
+Gemessener Bestand: **2324 Übungen**, 24 Lektionen, 62 Kompetenzknoten. Referenzinventar: **51 Stellen** (26 Muss, 21 Soll, 4 Kann).
 
 ## 1. Woher das Referenzinventar stammt
 
@@ -25,14 +25,6 @@ Liste ist deshalb aus drei Quellen zusammengesetzt:
 | (a) Breite | Anteil aller Stellen mit Note ≥ 2 (mindestens 4 Übungen vorhanden) | **100.0 %** |
 | (b) Tiefe an den Pflichtstellen | Anteil der **Muss**-Stellen mit Note 3 (Erklärung + ≥ 6 Übungen + produktiver Typ + B2.2-Übung) | **100.0 %** |
 | (c) Gewichteter Skor | Σ(Gewicht × Note) / Σ(Gewicht × 3), Gewicht Muss 3 / Soll 2 / Kann 1 | **100.0 %** |
-
-**Vorher / Nachher**
-
-| Kennzahl | vorher | nachher | Δ |
-| --- | ---: | ---: | ---: |
-| (a) Breite | 84.3 % | 100.0 % | +15.7 |
-| (b) Muss mit Note 3 | 69.2 % | 100.0 % | +30.8 |
-| (c) Gewichtet | 82.5 % | 100.0 % | +17.5 |
 
 **Relevant für „reicht das zum Bestehen?“ ist (c), der gewichtete Skor.** (a) belohnt bereits
 vier beliebige Übungen und ist damit zu gutmütig; (b) misst nur die Pflichtstellen und ist so
@@ -63,7 +55,7 @@ ohne produktiven Typ oder ohne B2.2-Item · 3 = Erklärung + ≥ 6 Übungen + pr
 | V07 | Irreale Bedingungssätze (wenn + Konjunktiv II, auch ohne wenn) | Muss | KONJUNKTIV2 | 19 (0/12/7) | 3/15/1 | L07 | **3** |
 | V08 | Irrealer Vergleich (als ob) und irrealer Wunsch (wenn … nur/doch) | Soll | querliegend (1 Knoten) | 8 (0/3/5) | 2/6/0 | L07 | **3** |
 | V09 | Konjunktiv I und indirekte Rede (Redewiedergabe, Ersatzformen) | Soll | INDIREKTE_REDE | 11 (0/0/11) | 6/5/0 | L22 | **3** |
-| V10 | Modalverben: Formen und Bedeutungen (auch Präteritum) | Muss | querliegend (42 Knoten) | 172 (13/109/50) | 51/96/25 | L01, L04, L14, L20, L24 | **3** |
+| V10 | Modalverben: Formen und Bedeutungen (auch Präteritum) | Muss | querliegend (55 Knoten) | 528 (81/273/132) | 53/450/25 | L01, L04, L14, L20, L24 | **3** |
 | V11 | Perfekt der Modalverben und doppelter Infinitiv (hat … machen müssen) | Soll | querliegend (4 Knoten) | 8 (0/4/4) | 1/6/1 | L01 | **3** |
 | V12 | Modalverben subjektiv: Vermutung und Distanz (müsste, dürfte, soll, will) | Soll | MODALVERBEN_SUBJEKTIV | 12 (0/0/12) | 5/7/0 | L20 | **3** |
 
@@ -74,7 +66,7 @@ ohne produktiven Typ oder ohne B2.2-Item · 3 = Erklärung + ≥ 6 Übungen + pr
 | P01 | Vorgangspassiv in allen Zeiten (von/durch) | Muss | PASSIV | 35 (1/19/15) | 9/25/1 | L04 | **3** |
 | P02 | Zustandspassiv (sein + Partizip II) | Soll | querliegend (1 Knoten) | 8 (0/5/3) | 3/5/0 | L04 | **3** |
 | P03 | Passiv mit Modalverben (muss … werden) | Muss | PASSIV | 11 (0/2/9) | 2/9/0 | L04 | **3** |
-| P04 | Passiversatz: sich lassen, sein + zu, -bar, man | Soll | querliegend (4 Knoten) | 11 (0/3/8) | 3/8/0 | L04 | **3** |
+| P04 | Passiversatz: sich lassen, sein + zu, -bar, man | Soll | querliegend (8 Knoten) | 19 (1/8/9) | 3/16/0 | L04 | **3** |
 
 ### Satzbau und Konnektoren
 
@@ -82,15 +74,15 @@ ohne produktiven Typ oder ohne B2.2-Item · 3 = Erklärung + ≥ 6 Übungen + pr
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | S01 | Hauptsatz: Verb an Position 2, Inversion | Muss | HAUPTSATZ_V2 | 21 (6/10/5) | 4/17/0 | L03, L09 | **3** |
 | S02 | Nebensatz: Verb am Ende; Satzklammer bei trennbaren Verben | Muss | NEBENSATZ_WORTSTELLUNG, TRENNBARE_VERBEN | 39 (13/21/5) | 9/29/1 | L03, L14 | **3** |
-| S03 | Kausal, konzessiv, konsekutiv, final (weil, obwohl, sodass, damit) | Muss | querliegend (24 Knoten) | 75 (10/42/23) | 36/33/6 | L01, L03, L04, L07, L09, … | **3** |
-| S04 | Temporale Nebensätze (nachdem, bevor, seit(dem), bis, sobald, während, solange) | Muss | querliegend (14 Knoten) | 34 (2/19/13) | 11/22/1 | L05, L08, L09, L11, L19 | **3** |
+| S03 | Kausal, konzessiv, konsekutiv, final (weil, obwohl, sodass, damit) | Muss | querliegend (38 Knoten) | 147 (21/65/38) | 44/97/6 | L01, L03, L04, L07, L09, … | **3** |
+| S04 | Temporale Nebensätze (nachdem, bevor, seit(dem), bis, sobald, während, solange) | Muss | querliegend (25 Knoten) | 79 (10/46/17) | 13/65/1 | L05, L08, L09, L11, L19 | **3** |
 | S05 | Konnektorklassen und Wortstellung (Adverb vs. Subjunktion vs. Konjunktion) | Muss | KONNEKTOREN | 28 (1/19/8) | 9/18/1 | L09 | **3** |
-| S06 | Zweiteilige Konnektoren (nicht nur … sondern auch, je … desto, zwar … aber, entweder … oder, weder … noch, sowohl … als auch) | Muss | querliegend (5 Knoten) | 12 (0/6/6) | 3/9/0 | L09 | **3** |
-| S07 | Konnektor ↔ Präposition (wegen/trotz/während/aufgrund/infolge ↔ weil/obwohl/während) | Muss | querliegend (12 Knoten) | 21 (1/15/5) | 9/11/1 | L03, L05, L09, L11, L19 | **3** |
+| S06 | Zweiteilige Konnektoren (nicht nur … sondern auch, je … desto, zwar … aber, entweder … oder, weder … noch, sowohl … als auch) | Muss | querliegend (7 Knoten) | 14 (0/7/7) | 3/11/0 | L09 | **3** |
+| S07 | Konnektor ↔ Präposition (wegen/trotz/während/aufgrund/infolge ↔ weil/obwohl/während) | Muss | querliegend (23 Knoten) | 73 (15/39/16) | 10/62/1 | L03, L05, L09, L11, L19 | **3** |
 | S08 | Relativsätze: Nominativ, Akkusativ, Dativ | Muss | RELATIVSATZ | 21 (2/13/6) | 3/18/0 | L10 | **3** |
 | S09 | Relativsätze fortgeschritten: mit Präposition, dessen/deren, was/wo- | Soll | RELATIVSATZ | 8 (0/6/2) | 2/6/0 | L10 | **3** |
 | S10 | Infinitivsätze: zu, um … zu, ohne … zu, (an)statt … zu | Muss | INFINITIV_ZU | 16 (3/12/1) | 4/12/0 | L24 | **3** |
-| S11 | Indirekte Fragesätze (ob / W-Wort) | Soll | querliegend (11 Knoten) | 19 (2/15/2) | 11/5/3 | L07, L12, L14, L23 | **3** |
+| S11 | Indirekte Fragesätze (ob / W-Wort) | Soll | querliegend (17 Knoten) | 27 (2/20/5) | 11/13/3 | L07, L12, L14, L23 | **3** |
 | S12 | Mittelfeld: TeKaMoLo und Pronomenstellung | Soll | querliegend (2 Knoten) | 7 (1/4/2) | 2/5/0 | L03 | **3** |
 
 ### Nominalgruppe und Kasus
@@ -102,10 +94,10 @@ ohne produktiven Typ oder ohne B2.2-Item · 3 = Erklärung + ≥ 6 Übungen + pr
 | N03 | Präpositionen mit festem Kasus | Muss | KASUS_PRAEPOSITIONEN | 18 (7/10/1) | 3/15/0 | L05 | **3** |
 | N04 | Wechselpräpositionen (wo? / wohin?) | Muss | WECHSELPRAEPOSITIONEN | 19 (5/12/2) | 4/15/0 | L06 | **3** |
 | N05 | Adjektivdeklination nach bestimmtem/unbestimmtem/Nullartikel | Muss | ADJEKTIVDEKLINATION | 26 (1/17/8) | 5/20/1 | L16 | **3** |
-| N06 | Adjektivdeklination nach Zahl- und Mengenwörtern (viele, einige, mehrere, andere) | Soll | querliegend (17 Knoten) | 40 (1/24/15) | 9/28/3 | L13, L16 | **3** |
+| N06 | Adjektivdeklination nach Zahl- und Mengenwörtern (viele, einige, mehrere, andere) | Soll | querliegend (29 Knoten) | 140 (16/74/37) | 9/128/3 | L13, L16 | **3** |
 | N07 | Genitiv: Nomen und Präpositionen mit Genitiv | Soll | GENITIV | 14 (0/11/3) | 4/10/0 | L19 | **3** |
-| N08 | n-Deklination (der Kollege – dem Kollegen, der Kunde, der Name) | Soll | querliegend (20 Knoten) | 35 (9/21/5) | 11/23/1 | L13, L19 | **3** |
-| N09 | Komparativ und Superlativ (auch attributiv, so … wie / als) | Soll | querliegend (7 Knoten) | 12 (0/9/3) | 5/7/0 | L16 | **3** |
+| N08 | n-Deklination (der Kollege – dem Kollegen, der Kunde, der Name) | Soll | querliegend (26 Knoten) | 56 (16/32/8) | 13/42/1 | L13, L19 | **3** |
+| N09 | Komparativ und Superlativ (auch attributiv, so … wie / als) | Soll | querliegend (17 Knoten) | 40 (2/21/11) | 6/34/0 | L16 | **3** |
 | N10 | Reflexive Verben (Akkusativ/Dativ, reziprok) | Soll | REFLEXIVE_VERBEN | 16 (2/12/2) | 3/13/0 | L17 | **3** |
 | N11 | „es“ als Korrelat und Platzhalter (Es ist wichtig, dass …) | Kann | querliegend (1 Knoten) | 6 (0/3/3) | 2/4/0 | L14 | **3** |
 
@@ -122,23 +114,23 @@ ohne produktiven Typ oder ohne B2.2-Item · 3 = Erklärung + ≥ 6 Übungen + pr
 | # | Stelle | Prio | Knoten | Übungen (B1.2/B2.1/B2.2) | rez/prod/frei | Erklärung | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | PR1 | Verben, Nomen und Adjektive mit fester Präposition | Muss | VERB_PRAEPOSITION | 30 (1/25/4) | 4/25/1 | L15 | **3** |
-| PR2 | Präpositionaladverbien (darauf, worauf) und da-/wo- + dass-Satz | Muss | querliegend (27 Knoten) | 39 (4/23/12) | 19/18/2 | L12, L15 | **3** |
+| PR2 | Präpositionaladverbien (darauf, worauf) und da-/wo- + dass-Satz | Muss | querliegend (38 Knoten) | 83 (8/45/25) | 21/60/2 | L12, L15 | **3** |
 
 ### Wortbildung
 
 | # | Stelle | Prio | Knoten | Übungen (B1.2/B2.1/B2.2) | rez/prod/frei | Erklärung | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | W01 | Wortbildung: Präfixe und Suffixe (-ung, -heit, -keit, un-, -los, -bar, ver-/be-/ent-) | Soll | WS WORTBILDUNG | 26 (0/20/6) | 7/19/0 | L03, L13, L18 | **3** |
-| W02 | Komposita und Wortfamilien | Kann | querliegend (3 Knoten) | 10 (1/6/3) | 4/6/0 | L13, L18 | **3** |
+| W02 | Komposita und Wortfamilien | Kann | querliegend (7 Knoten) | 15 (2/10/3) | 4/11/0 | L13, L18 | **3** |
 
 ### Orthografie und Zeichensetzung
 
 | # | Stelle | Prio | Knoten | Übungen (B1.2/B2.1/B2.2) | rez/prod/frei | Erklärung | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| O01 | Kommaregeln (Nebensatz, Infinitivsatz mit zu, Aufzählung, Relativsatz) | Muss | querliegend (4 Knoten) | 11 (3/5/3) | 5/6/0 | L14, L24 | **3** |
-| O02 | Groß-/Kleinschreibung inkl. Nominalisierung (das Wichtigste, beim Arbeiten) | Soll | querliegend (3 Knoten) | 9 (4/2/3) | 2/7/0 | L11 | **3** |
-| O03 | das / dass unterscheiden | Soll | querliegend (5 Knoten) | 11 (2/6/3) | 6/5/0 | L14, L21, L22 | **3** |
-| O04 | ß/ss-Schreibung und Umlaute | Kann | querliegend (1 Knoten) | 7 (1/5/1) | 5/2/0 | L18 | **3** |
+| O01 | Kommaregeln (Nebensatz, Infinitivsatz mit zu, Aufzählung, Relativsatz) | Muss | querliegend (5 Knoten) | 12 (3/5/3) | 5/7/0 | L14, L24 | **3** |
+| O02 | Groß-/Kleinschreibung inkl. Nominalisierung (das Wichtigste, beim Arbeiten) | Soll | querliegend (6 Knoten) | 16 (4/2/4) | 2/14/0 | L11 | **3** |
+| O03 | das / dass unterscheiden | Soll | querliegend (6 Knoten) | 12 (2/6/4) | 6/6/0 | L14, L21, L22 | **3** |
+| O04 | ß/ss-Schreibung und Umlaute | Kann | querliegend (4 Knoten) | 10 (2/7/1) | 5/5/0 | L18 | **3** |
 
 ### Negation
 
@@ -161,16 +153,16 @@ folgenden Stellen stehen genau auf dieser Schwelle und sind die ersten Kandidate
 | --- | --- | --- | ---: | ---: |
 | N11 | „es“ als Korrelat und Platzhalter (Es ist wichtig, dass …) | Kann | 6 | 3 |
 | V04 | Futur II: Vermutung über Vergangenes | Kann | 6 | 4 |
-| O04 | ß/ss-Schreibung und Umlaute | Kann | 7 | 1 |
 | S12 | Mittelfeld: TeKaMoLo und Pronomenstellung | Soll | 7 | 2 |
 | V11 | Perfekt der Modalverben und doppelter Infinitiv (hat … machen müssen) | Soll | 7 | 4 |
 | P02 | Zustandspassiv (sein + Partizip II) | Soll | 8 | 3 |
 | S09 | Relativsätze fortgeschritten: mit Präposition, dessen/deren, was/wo- | Soll | 8 | 2 |
 | V02 | Plusquamperfekt und Vorzeitigkeit (nachdem) | Muss | 8 | 2 |
 | V08 | Irrealer Vergleich (als ob) und irrealer Wunsch (wenn … nur/doch) | Soll | 8 | 5 |
-| O02 | Groß-/Kleinschreibung inkl. Nominalisierung (das Wichtigste, beim Arbe | Soll | 9 | 3 |
+| O04 | ß/ss-Schreibung und Umlaute | Kann | 10 | 1 |
 | V03 | Futur I: Zukunft und Vermutung (wohl) | Soll | 10 | 4 |
 | V06 | Konjunktiv II Vergangenheit (hätte/wäre + Partizip II) | Muss | 10 | 5 |
+| P03 | Passiv mit Modalverben (muss … werden) | Muss | 11 | 9 |
 
 ## 6. Produktionsdruck: Was die Rubriken wirklich verlangen
 

@@ -19,3 +19,6 @@ appsettings.Local.json
 # core.ignorecase=true makes "data/" match "Data/"), so it was never committed - fixed here, source force-added
 # once alongside this change. See CHANGELOG 0.7.0.
 /src/Lotse.Web/data/
+
+# Persoenliche Editor-/Agenten-Konfiguration bleibt lokal (Launch-Profile des Claude-Code-Panels).
+.claude/
