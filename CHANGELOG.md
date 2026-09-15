@@ -1,5 +1,12 @@
 # Changelog
 
+## Nicht veröffentlicht
+
+### Aus der Bewertung vom 15.09.2026
+
+- **Eine falsche Endung ist keine Tippfehler-Toleranz mehr.** „Eine Bearbeitung in einem Wort ab sechs Buchstaben" verzieh genau die deutschen Endungen: „des Urlaub" für „des Urlaubs" kam als „Fast richtig (Tippfehler?)" zurück, zählte 0,7 Punkte und stand im Journal als „Tippfehler / Rechtschreibung" – der Genitivfehler, für den die Aufgabe existiert, erreichte den Planer nie. Entschieden wird jetzt nach der Stelle statt nach der Wortlänge: hinter dem gemeinsamen Stamm und nur ein Endungsbuchstabe (e n r s m t) = Form, also falsch, ohne Slip-Code (damit das Journal den Fehlercode des Knotens schreibt) und mit dem Hinweis „Die Endung stimmt nicht – richtig: …"; weiter innen im Wort bleibt es ein Fingerfehler („Besprechnug", „Besprechng"). Am laufenden Programm: „der hohen Koste" für „der hohen Kosten" steht jetzt als „Kasus nach Präposition falsch" im Journal, und der Knoten erscheint unter „Woran du gerade arbeitest". Acht neue Testfälle; gegen den alten Prüfer waren genau die fünf Endungsfälle rot.
+- **Farben, die als Text gelesen werden, halten 4,5:1.** Messung über acht Routen in beiden Themen fand den Skip-Link bei 2,02:1, den Onboarding-Hinweis auf Heute bei 2,94:1 (die erste Seite eines neuen Lerners), den „SR-Interferenz"-Chip 23-mal bei 3,01:1, „Reparieren" bei 3,01:1 und „Alle Lerndaten löschen" bei 3,68:1. Drei Ursachen: der Skip-Link schrieb `#fff` auf das Orange, obwohl die Palette mit `SecondaryContrastText` die passende Tinte schon dabei hat; Info, Success, Warning und Error kamen als mittlere Töne von MudBlazor und stehen jetzt in beiden Paletten (hell dunkel genug für weißen Text *und* als Text auf der Fläche, dunkel hell genug zum Lesen mit dunkler Tinte darauf); und wo die Akzentfarbe selbst Text ist, wird sie zur Textfarbe hin gemischt – 55 % Akzent, weil 60 % auf dem Seitenhintergrund `#F6F7F9` nur 4,38:1 ergaben. Die eigene Regel musste dabei MudBlazors Spezifität von zwei Klassen treffen, sonst greift sie trotz späterer Ladereihenfolge nicht. Dazu sagte die Vorlese-Ansage bei falscher Antwort die Lösung zweimal.
+
 ## 0.9.0 – 2026-09-08
 
 ### Aus der Revision vom 08.09.2026
