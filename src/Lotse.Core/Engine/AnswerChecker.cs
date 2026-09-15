@@ -112,6 +112,7 @@ public static class AnswerChecker
         }
 
         // 2. tolerant matches – accepted, but the slip is recorded
+        string? endingMiss = null;
         foreach (var accepted in exercise.Answers)
         {
             var slips = new List<string>();
@@ -133,11 +134,18 @@ public static class AnswerChecker
             if (slips.Count > 0)
                 return new CheckResult(Outcome.AlmostCorrect, accepted, slips, $"Fast richtig – korrekt geschrieben: {accepted}");
 
-            if (allowTypo && IsTypoOf(aFold, bFold))
+            var diff = ClassifySingleWordDiff(aFold, bFold);
+            if (allowTypo && diff == WordDiff.Typo)
                 return new CheckResult(Outcome.AlmostCorrect, accepted, [SlipTypo], $"Fast richtig (Tippfehler?): {accepted}");
+            endingMiss ??= diff == WordDiff.Ending ? accepted : null;
         }
 
-        return new CheckResult(Outcome.Incorrect, exercise.Answers[0], [], $"Richtig wäre: {exercise.Answers[0]}");
+        // A wrong or missing inflection ending is the exercise's own subject, never a slip: it stays Incorrect
+        // (score 0, no slip code, so the journal gets the node's error code and the planner sees the gap) and the
+        // feedback points at the ending instead of just repeating the solution.
+        return endingMiss is not null
+            ? new CheckResult(Outcome.Incorrect, endingMiss, [], $"Die Endung stimmt nicht – richtig: {endingMiss}")
+            : new CheckResult(Outcome.Incorrect, exercise.Answers[0], [], $"Richtig wäre: {exercise.Answers[0]}");
     }
 
     /// <summary>Collapses whitespace, strips surrounding punctuation of each token and trailing sentence punctuation.</summary>
@@ -155,21 +163,65 @@ public static class AnswerChecker
         .Replace("Ä", "Ae").Replace("Ö", "Oe").Replace("Ü", "Ue")
         .Replace("ß", "ss");
 
-    /// <summary>One edit in a word of six or more letters counts as a typo; a whole sentence may contain exactly one such word.</summary>
-    private static bool IsTypoOf(string given, string expected)
+    /// <summary>What the one differing word between the learner's answer and an accepted one actually is.</summary>
+    private enum WordDiff
+    {
+        /// <summary>No difference, more than one word differs, or a difference too large to classify.</summary>
+        Other,
+
+        /// <summary>A wrong or missing inflection ending – grammar, and usually the very thing being drilled.</summary>
+        Ending,
+
+        /// <summary>One edit inside a word of six or more letters: a slip of the finger.</summary>
+        Typo,
+    }
+
+    /// <summary>
+    /// Classifies the difference when exactly one word differs and it is one edit away.
+    /// A whole sentence may carry exactly one such word; anything else is <see cref="WordDiff.Other"/>.
+    /// </summary>
+    private static WordDiff ClassifySingleWordDiff(string given, string expected)
     {
         var g = given.Split(' ');
         var e = expected.Split(' ');
-        if (g.Length != e.Length) return false;
-        var typos = 0;
+        if (g.Length != e.Length) return WordDiff.Other;
+
+        var at = -1;
         for (var i = 0; i < g.Length; i++)
         {
             if (g[i] == e[i]) continue;
-            if (e[i].Length < 6) return false;
-            if (Levenshtein(g[i], e[i]) != 1) return false;
-            typos++;
+            if (at >= 0) return WordDiff.Other; // two or more words differ
+            at = i;
         }
-        return typos == 1;
+        if (at < 0) return WordDiff.Other; // identical – handled by the exact match above
+        if (Levenshtein(g[at], e[at]) != 1) return WordDiff.Other;
+        if (IsInflectionTail(g[at], e[at])) return WordDiff.Ending;
+        return e[at].Length >= 6 ? WordDiff.Typo : WordDiff.Other;
+    }
+
+    /// <summary>The letters German inflection is made of; a single edit that only moves one of them is an ending.</summary>
+    private const string InflectionLetters = "enrsmt";
+
+    /// <summary>
+    /// True when the single edit sits behind the shared stem and only adds, drops or swaps one inflection letter:
+    /// "des Urlaub" for "des Urlaubs", "drei Jahre" for "drei Jahren", "interessantem" for "interessanten",
+    /// "gearbeite" for "gearbeitet", "dem" for "den". Those are grammar mistakes – the ones the exercises exist
+    /// for – and forgiving them as typos hid a genitive error behind "Tippfehler?" and kept it out of the journal.
+    /// An edit further inside the word stays a typo ("Besprechnug", "Besprechunh"), because a finger slip there
+    /// cannot be read as a form. The price is that a doubled final letter ("Buchstabenn") now counts as wrong;
+    /// it is indistinguishable from a wrong ending, and for a grammar trainer strict is the right side to err on.
+    /// </summary>
+    private static bool IsInflectionTail(string given, string expected)
+    {
+        var shared = 0;
+        var max = Math.Min(given.Length, expected.Length);
+        while (shared < max && given[shared] == expected[shared]) shared++;
+
+        var givenTail = given[shared..];
+        var expectedTail = expected[shared..];
+        return givenTail.Length <= 1 && expectedTail.Length <= 1
+            && givenTail.All(InflectionLetters.Contains)
+            && expectedTail.All(InflectionLetters.Contains);
     }
 
     /// <summary>Optimal-string-alignment distance: insert, delete, substitute or swap two adjacent letters ("Besprechnug") each cost 1.</summary>

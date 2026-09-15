@@ -84,6 +84,40 @@ public class AnswerCheckerTests
     public void Typo_in_a_short_word_is_wrong()
         => Assert.Equal(Outcome.Incorrect, AnswerChecker.Check(Cloze("dem Bus"), "den Bus").Outcome);
 
+    /// <summary>
+    /// The tolerance for one edit in a long word forgave exactly the German endings: "des Urlaub" for
+    /// "des Urlaubs" came back as "Fast richtig (Tippfehler?)", scored 0.7 and reached the journal as
+    /// ORTH_TIPPFEHLER - so the genitive error the exercise is about never reached the planner. An ending
+    /// is grammar: wrong, no slip code (the node's own error code is written instead), and named as such.
+    /// </summary>
+    [Theory]
+    [InlineData("des Urlaubs", "des Urlaub")]          // genitive -s dropped
+    [InlineData("drei Jahren", "drei Jahre")]          // dative plural -n dropped
+    [InlineData("interessanten", "interessantem")]     // adjective ending swapped
+    [InlineData("gearbeitet", "gearbeite")]            // participle -t dropped
+    [InlineData("dem Kollegen", "dem Kollege")]        // weak noun -n dropped
+    public void A_wrong_inflection_ending_is_wrong_not_a_typo(string expected, string typed)
+    {
+        var r = AnswerChecker.Check(Cloze(expected), typed);
+        Assert.Equal(Outcome.Incorrect, r.Outcome);
+        Assert.Equal(0.0, r.Score);
+        Assert.Empty(r.SlipCodes);
+        Assert.Contains("Endung", r.Feedback);
+        Assert.Contains(expected, r.Feedback);
+    }
+
+    /// <summary>The counterpart: an edit that is not an ending stays a slip of the finger, tolerated as before.</summary>
+    [Theory]
+    [InlineData("Ich habe die Besprechung verschoben", "Ich habe die Besprechnug verschoben")] // letters swapped
+    [InlineData("Ich habe die Besprechung verschoben", "Ich habe die Besprechunh verschoben")] // wrong last letter, not an ending letter
+    [InlineData("Ich habe die Besprechung verschoben", "Ich habe die Besprechng verschoben")]  // letter dropped inside
+    public void An_edit_that_is_not_an_ending_stays_a_typo(string expected, string typed)
+    {
+        var r = AnswerChecker.Check(Cloze(expected), typed);
+        Assert.Equal(Outcome.AlmostCorrect, r.Outcome);
+        Assert.Contains(AnswerChecker.SlipTypo, r.SlipCodes);
+    }
+
     [Fact]
     public void Any_accepted_variant_counts()
         => Assert.Equal(Outcome.Correct, AnswerChecker.Check(Cloze("desto", "umso"), "umso").Outcome);
