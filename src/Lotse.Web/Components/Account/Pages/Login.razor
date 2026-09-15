@@ -25,18 +25,19 @@
 
 <EditForm EditContext="_editContext" method="post" OnSubmit="LoginUserAsync" FormName="login">
     <DataAnnotationsValidator />
+    <AcctErrorSummary Fields="FieldIds" />
     <div class="acct-field">
         <label class="acct-label" for="email">E-Mail</label>
-        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username webauthn" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" autofocus />
-        <ValidationMessage For="() => Input.Email" class="acct-error" />
+        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username webauthn" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" aria-describedby="email-error" autofocus />
+        <ValidationMessage For="() => Input.Email" class="acct-error" id="email-error" />
     </div>
     <div class="acct-field">
         <label class="acct-label" for="password"><span>Passwort</span><a href="Account/ForgotPassword">Passwort vergessen?</a></label>
         <div class="acct-pw">
-            <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="current-password" />
+            <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="current-password" aria-describedby="password-error" />
             <AcctPwToggle Target="password" />
         </div>
-        <ValidationMessage For="() => Input.Password" class="acct-error" />
+        <ValidationMessage For="() => Input.Password" class="acct-error" id="password-error" />
     </div>
     <label class="acct-check" for="remember">
         <InputCheckbox id="remember" @bind-Value="Input.RememberMe" />
@@ -53,6 +54,12 @@
 <div class="acct-alt">Neu hier? <a href="@RegisterUrl">Konto erstellen</a></div>
 
 @code {
+    private static readonly Dictionary<string, string> FieldIds = new()
+    {
+        [nameof(InputModel.Email)] = "email",
+        [nameof(InputModel.Password)] = "password",
+    };
+
     private string? _errorMessage;
     private string? _statusMessage;
     private EditContext _editContext = default!;

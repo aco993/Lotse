@@ -15,10 +15,11 @@
 
 <EditForm Model="Input" OnValidSubmit="RenameAsync" FormName="rename-passkey" method="post">
     <DataAnnotationsValidator />
+    <AcctErrorSummary Fields="FieldIds" />
     <div class="acct-field">
         <label class="acct-label" for="name">Name</label>
-        <InputText id="name" @bind-Value="Input.Name" placeholder="z. B. Laptop" autofocus />
-        <ValidationMessage For="() => Input.Name" class="acct-error" />
+        <InputText id="name" @bind-Value="Input.Name" placeholder="z. B. Laptop" aria-describedby="name-error" autofocus />
+        <ValidationMessage For="() => Input.Name" class="acct-error" id="name-error" />
     </div>
     <button type="submit" class="acct-btn">Speichern</button>
 </EditForm>
@@ -26,6 +27,10 @@
 <div class="acct-alt"><a href="Account/Manage/Passkeys">← Zurück zu den Passkeys</a></div>
 
 @code {
+    private static readonly Dictionary<string, string> FieldIds = new()
+    {
+        [nameof(InputModel.Name)] = "name",
+    };
     private ApplicationUser? _user;
     private UserPasskeyInfo? _passkey;
 

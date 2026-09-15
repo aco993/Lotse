@@ -27,27 +27,28 @@
 
 <EditForm Model="Input" method="post" OnValidSubmit="RegisterUserAsync" FormName="register">
     <DataAnnotationsValidator />
+    <AcctErrorSummary Fields="FieldIds" />
     <div class="acct-field">
         <label class="acct-label" for="email">E-Mail</label>
-        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" autofocus />
-        <ValidationMessage For="() => Input.Email" class="acct-error" />
+        <InputText id="email" type="email" @bind-Value="Input.Email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="name@beispiel.de" aria-describedby="email-error" autofocus />
+        <ValidationMessage For="() => Input.Email" class="acct-error" id="email-error" />
     </div>
     <div class="acct-field">
         <label class="acct-label" for="password">Passwort</label>
         <div class="acct-pw">
-            <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="new-password" />
+            <InputText id="password" type="password" @bind-Value="Input.Password" autocomplete="new-password" aria-describedby="password-error password-hint" />
             <AcctPwToggle Target="password" />
         </div>
-        <ValidationMessage For="() => Input.Password" class="acct-error" />
-        <div class="acct-hint">Mindestens @PasswordRules.MinLength Zeichen. Länge zählt mehr als Sonderzeichen – ein Satz, den nur du kennst, ist ideal.</div>
+        <ValidationMessage For="() => Input.Password" class="acct-error" id="password-error" />
+        <div class="acct-hint" id="password-hint">Mindestens @PasswordRules.MinLength Zeichen. Länge zählt mehr als Sonderzeichen – ein Satz, den nur du kennst, ist ideal.</div>
     </div>
     <div class="acct-field">
         <label class="acct-label" for="confirm">Passwort wiederholen</label>
         <div class="acct-pw">
-            <InputText id="confirm" type="password" @bind-Value="Input.ConfirmPassword" autocomplete="new-password" />
+            <InputText id="confirm" type="password" @bind-Value="Input.ConfirmPassword" autocomplete="new-password" aria-describedby="confirm-error" />
             <AcctPwToggle Target="confirm" />
         </div>
-        <ValidationMessage For="() => Input.ConfirmPassword" class="acct-error" />
+        <ValidationMessage For="() => Input.ConfirmPassword" class="acct-error" id="confirm-error" />
     </div>
     <div class="acct-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L15.5 10"/></svg>
@@ -59,6 +60,13 @@
 <div class="acct-alt">Schon ein Konto? <a href="Account/Login">Anmelden</a></div>
 
 @code {
+    private static readonly Dictionary<string, string> FieldIds = new()
+    {
+        [nameof(InputModel.Email)] = "email",
+        [nameof(InputModel.Password)] = "password",
+        [nameof(InputModel.ConfirmPassword)] = "confirm",
+    };
+
     private IReadOnlyList<string>? _identityErrors;
 
 #pragma warning disable BL0008 // Safe: this EditForm always posts back to this same page with every field present.

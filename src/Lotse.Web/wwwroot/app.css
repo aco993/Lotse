@@ -163,7 +163,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     --acct-bg: #EEF2F6; --acct-surface: #FFFFFF; --acct-text: #16202B; --acct-muted: #5B6B7A; --acct-line: #D6DDE5;
     --acct-primary: #1F5F8B; --acct-primary-soft: rgba(31,95,139,.10); --acct-ring: rgba(31,95,139,.22);
     --acct-btn: #1F5F8B; --acct-btn-text: #FFFFFF; --acct-btn-shadow: rgba(31,95,139,.28);
-    --acct-success: #2E8B57; --acct-error: #C44536; --acct-input-bg: #FFFFFF; --acct-card-shadow: rgba(22,50,74,.08);
+    --acct-success: #2E8B57; --acct-error: #BB3E30; --acct-input-bg: #FFFFFF; --acct-card-shadow: rgba(22,50,74,.08);
     color-scheme: light;
     min-height: 100vh; display: flex; background: var(--acct-bg); color: var(--acct-text);
     font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5;
@@ -264,6 +264,12 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .acct-alert svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
 .acct-alert.error { background: rgba(196,69,54,.10); color: var(--acct-error); border: 1px solid rgba(196,69,54,.25); }
 .acct-alert.success { background: rgba(46,139,87,.10); color: var(--acct-success); border: 1px solid rgba(46,139,87,.25); }
+/* The error summary: same box, plus the list. The links keep the error colour (the page's link blue would
+   read as a second meaning on a red ground) and stay underlined, so they are recognisable as links without
+   relying on colour alone. */
+.acct-summary ul { margin: 6px 0 0; padding-left: 18px; }
+.acct-summary li { margin-top: 2px; }
+.acct .acct-summary a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
 .acct a { color: var(--acct-primary); text-decoration: none; font-weight: 600; }
 .acct a:hover { text-decoration: underline; }
