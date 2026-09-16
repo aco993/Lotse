@@ -117,6 +117,19 @@
             // White on this orange is 3.0:1 - below AA for the button-sized text it carries. Dark ink reads.
             SecondaryContrastText = "#1B2733",
             Tertiary = "#2E8B57",
+            // The four semantic colours came from MudBlazor's defaults, which are mid-tone hues: they carry
+            // white text at 2.2-2.9:1 when an alert is filled, and their -darken shade reads at 2.9-4.3:1 as
+            // the text of a Variant.Text alert on white. Measured 2026-09-15: the filled info alert on Heute
+            // 2.9:1, the success note in the journal 2.9:1, the outlined error alert 4.3:1. These four are dark
+            // enough to carry white text and to be read as text on the surface (4.99-6.5:1 both ways).
+            Info = "#2A6FA0",
+            InfoContrastText = "#FFFFFF",
+            Success = "#206B41",
+            SuccessContrastText = "#FFFFFF",
+            Warning = "#A85B00",
+            WarningContrastText = "#FFFFFF",
+            Error = "#C62828",
+            ErrorContrastText = "#FFFFFF",
             AppbarBackground = "#1F5F8B",
             Background = "#F6F7F9",
             Surface = "#FFFFFF",
@@ -132,6 +145,18 @@
             PrimaryContrastText = "#0F1A24",
             SecondaryContrastText = "#0F1A24",
             TertiaryContrastText = "#0F1A24",
+            // Same reason as in the light palette, the other way round: on a dark surface the semantic colour
+            // has to be light enough to be read as text (MudBlazor's error red is 2.8:1 on Surface) and then
+            // needs dark ink when it becomes a filled background. Measured as text on Surface #1A2430:
+            // info 6.7:1, success 7.0:1, warning 8.1:1, error 5.3:1.
+            Info = "#6FB1E0",
+            InfoContrastText = "#0F1A24",
+            Success = "#5CC08A",
+            SuccessContrastText = "#0F1A24",
+            Warning = "#FFA726",
+            WarningContrastText = "#0F1A24",
+            Error = "#EF6F6C",
+            ErrorContrastText = "#0F1A24",
             AppbarBackground = "#16324A",
             Background = "#111820",
             Surface = "#1A2430",

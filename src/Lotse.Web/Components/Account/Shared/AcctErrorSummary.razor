@@ -1,0 +1,84 @@
+@* One list of everything the form rejected, at the top, focused on arrival.
+
+   The Account pages are static SSR: a failed submit is a full page load, so the field-level
+   <ValidationMessage>s appeared somewhere down the page while focus sat on <body> - a screen reader
+   announced nothing, and on a phone the messages could be below the fold. aria-invalid alone says
+   "wrong" without saying why.
+
+   role="alert" makes the region announced, tabindex="-1" + autofocus put the caret in it (the first
+   autofocus in tree order wins, and this sits above the fields, so it takes precedence over the
+   autofocus on the first input - which keeps working when there is nothing to report). Each message
+   links to its field, so the next Tab is on the way there.
+*@
+@if (_items.Count > 0)
+{
+    <div class="acct-alert error acct-summary" role="alert" tabindex="-1" autofocus>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+        <div>
+            <strong>@Heading</strong>
+            <ul>
+                @foreach (var (anchor, message) in _items)
+                {
+                    <li>
+                        @if (anchor is null) { @message }
+                        else { <a href="@HrefFor(anchor)">@message</a> }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+@inject NavigationManager Nav
+
+@code {
+    [CascadingParameter] private EditContext? Edit { get; set; }
+
+    /// <summary>
+    /// Model property name → id of the input that holds it, so a message can link to its field.
+    /// A message whose property is not listed is still shown, just without the link.
+    /// </summary>
+    [Parameter] public IReadOnlyDictionary<string, string> Fields { get; set; } = new Dictionary<string, string>();
+
+    private readonly List<(string? Anchor, string Message)> _items = [];
+
+    private string Heading => _items.Count == 1
+        ? "Eine Angabe stimmt noch nicht:"
+        : $"{_items.Count} Angaben stimmen noch nicht:";
+
+    /// <summary>
+    /// The current path plus the fragment - NOT a bare "#field". App.razor sets &lt;base href="/"&gt;, and a
+    /// fragment-only href resolves against the base URL, not the document URL: on /Account/Register a bare
+    /// "#confirm" navigates to "/#confirm", i.e. away to the dashboard (and for a signed-out visitor on to the
+    /// login page, where the caret lands in a field of the wrong form). Caught by the E2E test below.
+    /// </summary>
+    private string HrefFor(string anchor)
+    {
+        var path = Nav.ToBaseRelativePath(Nav.Uri);
+        var cut = path.IndexOf('#');
+        if (cut >= 0) path = path[..cut];
+        return $"{path}#{anchor}";
+    }
+
+    protected override void OnParametersSet()
+    {
+        _items.Clear();
+        if (Edit is null) return;
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (property, inputId) in Fields)
+        {
+            foreach (var message in Edit.GetValidationMessages(new FieldIdentifier(Edit.Model, property)))
+            {
+                _items.Add((inputId, message));
+                seen.Add(message);
+            }
+        }
+
+        // Anything the page did not list (a model-level rule, a message added by hand) still belongs here.
+        foreach (var message in Edit.GetValidationMessages())
+        {
+            if (seen.Add(message)) _items.Add((null, message));
+        }
+    }
+}

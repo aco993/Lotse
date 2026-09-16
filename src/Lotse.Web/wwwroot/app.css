@@ -37,7 +37,9 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     outline-offset: 2px;
     border-radius: 6px;
 }
-.skip-link { position: absolute; left: 8px; top: -60px; z-index: 2000; padding: 8px 14px; border-radius: 8px; background: var(--mud-palette-secondary); color: #fff; font-weight: 600; text-decoration: none; transition: top .15s; }
+/* White on the orange is 2.0:1 dark / 3.0:1 light - below AA for this 14 px label, and the palette already
+   carries the right ink for that background (SecondaryContrastText, #0F1A24 / #1B2733 = 8.7:1 / 8.1:1). */
+.skip-link { position: absolute; left: 8px; top: -60px; z-index: 2000; padding: 8px 14px; border-radius: 8px; background: var(--mud-palette-secondary); color: var(--mud-palette-secondary-text); font-weight: 600; text-decoration: none; transition: top .15s; }
 .skip-link:focus { top: 8px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 #main:focus { outline: none; }
@@ -161,7 +163,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     --acct-bg: #EEF2F6; --acct-surface: #FFFFFF; --acct-text: #16202B; --acct-muted: #5B6B7A; --acct-line: #D6DDE5;
     --acct-primary: #1F5F8B; --acct-primary-soft: rgba(31,95,139,.10); --acct-ring: rgba(31,95,139,.22);
     --acct-btn: #1F5F8B; --acct-btn-text: #FFFFFF; --acct-btn-shadow: rgba(31,95,139,.28);
-    --acct-success: #2E8B57; --acct-error: #C44536; --acct-input-bg: #FFFFFF; --acct-card-shadow: rgba(22,50,74,.08);
+    --acct-success: #2E8B57; --acct-error: #BB3E30; --acct-input-bg: #FFFFFF; --acct-card-shadow: rgba(22,50,74,.08);
     color-scheme: light;
     min-height: 100vh; display: flex; background: var(--acct-bg); color: var(--acct-text);
     font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5;
@@ -262,6 +264,12 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .acct-alert svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
 .acct-alert.error { background: rgba(196,69,54,.10); color: var(--acct-error); border: 1px solid rgba(196,69,54,.25); }
 .acct-alert.success { background: rgba(46,139,87,.10); color: var(--acct-success); border: 1px solid rgba(46,139,87,.25); }
+/* The error summary: same box, plus the list. The links keep the error colour (the page's link blue would
+   read as a second meaning on a red ground) and stay underlined, so they are recognisable as links without
+   relying on colour alone. */
+.acct-summary ul { margin: 6px 0 0; padding-left: 18px; }
+.acct-summary li { margin-top: 2px; }
+.acct .acct-summary a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
 .acct a { color: var(--acct-primary); text-decoration: none; font-weight: 600; }
 .acct a:hover { text-decoration: underline; }
@@ -308,7 +316,7 @@ a.acct-btn:hover { text-decoration: none; }
 .task-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
 /* Small bold text in the accent hue: mixed 25 % toward the theme's text colour so it clears AA contrast on both
    the white and the dark surface (pure #7C6BD6 / #A07850 on #1A2430 would not). */
-.task-ctx { font-size: .76rem; font-weight: 700; color: color-mix(in srgb, var(--task-accent) 75%, var(--mud-palette-text-primary)); text-transform: uppercase; letter-spacing: .5px; }
+.task-ctx { font-size: .76rem; font-weight: 700; color: color-mix(in srgb, var(--task-accent) 55%, var(--mud-palette-text-primary)); text-transform: uppercase; letter-spacing: .5px; }
 .task-chip.mud-chip { margin: 0; height: 22px; }
 .task-node { margin-left: auto; font-size: .72rem; opacity: .65; font-weight: 500; text-align: right; }
 .task-prompt { line-height: 1.5; }
@@ -335,10 +343,34 @@ a.acct-btn:hover { text-decoration: none; }
 .area-hoeren { --task-accent: #1FA2B0; }
 .area-schreiben { --task-accent: #C74B7A; }
 .area-sprechen { --task-accent: #A07850; }
-.area-head { display: flex; align-items: baseline; gap: 10px; margin: 20px 4px 8px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: color-mix(in srgb, var(--task-accent) 75%, var(--mud-palette-text-primary)); }
+.area-head { display: flex; align-items: baseline; gap: 10px; margin: 20px 4px 8px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: color-mix(in srgb, var(--task-accent) 55%, var(--mud-palette-text-primary)); }
 .area-head::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); align-self: center; }
 .area-head small { font-weight: 500; text-transform: none; letter-spacing: 0; opacity: .6; color: var(--mud-palette-text-primary); }
 .topic-title { font-weight: 600; font-size: .95rem; }
 .topic-mastery { display: inline-flex; align-items: center; gap: 8px; }
 .topic-heat { width: 64px; height: 6px; display: inline-block; }
 .topic-heat > span { background: var(--task-accent); }
+
+/* ---------------------------------------------------------------------------------------------------------
+   Accent colours used as TEXT on the page background.
+
+   The palette hues are picked for filled surfaces, where SecondaryContrastText / ErrorContrastText carry the
+   contrast. The same hue as *text* on Background or Surface falls below AA at the sizes it is used in:
+   measured on 2026-09-15, light theme, white surface - "Reparieren" (13 px, Color.Secondary) 3.01:1,
+   "Alle Lerndaten löschen" (14 px, Color.Error) 3.68:1, the "SR-Interferenz" chip (12 px) 3.01:1, the task
+   context line 4.02:1 and the topic headings 3.75-4.09:1, all against the 4.5:1 AA floor for small text.
+
+   Mixing the hue towards the body text colour keeps the colour coding and buys the contrast in both themes
+   at once: towards near-black in light, towards near-white in dark. The mix share is the smallest that clears
+   4.5:1 on every route (see the contrast measurement in the assessment of 2026-09-15).
+   --------------------------------------------------------------------------------------------------------- */
+.mud-button-outlined.mud-button-outlined-secondary,
+.mud-button-text.mud-button-text-secondary,
+.mud-chip-outlined.mud-chip-color-secondary,
+.mud-chip-text.mud-chip-color-secondary {
+    color: color-mix(in srgb, var(--mud-palette-secondary) 55%, var(--mud-palette-text-primary));
+}
+.mud-button-outlined.mud-button-outlined-error,
+.mud-button-text.mud-button-text-error {
+    color: color-mix(in srgb, var(--mud-palette-error) 70%, var(--mud-palette-text-primary));
+}

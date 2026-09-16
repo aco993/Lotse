@@ -218,7 +218,9 @@ else
             {
                 Outcome.Correct => "Richtig.",
                 Outcome.AlmostCorrect => $"Fast richtig. {_result.Check.Feedback}",
-                _ => $"Leider falsch. Richtig wäre: {_result.Check.Expected}. {_result.Check.Feedback}",
+                // The checker's feedback already names the expected form ("Richtig wäre: …", "Die Endung stimmt
+                // nicht – richtig: …"), so repeating Expected here read the solution out twice.
+                _ => $"Leider falsch. {_result.Check.Feedback}",
             };
             _focusNext = true;
         }

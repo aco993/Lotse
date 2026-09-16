@@ -1,5 +1,9 @@
-@* Inline status box for the static Account pages (no MudAlert available there). *@
-<div class="acct-alert @Kind" role="@(Kind == "error" ? "alert" : "status")">
+@* Inline status box for the static Account pages (no MudAlert available there).
+   An error takes the caret as well as the announcement: these pages are static SSR, so "wrong password" or
+   "address already taken" arrives as a fresh page load with focus on <body>. tabindex="-1" + autofocus is
+   what moves it; the attribute sits above the form, and the first autofocus in tree order wins, so the
+   autofocus on the first input still applies whenever there is nothing to report. *@
+<div class="acct-alert @Kind" role="@(Kind == "error" ? "alert" : "status")" tabindex="@(Kind == "error" ? "-1" : null)" autofocus="@(Kind == "error")">
     @if (Kind == "error")
     {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></svg>
