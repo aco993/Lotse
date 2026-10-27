@@ -1,4 +1,5 @@
 using Lotse.Core.Model;
+using Lotse.Core.Training;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -158,6 +159,47 @@ public sealed class GeneratedExerciseEntity
     public DateTime CreatedUtc { get; set; }
 }
 
+/// <summary>
+/// One B2-Training session (see <c>Lotse.Core.Training</c>). Numbered per learner: session 1 is the diagnostic, and
+/// "two sessions later" in the learned rule counts these numbers, not days. Lives through three states: open (the
+/// learner is answering, <see cref="DraftJson"/> keeps unsent input), submitted (solutions visible, diagnosis
+/// pending) and completed.
+/// </summary>
+public sealed class TrainingSessionEntity
+{
+    public Guid Id { get; set; }
+    public required string UserId { get; set; }
+    public int Number { get; set; }
+    public string? TopicId { get; set; }
+    public DateTime StartedUtc { get; set; }
+    public DateTime? SubmittedUtc { get; set; }
+    public DateTime? CompletedUtc { get; set; }
+    /// <summary>The planned items as JSON, so the session reads the same after a content edit.</summary>
+    public string ItemsJson { get; set; } = "[]";
+    /// <summary>Unsent answers and confidences, keyed by item, so a reload loses nothing.</summary>
+    public string DraftJson { get; set; } = "{}";
+}
+
+/// <summary>One answer in a training session, with the learner's confidence and - once diagnosed - the error kind.</summary>
+public sealed class TrainingAnswerEntity
+{
+    public long Id { get; set; }
+    public required string UserId { get; set; }
+    public Guid SessionId { get; set; }
+    public int SessionNumber { get; set; }
+    public required string ItemKey { get; set; }
+    public required string NodeId { get; set; }
+    public string? PointId { get; set; }
+    public string? VariantId { get; set; }
+    public string Answer { get; set; } = "";
+    /// <summary>1 = geraten, 2 = ziemlich sicher, 3 = sicher. Never feeds the FSRS scheduler.</summary>
+    public int Confidence { get; set; }
+    /// <summary>Set by the checker for closed items at submit, by the learner's own verdict for free items at completion.</summary>
+    public bool? Correct { get; set; }
+    public ErrorKind? Kind { get; set; }
+    public DateTime Utc { get; set; }
+}
+
 /// <summary>One named setting for one learner — today only <c>"tutor.settings"</c> (the AI tutor configuration,
 /// including the API key encrypted at rest). Scoped per user: one learner's key must never be readable, let alone
 /// usable, from another account.</summary>
@@ -205,6 +247,8 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
     public DbSet<SettingEntity> Settings => Set<SettingEntity>();
     public DbSet<LessonProgressEntity> LessonProgress => Set<LessonProgressEntity>();
     public DbSet<ReadinessSnapshotEntity> ReadinessSnapshots => Set<ReadinessSnapshotEntity>();
+    public DbSet<TrainingSessionEntity> TrainingSessions => Set<TrainingSessionEntity>();
+    public DbSet<TrainingAnswerEntity> TrainingAnswers => Set<TrainingAnswerEntity>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -281,6 +325,20 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
             e.HasIndex(p => p.UserId);
             e.HasIndex(p => p.Utc);
+        });
+
+        b.Entity<TrainingSessionEntity>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(s => s.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(s => new { s.UserId, s.Number }).IsUnique();
+        });
+
+        b.Entity<TrainingAnswerEntity>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<TrainingSessionEntity>().WithMany().HasForeignKey(a => a.SessionId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(a => new { a.UserId, a.PointId });
+            e.Property(a => a.Kind).HasConversion<string>();
         });
 
         b.Entity<GeneratedExerciseEntity>().HasKey(g => g.Id);

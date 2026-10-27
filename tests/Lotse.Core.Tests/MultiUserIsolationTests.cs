@@ -110,7 +110,8 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
         var ex = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
         var writing = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.FreeWrite);
         var dictation = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Dictation);
-        foreach (var svc in new[] { _svcA, _svcB })
+        var trainingContent = TrainingContentLoader.Load(ContentLoader.ResolveContentDirectory(), _provider.Catalog);
+        foreach (var (svc, user) in new[] { (_svcA, UserA), (_svcB, UserB) })
         {
             await svc.StartSessionAsync(10);
             await svc.SubmitAnswerAsync(null, 0, ex.Id, "völlig falsch", 1000, false);
@@ -120,6 +121,9 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
             await svc.SubmitProductionAsync(null, 0, writing.Id, "Sehr geehrte Damen und Herren, ich schreibe Ihnen wegen der Rechnung.", false); // Productions
             for (var i = 0; i < 4; i++) await svc.SubmitAnswerAsync(null, 0, dictation.Id, dictation.Answers[0], 1000, false);
             await svc.GetDashboardAsync();                                                     // ReadinessSnapshots (needs module evidence)
+            var training = new TrainingService(_factory, _provider, trainingContent, TimeProvider.System, new FakeCurrentUserAccessor(user));
+            var session = await training.StartOrResumeAsync();                                // TrainingSessions
+            await training.SubmitAsync(session.Id, session.Items.Select(i => new TrainingAnswerInput(i.Key, "x", 2)).ToList()); // TrainingAnswers
         }
         var dp = new EphemeralDataProtectionProvider();
         await new TutorRegistry(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserA), env: _ => null)

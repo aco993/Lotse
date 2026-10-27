@@ -105,6 +105,9 @@ builder.Services.AddScoped<ITutor>(sp => sp.GetRequiredService<TutorRegistry>())
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<SessionPlanner>();
 builder.Services.AddScoped<ILearningService, LearningService>();
+// B2-Training: content validated against the seed catalogue once at startup, like the exercise bank itself.
+builder.Services.AddSingleton(sp => TrainingContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog));
+builder.Services.AddScoped<ITrainingService, TrainingService>();
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddHealthChecks();
 

@@ -1130,6 +1130,8 @@ public sealed class LearningService(
         // it had just deleted. The isolation test now enumerates every per-user entity type, so the next table
         // cannot be forgotten silently.
         await db.ReadinessSnapshots.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.TrainingAnswers.Where(a => a.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.TrainingSessions.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Profiles.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
         await tx.CommitAsync(ct);
     }

@@ -1,0 +1,507 @@
+@page "/training"
+@using Lotse.Core.Training
+@inject ITrainingService Trainer
+@inject SpeechService Speech
+@inject ISnackbar Snackbar
+@implements IDisposable
+
+<PageTitle>B2-Training – Lotse</PageTitle>
+
+<div class="page-intro intro-training">
+    <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.FactCheck" /></div>
+    <div>
+        <MudText Typo="Typo.h5" HtmlTag="h1">B2-Training</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">Eine Sitzung als ganzer Test: erst alles beantworten, zu jeder Antwort sagen, wie sicher du bist – dann Lösungen, Fehlerart, und deine Fehler kommen so lange zurück, bis sie wirklich sitzen.</MudText>
+    </div>
+</div>
+
+@if (_overview is null)
+{
+    <MudSkeleton Height="220px" />
+}
+else if (_view is null)
+{
+    @Overview
+}
+else if (_view.State == TrainingSessionState.Open)
+{
+    @Form
+}
+else
+{
+    @Results
+}
+
+@code {
+    private TrainingOverview? _overview;
+    private TrainingSessionView? _view;
+    private bool _busy;
+
+    private sealed class Input
+    {
+        public string Answer { get; set; } = "";
+        public int Confidence { get; set; }
+    }
+
+    private sealed class Verdict
+    {
+        public bool? Correct { get; set; }
+        public ErrorKind? Kind { get; set; }
+    }
+
+    private readonly Dictionary<string, Input> _inputs = [];
+    private readonly Dictionary<string, Verdict> _verdicts = [];
+    private string? _recordingKey;
+    private string _typedBeforeRecording = "";
+    private string? _recognitionError;
+
+    private static readonly (int Value, string Label)[] Confidences = [(1, "geraten"), (2, "ziemlich sicher"), (3, "sicher")];
+
+    protected override async Task OnInitializedAsync()
+    {
+        Speech.Transcript += OnTranscript;
+        Speech.RecognitionEnded += OnRecognitionEnded;
+        Speech.RecognitionError += OnRecognitionError;
+        _overview = await Trainer.GetOverviewAsync();
+        // An unfinished session is picked up where it was left - with the typed draft, or with its solutions.
+        if (_overview.OpenSessionId is { } id) Load(await Trainer.GetSessionAsync(id));
+    }
+
+    private void Load(TrainingSessionView? view)
+    {
+        _view = view;
+        _inputs.Clear();
+        _verdicts.Clear();
+        if (view is null) return;
+        foreach (var item in view.Items)
+        {
+            var draft = view.Draft.GetValueOrDefault(item.Key);
+            _inputs[item.Key] = new Input { Answer = draft?.Answer ?? "", Confidence = draft?.Confidence ?? 0 };
+        }
+        foreach (var r in view.Results)
+        {
+            // Closed items keep the checker's verdict; a wrong one starts with the suggested kind selected.
+            _verdicts[r.Item.Key] = new Verdict
+            {
+                Correct = r.Correct,
+                Kind = r.Kind ?? (r.Correct == false ? r.SuggestedKind : null),
+            };
+        }
+    }
+
+    private async Task StartAsync()
+    {
+        _busy = true;
+        try { Load(await Trainer.StartOrResumeAsync()); }
+        finally { _busy = false; }
+    }
+
+    private async Task BackToOverviewAsync()
+    {
+        _view = null;
+        _overview = await Trainer.GetOverviewAsync();
+    }
+
+    // ---- Form -----------------------------------------------------------------------------------------------------
+
+    private List<TrainingAnswerInput> CurrentAnswers()
+        => _inputs.Select(kv => new TrainingAnswerInput(kv.Key, kv.Value.Answer, kv.Value.Confidence)).ToList();
+
+    private IReadOnlyList<string> MissingKeys => _view is null ? [] : TrainingService.Missing(_view.Items, CurrentAnswers());
+    private int Filled => _view is null ? 0 : _view.Items.Count - MissingKeys.Count;
+
+    private string Number(string key) => _view is null ? key : (_view.Items.ToList().FindIndex(i => i.Key == key) + 1).ToString();
+
+    private async Task SaveDraftAsync()
+    {
+        if (_view is { State: TrainingSessionState.Open }) await Trainer.SaveDraftAsync(_view.Id, CurrentAnswers());
+    }
+
+    private async Task SetConfidenceAsync(string key, int value)
+    {
+        _inputs[key].Confidence = value;
+        await SaveDraftAsync();
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_view is null || MissingKeys.Count > 0) return;
+        _busy = true;
+        try
+        {
+            if (_recordingKey is not null) await StopRecordingAsync();
+            Load(await Trainer.SubmitAsync(_view.Id, CurrentAnswers()));
+        }
+        catch (InvalidOperationException e) { Snackbar.Add(e.Message, Severity.Warning); }
+        finally { _busy = false; }
+    }
+
+    private RenderFragment Form => __builder =>
+    {
+        var view = _view!;
+        var missing = MissingKeys.ToHashSet();
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap" Spacing="2">
+            <MudText Typo="Typo.h6" HtmlTag="h2">Sitzung @view.Number@(view.Number == 1 ? " – Diagnose" : "")</MudText>
+            @if (view.TopicTitle is not null) { <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">Schwerpunkt: @view.TopicTitle</MudChip> }
+        </MudStack>
+        <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.8">Lösungen siehst du erst nach dem Abgeben. Sicherheit: <b>1</b> = geraten, <b>2</b> = ziemlich sicher, <b>3</b> = sicher. Deine Eingaben werden zwischengespeichert.</MudText>
+
+        TrainingBlock? block = null;
+        for (var i = 0; i < view.Items.Count; i++)
+        {
+            var item = view.Items[i];
+            var no = i + 1;
+            var input = _inputs[item.Key];
+            if (item.Block != block)
+            {
+                block = item.Block;
+                <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="tr-block mt-4 mb-2">@BlockTitle(item.Block, view.TopicTitle)</MudText>
+            }
+            <MudPaper Class="@("tr-item pa-3 mb-2" + (missing.Contains(item.Key) ? "" : " tr-complete"))" Elevation="1" id="@($"tr-{item.Key}")">
+                <div class="tr-head">
+                    <span class="tr-no">@no</span>
+                    @if (item.Stage is { } stage) { <span class="tr-tag">@stage.Label()</span> }
+                    @if (!string.IsNullOrWhiteSpace(item.Instruction)) { <span class="tr-instruction">@item.Instruction</span> }
+                </div>
+                @if (item.Reason is not null && item.Block == TrainingBlock.Wiederholung) { <MudText Typo="Typo.caption" Class="ex-reason d-block mb-1">@item.Reason</MudText> }
+                <div class="ex-prompt tr-prompt mb-2">@Prompt(item.Prompt)</div>
+                <MudTextField T="string" @bind-Value="input.Answer" Label="@($"Antwort {no}")" Variant="Variant.Outlined" Immediate="true"
+                              Lines="@(item.IsFree ? 4 : item.Answers.Any(a => a.Contains(' ') && a.Length > 25) ? 2 : 1)"
+                              OnBlur="SaveDraftAsync" spellcheck="false" autocomplete="off" />
+                @if (item.Speaking)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-1">
+                        @if (_recordingKey == item.Key)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Class="recording" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopRecordingAsync">Aufnahme beenden</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Mic" OnClick="() => StartRecordingAsync(item.Key)" Disabled="@(_recordingKey is not null)">Sprechen</MudButton>
+                        }
+                        <MudText Typo="Typo.caption" Style="opacity:.75">Die Erkennung schreibt mit; du kannst danach korrigieren – aber nur Tippfehler der Erkennung, nicht deine Grammatik.</MudText>
+                    </MudStack>
+                    @if (_recognitionError is not null && _recordingKey is null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-1">@_recognitionError</MudAlert> }
+                }
+                <div class="tr-conf mt-2" role="radiogroup" aria-label="@($"Sicherheit für Antwort {no}")">
+                    <span class="tr-conf-label">Sicherheit</span>
+                    @foreach (var (value, label) in Confidences)
+                    {
+                        var v = value;
+                        var key = item.Key;
+                        <button type="button" role="radio" aria-checked="@(input.Confidence == v ? "true" : "false")" title="@label"
+                                class="@("tr-conf-btn" + (input.Confidence == v ? " selected c" + v : ""))" @onclick="() => SetConfidenceAsync(key, v)">
+                            <b>@v</b><span>@label</span>
+                        </button>
+                    }
+                    @if (missing.Contains(item.Key)) { <span class="tr-missing-note">@MissingWhat(input)</span> }
+                </div>
+            </MudPaper>
+        }
+
+        <div class="tr-footer">
+            <div class="tr-footer-inner">
+                <div style="flex:1;min-width:180px">
+                    <MudText Typo="Typo.body2"><b>@Filled/@view.Items.Count</b> ausgefüllt</MudText>
+                    <MudProgressLinear Value="@(100.0 * Filled / Math.Max(1, view.Items.Count))" Color="Color.Primary" Rounded="true" Class="mt-1" />
+                    @if (missing.Count > 0)
+                    {
+                        <MudText Typo="Typo.caption" Style="opacity:.8">Es fehlt noch etwas bei Nr. @string.Join(", ", missing.Select(Number))</MudText>
+                    }
+                </div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="SubmitAsync" Disabled="@(_busy || missing.Count > 0)"
+                           StartIcon="@Icons.Material.Filled.Send">@(_busy ? "Wird geprüft …" : "Abgeben")</MudButton>
+            </div>
+        </div>
+    };
+
+    private static string MissingWhat(Input input)
+        => string.IsNullOrWhiteSpace(input.Answer) && input.Confidence == 0 ? "Antwort und Sicherheit fehlen"
+         : string.IsNullOrWhiteSpace(input.Answer) ? "Antwort fehlt"
+         : "Sicherheit fehlt";
+
+    private static string BlockTitle(TrainingBlock block, string? topic) => block switch
+    {
+        TrainingBlock.Diagnose => "Diagnose",
+        TrainingBlock.Wiederholung => "1 · Wiederholung – alte Fehler in neuem Kontext",
+        TrainingBlock.Schwerpunkt => $"2 · Schwerpunkt: {topic} – Lücke → Umformung → eigener Satz → Text",
+        _ => "3 · Sprechsimulation",
+    };
+
+    // ---- Results --------------------------------------------------------------------------------------------------
+
+    private IReadOnlyList<string> Undecided => _view is null ? [] : _view.Results
+        .Where(r => !_verdicts.TryGetValue(r.Item.Key, out var v) || v.Correct is null || (v.Correct == false && v.Kind is null))
+        .Select(r => r.Item.Key).ToList();
+
+    private async Task CompleteAsync()
+    {
+        if (_view is null || Undecided.Count > 0) return;
+        _busy = true;
+        try
+        {
+            var verdicts = _verdicts.Select(kv => new TrainingVerdict(kv.Key, kv.Value.Correct, kv.Value.Kind)).ToList();
+            Load(await Trainer.CompleteAsync(_view.Id, verdicts));
+            _overview = await Trainer.GetOverviewAsync();
+        }
+        catch (InvalidOperationException e) { Snackbar.Add(e.Message, Severity.Warning); }
+        finally { _busy = false; }
+    }
+
+    private void SetFreeVerdict(TrainingItemResult r, bool correct)
+    {
+        var v = _verdicts[r.Item.Key];
+        v.Correct = correct;
+        v.Kind = correct ? null : v.Kind ?? r.SuggestedKind;
+    }
+
+    private RenderFragment Results => __builder =>
+    {
+        var view = _view!;
+        var completed = view.State == TrainingSessionState.Completed;
+        var wrong = view.Results.Count(r => _verdicts[r.Item.Key].Correct == false);
+        var right = view.Results.Count(r => _verdicts[r.Item.Key].Correct == true);
+        var urgent = view.Results.Where(r => _verdicts[r.Item.Key].Correct == false && r.Confidence >= 3).ToList();
+        <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">Sitzung @view.Number – @(completed ? "ausgewertet" : "Lösungen")</MudText>
+        <MudPaper Class="pa-3 mb-3" Elevation="1">
+            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="4">
+                <div><div class="tr-stat">@right</div><MudText Typo="Typo.caption">richtig</MudText></div>
+                <div><div class="tr-stat">@wrong</div><MudText Typo="Typo.caption">falsch</MudText></div>
+                <div><div class="tr-stat tr-urgent-text">@urgent.Count</div><MudText Typo="Typo.caption">sicher und falsch – dringend</MudText></div>
+                @foreach (var kind in Enum.GetValues<ErrorKind>())
+                {
+                    var n = view.Results.Count(r => _verdicts[r.Item.Key] is { Correct: false } v && v.Kind == kind);
+                    if (n > 0) { <div><div class="tr-stat">@n</div><MudText Typo="Typo.caption">@kind – @kind.Label()</MudText></div> }
+                }
+            </MudStack>
+            @if (!completed)
+            {
+                <MudText Typo="Typo.body2" Class="mt-2" Style="opacity:.85">Ordne jeden Fehler ein – der Vorschlag ist vorausgewählt, ein Klick ändert ihn. Bei freien Aufgaben entscheidest du selbst anhand der Prüfpunkte, ob es passt.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mt-2">Gespeichert. Die Fehler kommen in der nächsten Sitzung in neuem Kontext zurück; als gelernt zählt ein Punkt erst, wenn er mindestens zwei Sitzungen später sicher (3) und richtig in einem neuen Satz kommt.</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" OnClick="BackToOverviewAsync">Zur Übersicht</MudButton>
+            }
+        </MudPaper>
+
+        for (var i = 0; i < view.Results.Count; i++)
+        {
+            var r = view.Results[i];
+            var v = _verdicts[r.Item.Key];
+            var no = view.Items.ToList().FindIndex(x => x.Key == r.Item.Key) + 1;
+            var css = v.Correct switch { true when r.AlmostCorrect => "ex-feedback-almost", true => "ex-feedback-correct", false => "ex-feedback-wrong", _ => "" };
+            var isUrgent = v.Correct == false && r.Confidence >= 3;
+            <MudPaper Class="@($"tr-item pa-3 mb-2 {css}" + (isUrgent ? " tr-urgent" : ""))" Elevation="1">
+                <div class="tr-head">
+                    <span class="tr-no">@no</span>
+                    <b>@(v.Correct switch { true when r.AlmostCorrect => "Fast richtig", true => "Richtig", false => "Falsch", _ => "Selbst prüfen" })</b>
+                    <span class="tr-tag">Sicherheit @r.Confidence</span>
+                    @if (isUrgent) { <span class="tr-urgent-badge">Dringend: du warst sicher</span> }
+                    @if (r.Item.Stage is { } stage) { <span class="tr-tag">@stage.Label()</span> }
+                </div>
+                <div class="tr-prompt mb-1" style="opacity:.85">@Prompt(r.Item.Prompt)</div>
+                <MudText Typo="Typo.body2" Class="preline"><span style="opacity:.7">Deine Antwort:</span> @r.Answer</MudText>
+                @if (r.Item.IsFree)
+                {
+                    @if (r.Expected is not null) { <MudText Typo="Typo.body2" Class="mt-1 preline"><span style="opacity:.7">Musterlösung:</span> <b>@r.Expected</b></MudText> }
+                    <MudText Typo="Typo.caption" Class="d-block mt-2" Style="opacity:.8">Prüfpunkte</MudText>
+                    <ul class="tr-checks">@foreach (var c in r.Item.Checks) { <li>@c</li> }</ul>
+                    @if (r.Findings.Count > 0)
+                    {
+                        <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.8">Automatisch gefunden</MudText>
+                        <ul class="tr-checks">@foreach (var f in r.Findings) { <li><s>@f.Snippet</s> → <b>@f.Correction</b> – @f.Explanation</li> }</ul>
+                    }
+                    @if (!completed)
+                    {
+                        <MudStack Row="true" Spacing="1" Class="mt-2" Wrap="Wrap.Wrap">
+                            <MudButton Size="Size.Small" Variant="@(v.Correct == true ? Variant.Filled : Variant.Outlined)" Color="Color.Success" OnClick="() => SetFreeVerdict(r, true)">Passt – alle Prüfpunkte erfüllt</MudButton>
+                            <MudButton Size="Size.Small" Variant="@(v.Correct == false ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="() => SetFreeVerdict(r, false)">Fehler drin</MudButton>
+                        </MudStack>
+                    }
+                }
+                else
+                {
+                    @if (v.Correct != true || r.AlmostCorrect) { <MudText Typo="Typo.body2" Class="mt-1"><span style="opacity:.7">Richtig:</span> <b>@r.Expected</b></MudText> }
+                    @if (r.AlmostCorrect) { <MudText Typo="Typo.caption" Class="d-block">@r.Feedback</MudText> }
+                    @if (v.Correct == false && r.Item.Trap is not null) { <div class="ex-serbian mt-2"><MudText Typo="Typo.body2"><b>Falle:</b> @r.Item.Trap</MudText></div> }
+                    @if (v.Correct == false && r.Item.Explanation is not null) { <MudText Typo="Typo.body2" Class="mt-1">@r.Item.Explanation</MudText> }
+                }
+
+                @if (v.Correct == false)
+                {
+                    <div class="tr-kinds mt-2" role="radiogroup" aria-label="@($"Fehlerart für Antwort {no}")">
+                        <span class="tr-conf-label">Fehlerart</span>
+                        @foreach (var kind in Enum.GetValues<ErrorKind>())
+                        {
+                            var k = kind;
+                            <button type="button" role="radio" aria-checked="@(v.Kind == k ? "true" : "false")" disabled="@completed" title="@k.Label()" aria-label="@($"{k} – {k.Label()}")"
+                                    class="@("tr-kind-btn" + (v.Kind == k ? " selected" : ""))" @onclick="() => v.Kind = k">
+                                <b>@k</b><span>@k.Label()</span>@if (k == r.SuggestedKind && !completed) { <em>Vorschlag</em> }
+                            </button>
+                        }
+                    </div>
+                }
+            </MudPaper>
+        }
+
+        @if (!completed)
+        {
+            var undecided = Undecided;
+            <div class="tr-footer">
+                <div class="tr-footer-inner">
+                    <div style="flex:1;min-width:180px">
+                        @if (undecided.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2">Noch ohne Einordnung: Nr. @string.Join(", ", undecided.Select(Number))</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2">Alles eingeordnet.</MudText>
+                        }
+                    </div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="CompleteAsync" Disabled="@(_busy || undecided.Count > 0)"
+                               StartIcon="@Icons.Material.Filled.Done">@(_busy ? "Wird gespeichert …" : "Auswertung abschließen")</MudButton>
+                </div>
+            </div>
+        }
+    };
+
+    // ---- Overview -------------------------------------------------------------------------------------------------
+
+    private RenderFragment Overview => __builder =>
+    {
+        var o = _overview!;
+        var tracked = o.Points.Where(p => p.Answers > 0).ToList();
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2">@(o.CompletedSessions == 0 ? "Sitzung 1 – Diagnose" : $"Sitzung {o.NextNumber}")</MudText>
+            <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
+                @if (o.CompletedSessions == 0)
+                {
+                    @:21 Aufgaben quer durch deine B2-Schwachstellen: Verben mit Präposition, Genitiv, Adjektive ohne Artikel, Verbketten, damit/um … zu, Nomen-Verb-Verbindungen und eine freie Antwort. Etwa 25 Minuten.
+                }
+                else
+                {
+                    @:Wiederholung deiner offenen Punkte in neuem Kontext, dann ein Schwerpunkt von der Lücke bis zum eigenen Text, zum Schluss Sprechen.
+                }
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="StartAsync" Disabled="_busy">
+                @(o.CompletedSessions == 0 ? "Diagnose starten" : $"Sitzung {o.NextNumber} starten")
+            </MudButton>
+        </MudPaper>
+
+        <MudExpansionPanels Elevation="0" Class="mb-3">
+            <MudExpansionPanel Text="So funktioniert es">
+                <MudText Typo="Typo.body2" Class="mb-2"><b>Sicherheit</b> zu jeder Antwort: 1 = geraten, 2 = ziemlich sicher, 3 = sicher. Ein Fehler mit 3 ist am teuersten – du hättest ihn so in der Prüfung geschrieben – und wird als <b>dringend</b> markiert.</MudText>
+                <MudText Typo="Typo.body2" Class="mb-1"><b>Fehlerart</b> nach dem Abgeben:</MudText>
+                <ul class="tr-checks">
+                    @foreach (var kind in Enum.GetValues<ErrorKind>()) { <li><b>@kind</b> – @kind.Label()</li> }
+                </ul>
+                <MudText Typo="Typo.body2" Class="mt-2"><b>Gelernt</b> ist ein Punkt erst, wenn er richtig, mit Sicherheit 3, in einem neuen Satz und mindestens zwei Sitzungen nach dem letzten Fehler kommt. Bis dahin kommt er in jeder Sitzung zurück. Richtig, aber nur geraten (1), zählt wie ein Fehler.</MudText>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+
+        @if (tracked.Count > 0)
+        {
+            <MudText Typo="Typo.subtitle1" HtmlTag="h2" Class="mb-1">Lernpunkte</MudText>
+            <MudSimpleTable Dense="true" Hover="true" Elevation="1">
+                <thead><tr><th>Punkt</th><th>Thema</th><th>Stand</th><th>Gelernt frühestens</th></tr></thead>
+                <tbody>
+                @foreach (var row in tracked.OrderBy(r => StatusOrder(r.Progress)).ThenByDescending(r => r.Progress.Urgent))
+                {
+                    <tr>
+                        <td>@row.Point.Title @if (row.Progress.LastKind is { } k) { <span class="tr-tag" title="@k.Label()">@k</span> }</td>
+                        <td style="opacity:.8">@row.TopicTitle</td>
+                        <td>
+                            <span class="@("tr-status tr-status-" + row.Progress.Status.ToString().ToLowerInvariant())">@StatusLabel(row.Progress.Status)</span>
+                            @if (row.Progress.Urgent) { <span class="tr-urgent-badge">dringend</span> }
+                        </td>
+                        <td>@(row.Progress.NeedsReview ? $"Sitzung {row.Progress.LearnableFromSession}" : "")</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        }
+    };
+
+    private static int StatusOrder(PointProgress p) => p.Status switch
+    {
+        PointStatus.Offen => 0,
+        PointStatus.AufGutemWeg => 1,
+        PointStatus.Gelernt => 2,
+        _ => 3,
+    };
+
+    private static string StatusLabel(PointStatus s) => s switch
+    {
+        PointStatus.Offen => "offen",
+        PointStatus.AufGutemWeg => "auf gutem Weg",
+        PointStatus.Gelernt => "gelernt",
+        _ => "kein Fehler",
+    };
+
+    // ---- Shared ---------------------------------------------------------------------------------------------------
+
+    private static RenderFragment Prompt(string prompt) => builder =>
+    {
+        var parts = prompt.Split("___");
+        var seq = 0;
+        for (var i = 0; i < parts.Length; i++)
+        {
+            builder.AddContent(seq++, parts[i]);
+            if (i < parts.Length - 1)
+            {
+                builder.OpenElement(seq++, "span");
+                builder.AddAttribute(seq++, "class", "gap");
+                builder.AddContent(seq++, " ");
+                builder.CloseElement();
+            }
+        }
+    };
+
+    private async Task StartRecordingAsync(string key)
+    {
+        _recognitionError = null;
+        _typedBeforeRecording = _inputs[key].Answer;
+        _recordingKey = key;
+        if (!await Speech.StartRecognitionAsync())
+        {
+            _recordingKey = null;
+            _recognitionError = "Spracherkennung ist in diesem Browser nicht verfügbar (Chrome oder Edge). Du kannst stattdessen tippen oder mit der Diktierfunktion deines Systems sprechen.";
+        }
+    }
+
+    private async Task StopRecordingAsync()
+    {
+        await Speech.StopRecognitionAsync();
+        _recordingKey = null;
+        await SaveDraftAsync();
+    }
+
+    private void OnTranscript(string text, bool isFinal)
+    {
+        if (_recordingKey is not { } key) return;
+        _inputs[key].Answer = string.IsNullOrWhiteSpace(_typedBeforeRecording) ? text : $"{_typedBeforeRecording.TrimEnd()} {text}".TrimEnd();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnRecognitionEnded()
+    {
+        _recordingKey = null;
+        _ = InvokeAsync(async () => { await SaveDraftAsync(); StateHasChanged(); });
+    }
+
+    private void OnRecognitionError(string error)
+    {
+        _recordingKey = null;
+        _recognitionError = error == "no-speech" ? null : $"Spracherkennung gerade nicht verfügbar ({error}). Du kannst stattdessen tippen.";
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Speech.Transcript -= OnTranscript;
+        Speech.RecognitionEnded -= OnRecognitionEnded;
+        Speech.RecognitionError -= OnRecognitionError;
+    }
+}
