@@ -1,0 +1,476 @@
+{
+  // B2-Training: the error-driven loop on its own page. Points are the things to learn; the first variant of each is
+  // the one the diagnostic (session 1) asks, the others are the new contexts a later review uses. Topics are listed
+  // in priority order - on equal weight the earlier one becomes the Schwerpunkt.
+  "topics": [
+    {
+      "id": "verb-praep",
+      "title": "Verben mit Präpositionen",
+      "nodeIds": [ "GR.VERB_PRAEPOSITION" ],
+      "ownSentence": {
+        "id": "t.verb-praep.satz",
+        "nodeId": "GR.VERB_PRAEPOSITION",
+        "prompt": "Schreiben Sie einen Satz über Ihre Arbeit mit „sich verlassen auf“ und einem dass-Satz.",
+        "instruction": "Ein Satz. Das Präpositionaladverb gehört in den Hauptsatz.",
+        "checks": [ "„darauf“ steht im Hauptsatz, vor dem dass-Satz", "Das Verb steht am Ende des dass-Satzes", "Komma vor „dass“" ],
+        "modelAnswer": "Ich verlasse mich darauf, dass mein Team die Tests vor jedem Release durchführt."
+      },
+      "shortText": {
+        "id": "t.verb-praep.text",
+        "nodeId": "GR.VERB_PRAEPOSITION",
+        "prompt": "Ein Kollege fragt im Chat, wie es mit dem neuen Projekt läuft. Antworten Sie in 3–4 Sätzen. Benutzen Sie mindestens drei dieser Verben: sich kümmern um, abhängen von, sich beschweren über, sich freuen auf.",
+        "instruction": "Kurzer Text, informell, aber grammatisch sauber.",
+        "checks": [ "Mindestens drei Verben mit der richtigen Präposition", "Mindestens einmal da-Wort + Nebensatz (darauf, dass … / davon, ob …)", "Der Kasus nach der Präposition stimmt (um + Akk., von + Dat., über + Akk., auf + Akk.)" ],
+        "modelAnswer": "Gerade kümmere ich mich um die Schnittstelle zum Bezahlsystem. Ob wir den Termin halten, hängt davon ab, wann der Kunde die Daten liefert. Der Kunde hat sich schon darüber beschwert, dass es so lange dauert. Aber ich freue mich auf die Demo nächste Woche."
+      },
+      "speaking": {
+        "id": "t.verb-praep.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Team-Meeting: Erklären Sie etwa eine Minute lang, wovon der Erfolg Ihres aktuellen Projekts abhängt und worum Sie sich diese Woche kümmern. Stellen Sie dem Team am Ende eine Frage.",
+        "instruction": "Frei sprechen – Mikrofon benutzen oder diktieren. Nicht vorher aufschreiben.",
+        "checks": [ "„… hängt davon ab, ob/dass …“ benutzt", "„Ich kümmere mich um …“ mit Akkusativ", "Eine Frage mit wo-Wort (Worauf …? Worum …? Wovon …?)" ],
+        "modelAnswer": "Der Erfolg hängt vor allem davon ab, ob wir die Daten rechtzeitig bekommen. Diese Woche kümmere ich mich um die Tests und um die Dokumentation. Ich verlasse mich darauf, dass die Schnittstelle bis Mittwoch fertig ist. Meine Frage an euch: Worauf sollen wir bei der Demo besonders achten?",
+        "speaking": true
+      }
+    },
+    {
+      "id": "verbkette",
+      "title": "Verbketten: Plusquamperfekt, Passiv, Konjunktiv II",
+      "nodeIds": [ "GR.PLUSQUAMPERFEKT_FUTUR", "GR.PASSIV", "GR.KONJUNKTIV2" ],
+      "ownSentence": {
+        "id": "t.verbkette.satz",
+        "nodeId": "GR.KONJUNKTIV2",
+        "prompt": "Schreiben Sie einen Satz darüber, was in Ihrem letzten Projekt anders hätte gemacht werden müssen.",
+        "instruction": "Konjunktiv II der Vergangenheit + Passiv + Modalverb.",
+        "checks": [ "Form: hätte … + Partizip II + werden + müssen", "„hätte/hätten“ steht an Position 2", "Am Ende: Partizip – werden – müssen (die Lokomotive „hätte“ vorne, die Wagen hinten)" ],
+        "modelAnswer": "Die Anforderungen hätten viel früher mit dem Kunden abgestimmt werden müssen."
+      },
+      "shortText": {
+        "id": "t.verbkette.text",
+        "nodeId": "GR.PASSIV",
+        "prompt": "Schreiben Sie Ihrer Chefin eine kurze E-Mail (4–5 Sätze): Gestern ist ein Server ausgefallen. Was war vorher passiert? Was ist inzwischen gemacht worden? Was hätte man verhindern können?",
+        "instruction": "Formell. Jede der drei Zeitebenen mindestens einmal.",
+        "checks": [ "Mindestens einmal Plusquamperfekt (… hatte/war + Partizip II)", "Mindestens einmal Passiv Perfekt (… ist … worden)", "Mindestens einmal Konjunktiv II der Vergangenheit (hätte/wäre …)", "Formelle Anrede und Gruß" ],
+        "modelAnswer": "Sehr geehrte Frau Becker, gestern Abend ist unser Datenbankserver ausgefallen. Kurz vorher war ein Update eingespielt worden, das nicht getestet worden war. Inzwischen ist der Server neu gestartet und das Update zurückgenommen worden. Mit einem Test in der Staging-Umgebung hätte der Ausfall verhindert werden können. Mit freundlichen Grüßen"
+      },
+      "speaking": {
+        "id": "t.verbkette.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Ein Kunde ruft an und beschwert sich, weil die Lieferung zu spät kam. Erklären Sie ihm etwa eine Minute lang, was passiert war, was schon gemacht worden ist und was eigentlich hätte passieren sollen.",
+        "instruction": "Frei sprechen – Mikrofon benutzen oder diktieren.",
+        "checks": [ "Plusquamperfekt für das, was vorher passiert war", "Passiv Perfekt für das, was schon gemacht worden ist", "Konjunktiv II der Vergangenheit für das, was hätte passieren sollen", "Höflicher Ton (Es tut mir leid, dass …)" ],
+        "modelAnswer": "Es tut mir sehr leid, dass die Lieferung zu spät kam. Unser Lager hatte die Bestellung leider falsch erfasst. Inzwischen ist der Fehler korrigiert und die Ware ist gestern verschickt worden. Eigentlich hätte die Bestellung schon letzte Woche geprüft werden sollen.",
+        "speaking": true
+      }
+    },
+    {
+      "id": "genitiv",
+      "title": "Genitiv",
+      "nodeIds": [ "GR.GENITIV" ],
+      "ownSentence": {
+        "id": "t.genitiv.satz",
+        "nodeId": "GR.GENITIV",
+        "prompt": "Schreiben Sie einen Satz mit „wegen“ oder „trotz“ über eine Verspätung in einem Projekt – mit Artikel, Adjektiv und Nomen.",
+        "instruction": "Ein Satz. Prüfen Sie alle drei Teile: Artikel, Adjektiv, Nomen.",
+        "checks": [ "Artikel im Genitiv (des/der/eines/einer)", "Adjektiv auf -en", "Maskuline und neutrale Nomen mit -s/-es (des Fehlers, des Systems)" ],
+        "modelAnswer": "Wegen eines unerwarteten Fehlers im Bezahlsystem mussten wir den Release verschieben."
+      },
+      "shortText": {
+        "id": "t.genitiv.text",
+        "nodeId": "GR.GENITIV",
+        "prompt": "Fassen Sie die Ergebnisse eines Meetings in 3–4 Sätzen schriftlich zusammen. Benutzen Sie mindestens drei Genitive (z. B. wegen, trotz, während, innerhalb, die Kosten des …).",
+        "instruction": "Protokollstil, formell.",
+        "checks": [ "Mindestens drei Genitive", "Endung -s/-es am maskulinen und neutralen Nomen", "Adjektive im Genitiv mit -en" ],
+        "modelAnswer": "Während des Meetings wurden die Kosten des neuen Systems besprochen. Trotz der gestiegenen Preise bleibt das Budget unverändert. Innerhalb der nächsten zwei Wochen soll die Entscheidung des Vorstands vorliegen."
+      },
+      "speaking": {
+        "id": "t.genitiv.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Erklären Sie Ihrem Team mündlich, warum ein wichtiger Termin verschoben wurde und warum das Projekt trotzdem weiterläuft.",
+        "instruction": "Frei sprechen – benutzen Sie „wegen“ und „trotz“ mit Genitiv.",
+        "checks": [ "„wegen“ + Genitiv mit -s am Nomen", "„trotz“ + Genitiv", "Kein Ausweichen auf „wegen dem …“" ],
+        "modelAnswer": "Wegen des Ausfalls unseres Testservers mussten wir die Präsentation verschieben. Trotz dieser Verzögerung läuft die Entwicklung normal weiter. Innerhalb der nächsten Woche bekommen wir einen neuen Termin.",
+        "speaking": true
+      }
+    },
+    {
+      "id": "adjektiv-ohne-artikel",
+      "title": "Adjektive ohne Artikel",
+      "nodeIds": [ "GR.ADJEKTIVDEKLINATION" ],
+      "ownSentence": {
+        "id": "t.adjektiv.satz",
+        "nodeId": "GR.ADJEKTIVDEKLINATION",
+        "prompt": "Beschreiben Sie in einem Satz Ihren idealen Arbeitsplatz mit „mit“ und mindestens zwei Adjektiven ohne Artikel.",
+        "instruction": "Ohne Artikel trägt das Adjektiv die Fahne: es zeigt den Kasus.",
+        "checks": [ "Nach „mit“ Dativ: -em (mask./neutr.), -er (fem.), -en (Plural)", "Jedes Adjektiv hat seine Endung", "flexibel → flexibl-, teuer → teur- (e fällt weg)" ],
+        "modelAnswer": "Ich möchte in einem Team mit flachen Hierarchien, flexibler Arbeitszeit und modernem Equipment arbeiten."
+      },
+      "shortText": {
+        "id": "t.adjektiv.text",
+        "nodeId": "GR.ADJEKTIVDEKLINATION",
+        "prompt": "Schreiben Sie eine kurze Stellenanzeige (3–4 Sätze) für Ihr Team: Was bieten Sie, was erwarten Sie?",
+        "instruction": "Mindestens vier Adjektive ohne Artikel, in verschiedenen Kasus.",
+        "checks": [ "Mindestens vier Adjektive ohne Artikel", "Richtige Endungen nach Präpositionen (mit, bei, von)", "Nominativ/Akkusativ ohne Artikel: -er/-e/-es bzw. -en (mask. Akk.)" ],
+        "modelAnswer": "Wir bieten ein Gehalt mit attraktiven Zusatzleistungen, flexible Arbeitszeiten und kostenlosen Kaffee. Sie bringen gute Deutschkenntnisse und erste Erfahrung mit agiler Entwicklung mit. Bei großem Interesse freuen wir uns über Ihre Bewerbung mit aussagekräftigem Lebenslauf."
+      },
+      "speaking": {
+        "id": "t.adjektiv.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Beschreiben Sie einem neuen Kollegen mündlich Ihr Büro und die Arbeitsbedingungen – gute und weniger gute Seiten.",
+        "instruction": "Frei sprechen – möglichst viele Adjektive ohne Artikel (mit …, bei …, ohne …).",
+        "checks": [ "Mindestens drei Adjektive ohne Artikel", "Dativ nach „mit“/„bei“ richtig", "Plural ohne Artikel: -e (Nom./Akk.), -en (Dat.)" ],
+        "modelAnswer": "Wir arbeiten in hellen Räumen mit großen Fenstern. Bei schönem Wetter kann man auf der Terrasse arbeiten. Leider gibt es nur alte Monitore, und mit schlechtem WLAN ist das Homeoffice manchmal besser.",
+        "speaking": true
+      }
+    },
+    {
+      "id": "kollokationen",
+      "title": "Nomen-Verb-Verbindungen",
+      "nodeIds": [ "WS.NOMEN_VERB_VERBINDUNGEN" ],
+      "ownSentence": {
+        "id": "t.kollokationen.satz",
+        "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+        "prompt": "Schreiben Sie einen Satz für eine formelle E-Mail mit „Bezug nehmen auf“ und einer zweiten Nomen-Verb-Verbindung.",
+        "instruction": "Ein Satz, formell.",
+        "checks": [ "„Bezug nehmen auf + Akkusativ“", "Die zweite Verbindung ist eine feste Kombination (z. B. eine Entscheidung treffen, in Frage kommen, Maßnahmen ergreifen)" ],
+        "modelAnswer": "Ich nehme Bezug auf unser Gespräch vom Montag und möchte Sie bitten, bis Freitag eine Entscheidung zu treffen."
+      },
+      "shortText": {
+        "id": "t.kollokationen.text",
+        "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+        "prompt": "Schreiben Sie einem Kunden eine kurze E-Mail (4 Sätze): Ein Termin muss verschoben werden. Benutzen Sie mindestens drei Nomen-Verb-Verbindungen.",
+        "instruction": "Formell.",
+        "checks": [ "Mindestens drei feste Verbindungen (Bezug nehmen, in Frage kommen, eine Entscheidung treffen, Maßnahmen ergreifen, zur Verfügung stehen …)", "Das Verb ist das deutsche, nicht das wörtlich übersetzte (nicht „eine Entscheidung machen/bringen“)", "Formeller Stil" ],
+        "modelAnswer": "Sehr geehrter Herr Wagner, ich nehme Bezug auf unseren Termin am Donnerstag. Leider müssen wir ihn verschieben; der Montag kommt für uns als Ersatztermin in Frage. Für Rückfragen stehe ich Ihnen gern zur Verfügung. Mit freundlichen Grüßen"
+      },
+      "speaking": {
+        "id": "t.kollokationen.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Sie leiten ein kurzes Meeting zu einem Sicherheitsproblem. Sagen Sie, welche Maßnahmen ergriffen werden, welche Lösung nicht in Frage kommt und bis wann eine Entscheidung getroffen wird.",
+        "instruction": "Frei sprechen – Mikrofon benutzen oder diktieren.",
+        "checks": [ "Maßnahmen ergreifen", "in Frage kommen / nicht in Frage kommen", "eine Entscheidung treffen" ],
+        "modelAnswer": "Wir haben sofort Maßnahmen ergriffen und alle Passwörter zurückgesetzt. Ein komplettes Abschalten des Systems kommt nicht in Frage. Bis Freitag treffen wir eine Entscheidung, ob wir einen externen Dienstleister beauftragen.",
+        "speaking": true
+      }
+    },
+    {
+      "id": "damit-umzu",
+      "title": "damit / um … zu",
+      "nodeIds": [ "GR.KONNEKTOREN", "GR.INFINITIV_ZU" ],
+      "ownSentence": {
+        "id": "t.damit.satz",
+        "nodeId": "GR.INFINITIV_ZU",
+        "prompt": "Schreiben Sie zwei Sätze über Ihre Weiterbildung: einen mit „um … zu“ und einen mit „damit“ – mit verschiedenen Subjekten.",
+        "instruction": "Erst prüfen: gleiches Subjekt oder nicht?",
+        "checks": [ "„um … zu“ nur bei gleichem Subjekt", "„damit“ bei verschiedenen Subjekten (oder wenn der Nebensatz Passiv ist)", "„zu“ direkt vor dem Infinitiv, bei trennbaren Verben in der Mitte (einzuhalten)" ],
+        "modelAnswer": "Ich mache einen Deutschkurs, um die B2-Prüfung zu bestehen. Mein Chef gibt mir freitags frei, damit ich mich vorbereiten kann."
+      },
+      "shortText": {
+        "id": "t.damit.text",
+        "nodeId": "GR.KONNEKTOREN",
+        "prompt": "Erklären Sie in 3–4 Sätzen, welche Änderungen Ihr Team einführt und wozu. Benutzen Sie mindestens zweimal „um … zu“ und zweimal „damit“.",
+        "instruction": "Sachlich, wie in einer internen Mitteilung.",
+        "checks": [ "Zweimal „um … zu“ mit gleichem Subjekt", "Zweimal „damit“ mit anderem Subjekt oder Passiv", "Verb am Ende des damit-Satzes" ],
+        "modelAnswer": "Ab Mai führen wir Code-Reviews ein, um Fehler früher zu finden. Außerdem dokumentieren wir jede Änderung, damit neue Kollegen schneller eingearbeitet werden. Wir treffen uns jeden Morgen kurz, um Probleme sofort zu besprechen. Das Board wird täglich aktualisiert, damit alle den aktuellen Stand kennen."
+      },
+      "speaking": {
+        "id": "t.damit.sprechen",
+        "nodeId": "SP.ALLTAG_BERUF",
+        "prompt": "Ein neuer Kollege fragt, wozu es Code-Reviews und Daily Stand-ups gibt. Erklären Sie es ihm mündlich.",
+        "instruction": "Frei sprechen – mit „um … zu“ und „damit“.",
+        "checks": [ "Mindestens einmal „um … zu“", "Mindestens einmal „damit“ mit anderem Subjekt", "Kein „für zu …“ oder „um dass …“" ],
+        "modelAnswer": "Wir machen Code-Reviews, um Fehler früh zu finden, und damit nicht nur eine Person den Code kennt. Das Stand-up gibt es, damit alle wissen, woran die anderen arbeiten, und um Blockaden schnell zu lösen.",
+        "speaking": true
+      }
+    }
+  ],
+  "points": [
+    {
+      "id": "vp.abhaengen",
+      "topicId": "verb-praep",
+      "nodeId": "GR.VERB_PRAEPOSITION",
+      "errorCode": "PRAEPADVERB",
+      "title": "abhängen von → davon ab + Nebensatz",
+      "trap": "Folgt ein Nebensatz (ob/wie/dass), braucht der Hauptsatz das da-Wort: davon. Und „ab“ ist das Präfix von abhängen – es steht am Satzende des Hauptsatzes.",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie die beiden Lücken.", "prompt": "Ob wir das Projekt verlängern, hängt ___ ___, wie viel Budget wir im nächsten Quartal bekommen.", "answers": [ "davon ab" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie die beiden Lücken.", "prompt": "Ob der Release am Freitag stattfindet, hängt ___ ___, ob bis dahin alle Tests grün sind.", "answers": [ "davon ab" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie die beiden Lücken.", "prompt": "Ob ich das Angebot annehme, hängt vor allem ___ ___, ob ich zwei Tage pro Woche im Homeoffice arbeiten kann.", "answers": [ "davon ab" ] }
+      ]
+    },
+    {
+      "id": "vp.wo-frage",
+      "topicId": "verb-praep",
+      "nodeId": "GR.VERB_PRAEPOSITION",
+      "errorCode": "PRAEPADVERB",
+      "title": "Frage nach einer Sache: wo(r) + Präposition",
+      "trap": "Nach Sachen fragt man mit wo(r)- + Präposition: um → worum, über → worüber, auf → worauf. „Um was“ ist umgangssprachlich, für B2 nicht genug.",
+      "variants": [
+        { "id": "v1", "instruction": "Fragen Sie nach dem Präpositionalobjekt.", "prompt": "Ich kümmere mich um die Reklamation. → ___ kümmerst du dich?", "answers": [ "Worum" ] },
+        { "id": "v2", "instruction": "Fragen Sie nach dem Präpositionalobjekt.", "prompt": "Wir haben lange über das neue Budget gesprochen. → ___ habt ihr so lange gesprochen?", "answers": [ "Worüber" ] },
+        { "id": "v3", "instruction": "Fragen Sie nach dem Präpositionalobjekt.", "prompt": "Die Kollegin freut sich auf die Teamreise. → ___ freut sich die Kollegin?", "answers": [ "Worauf" ] }
+      ]
+    },
+    {
+      "id": "vp.da-dass",
+      "topicId": "verb-praep",
+      "nodeId": "GR.VERB_PRAEPOSITION",
+      "errorCode": "PRAEPADVERB",
+      "title": "da-Wort im Hauptsatz + dass-Satz",
+      "trap": "Die Präposition des Verbs verschwindet nicht: Sie steht als da-Wort im Hauptsatz (darauf, darüber, darum), der dass-Satz füllt sie.",
+      "variants": [
+        { "id": "v1", "instruction": "Verbinden Sie die Sätze mit „dass“. „warten auf“ bleibt im Hauptsatz.", "prompt": "Wir haben lange gewartet. Der Kunde sollte endlich antworten.", "answers": [ "Wir haben lange darauf gewartet, dass der Kunde endlich antwortet.", "Wir haben lange darauf gewartet, dass der Kunde antwortet.", "Wir haben lange darauf gewartet, dass der Kunde endlich antwortete.", "Wir haben lange darauf gewartet, dass der Kunde endlich eine Antwort schickt." ] },
+        { "id": "v2", "instruction": "Verbinden Sie die Sätze mit „dass“ (sich beschweren über).", "prompt": "Ich habe mich beschwert. Die Lieferung kam zwei Wochen zu spät.", "answers": [ "Ich habe mich darüber beschwert, dass die Lieferung zwei Wochen zu spät kam.", "Ich habe mich darüber beschwert, dass die Lieferung zwei Wochen zu spät gekommen ist." ] },
+        { "id": "v3", "instruction": "Verbinden Sie die Sätze mit „dass“ (sich verlassen auf).", "prompt": "Die Chefin verlässt sich. Wir prüfen die Zahlen bis Montag.", "answers": [ "Die Chefin verlässt sich darauf, dass wir die Zahlen bis Montag prüfen.", "Die Chefin verlässt sich darauf, dass wir die Zahlen bis Montag geprüft haben." ] }
+      ]
+    },
+    {
+      "id": "vp.gewoehnen",
+      "topicId": "verb-praep",
+      "nodeId": "GR.VERB_PRAEPOSITION",
+      "errorCode": "VERB_PRAEP",
+      "title": "sich gewöhnen an + Akkusativ (mit Adjektiv)",
+      "trap": "sich gewöhnen an + Akkusativ – „an“ ist hier keine Ortsangabe, also kein Dativ. Nach dem bestimmten Artikel im Akkusativ Plural: -en.",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie Präposition, Artikel und Adjektiv (z. B. „mit dem großen“).", "prompt": "Ich habe mich noch nicht ___ ___ neu___ Arbeitszeiten gewöhnt.", "answers": [ "an die neuen" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie Präposition, Artikel und Adjektiv.", "prompt": "Unser Team muss sich erst ___ ___ neu___ Ticketsystem gewöhnen.", "answers": [ "an das neue" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie Präposition, Artikel und Adjektiv.", "prompt": "Hast du dich schon ___ ___ lang___ Arbeitsweg gewöhnt?", "answers": [ "an den langen" ] }
+      ]
+    },
+    {
+      "id": "gen.wegen",
+      "topicId": "genitiv",
+      "nodeId": "GR.GENITIV",
+      "errorCode": "GENITIV",
+      "title": "wegen / während + Genitiv (mit -s am Nomen)",
+      "trap": "Drei Stellen tragen den Genitiv: Artikel (des), Adjektiv (-en) und bei maskulinen/neutralen Nomen die Endung -s/-es. Das -s am Nomen wird am häufigsten vergessen.",
+      "variants": [
+        { "id": "v1", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Wegen ___ (der starke Regen) kamen viele Kollegen zu spät.", "answers": [ "des starken Regens" ] },
+        { "id": "v2", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Während ___ (das lange Meeting) habe ich keine einzige Mail gelesen.", "answers": [ "des langen Meetings" ] },
+        { "id": "v3", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Wegen ___ (ein technischer Fehler) war die Website zwei Stunden offline.", "answers": [ "eines technischen Fehlers" ] }
+      ]
+    },
+    {
+      "id": "gen.trotz-plural",
+      "topicId": "genitiv",
+      "nodeId": "GR.GENITIV",
+      "errorCode": "GENITIV",
+      "title": "trotz / innerhalb + Genitiv Plural",
+      "trap": "Genitiv Plural: der + Adjektiv auf -en. Das Nomen bekommt kein zusätzliches -s.",
+      "variants": [
+        { "id": "v1", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Trotz ___ (die gestiegenen Preise) bleibt die Nachfrage stabil.", "answers": [ "der gestiegenen Preise" ] },
+        { "id": "v2", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Trotz ___ (die vielen Überstunden) ist das Team motiviert.", "answers": [ "der vielen Überstunden" ] },
+        { "id": "v3", "instruction": "Setzen Sie die Wörter in Klammern in den Genitiv.", "prompt": "Innerhalb ___ (die nächsten zwei Wochen) bekommen Sie eine Antwort.", "answers": [ "der nächsten zwei Wochen" ] }
+      ]
+    },
+    {
+      "id": "gen.attribut",
+      "topicId": "genitiv",
+      "nodeId": "GR.GENITIV",
+      "errorCode": "GENITIV",
+      "title": "Genitivattribut statt „für/von“",
+      "trap": "Im schriftlichen B2-Stil wird „von + Dativ“ oder „für“ oft zum Genitiv: die Kosten des Systems, der Vertrag meines Kollegen.",
+      "variants": [
+        { "id": "v1", "instruction": "Formulieren Sie mit Genitiv statt „für“.", "prompt": "Die Kosten für das neue System sind höher als geplant.", "answers": [ "Die Kosten des neuen Systems sind höher als geplant." ] },
+        { "id": "v2", "instruction": "Formulieren Sie mit Genitiv statt „von“.", "prompt": "Die Ergebnisse von der Umfrage überraschen uns.", "answers": [ "Die Ergebnisse der Umfrage überraschen uns." ] },
+        { "id": "v3", "instruction": "Formulieren Sie mit Genitiv statt „von“.", "prompt": "Der Vertrag von meinem Kollegen läuft Ende Mai aus.", "answers": [ "Der Vertrag meines Kollegen läuft Ende Mai aus." ] }
+      ]
+    },
+    {
+      "id": "adj.mit-dativ",
+      "topicId": "adjektiv-ohne-artikel",
+      "nodeId": "GR.ADJEKTIVDEKLINATION",
+      "errorCode": "ADJ_ENDUNG",
+      "title": "Adjektiv ohne Artikel nach Präposition (Dativ)",
+      "trap": "Ohne Artikel muss jemand die Fahne tragen: das Adjektiv bekommt die Artikelendung – Dativ fem. -er (neuer Software), mask./neutr. -em, Plural -en.",
+      "variants": [
+        { "id": "v1", "instruction": "Schreiben Sie beide Adjektive mit Endung, durch Leerzeichen getrennt.", "prompt": "Wir arbeiten jetzt mit neu___ Software und modern___ Geräten.", "answers": [ "neuer modernen" ] },
+        { "id": "v2", "instruction": "Schreiben Sie beide Adjektive mit Endung, durch Leerzeichen getrennt.", "prompt": "Die Firma wirbt mit flexibel___ Arbeitszeiten und kostenlos___ Kaffee.", "answers": [ "flexiblen kostenlosem" ] },
+        { "id": "v3", "instruction": "Schreiben Sie beide Adjektive mit Endung, durch Leerzeichen getrennt.", "prompt": "Bei schlecht___ Wetter und stark___ Verkehr fahre ich mit der Bahn.", "answers": [ "schlechtem starkem" ] }
+      ]
+    },
+    {
+      "id": "adj.genitiv",
+      "topicId": "adjektiv-ohne-artikel",
+      "nodeId": "GR.ADJEKTIVDEKLINATION",
+      "errorCode": "ADJ_ENDUNG",
+      "title": "Adjektiv ohne Artikel im Genitiv",
+      "trap": "Genitiv ohne Artikel, feminin oder Plural: Das Adjektiv übernimmt die Endung von „der“ → -er (guter Zusammenarbeit, großer Mühe).",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie das Adjektiv mit Endung.", "prompt": "Das ist ein Zeichen gut___ Zusammenarbeit.", "answers": [ "guter" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie das Adjektiv mit Endung.", "prompt": "Wir feiern den Erfolg langjährig___ Partnerschaften.", "answers": [ "langjähriger" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie das Adjektiv mit Endung.", "prompt": "Trotz groß___ Mühe haben wir die Frist nicht geschafft.", "answers": [ "großer" ] }
+      ]
+    },
+    {
+      "id": "vk.plusq",
+      "topicId": "verbkette",
+      "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR",
+      "errorCode": "TEMPUS_PLUSQ",
+      "title": "Plusquamperfekt für das, was vorher passiert war",
+      "trap": "Was vor einer anderen Vergangenheit abgeschlossen war, steht im Plusquamperfekt: hatte/war + Partizip II.",
+      "variants": [
+        { "id": "v1", "instruction": "Verbinden Sie mit „als“. Das Meeting war schon vorher im Gang.", "prompt": "Ich kam ins Büro. Das Meeting hatte schon begonnen.", "answers": [ "Als ich ins Büro kam, hatte das Meeting schon begonnen.", "Als ich ins Büro kam, hatte das Meeting bereits begonnen." ] },
+        { "id": "v2", "instruction": "Verbinden Sie mit „nachdem“.", "prompt": "Wir haben alle Tests durchgeführt. Danach haben wir die neue Version veröffentlicht.", "answers": [ "Nachdem wir alle Tests durchgeführt hatten, veröffentlichten wir die neue Version.", "Nachdem wir alle Tests durchgeführt hatten, haben wir die neue Version veröffentlicht." ] },
+        { "id": "v3", "instruction": "Ergänzen Sie die Verbform (abfahren) – beide Teile, durch Leerzeichen getrennt.", "prompt": "Als ich am Bahnhof ankam, ___ der Zug schon ___.", "answers": [ "war abgefahren" ] }
+      ]
+    },
+    {
+      "id": "vk.passiv-perfekt",
+      "topicId": "verbkette",
+      "nodeId": "GR.PASSIV",
+      "errorCode": "PASSIV_FORM",
+      "title": "Passiv Perfekt: ist … worden",
+      "trap": "Passiv Perfekt = sein + Partizip II + worden (nicht „geworden“, nicht „hat“).",
+      "variants": [
+        { "id": "v1", "instruction": "Setzen Sie den Satz ins Passiv Perfekt.", "prompt": "Man hat den Vertrag gestern unterschrieben.", "answers": [ "Der Vertrag ist gestern unterschrieben worden.", "Gestern ist der Vertrag unterschrieben worden." ] },
+        { "id": "v2", "instruction": "Setzen Sie den Satz ins Passiv Perfekt.", "prompt": "Man hat die Server am Wochenende aktualisiert.", "answers": [ "Die Server sind am Wochenende aktualisiert worden.", "Am Wochenende sind die Server aktualisiert worden." ] },
+        { "id": "v3", "instruction": "Setzen Sie den Satz ins Passiv Perfekt.", "prompt": "Man hat mich zu spät informiert.", "answers": [ "Ich bin zu spät informiert worden." ] }
+      ]
+    },
+    {
+      "id": "vk.modal-passiv",
+      "topicId": "verbkette",
+      "nodeId": "GR.PASSIV",
+      "errorCode": "PASSIV_FORM",
+      "title": "Modalverb + Passiv: muss … werden",
+      "trap": "Das Modalverb ist die Lokomotive (Position 2), am Ende steht Partizip II + werden.",
+      "variants": [
+        { "id": "v1", "instruction": "Setzen Sie den Satz ins Passiv (mit Modalverb).", "prompt": "Man muss die Rechnung bis Freitag bezahlen.", "answers": [ "Die Rechnung muss bis Freitag bezahlt werden.", "Bis Freitag muss die Rechnung bezahlt werden." ] },
+        { "id": "v2", "instruction": "Setzen Sie den Satz ins Passiv (mit Modalverb).", "prompt": "Man kann das Formular auch online ausfüllen.", "answers": [ "Das Formular kann auch online ausgefüllt werden." ] },
+        { "id": "v3", "instruction": "Setzen Sie den Satz ins Passiv (mit Modalverb).", "prompt": "Man sollte die Daten jeden Tag sichern.", "answers": [ "Die Daten sollten jeden Tag gesichert werden.", "Jeden Tag sollten die Daten gesichert werden." ] }
+      ]
+    },
+    {
+      "id": "vk.konj2-modal-passiv",
+      "topicId": "verbkette",
+      "nodeId": "GR.KONJUNKTIV2",
+      "errorCode": "KONJ2_FORM",
+      "title": "hätte … werden müssen (Kritik an der Vergangenheit)",
+      "trap": "Lokomotive „hätte“ vorne, Wagen von rechts gebaut: Partizip II – werden – müssen. Kein „gemusst“, kein „würde“.",
+      "variants": [
+        { "id": "v1", "instruction": "Formulieren Sie als Kritik an der Vergangenheit (Konjunktiv II, Passiv, „müssen“).", "prompt": "Man hat das Problem nicht früher gelöst.", "answers": [ "Das Problem hätte früher gelöst werden müssen." ] },
+        { "id": "v2", "instruction": "Formulieren Sie als Kritik an der Vergangenheit (Konjunktiv II, Passiv, „müssen“).", "prompt": "Man hat den Kunden nicht rechtzeitig informiert.", "answers": [ "Der Kunde hätte rechtzeitig informiert werden müssen." ] },
+        { "id": "v3", "instruction": "Formulieren Sie als Kritik an der Vergangenheit (Konjunktiv II, Passiv, „sollen“).", "prompt": "Man hat die Fehler nicht vor dem Release gefunden.", "answers": [ "Die Fehler hätten vor dem Release gefunden werden sollen." ] }
+      ]
+    },
+    {
+      "id": "vk.konj2-irreal",
+      "topicId": "verbkette",
+      "nodeId": "GR.KONJUNKTIV2",
+      "errorCode": "KONJ2_FORM",
+      "title": "Irrealer Bedingungssatz in der Vergangenheit: hätte/wäre",
+      "trap": "Das Hilfsverb aus dem Perfekt bleibt: „ich bin gekommen“ → „ich wäre gekommen“, nicht „hätte“.",
+      "variants": [
+        { "id": "v1", "instruction": "Bilden Sie einen irrealen Bedingungssatz in der Vergangenheit (Wenn …).", "prompt": "Ich hatte keine Zeit. Deshalb bin ich nicht zur Feier gekommen.", "answers": [ "Wenn ich Zeit gehabt hätte, wäre ich zur Feier gekommen.", "Wenn ich Zeit gehabt hätte, dann wäre ich zur Feier gekommen." ] },
+        { "id": "v2", "instruction": "Bilden Sie einen irrealen Bedingungssatz in der Vergangenheit (Wenn …).", "prompt": "Der Zug war nicht pünktlich. Deshalb haben wir den Anschluss verpasst.", "answers": [ "Wenn der Zug pünktlich gewesen wäre, hätten wir den Anschluss nicht verpasst.", "Wenn der Zug pünktlich gewesen wäre, dann hätten wir den Anschluss nicht verpasst." ] },
+        { "id": "v3", "instruction": "Bilden Sie einen irrealen Bedingungssatz in der Vergangenheit (Wenn …).", "prompt": "Ich bin nicht früher losgefahren. Deshalb bin ich im Stau stecken geblieben.", "answers": [ "Wenn ich früher losgefahren wäre, wäre ich nicht im Stau stecken geblieben.", "Wenn ich früher losgefahren wäre, dann wäre ich nicht im Stau stecken geblieben." ] }
+      ]
+    },
+    {
+      "id": "dz.damit",
+      "topicId": "damit-umzu",
+      "nodeId": "GR.KONNEKTOREN",
+      "errorCode": "KONNEKTOR_WAHL",
+      "title": "damit bei anderem Subjekt (auch mit Passiv)",
+      "trap": "Zwei verschiedene Subjekte → „damit“. „um … zu“ geht nur, wenn das Subjekt gleich ist. „sollen“ fällt im damit-Satz weg.",
+      "variants": [
+        { "id": "v1", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Wir haben eine neue Kollegin eingestellt. Das Team soll entlastet werden.", "answers": [ "Wir haben eine neue Kollegin eingestellt, damit das Team entlastet wird." ] },
+        { "id": "v2", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Ich schicke dir die Unterlagen heute. Du sollst dich gut vorbereiten können.", "answers": [ "Ich schicke dir die Unterlagen heute, damit du dich gut vorbereiten kannst." ] },
+        { "id": "v3", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Die Firma bietet Deutschkurse an. Neue Mitarbeiter sollen schneller integriert werden.", "answers": [ "Die Firma bietet Deutschkurse an, damit neue Mitarbeiter schneller integriert werden." ] }
+      ]
+    },
+    {
+      "id": "dz.umzu",
+      "topicId": "damit-umzu",
+      "nodeId": "GR.INFINITIV_ZU",
+      "errorCode": "INF_ZU",
+      "title": "um … zu bei gleichem Subjekt (auch Passiv-Infinitiv)",
+      "trap": "Gleiches Subjekt → „um … zu“. Passiv-Infinitiv: Partizip II + zu werden. Trennbare Verben: einzuhalten.",
+      "variants": [
+        { "id": "v1", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Ich habe mich früh beworben. Ich wollte zum Gespräch eingeladen werden.", "answers": [ "Ich habe mich früh beworben, um zum Gespräch eingeladen zu werden." ] },
+        { "id": "v2", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Er hat alle Zertifikate mitgebracht. Er wollte ernst genommen werden.", "answers": [ "Er hat alle Zertifikate mitgebracht, um ernst genommen zu werden." ] },
+        { "id": "v3", "instruction": "Verbinden Sie mit „damit“ oder „um … zu“ – was passt?", "prompt": "Sie arbeitet am Wochenende. Sie will die Frist einhalten.", "answers": [ "Sie arbeitet am Wochenende, um die Frist einzuhalten." ] }
+      ]
+    },
+    {
+      "id": "nvv.entscheidung",
+      "topicId": "kollokationen",
+      "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+      "errorCode": "WS_KOLLOKATION",
+      "title": "eine Entscheidung treffen",
+      "trap": "Eine Entscheidung trifft man – nicht „macht“ und nicht „bringt“ (donositi odluku).",
+      "suggestedKind": "K",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Bis Ende der Woche müssen wir eine Entscheidung ___.", "answers": [ "treffen" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Wer hat diese Entscheidung eigentlich ___?", "answers": [ "getroffen" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Es ist schwer, eine Entscheidung zu ___, wenn die Zahlen fehlen.", "answers": [ "treffen" ] }
+      ]
+    },
+    {
+      "id": "nvv.massnahmen",
+      "topicId": "kollokationen",
+      "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+      "errorCode": "WS_KOLLOKATION",
+      "title": "Maßnahmen ergreifen",
+      "trap": "Maßnahmen ergreift man (ergreifen – ergriff – ergriffen). „Maßnahmen nehmen/machen“ gibt es nicht.",
+      "suggestedKind": "K",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Die Firma hat sofort Maßnahmen ___, um die Daten zu schützen.", "answers": [ "ergriffen" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Wir müssen dringend Maßnahmen ___.", "answers": [ "ergreifen" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Welche Maßnahmen wurden bereits ___?", "answers": [ "ergriffen" ] }
+      ]
+    },
+    {
+      "id": "nvv.bezug",
+      "topicId": "kollokationen",
+      "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+      "errorCode": "WS_KOLLOKATION",
+      "title": "Bezug nehmen auf",
+      "trap": "Man nimmt Bezug auf etwas (Akkusativ) – die Standardformel am Anfang einer formellen E-Mail.",
+      "suggestedKind": "K",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Ich ___ Bezug auf Ihre E-Mail vom 12. März.", "answers": [ "nehme" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Wir ___ Bezug auf unser Telefonat von gestern.", "answers": [ "nehmen" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "In seiner Antwort hat er leider keinen Bezug auf meine Frage ___.", "answers": [ "genommen" ] }
+      ]
+    },
+    {
+      "id": "nvv.frage",
+      "topicId": "kollokationen",
+      "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+      "errorCode": "WS_KOLLOKATION",
+      "title": "in Frage kommen",
+      "trap": "Etwas kommt (nicht) in Frage = ist (k)eine Möglichkeit. Das Verb ist „kommen“, nicht „stehen“ oder „sein“.",
+      "suggestedKind": "K",
+      "variants": [
+        { "id": "v1", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Ein zweiter Termin am Freitag ___ leider nicht in Frage.", "answers": [ "kommt" ] },
+        { "id": "v2", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Für die Stelle ___ nur zwei Bewerber in Frage.", "answers": [ "kommen" ] },
+        { "id": "v3", "instruction": "Ergänzen Sie das passende Verb.", "prompt": "Eine Gehaltserhöhung ist dieses Jahr leider nicht in Frage ___.", "answers": [ "gekommen" ] }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "d.projekt-verspaetung",
+      "nodeId": "SP.ALLTAG_BERUF",
+      "prompt": "Ihr Projekt hätte schon letzten Monat fertig sein sollen. Erklären Sie in 5–6 Sätzen: Warum ist es noch nicht fertig? Was hätte man anders machen müssen? Was schlagen Sie jetzt vor?",
+      "instruction": "Sprechen (Mikrofon) oder diktieren, nicht lange vorher planen.",
+      "checks": [ "Mindestens einmal Plusquamperfekt (… hatte/war + Partizip II)", "Mindestens einmal Passiv", "Konjunktiv II der Vergangenheit (hätte … müssen / wäre … gewesen)", "Mindestens zwei Konnektoren (weil, obwohl, deshalb, damit …)", "Ein höflicher Vorschlag (Ich würde vorschlagen, dass …)" ],
+      "modelAnswer": "Das Projekt ist leider noch nicht fertig, weil die Anforderungen mehrmals geändert worden sind. Als wir mit der Entwicklung begonnen hatten, war das Budget noch nicht freigegeben. Außerdem hätten die Tests viel früher geplant werden müssen. Wenn wir von Anfang an einen festen Ansprechpartner beim Kunden gehabt hätten, wäre vieles schneller gegangen. Ich würde vorschlagen, dass wir den Umfang reduzieren, damit wir bis Ende des Monats eine erste Version liefern können.",
+      "speaking": true
+    }
+  ],
+  "diagnostic": {
+    "title": "Sitzung 1 – Diagnose",
+    "items": [
+      "vp.abhaengen", "vp.wo-frage", "vp.da-dass", "vp.gewoehnen",
+      "gen.wegen", "gen.trotz-plural", "gen.attribut",
+      "adj.mit-dativ", "adj.genitiv",
+      "vk.plusq", "vk.passiv-perfekt", "vk.modal-passiv", "vk.konj2-modal-passiv", "vk.konj2-irreal",
+      "dz.damit", "dz.umzu",
+      "nvv.entscheidung", "nvv.massnahmen", "nvv.bezug", "nvv.frage",
+      "d.projekt-verspaetung"
+    ]
+  }
+}
