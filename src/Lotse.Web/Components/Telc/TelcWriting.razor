@@ -1,0 +1,264 @@
+@* Schriftlicher Ausdruck as in the exam: choose task A or B, 30 minutes, at least 150 words. After "Fertig" the
+   mechanical checks run (length, Betreff/Anrede/Schluss, linking, Leitpunkte) and cap criteria I and II the way
+   telc's rules do; the bands within the caps come from the tutor - every reported mistake quoted from the text -
+   or from the learner's own rating against the criteria. *@
+@inject ITelcService Telc
+@implements IDisposable
+
+@if (_pair is null)
+{
+    <MudAlert Severity="Severity.Error">Aufgabe nicht gefunden.</MudAlert>
+    return;
+}
+
+<div class="tc-bar">
+    <span class="tc-part">Schriftlicher Ausdruck</span>
+    @if (_task is not null && _result is null && !_finished)
+    {
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 300 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
+    }
+    <span class="tc-points">45 Punkte · mind. 150 Wörter</span>
+</div>
+
+@if (_task is null)
+{
+    <MudText Typo="Typo.body2" Class="mb-3">Wähle zuerst zwischen Aufgabe A und Aufgabe B. Entscheide schnell – die Zeit (30 Minuten) beginnt mit der Wahl.</MudText>
+    <MudGrid Spacing="2">
+        @foreach (var (letter, task) in new[] { ("A", _pair.A), ("B", _pair.B) })
+        {
+            var t = task;
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="1" Class="pa-3 tc-choose" Style="height:100%">
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:600">Aufgabe @letter: @t.Kind</MudText>
+                    <MudText Typo="Typo.body2" Class="my-2">@t.Situation</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => Choose(t)">Aufgabe @letter schreiben</MudButton>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+    return;
+}
+
+<MudPaper Elevation="0" Class="pa-3 mb-3 tc-task">
+    <MudText Typo="Typo.subtitle1" Style="font-weight:600">Aufgabe @(_task == _pair.A ? "A" : "B"): @_task.Kind</MudText>
+    <MudText Typo="Typo.body2" Class="my-2">@_task.Situation</MudText>
+    @if (_task.Stimulus is { } stim)
+    {
+        <div class="tc-stimulus reading-text">@stim</div>
+    }
+    <MudText Typo="Typo.body2" Class="mt-2">Behandeln Sie darin entweder <b>a)</b> drei der folgenden Punkte oder <b>b)</b> zwei der folgenden Punkte und einen weiteren Aspekt Ihrer Wahl.</MudText>
+    <ul class="tc-leitpunkte">
+        @for (var i = 0; i < _task.Leitpunkte.Count; i++)
+        {
+            var li = i;
+            <li class="@(_check is null ? "" : _check.LeitpunkteMentioned.ElementAtOrDefault(li) ? "hit" : "miss")">@_task.Leitpunkte[li].Text</li>
+        }
+    </ul>
+    <MudText Typo="Typo.caption" Style="opacity:.8">Überlegen Sie sich eine passende Reihenfolge der Punkte, einen Betreff, eine Anrede, eine Einleitung und einen Schluss. Register: @(_task.Formal ? "formell (Sie)" : "halbformell (Sie)").</MudText>
+</MudPaper>
+
+<MudTextField @bind-Value="_text" Variant="Variant.Outlined" Lines="16" Immediate="true" ReadOnly="_finished" Label="Ihre E-Mail" Placeholder="Betreff: …" Class="tc-textarea" />
+<div class="tc-wordcount @(Words >= TelcBlueprint.WritingMinWords ? "ok" : "")">@Words / @TelcBlueprint.WritingMinWords Wörter</div>
+
+@if (!_finished)
+{
+    <div class="tc-submit">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Finish" Disabled="@(Words < 20)">Fertig – prüfen</MudButton>
+    </div>
+    return;
+}
+
+@if (_check is not null)
+{
+    var hints = _check.Hints(_task.Leitpunkte);
+    <MudPaper Elevation="0" Class="pa-3 mt-3 tc-checks">
+        <MudText Typo="Typo.subtitle2" Class="mb-1">Was eine Bewerterin sofort sieht</MudText>
+        <div class="tc-checkrow">
+            <span class="@(_check.LongEnough ? "ok" : "bad")">@(_check.LongEnough ? "✓" : "✗") @_check.Words Wörter</span>
+            <span class="@(_check.HasBetreff ? "ok" : "bad")">@(_check.HasBetreff ? "✓" : "✗") Betreff</span>
+            <span class="@(_check.HasAnrede ? "ok" : "bad")">@(_check.HasAnrede ? "✓" : "✗") Anrede</span>
+            <span class="@(_check.HasSchluss ? "ok" : "bad")">@(_check.HasSchluss ? "✓" : "✗") Schlussformel</span>
+            <span class="@(_check.Linear ? "bad" : "ok")">@(_check.Linear ? "✗" : "✓") @_check.Connectors Verknüpfungen</span>
+            <span class="@(_check.LeitpunkteHit >= 3 ? "ok" : "bad")">@(_check.LeitpunkteHit >= 3 ? "✓" : "?") @_check.LeitpunkteHit Leitpunkte erkannt</span>
+        </div>
+        @if (_check.ConnectorsUsed.Count > 0)
+        {
+            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">Verknüpft mit: @string.Join(", ", _check.ConnectorsUsed)</MudText>
+        }
+        @foreach (var h in hints)
+        {
+            <div class="tc-hint">• @h</div>
+        }
+        @if (_check.MaxGestaltung != TelcBand.A || _check.MaxAufgabe != TelcBand.A)
+        {
+            <MudText Typo="Typo.caption" Class="d-block mt-1">Deshalb höchstens: Kriterium I <b>@_check.MaxAufgabe</b>, Kriterium II <b>@_check.MaxGestaltung</b> – egal, wie gut der Rest ist.</MudText>
+        }
+    </MudPaper>
+}
+
+@if (_result is null)
+{
+    <MudPaper Elevation="0" Class="pa-3 mt-3 tc-rate">
+        <MudText Typo="Typo.subtitle2" Class="mb-2">Bewertung nach den telc-Kriterien (A = 5, B = 3, C = 1, D = 0 Punkte, Summe × 3)</MudText>
+        @if (Telc.TutorAvailable && _ai is null)
+        {
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="RateAiAsync" Disabled="_busy">KI-Bewerterin fragen</MudButton>
+                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+                <MudText Typo="Typo.caption" Style="opacity:.75">oder unten selbst einstufen</MudText>
+            </MudStack>
+        }
+        @if (_aiError is not null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@_aiError</MudAlert> }
+        @if (_ai is not null)
+        {
+            <AiRatingView Rating="_ai" />
+        }
+        @for (var c = 0; c < TelcWritingRating.Criteria.Count; c++)
+        {
+            var ci = c;
+            var crit = TelcWritingRating.Criteria[ci];
+            <div class="tc-crit">
+                <div><b>@crit.Title</b> <span class="tc-crit-q">@crit.Question</span></div>
+                <div class="tr-conf">
+                    @foreach (var band in Enum.GetValues<TelcBand>())
+                    {
+                        var b = band;
+                        var capped = (ci == 0 && b < _check!.MaxAufgabe) || (ci == 1 && b < _check!.MaxGestaltung);
+                        <button type="button" class="tr-conf-btn @(_bands[ci] == b ? "selected" : "")" disabled="@capped" title="@(capped ? "durch die Prüfung oben ausgeschlossen" : "")" @onclick="() => _bands[ci] = b"><b>@b</b> @TelcWritingRating.BandPoints(b)</button>
+                    }
+                </div>
+            </div>
+        }
+        <MudCheckBox T="bool" @bind-Value="_themaVerfehlt" Label="Thema verfehlt (Text hat mit der Aufgabe kaum etwas zu tun → 0 Punkte)" Dense="true" />
+        @if (_model is { } model)
+        {
+            <MudExpansionPanels Elevation="0" Dense="true" Class="mt-2">
+                <MudExpansionPanel Text="Musterlösung zum Vergleich">
+                    <div class="reading-text">@model</div>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+        <div class="tc-submit">
+            <MudText Typo="Typo.caption" Style="opacity:.75">Vorschau: @Preview.ToString("0") von 45 Punkten</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _bands.Any(b => b is null))">Speichern</MudButton>
+        </div>
+    </MudPaper>
+}
+else
+{
+    <MudPaper Elevation="1" Class="pa-3 mt-3 tc-score">
+        <MudText Typo="Typo.h6">@_result.Points.ToString("0") von 45 Punkten · I @_result.Bands[0] · II @_result.Bands[1] · III @_result.Bands[2]</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">@(_result.Points >= 27 ? "B2 erfüllt – das trägt die schriftliche Prüfung." : _result.Points >= 18 ? "Unter B2 in mindestens einem Kriterium. Die Hinweise oben sind die schnellsten Punkte." : "Hier liegen viele Punkte. Erst Form (Betreff, Anrede, Schluss), dann Verknüpfung, dann Grammatik.")</MudText>
+    </MudPaper>
+    <div class="tc-submit">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">@DoneLabel</MudButton>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public string TaskId { get; set; } = "";
+    [Parameter] public Guid? SimulationId { get; set; }
+    [Parameter] public string DoneLabel { get; set; } = "Weiter";
+    [Parameter] public EventCallback<TelcProductionResult> OnDone { get; set; }
+
+    private TelcWritingPair? _pair;
+    private TelcWritingTask? _task;
+    private string _text = "";
+    private bool _finished, _busy, _themaVerfehlt;
+    private TelcWritingCheck? _check;
+    private TelcAiRating? _ai;
+    private string? _aiError;
+    private readonly TelcBand?[] _bands = new TelcBand?[3];
+    private TelcProductionResult? _result;
+    private string? _model;
+    private int _elapsed;
+    private DateTime _startedAt;
+    private System.Threading.Timer? _timer;
+    private string? _loaded;
+
+    private int Words => TelcWritingCheck.CountWords(_text);
+    private int Remaining => Math.Max(0, TelcBlueprint.WritingMinutes * 60 - _elapsed);
+    private static string Clock(int s) => $"{s / 60}:{s % 60:00}";
+    private double Preview => _bands.Any(b => b is null) ? 0 : new TelcWritingRating(_bands[0]!.Value, _bands[1]!.Value, _bands[2]!.Value, _themaVerfehlt).Capped(_check!).Points;
+
+    protected override void OnParametersSet()
+    {
+        if (_loaded == TaskId) return;
+        _loaded = TaskId;
+        // A pair id starts the choice; a task id (A or B) goes straight to that task.
+        _pair = Telc.Content.FindSchreiben(TaskId) ?? Telc.Content.FindWritingTask(TaskId)?.Pair;
+        _task = Telc.Content.FindWritingTask(TaskId)?.Task;
+        if (_task is not null) StartClock();
+    }
+
+    private void Choose(TelcWritingTask task)
+    {
+        _task = task;
+        StartClock();
+    }
+
+    private void StartClock()
+    {
+        _startedAt = DateTime.UtcNow;
+        _elapsed = 0;
+        _timer?.Dispose();
+        _timer = new System.Threading.Timer(_ => _ = InvokeAsync(Tick), null, 1000, 1000);
+    }
+
+    private void Tick()
+    {
+        _elapsed++;
+        // The sheet is collected when the time is up; the text so far is what gets rated.
+        if (!_finished && Remaining == 0) Finish();
+        StateHasChanged();
+    }
+
+    private void Finish()
+    {
+        _ = LoadModelAsync();
+        _finished = true;
+        _timer?.Dispose();
+        _timer = null;
+        _check = TelcWritingCheck.Analyze(_text, _task);
+        for (var i = 0; i < 2; i++)
+            if (_bands[i] is { } b && b < (i == 0 ? _check.MaxAufgabe : _check.MaxGestaltung)) _bands[i] = null;
+    }
+
+    private async Task LoadModelAsync()
+    {
+        if (_task?.ModelAnswer is not { } model) return;
+        _model = await Telc.PersonalizeAsync(model);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RateAiAsync()
+    {
+        _busy = true;
+        _aiError = null;
+        try
+        {
+            _ai = await Telc.RateWithAiAsync(TelcPart.Schreiben, _task!.Id, _text);
+            var capped = _ai.ToWriting().Capped(_check!);
+            _bands[0] = capped.Aufgabe;
+            _bands[1] = capped.Gestaltung;
+            _bands[2] = capped.Richtigkeit;
+            _themaVerfehlt = _ai.ThemaVerfehlt;
+        }
+        catch (Exception e) { _aiError = "KI-Bewertung nicht möglich: " + TutorRegistry.Friendly(e) + " – bitte selbst einstufen."; }
+        finally { _busy = false; }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_bands.Any(b => b is null)) return;
+        _busy = true;
+        try
+        {
+            var seconds = (int)(DateTime.UtcNow - _startedAt).TotalSeconds;
+            _result = await Telc.SubmitProductionAsync(TelcPart.Schreiben, _task!.Id, _text, _bands.Select(b => b!.Value).ToList(), _themaVerfehlt, _ai, seconds, SimulationId);
+        }
+        finally { _busy = false; }
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

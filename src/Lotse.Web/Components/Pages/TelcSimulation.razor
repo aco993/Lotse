@@ -1,0 +1,136 @@
+@page "/telc/simulation/{Id:guid}"
+@inject ITelcService Telc
+@inject NavigationManager Nav
+
+<PageTitle>telc-Simulation – Lotse</PageTitle>
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="telc" Class="mb-2">telc-Übersicht</MudButton>
+
+@if (_sim is null)
+{
+    @if (_missing) { <MudAlert Severity="Severity.Error">Diese Simulation gibt es nicht (mehr).</MudAlert> }
+    else { <MudProgressLinear Indeterminate="true" /> }
+    return;
+}
+
+<MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">Simulation vom @_sim.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudText>
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
+    Die Teile in der Reihenfolge der Prüfung. Jeder Teil läuft mit seiner Prüfungszeit; was einmal abgegeben ist, zählt.
+    Am Ende steht das Ergebnis so, wie telc es berechnet.
+</MudText>
+
+@foreach (var block in Blocks)
+{
+    <MudPaper Elevation="1" Class="pa-3 mb-2 tc-simblock">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-1">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">@block.Title</MudText>
+            <MudSpacer />
+            <span class="tc-muted">@block.Time</span>
+        </MudStack>
+        @if (block.Note is { } note) { <MudText Typo="Typo.caption" Class="d-block mb-1" Style="opacity:.8">@note</MudText> }
+        @foreach (var part in block.Parts)
+        {
+            var info = TelcBlueprint.Info(part);
+            var done = _sim.Done.GetValueOrDefault(part);
+            var isNext = _sim.Next == part && _sim.CompletedUtc is null;
+            <div class="tc-partrow @(isNext ? "next" : "")">
+                <div class="tc-partrow-main"><b>@info.Title</b> <span class="tc-muted">@Telc.Content.TaskTitle(part, _sim.Tasks.GetValueOrDefault(part) ?? "")</span></div>
+                <div class="tc-partrow-side">
+                    @if (done is not null)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="@(done.Points / done.Max >= 0.6 ? Color.Tertiary : Color.Warning)">@done.Points.ToString("0.#")/@done.Max.ToString("0")</MudChip>
+                    }
+                    else if (isNext)
+                    {
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" Href="@PartHref(part)">Starten</MudButton>
+                    }
+                    else
+                    {
+                        <span class="tc-muted">offen</span>
+                    }
+                </div>
+            </div>
+        }
+    </MudPaper>
+}
+
+@if (_sim.Done.Count > 0)
+{
+    var r = _sim.Result;
+    <MudPaper Elevation="1" Class="pa-3 mt-3 tc-score">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">@(_sim.AllDone ? "Ergebnis" : "Zwischenstand")</MudText>
+        <div class="tc-halves">
+            <div class="tc-half">
+                <div class="tc-half-label">Schriftlich</div>
+                <div class="tc-half-value @(r.Written >= TelcBlueprint.WrittenPass ? "ok" : "bad")">@r.Written.ToString("0.#")<small> / 225</small></div>
+                <div class="tc-muted">bestanden ab 135@(r.WrittenComplete ? "" : " · noch nicht vollständig")</div>
+            </div>
+            <div class="tc-half">
+                <div class="tc-half-label">Mündlich</div>
+                <div class="tc-half-value @(r.Oral >= TelcBlueprint.OralPass ? "ok" : "bad")">@r.Oral.ToString("0.#")<small> / 75</small></div>
+                <div class="tc-muted">bestanden ab 45@(r.OralComplete ? "" : " · noch nicht vollständig")</div>
+            </div>
+        </div>
+        <table class="tc-subtests">
+            @foreach (var s in Enum.GetValues<TelcSubtest>())
+            {
+                <tr><td>@TelcBlueprint.SubtestTitle(s)</td><td>@r.Subtest(s).ToString("0.#") / @TelcBlueprint.SubtestMax(s)</td></tr>
+            }
+            <tr><td><b>Gesamt</b></td><td><b>@r.Total.ToString("0.#") / 300</b></td></tr>
+        </table>
+        @if (r.Grade is { } grade)
+        {
+            <MudText Typo="Typo.h6" Class="mt-2">@(r.Passed ? $"Bestanden – {grade}" : "Nicht bestanden")</MudText>
+            @if (!r.Passed)
+            {
+                <MudText Typo="Typo.body2">@(r.WrittenPassed ? "Die schriftliche Prüfung reicht; es fehlt die mündliche Hürde." : r.OralPassed ? "Die mündliche Prüfung reicht; schriftlich fehlen Punkte - am meisten bringt der Teil mit den meisten verlorenen Punkten." : "Beide Hürden verfehlt.") In der echten Prüfung könntest du den nicht bestandenen Teil im selben oder im nächsten Kalenderjahr allein wiederholen.</MudText>
+            }
+        }
+    </MudPaper>
+}
+
+<MudStack Row="true" Spacing="2" Class="mt-3 mb-4" Wrap="Wrap.Wrap">
+    @if (_sim.CompletedUtc is null)
+    {
+        @if (_sim.AllDone)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CompleteAsync">Simulation abschließen</MudButton>
+        }
+        <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="AbandonAsync">Abbrechen</MudButton>
+        <MudText Typo="Typo.caption" Style="opacity:.7">Abbrechen behält die schon abgegebenen Teile als normale Übungsergebnisse.</MudText>
+    }
+</MudStack>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private TelcSimulationView? _sim;
+    private bool _missing;
+
+    private sealed record Block(string Title, string Time, string? Note, TelcPart[] Parts);
+
+    private static readonly Block[] Blocks =
+    [
+        new("Leseverstehen und Sprachbausteine", "90 Minuten", "In der Prüfung teilst du die 90 Minuten selbst ein; hier hat jeder Teil seinen Anteil: 20 + 25 + 25 + 10 + 10.",
+            [TelcPart.Lesen1, TelcPart.Lesen2, TelcPart.Lesen3, TelcPart.Sprachbausteine1, TelcPart.Sprachbausteine2]),
+        new("Hörverstehen", "ca. 20 Minuten", "Jeder Text nur einmal.", [TelcPart.Hoeren1, TelcPart.Hoeren2, TelcPart.Hoeren3]),
+        new("Schriftlicher Ausdruck", "30 Minuten", "Aufgabe A oder B.", [TelcPart.Schreiben]),
+        new("Mündliche Prüfung", "20 Minuten Vorbereitung, ca. 15 Minuten Prüfung", "Lies vorher den Text für Teil 2 und überlege dir Vorschläge für Teil 3 – das ist die Vorbereitungszeit.", [TelcPart.Sprechen1, TelcPart.Sprechen2, TelcPart.Sprechen3]),
+    ];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _sim = await Telc.GetSimulationAsync(Id);
+        _missing = _sim is null;
+    }
+
+    private string PartHref(TelcPart part) => $"telc/ueben/{part}?aufgabe={Uri.EscapeDataString(_sim!.Tasks[part])}&sim={_sim.Id}";
+
+    private async Task CompleteAsync() => _sim = await Telc.CompleteSimulationAsync(Id);
+
+    private async Task AbandonAsync()
+    {
+        await Telc.AbandonSimulationAsync(Id);
+        Nav.NavigateTo("telc");
+    }
+}

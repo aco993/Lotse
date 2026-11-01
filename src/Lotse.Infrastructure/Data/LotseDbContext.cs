@@ -1,4 +1,5 @@
 using Lotse.Core.Model;
+using Lotse.Core.Telc;
 using Lotse.Core.Training;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -56,6 +57,8 @@ public sealed class LearnerProfile
     public DateOnly? TargetExamDate { get; set; }
     /// <summary>B2 by default; C1 lifts the planner's focus cap. See <see cref="Core.Model.TargetLevel"/>.</summary>
     public TargetLevel TargetLevel { get; set; } = TargetLevel.B2;
+    /// <summary>The exam the Prüfung page, the forecast and the plan count in. See <see cref="Core.Model.ExamProvider"/>.</summary>
+    public ExamProvider Exam { get; set; } = ExamProvider.Goethe;
     /// <summary>Which language the app explains German in. The interface itself stays German either way.</summary>
     public HelperLanguage HelperLanguage { get; set; } = HelperLanguage.Serbian;
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
@@ -200,6 +203,45 @@ public sealed class TrainingAnswerEntity
     public DateTime Utc { get; set; }
 }
 
+/// <summary>
+/// One scored telc part: a practice task or one part of a simulation. Points are telc points (e.g. 0..25 for
+/// Leseverstehen Teil 1, 0..45 for the email), so the forecast simply adds them up the way telc does.
+/// </summary>
+public sealed class TelcAttemptEntity
+{
+    public long Id { get; set; }
+    public required string UserId { get; set; }
+    public TelcPart Part { get; set; }
+    public required string TaskId { get; set; }
+    public double Points { get; set; }
+    public double MaxPoints { get; set; }
+    public DateTime Utc { get; set; }
+    public int? DurationSeconds { get; set; }
+    /// <summary>Set when the part was done inside a full simulation; such results weigh double in the forecast.</summary>
+    public Guid? SimulationId { get; set; }
+    /// <summary>Objective parts: the chosen answer per item (-1 = x, null = empty) as JSON.</summary>
+    public string? AnswersJson { get; set; }
+    /// <summary>Production parts: the email, or the learner's turns of the oral part.</summary>
+    public string? Text { get; set; }
+    /// <summary>Production parts: the bands per criterion (and the tutor's comments when it rated) as JSON.</summary>
+    public string? RatingJson { get; set; }
+    public bool RatedByAi { get; set; }
+}
+
+/// <summary>
+/// A full telc simulation: the tasks drawn for each part and how far the learner has got. The results are the
+/// <see cref="TelcAttemptEntity"/> rows carrying its id.
+/// </summary>
+public sealed class TelcSimulationEntity
+{
+    public Guid Id { get; set; }
+    public required string UserId { get; set; }
+    public DateTime StartedUtc { get; set; }
+    public DateTime? CompletedUtc { get; set; }
+    /// <summary>Part → task id, as JSON, so a reload shows the same exam.</summary>
+    public string TasksJson { get; set; } = "{}";
+}
+
 /// <summary>One named setting for one learner — today only <c>"tutor.settings"</c> (the AI tutor configuration,
 /// including the API key encrypted at rest). Scoped per user: one learner's key must never be readable, let alone
 /// usable, from another account.</summary>
@@ -249,6 +291,8 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
     public DbSet<ReadinessSnapshotEntity> ReadinessSnapshots => Set<ReadinessSnapshotEntity>();
     public DbSet<TrainingSessionEntity> TrainingSessions => Set<TrainingSessionEntity>();
     public DbSet<TrainingAnswerEntity> TrainingAnswers => Set<TrainingAnswerEntity>();
+    public DbSet<TelcAttemptEntity> TelcAttempts => Set<TelcAttemptEntity>();
+    public DbSet<TelcSimulationEntity> TelcSimulations => Set<TelcSimulationEntity>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -339,6 +383,20 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
             e.HasOne<TrainingSessionEntity>().WithMany().HasForeignKey(a => a.SessionId).OnDelete(DeleteBehavior.Cascade);
             e.HasIndex(a => new { a.UserId, a.PointId });
             e.Property(a => a.Kind).HasConversion<string>();
+        });
+
+        b.Entity<TelcSimulationEntity>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(s => s.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(s => s.UserId);
+        });
+
+        b.Entity<TelcAttemptEntity>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<TelcSimulationEntity>().WithMany().HasForeignKey(a => a.SimulationId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(a => new { a.UserId, a.Part });
+            e.Property(a => a.Part).HasConversion<string>();
         });
 
         b.Entity<GeneratedExerciseEntity>().HasKey(g => g.Id);

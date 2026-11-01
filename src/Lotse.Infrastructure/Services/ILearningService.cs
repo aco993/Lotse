@@ -47,6 +47,8 @@ public interface ILearningService
 
     /// <summary>Retention figures for Fortschritt, straight from the FSRS state.</summary>
     Task<ProgressStats> GetProgressStatsAsync(CancellationToken ct = default);
+    /// <summary>The learner's fitted FSRS-6 forgetting curve, or null while the default is used.</summary>
+    Task<LearningService.StoredFsrsFit?> GetForgettingCurveAsync(CancellationToken ct = default);
 
     Task<IReadOnlyList<Exercise>> GenerateForNodeAsync(string nodeId, int count = 6, CancellationToken ct = default);
     Task<Exercise?> GenerateReadingForNodeAsync(string nodeId, CancellationToken ct = default);

@@ -15,7 +15,7 @@ namespace Lotse.Infrastructure.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
             modelBuilder.Entity("Lotse.Core.Model.ReviewState", b =>
                 {
@@ -292,6 +292,9 @@ namespace Lotse.Infrastructure.Data.Migrations
                     b.Property<int>("DailyMinutes")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Exam")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -508,6 +511,87 @@ namespace Lotse.Infrastructure.Data.Migrations
                     b.HasKey("UserId", "Key");
 
                     b.ToTable("Settings");
+                });
+
+            modelBuilder.Entity("Lotse.Infrastructure.Data.TelcAttemptEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AnswersJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DurationSeconds")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("MaxPoints")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Part")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Points")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("RatedByAi")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RatingJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("SimulationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TaskId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Utc")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SimulationId");
+
+                    b.HasIndex("UserId", "Part");
+
+                    b.ToTable("TelcAttempts");
+                });
+
+            modelBuilder.Entity("Lotse.Infrastructure.Data.TelcSimulationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CompletedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TasksJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TelcSimulations");
                 });
 
             modelBuilder.Entity("Lotse.Infrastructure.Data.TrainingAnswerEntity", b =>
@@ -837,6 +921,29 @@ namespace Lotse.Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("Lotse.Infrastructure.Data.SettingEntity", b =>
+                {
+                    b.HasOne("Lotse.Infrastructure.Data.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Lotse.Infrastructure.Data.TelcAttemptEntity", b =>
+                {
+                    b.HasOne("Lotse.Infrastructure.Data.TelcSimulationEntity", null)
+                        .WithMany()
+                        .HasForeignKey("SimulationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Lotse.Infrastructure.Data.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Lotse.Infrastructure.Data.TelcSimulationEntity", b =>
                 {
                     b.HasOne("Lotse.Infrastructure.Data.ApplicationUser", null)
                         .WithMany()

@@ -1,0 +1,368 @@
+@* One objective telc part - Leseverstehen, Sprachbausteine or Hörverstehen - in the exam's own layout. Reading and
+   language parts run against their share of the 90-minute block and are collected when it runs out; listening
+   parts are played exactly once, as in the exam, and can be replayed only after the answers are in. *@
+@inject ITelcService Telc
+@inject SpeechService Speech
+@implements IDisposable
+
+@if (_key is null)
+{
+    <MudAlert Severity="Severity.Error">Aufgabe nicht gefunden.</MudAlert>
+    return;
+}
+
+<div class="tc-bar">
+    <span class="tc-part">@Info.Title</span>
+    @if (_limit is { } limit && _result is null)
+    {
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 120 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
+    }
+    <span class="tc-points">@Info.Items Items · @Info.MaxPoints.ToString("0.#") Punkte</span>
+</div>
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">@Info.Format</MudText>
+
+@if (_timedOut)
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Text" Dense="true" Class="mb-2">Zeit abgelaufen – eingesammelt wie in der Prüfung; leere Felder zählen als falsch.</MudAlert>
+}
+
+@switch (Part)
+{
+    case TelcPart.Lesen1:
+        var l1 = Telc.Content.FindLesen1(TaskId)!;
+        <MudPaper Elevation="0" Class="pa-3 mb-3 tc-list">
+            <MudText Typo="Typo.subtitle2" Class="mb-1">Überschriften</MudText>
+            @for (var h = 0; h < l1.Headings.Count; h++)
+            {
+                <div><b>@Letter(h)</b> @l1.Headings[h]</div>
+            }
+        </MudPaper>
+        for (var t = 0; t < l1.Texts.Count; t++)
+        {
+            var ti = t;
+            <MudPaper Elevation="0" Class="pa-3 mb-2 tc-item">
+                <div class="tc-item-head"><span class="tr-no">@(ti + 1)</span> <span class="tc-ask">Welche Überschrift passt?</span></div>
+                <div class="reading-text mb-2">@l1.Texts[ti]</div>
+                @Choices(ti, l1.Headings.Count, false)
+                @Verdict(ti, l => $"{Letter(l)}: {l1.Headings[l]}")
+            </MudPaper>
+        }
+        break;
+
+    case TelcPart.Lesen2:
+        var l2 = Telc.Content.FindLesen2(TaskId)!;
+        <MudPaper Elevation="0" Class="pa-4 mb-3 reading-text tc-longtext">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">@l2.Title</MudText>@l2.Text
+        </MudPaper>
+        for (var q = 0; q < l2.Questions.Count; q++)
+        {
+            var qi = q;
+            var question = l2.Questions[qi];
+            <MudPaper Elevation="0" Class="pa-3 mb-2 tc-item">
+                <div class="tc-item-head"><span class="tr-no">@(qi + 1)</span> <span>@question.Question</span></div>
+                @OptionList(qi, question.Options)
+                @Verdict(qi, l => $"{Letter(l)}) {question.Options[l]}", question.Explanation)
+            </MudPaper>
+        }
+        break;
+
+    case TelcPart.Lesen3:
+        var l3 = Telc.Content.FindLesen3(TaskId)!;
+        <MudGrid Spacing="2" Class="mb-3">
+            @for (var a = 0; a < l3.Ads.Count; a++)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Elevation="0" Class="pa-3 tc-ad">
+                        <div><b class="tc-letter">@Letter(a)</b> <b>@l3.Ads[a].Title</b></div>
+                        <div class="tc-ad-text">@l3.Ads[a].Text</div>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+        for (var s = 0; s < l3.Situations.Count; s++)
+        {
+            var si = s;
+            <MudPaper Elevation="0" Class="pa-3 mb-2 tc-item">
+                <div class="tc-item-head"><span class="tr-no">@(si + 1)</span> <span>@l3.Situations[si]</span></div>
+                @Choices(si, l3.Ads.Count, true)
+                @Verdict(si, l => l < 0 ? "x – keine Anzeige passt" : $"{Letter(l)}: {l3.Ads[l].Title}")
+            </MudPaper>
+        }
+        break;
+
+    case TelcPart.Sprachbausteine1:
+    case TelcPart.Sprachbausteine2:
+        var sb = Telc.Content.FindSprachbausteine(TaskId)!;
+        <MudPaper Elevation="0" Class="pa-4 mb-3 reading-text tc-longtext">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">@sb.Title</MudText>
+            @foreach (var piece in GapText(sb.Text))
+            {
+                if (piece.Gap is { } g)
+                {
+                    var filled = _answers[g] is { } a ? GapWord(sb, g, a) : null;
+                    <span class="@GapClass(g)">(@(g + 1))@(filled is null ? " ____" : " " + filled)</span>
+                }
+                else { @piece.Text }
+            }
+        </MudPaper>
+        if (sb.Box is { } box)
+        {
+            <MudPaper Elevation="0" Class="pa-3 mb-3 tc-box">
+                @for (var w = 0; w < box.Count; w++)
+                {
+                    var used = _answers.Any(x => x == w);
+                    <span class="tc-boxword @(used ? "used" : "")"><b>@Letter(w)</b> @box[w]</span>
+                }
+            </MudPaper>
+        }
+        for (var gi = 0; gi < sb.Gaps.Count; gi++)
+        {
+            var gIndex = gi;
+            var gap = sb.Gaps[gIndex];
+            <MudPaper Elevation="0" Class="pa-3 mb-2 tc-item">
+                <div class="tc-item-head"><span class="tr-no">@(gIndex + 1)</span></div>
+                @if (sb.Teil == 1) { @OptionList(gIndex, gap.Options!) }
+                else { @Choices(gIndex, sb.Box!.Count, false, l => $"{Letter(l)} {sb.Box![l]}") }
+                @Verdict(gIndex, l => GapWord(sb, gIndex, l), gap.Explanation)
+            </MudPaper>
+        }
+        break;
+
+    default:
+        var hv = Telc.Content.FindHoeren(TaskId)!;
+        <MudPaper Elevation="0" Class="pa-3 mb-3 tc-listen">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="PlayAsync" Disabled="@(_playing || !CanPlay)">
+                    @(_result is null ? (_played ? "Schon gehört" : "Abspielen (nur einmal)") : "Noch einmal hören")
+                </MudButton>
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopAsync" Disabled="!_playing">Stopp</MudButton>
+                @if (_playing && _nowPlaying is { } np) { <MudText Typo="Typo.caption">▶ @np</MudText> }
+            </MudStack>
+            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">
+                @if (_result is null)
+                {
+                    <span>Wie in der Prüfung: Lies zuerst alle Aussagen, dann einmal hören und sofort markieren. Nach der Abgabe kannst du beliebig oft nachhören und den Text lesen.</span>
+                }
+                else
+                {
+                    <MudLink OnClick="() => _showTranscript = !_showTranscript">@(_showTranscript ? "Text verbergen" : "Text anzeigen")</MudLink>
+                }
+            </MudText>
+        </MudPaper>
+        var idx = 0;
+        foreach (var rec in hv.Recordings)
+        {
+            if (rec.Label is { } label) { <MudText Typo="Typo.subtitle2" Class="mt-2">@label</MudText> }
+            if (_showTranscript) { <MudPaper Elevation="0" Class="pa-3 mb-2 reading-text tc-transcript">@rec.Audio</MudPaper> }
+            foreach (var st in rec.Statements)
+            {
+                var si = idx++;
+                var statement = st;
+                <MudPaper Elevation="0" Class="pa-3 mb-2 tc-item">
+                    <div class="tc-item-head"><span class="tr-no">@(si + 1)</span> <span>@statement.Text</span></div>
+                    <div class="tr-conf" role="radiogroup" aria-label="richtig oder falsch">
+                        <button type="button" class="tr-conf-btn @(_answers[si] == 1 ? "selected" : "")" disabled="@(_result is not null)" @onclick="() => Set(si, 1)"><b>+</b> richtig</button>
+                        <button type="button" class="tr-conf-btn @(_answers[si] == 0 ? "selected" : "")" disabled="@(_result is not null)" @onclick="() => Set(si, 0)"><b>–</b> falsch</button>
+                    </div>
+                    @Verdict(si, l => l == 1 ? "richtig" : "falsch", statement.Explanation)
+                </MudPaper>
+            }
+        }
+        break;
+}
+
+@if (_result is null)
+{
+    <div class="tc-submit">
+        <MudText Typo="Typo.caption" Style="opacity:.75">@_answers.Count(a => a is not null) von @_answers.Length beantwortet@(Missing > 0 ? " – leere Felder zählen als falsch" : "")</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="_busy">Abgeben</MudButton>
+    </div>
+}
+else
+{
+    <MudPaper Elevation="1" Class="pa-3 mt-3 tc-score">
+        <MudText Typo="Typo.h6">@_result.Correct.Count(c => c) von @_result.Correct.Count richtig · @_result.Points.ToString("0.#") von @_result.Max.ToString("0.#") Punkten</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">@Comment(_result.Points / _result.Max)</MudText>
+    </MudPaper>
+    <div class="tc-submit">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">@DoneLabel</MudButton>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public TelcPart Part { get; set; }
+    [Parameter, EditorRequired] public string TaskId { get; set; } = "";
+    [Parameter] public Guid? SimulationId { get; set; }
+    [Parameter] public string DoneLabel { get; set; } = "Weiter";
+    [Parameter] public EventCallback<TelcObjectiveResult> OnDone { get; set; }
+
+    private IReadOnlyList<int>? _key;
+    private int?[] _answers = [];
+    private TelcObjectiveResult? _result;
+    private bool _busy, _playing, _played, _showTranscript, _timedOut;
+    private string? _nowPlaying;
+    private int? _limit;
+    private int _elapsed;
+    private System.Threading.Timer? _timer;
+    private string? _loaded;
+    private DateTime _startedAt;
+
+    private TelcPartInfo Info => TelcBlueprint.Info(Part);
+    private int Remaining => Math.Max(0, (_limit ?? 0) - _elapsed);
+    private int Missing => _answers.Count(a => a is null);
+    private bool CanPlay => _result is not null || !_played;
+    private static string Clock(int s) => $"{s / 60}:{s % 60:00}";
+    private static string Letter(int i) => TelcObjectiveScoring.Letter(i);
+
+    protected override void OnParametersSet()
+    {
+        var id = $"{Part}|{TaskId}";
+        if (_loaded == id) return;
+        _loaded = id;
+        _key = Telc.Content.Key(Part, TaskId);
+        _answers = new int?[_key?.Count ?? 0];
+        _result = null;
+        _played = _playing = _showTranscript = _timedOut = false;
+        _elapsed = 0;
+        _startedAt = DateTime.UtcNow;
+        _limit = TelcBlueprint.IsListening(Part) ? null : Info.Minutes * 60;
+        _timer?.Dispose();
+        _timer = _limit is null ? null : new System.Threading.Timer(_ => _ = InvokeAsync(TickAsync), null, 1000, 1000);
+    }
+
+    private async Task TickAsync()
+    {
+        _elapsed++;
+        if (_result is null && !_busy && _limit is { } limit && _elapsed >= limit)
+        {
+            _timedOut = true;
+            await SubmitAsync();
+        }
+        StateHasChanged();
+    }
+
+    private void Set(int item, int value)
+    {
+        if (_result is not null) return;
+        // Teil 3 and the box: a letter belongs to one item only, as on the answer sheet.
+        if (value >= 0 && Part is TelcPart.Lesen3 or TelcPart.Sprachbausteine2 or TelcPart.Lesen1)
+            for (var i = 0; i < _answers.Length; i++)
+                if (i != item && _answers[i] == value) _answers[i] = null;
+        _answers[item] = _answers[item] == value ? null : value;
+    }
+
+    private RenderFragment Choices(int item, int count, bool withX, Func<int, string>? label = null) => __builder =>
+    {
+        <div class="tr-conf tc-choices" role="radiogroup" aria-label="@($"Lösung zu {item + 1}")">
+            @for (var o = 0; o < count; o++)
+            {
+                var oi = o;
+                <button type="button" class="tr-conf-btn @(_answers[item] == oi ? "selected" : "")" disabled="@(_result is not null)" @onclick="() => Set(item, oi)">@(label?.Invoke(oi) ?? Letter(oi))</button>
+            }
+            @if (withX)
+            {
+                <button type="button" class="tr-conf-btn @(_answers[item] == -1 ? "selected" : "")" disabled="@(_result is not null)" @onclick="() => Set(item, -1)">x</button>
+            }
+        </div>
+    };
+
+    private RenderFragment OptionList(int item, IReadOnlyList<string> options) => __builder =>
+    {
+        <div class="tc-options" role="radiogroup">
+            @for (var o = 0; o < options.Count; o++)
+            {
+                var oi = o;
+                <button type="button" class="tr-conf-btn tc-option @(_answers[item] == oi ? "selected" : "")" disabled="@(_result is not null)" @onclick="() => Set(item, oi)"><b>@Letter(oi)</b> @options[oi]</button>
+            }
+        </div>
+    };
+
+    private RenderFragment Verdict(int item, Func<int, string> describe, string? explanation = null) => __builder =>
+    {
+        if (_result is null) return;
+        var right = _result.Correct[item];
+        <div class="tc-verdict @(right ? "ok" : "bad")">
+            @if (right) { <span>✓ richtig</span> }
+            else
+            {
+                <span>✗ @(_answers[item] is { } a ? describe(a) : "leer") → richtig: <b>@describe(_key![item])</b></span>
+            }
+            @if (!string.IsNullOrWhiteSpace(explanation) && !right) { <div class="tc-explain">@explanation</div> }
+        </div>
+    };
+
+    private sealed record Piece(string? Text, int? Gap);
+
+    private static IEnumerable<Piece> GapText(string text)
+    {
+        var rx = new System.Text.RegularExpressions.Regex(@"\[(\d+)\]");
+        var last = 0;
+        foreach (System.Text.RegularExpressions.Match m in rx.Matches(text))
+        {
+            if (m.Index > last) yield return new Piece(text[last..m.Index], null);
+            yield return new Piece(null, int.Parse(m.Groups[1].Value) - 1);
+            last = m.Index + m.Length;
+        }
+        if (last < text.Length) yield return new Piece(text[last..], null);
+    }
+
+    private static string GapWord(TelcSprachbausteine sb, int gap, int index)
+        => (sb.Teil == 1 ? sb.Gaps[gap].Options : sb.Box) is { } list && index >= 0 && index < list.Count ? list[index] : "?";
+
+    private string GapClass(int g) => _result is null ? "tc-gap" : _result.Correct[g] ? "tc-gap ok" : "tc-gap bad";
+
+    private async Task PlayAsync()
+    {
+        if (_playing || !CanPlay) return;
+        var hv = Telc.Content.FindHoeren(TaskId);
+        if (hv is null) return;
+        _playing = true;
+        _played = true;
+        try
+        {
+            foreach (var rec in hv.Recordings)
+            {
+                if (!_playing) break;
+                _nowPlaying = rec.Label;
+                StateHasChanged();
+                var turns = SpeakerTurns.Parse(rec.Audio);
+                var voices = SpeakerVoices.ForScript(turns.Select(t => t.Speaker));
+                foreach (var turn in turns)
+                {
+                    if (!_playing) break;
+                    var voice = turn.Speaker is { } s && voices.TryGetValue(s, out var v) ? v : SpeechVoice.Male;
+                    await Speech.SpeakAsync(turn.Text, 0.95, voice);
+                }
+            }
+        }
+        finally { _playing = false; _nowPlaying = null; StateHasChanged(); }
+    }
+
+    private async Task StopAsync() { _playing = false; await Speech.StopSpeakingAsync(); }
+
+    private async Task SubmitAsync()
+    {
+        if (_busy || _result is not null) return;
+        _busy = true;
+        try
+        {
+            _timer?.Dispose();
+            _timer = null;
+            _playing = false;
+            await Speech.StopSpeakingAsync();
+            var seconds = (int)(DateTime.UtcNow - _startedAt).TotalSeconds;
+            _result = await Telc.SubmitObjectiveAsync(Part, TaskId, _answers, seconds, SimulationId);
+        }
+        finally { _busy = false; }
+    }
+
+    private static string Comment(double fraction) => fraction switch
+    {
+        >= 0.8 => "Sehr sicher – dieser Teil trägt deine schriftliche Prüfung.",
+        >= 0.6 => "Auf Kurs: über der 60-%-Marke. Die Fehler unten zeigen, wo noch Punkte liegen.",
+        >= 0.4 => "Knapp darunter. Schau dir jeden Fehler an: War es Wortschatz, Grammatik oder eine Falle im Format?",
+        _ => "Hier liegen viele Punkte. Dieser Teil kommt in deinen Plan.",
+    };
+
+    public void Dispose() => _timer?.Dispose();
+}

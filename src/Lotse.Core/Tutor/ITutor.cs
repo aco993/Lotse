@@ -1,4 +1,5 @@
 using Lotse.Core.Model;
+using Lotse.Core.Telc;
 
 namespace Lotse.Core.Tutor;
 
@@ -61,6 +62,15 @@ public interface ITutor
 
     /// <summary>A reading (or, when <paramref name="audioOnly"/>, listening) task in Goethe B2 part format for a Lesen/Hören node.</summary>
     Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>Rates a telc email or oral part on telc's own criteria and bands, quoting every mistake it reports.</summary>
+    Task<TelcAiRating> RateTelcAsync(TelcRatingRequest request, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>
+    /// One turn of the exam partner in a telc oral part: asking about the learner's experience (Teil 1), discussing
+    /// the text (Teil 2) or planning together (Teil 3). <paramref name="scenario"/> is the task as both candidates see it.
+    /// </summary>
+    Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default);
 }
 
 /// <summary>Used when no provider is configured. Evaluation calls throw a clear message; the UI falls back to self-checks.</summary>
@@ -80,4 +90,10 @@ public sealed class NullTutor(string? description = null) : ITutor
 
     public Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
         => Task.FromResult<Exercise?>(null);
+
+    public Task<TelcAiRating> RateTelcAsync(TelcRatingRequest request, LearnerContext context, CancellationToken ct = default)
+        => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
+
+    public Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
+        => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
 }

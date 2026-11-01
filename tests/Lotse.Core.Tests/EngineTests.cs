@@ -185,7 +185,8 @@ public class ReviewSchedulerTests
         for (var i = 0; i < 5; i++)
         {
             ReviewScheduler.Apply(s, ReviewGrade.Good, T0.AddDays(last));
-            Assert.True(s.IntervalDays > last);
+            // FSRS-6 grows fast enough to reach the exam-bound cap within five good reviews; at the cap it stays.
+            Assert.True(s.IntervalDays > last || s.IntervalDays == ReviewScheduler.MaxIntervalDays);
             last = s.IntervalDays;
         }
         Assert.True(last > 10);
@@ -279,7 +280,8 @@ public class ReviewSchedulerTests
         ReviewScheduler.Apply(s, ReviewGrade.Good, T0);
         Assert.InRange(s.RetrievabilityAt(T0), 0.999, 1.0);
         Assert.InRange(s.RetrievabilityAt(T0.AddDays(s.Stability)), 0.899, 0.901);
-        Assert.True(s.RetrievabilityAt(T0.AddDays(s.Stability * 10)) < 0.6);
+        // FSRS-6's default decay (0.1542) is flatter than FSRS-5's 0.5: ten stabilities later about 70 % remain.
+        Assert.True(s.RetrievabilityAt(T0.AddDays(s.Stability * 10)) < 0.75);
     }
 }
 
@@ -328,6 +330,62 @@ public class FsrsTests
             }
         }
     }
+
+    [Fact]
+    public void Decay_changes_the_curve_but_not_the_ninety_percent_point()
+    {
+        foreach (var d in new[] { 0.15, 0.3, 0.5 })
+        {
+            Assert.Equal(0.9, Fsrs.Retrievability(10, 10, d), 6);
+            Assert.Equal(10, Fsrs.IntervalDays(10, 0.9, d), 6);
+        }
+        // A steeper curve (higher decay) forgets faster after the stability point.
+        Assert.True(Fsrs.Retrievability(10, 60, 0.5) < Fsrs.Retrievability(10, 60, 0.15));
+    }
+
+    [Fact]
+    public void Same_day_right_answers_never_shrink_stability()
+    {
+        foreach (var s in new[] { 0.5, 3.0, 40.0 })
+        {
+            Assert.True(Fsrs.NextShortTermStability(s, 3) >= s);
+            Assert.True(Fsrs.NextShortTermStability(s, 1) < s);
+        }
+    }
+
+    [Fact]
+    public void Optimizer_recovers_a_steep_learner_and_needs_enough_data()
+    {
+        Assert.Null(FsrsOptimizer.FitDecay([new FsrsReview("a", T, 3), new FsrsReview("a", T.AddDays(3), 3)]));
+
+        // Simulate a learner who forgets on a steep curve (decay 0.6): replay the model and draw the outcome with a
+        // fixed pseudo-random sequence. The fit must land clearly above the flat default.
+        var rng = new Random(42);
+        var reviews = new List<FsrsReview>();
+        for (var card = 0; card < 60; card++)
+        {
+            var t = T;
+            double s = Fsrs.InitialStability(3), diff = Fsrs.InitialDifficulty(3);
+            reviews.Add(new FsrsReview($"c{card}", t, 3));
+            for (var i = 0; i < 6; i++)
+            {
+                var gap = 1 + rng.Next(1, 25);
+                t = t.AddDays(gap);
+                var p = Fsrs.Retrievability(s, gap, 0.6);
+                var grade = rng.NextDouble() < p ? 3 : 1;
+                reviews.Add(new FsrsReview($"c{card}", t, grade));
+                s = grade == 1 ? Fsrs.NextForgetStability(diff, s, p) : Fsrs.NextRecallStability(diff, s, p, grade);
+                diff = Fsrs.NextDifficulty(diff, grade);
+            }
+        }
+        var fit = FsrsOptimizer.FitDecay(reviews);
+        Assert.NotNull(fit);
+        Assert.InRange(fit.Decay, 0.35, 0.8);
+        Assert.True(fit.LogLoss <= fit.DefaultLogLoss);
+        Assert.Equal(360, fit.Reviews);
+    }
+
+    private static readonly DateTime T = new(2026, 1, 1, 8, 0, 0, DateTimeKind.Utc);
 
     [Fact]
     public void Grades_outside_one_to_four_are_rejected()

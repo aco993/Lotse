@@ -5,6 +5,10 @@
 
 <PageTitle>Prüfung B2 – Lotse</PageTitle>
 
+@if (_exam == ExamProvider.Telc)
+{
+    <MudAlert Severity="Severity.Success" Dense="true" Class="mb-3">Deine Prüfung ist <b>telc Deutsch B2</b>. Format, Prognose in telc-Punkten, Plan und Simulation findest du auf der <MudLink Href="telc">telc-Seite</MudLink>. Diese Seite zeigt das Goethe-Format zum Vergleich.</MudAlert>
+}
 <MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">@ExamBlueprint.Name</MudText>
 <MudText Typo="Typo.body2" Class="mb-2" Style="opacity:.8">Vier Module, jedes einzeln bestehbar, jeweils 60 % nötig. Unten das Format mit Tipps – und die Simulationen, die es hier schon gibt.</MudText>
 @if (_target == TargetLevel.C1)
@@ -85,12 +89,13 @@ else
 </MudGrid>
 
 <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true">
-    <b>telc statt Goethe?</b> @ExamBlueprint.TelcDifferences
+    <b>telc statt Goethe?</b> @ExamBlueprint.TelcDifferences <MudLink Href="telc">Zur telc-Vorbereitung →</MudLink>
 </MudAlert>
 
 @code {
     private ReadinessReport? _readiness;
     private TargetLevel _target = TargetLevel.B2;
+    private ExamProvider _exam;
 
     private static readonly Func<Exercise, bool> Teil1 = e => e.Type == ExerciseType.FreeWrite && e.MinWords >= 150;
     private static readonly Func<Exercise, bool> Teil2 = e => e.Type == ExerciseType.FreeWrite && e.MinWords is >= 100 and < 150;
@@ -101,7 +106,9 @@ else
     {
         var states = await Learning.GetSkillStatesAsync();
         _readiness = LearnerAnalysis.Readiness(CatalogProvider.Catalog, states);
-        _target = (await Learning.GetProfileAsync()).TargetLevel;
+        var profile = await Learning.GetProfileAsync();
+        _target = profile.TargetLevel;
+        _exam = profile.Exam;
     }
 
     private async Task StartRandom(Func<Exercise, bool> filter)

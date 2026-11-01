@@ -29,7 +29,7 @@ public static class ProgressStatsCalculator
     /// <summary>Three weeks: long enough that an item survives a normal gap in practice, short enough to be reachable.</summary>
     public const double StuckDays = 21;
 
-    public static ProgressStats Compute(IReadOnlyCollection<ReviewState> reviews, DateTime nowUtc)
+    public static ProgressStats Compute(IReadOnlyCollection<ReviewState> reviews, DateTime nowUtc, double? decay = null)
     {
         var scheduled = reviews.Where(r => !r.IsNew && r.LastReviewUtc is not null).ToList();
         var weekAgo = nowUtc.AddDays(-7);
@@ -53,6 +53,6 @@ public static class ProgressStatsCalculator
             stuck.Count(r => r.LastReviewUtc >= weekAgo),
             scheduled.Count,
             dueByDay,
-            scheduled.Count == 0 ? 0 : scheduled.Average(r => r.RetrievabilityAt(nowUtc)));
+            scheduled.Count == 0 ? 0 : scheduled.Average(r => r.RetrievabilityAt(nowUtc, decay)));
     }
 }

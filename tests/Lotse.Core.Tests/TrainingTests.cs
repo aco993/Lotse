@@ -132,7 +132,10 @@ public sealed class TrainingContentTests
         Assert.Equal("genitiv", plan.TopicId);                        // two open points + urgent weight
 
         var stages = plan.Items.Where(i => i.Block == TrainingBlock.Schwerpunkt).Select(i => i.Stage).ToList();
-        Assert.Equal([TrainingStage.Lueckentext, TrainingStage.Umformung, TrainingStage.EigenerSatz, TrainingStage.KurzerText], stages);
+        Assert.Equal([TrainingStage.Lueckentext, TrainingStage.Lueckentext, TrainingStage.Umformung, TrainingStage.EigenerSatz, TrainingStage.KurzerText], stages);
+        // The second gap is interleaved from another topic, so the learner has to tell the rules apart.
+        var mixed = plan.Items.Single(i => i.Key == "m1");
+        Assert.DoesNotContain(mixed.NodeId, Content.Topic(plan.TopicId!)!.NodeIds);
         Assert.Equal(TrainingBlock.Sprechen, plan.Items[^1].Block);
         Assert.True(plan.Items[^1].Speaking);
 
@@ -153,9 +156,16 @@ public sealed class TrainingServiceTests : IAsyncLifetime
             => new(new DbContextOptionsBuilder<LotseDbContext>().UseSqlite($"Data Source={path}").Options);
     }
 
+    private sealed class ManualClock : TimeProvider
+    {
+        public DateTimeOffset Now { get; set; } = new(2026, 10, 1, 18, 0, 0, TimeSpan.Zero);
+        public override DateTimeOffset GetUtcNow() => Now;
+    }
+
     private string _dbPath = "";
     private TestDbFactory _factory = default!;
     private TrainingService _svc = default!;
+    private readonly ManualClock _clock = new();
 
     public async ValueTask InitializeAsync()
     {
@@ -170,7 +180,7 @@ public sealed class TrainingServiceTests : IAsyncLifetime
         var provider = new ContentCatalogProvider(ContentLoader.ResolveContentDirectory(), _factory, NullLogger<ContentCatalogProvider>.Instance);
         await provider.RefreshAsync();
         var content = TrainingContentLoader.Load(ContentLoader.ResolveContentDirectory(), provider.Catalog);
-        _svc = new TrainingService(_factory, provider, content, TimeProvider.System, new FakeCurrentUserAccessor(UserId));
+        _svc = new TrainingService(_factory, provider, content, _clock, new FakeCurrentUserAccessor(UserId));
     }
 
     public async ValueTask DisposeAsync()
@@ -243,7 +253,7 @@ public sealed class TrainingServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task A_mistake_comes_back_in_new_contexts_until_learned_two_sessions_later()
+    public async Task A_mistake_comes_back_in_new_contexts_until_learned_two_sessions_and_a_week_later()
     {
         await RunSessionAsync(3, "gen.wegen");
 
@@ -263,9 +273,22 @@ public sealed class TrainingServiceTests : IAsyncLifetime
         await _svc.CompleteAsync((await _svc.SubmitAsync(s3.Id, Answers(s3, 3))).Id,
             s3.Items.Where(i => i.IsFree).Select(i => new TrainingVerdict(i.Key, true, null)).ToList());
 
+        // Two sessions later, but the same evening: the mistake was sure-and-wrong, so the week is not over yet.
+        var sameDay = (await _svc.GetOverviewAsync()).Points.Single(p => p.Point.Id == "gen.wegen").Progress;
+        Assert.Equal(PointStatus.AufGutemWeg, sameDay.Status);
+        Assert.NotNull(sameDay.LearnableFromUtc);
+
+        // A week on, the delayed re-test comes first in the review - and settles it.
+        _clock.Now = _clock.Now.AddDays(LearnedRule.HypercorrectionDays + 1);
+        var s4 = await _svc.StartOrResumeAsync();
+        var review4 = s4.Items.Single(i => i.Block == TrainingBlock.Wiederholung);
+        Assert.StartsWith("Nachtest", review4.Reason);
+        await _svc.CompleteAsync((await _svc.SubmitAsync(s4.Id, Answers(s4, 3))).Id,
+            s4.Items.Where(i => i.IsFree).Select(i => new TrainingVerdict(i.Key, true, null)).ToList());
+
         var overview = await _svc.GetOverviewAsync();
         Assert.Equal(PointStatus.Gelernt, overview.Points.Single(p => p.Point.Id == "gen.wegen").Progress.Status);
-        Assert.Equal(3, overview.CompletedSessions);
+        Assert.Equal(4, overview.CompletedSessions);
         Assert.DoesNotContain((await _svc.StartOrResumeAsync()).Items, i => i.Block == TrainingBlock.Wiederholung);
     }
 }

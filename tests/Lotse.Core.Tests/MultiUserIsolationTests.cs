@@ -111,6 +111,7 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
         var writing = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.FreeWrite);
         var dictation = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Dictation);
         var trainingContent = TrainingContentLoader.Load(ContentLoader.ResolveContentDirectory(), _provider.Catalog);
+        var telcContent = TelcContentLoader.Load(ContentLoader.ResolveContentDirectory(), _provider.Catalog);
         foreach (var (svc, user) in new[] { (_svcA, UserA), (_svcB, UserB) })
         {
             await svc.StartSessionAsync(10);
@@ -124,6 +125,10 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
             var training = new TrainingService(_factory, _provider, trainingContent, TimeProvider.System, new FakeCurrentUserAccessor(user));
             var session = await training.StartOrResumeAsync();                                // TrainingSessions
             await training.SubmitAsync(session.Id, session.Items.Select(i => new TrainingAnswerInput(i.Key, "x", 2)).ToList()); // TrainingAnswers
+            var telc = new TelcService(_factory, _provider, telcContent, new NullTutor(), svc, TimeProvider.System, new FakeCurrentUserAccessor(user));
+            var sim = await telc.StartOrResumeSimulationAsync();                              // TelcSimulations
+            var sb = telcContent.TaskIds(Lotse.Core.Telc.TelcPart.Sprachbausteine1)[0];
+            await telc.SubmitObjectiveAsync(Lotse.Core.Telc.TelcPart.Sprachbausteine1, sb, new int?[10], simulationId: sim.Id); // TelcAttempts
         }
         var dp = new EphemeralDataProtectionProvider();
         await new TutorRegistry(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserA), env: _ => null)

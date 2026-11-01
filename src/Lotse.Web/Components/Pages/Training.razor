@@ -397,9 +397,26 @@ else
                 <ul class="tr-checks">
                     @foreach (var kind in Enum.GetValues<ErrorKind>()) { <li><b>@kind</b> – @kind.Label()</li> }
                 </ul>
-                <MudText Typo="Typo.body2" Class="mt-2"><b>Gelernt</b> ist ein Punkt erst, wenn er richtig, mit Sicherheit 3, in einem neuen Satz und mindestens zwei Sitzungen nach dem letzten Fehler kommt. Bis dahin kommt er in jeder Sitzung zurück. Richtig, aber nur geraten (1), zählt wie ein Fehler.</MudText>
+                <MudText Typo="Typo.body2" Class="mt-2"><b>Gelernt</b> ist ein Punkt erst, wenn er richtig, mit Sicherheit 3, in einem neuen Satz und mindestens zwei Sitzungen nach dem letzten Fehler kommt. Bis dahin kommt er in jeder Sitzung zurück. Richtig, aber nur geraten (1), zählt wie ein Fehler. Ein Fehler mit Sicherheit 3 braucht zusätzlich eine Woche Abstand: Solche Fehler sitzen direkt nach der Korrektur gut, kommen aber nach etwa einer Woche häufiger zurück – deshalb gibt es dann einen Nachtest.</MudText>
+                <MudText Typo="Typo.body2" Class="mt-2"><b>Gemischt:</b> Im Schwerpunkt steht eine Lücke aus einem anderen Thema zwischen den Aufgaben. So übst du nicht nur die Regel, sondern auch zu erkennen, wann sie gilt.</MudText>
             </MudExpansionPanel>
         </MudExpansionPanels>
+
+        @if (o.Calibration.Rows.Any(r => r.Answers > 0))
+        {
+            <MudPaper Class="pa-3 mb-3" Elevation="1">
+                <MudText Typo="Typo.subtitle1" HtmlTag="h2" Class="mb-1">Wie gut passt deine Sicherheit?</MudText>
+                <div class="tc-calib">
+                    @foreach (var r in o.Calibration.Rows)
+                    {
+                        <span>@r.Confidence = @(r.Confidence switch { 1 => "geraten", 2 => "ziemlich sicher", _ => "sicher" })</span>
+                        <div class="tc-meter"><div class="tc-meter-fill @(r.Confidence == 3 && r.Accuracy < ConfidenceCalibration.SureTarget ? "bad" : "ok")" style="width:@((r.Accuracy * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+                        <span>@(r.Answers == 0 ? "–" : $"{r.Accuracy:P0} richtig ({r.Correct}/{r.Answers})")</span>
+                    }
+                </div>
+                <MudText Typo="Typo.body2" Class="mt-2">@(o.Calibration.Verdict ?? $"Noch zu wenige Antworten mit „sicher“ für eine Aussage (ab {ConfidenceCalibration.MinAnswers}).")</MudText>
+            </MudPaper>
+        }
 
         @if (tracked.Count > 0)
         {
@@ -416,7 +433,7 @@ else
                             <span class="@("tr-status tr-status-" + row.Progress.Status.ToString().ToLowerInvariant())">@StatusLabel(row.Progress.Status)</span>
                             @if (row.Progress.Urgent) { <span class="tr-urgent-badge">dringend</span> }
                         </td>
-                        <td>@(row.Progress.NeedsReview ? $"Sitzung {row.Progress.LearnableFromSession}" : "")</td>
+                        <td>@(row.Progress.NeedsReview ? $"Sitzung {row.Progress.LearnableFromSession}" + (row.Progress.LearnableFromUtc is { } t ? $", ab {t.ToLocalTime():dd.MM.}" : "") : "")</td>
                     </tr>
                 }
                 </tbody>

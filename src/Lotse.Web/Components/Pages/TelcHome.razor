@@ -1,0 +1,212 @@
+@page "/telc"
+@inject ITelcService Telc
+@inject ILearningService Learning
+@inject NavigationManager Nav
+
+<PageTitle>telc Deutsch B2 – Lotse</PageTitle>
+
+<div class="page-intro intro-pruefung">
+    <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.WorkspacePremium" /></div>
+    <div>
+        <MudText Typo="Typo.h5" HtmlTag="h1">telc Deutsch B2</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">Jeder Teil im Prüfungsformat, gezählt in telc-Punkten. Schriftlich zählt die Summe (135 von 225), mündlich gibt es eine eigene Hürde (45 von 75) – die kann kein anderer Teil ausgleichen.</MudText>
+    </div>
+</div>
+
+@if (_o is null)
+{
+    <MudProgressLinear Indeterminate="true" />
+    return;
+}
+
+@if (_o.Exam != ExamProvider.Telc)
+{
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+        In deinem Profil ist noch das Goethe-Zertifikat als Prüfung eingetragen.
+        <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Primary" OnClick="MakeTelcAsync">telc als meine Prüfung festlegen</MudButton>
+    </MudAlert>
+}
+
+@* ---- Prognose ------------------------------------------------------------------------------------------- *@
+<MudGrid Spacing="2" Class="mb-3">
+    <MudItem xs="12" md="7">
+        <MudPaper Elevation="1" Class="pa-3 tc-forecast" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">Wenn die Prüfung heute wäre</MudText>
+            @if (!R.HasAnyEvidence)
+            {
+                <MudText Typo="Typo.body2" Class="my-2">Noch keine telc-Ergebnisse. Am schnellsten zu einer echten Prognose kommst du mit einer Einstiegssimulation – oder mit je einer Aufgabe pro Teil.</MudText>
+            }
+            else
+            {
+                <div class="tc-halves">
+                    @Half("Schriftlich", R.Written.Points, R.Written.Projected, TelcBlueprint.WrittenMax, TelcBlueprint.WrittenPass, R.HasWrittenEvidence)
+                    @Half("Mündlich", R.Oral.Points, R.Oral.Projected, TelcBlueprint.OralMax, TelcBlueprint.OralPass, R.HasOralEvidence)
+                </div>
+                <MudText Typo="Typo.body2" Class="mt-2">
+                    @if (R.ExpectedGrade is { } grade) { <span>Erwartete Note: <b>@grade</b>. </span> }
+                    @if (R.Written.Projected || R.Oral.Projected) { <span class="tc-muted">Teile ohne Ergebnis sind aus den anderen Teilen derselben Hälfte geschätzt.</span> }
+                </MudText>
+            }
+            <MudStack Row="true" Spacing="2" Class="mt-2" Wrap="Wrap.Wrap">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Timer" OnClick="SimulationAsync">@(_o.OpenSimulationId is null ? "Volle Simulation starten" : "Simulation fortsetzen")</MudButton>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Hier liegen die meisten Punkte</MudText>
+            @foreach (var p in R.Priorities().Take(4))
+            {
+                var info = TelcBlueprint.Info(p.Part);
+                <div class="tc-prio">
+                    <MudLink Href="@($"telc/ueben/{p.Part}")">@info.Title</MudLink>
+                    <span class="tc-muted">@(p.Points is null ? "noch nicht geübt" : $"≈ {p.Points:0.#}/{p.Max:0} · {p.Lost:0.#} Punkte offen")</span>
+                </div>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@* ---- Teile ------------------------------------------------------------------------------------------------ *@
+<MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">Alle Teile üben</MudText>
+<MudGrid Spacing="2" Class="mb-4">
+    @foreach (var group in TelcBlueprint.Parts.GroupBy(p => p.Subtest))
+    {
+        <MudItem xs="12" md="6">
+            <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-1">
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:600">@TelcBlueprint.SubtestTitle(group.Key)</MudText>
+                    <MudSpacer />
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@TelcBlueprint.SubtestMax(group.Key) Punkte</MudChip>
+                </MudStack>
+                @foreach (var part in group)
+                {
+                    var est = R.Of(part.Part);
+                    <div class="tc-partrow">
+                        <div class="tc-partrow-main">
+                            <b>@part.Title.Replace(TelcBlueprint.SubtestTitle(group.Key), "").Trim() </b>
+                            <span class="tc-muted">@part.Format</span>
+                            <details class="tc-tip"><summary>Tipp</summary>@part.Tip</details>
+                        </div>
+                        <div class="tc-partrow-side">
+                            @if (est.Points is { } pts)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="@(est.Fraction >= 0.6 ? Color.Tertiary : Color.Warning)">@pts.ToString("0.#")/@est.Max.ToString("0")</MudChip>
+                            }
+                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" Href="@($"telc/ueben/{part.Part}")">Üben</MudButton>
+                        </div>
+                    </div>
+                }
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@* ---- Plan ------------------------------------------------------------------------------------------------- *@
+<MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">Plan bis zur Prüfung</MudText>
+@if (_o.ExamDate is null)
+{
+    <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined" Dense="true" Class="mb-4">Trag in den <MudLink Href="einstellungen">Einstellungen</MudLink> deinen Prüfungstermin ein – dann baut Lotse den Plan rückwärts: Aufbau, Prüfungsformat mit Simulation alle zwei Wochen, Endspurt, Ruhe.</MudAlert>
+}
+else if (_o.Plan.Count == 0)
+{
+    <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined" Dense="true" Class="mb-4">Der eingetragene Termin (@_o.ExamDate.Value.ToString("dd.MM.yyyy")) liegt in der Vergangenheit. Neuer Termin? → <MudLink Href="einstellungen">Einstellungen</MudLink></MudAlert>
+}
+else
+{
+    <MudText Typo="Typo.body2" Class="mb-2">Prüfung am <b>@_o.ExamDate.Value.ToString("dd.MM.yyyy")</b> – noch @((_o.ExamDate.Value.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber)) Tage.</MudText>
+    <div class="tc-plan mb-4">
+        @foreach (var w in _o.Plan)
+        {
+            <MudPaper Elevation="0" Class="@($"pa-3 tc-week phase-{w.Phase.ToString().ToLowerInvariant()}")">
+                <div class="tc-week-head"><b>@w.Start.ToString("dd.MM.") – @w.End.ToString("dd.MM.")</b> <span>@w.Title</span>@if (w.Simulation) { <span class="tr-tag">Simulation</span> }</div>
+                <ul>@foreach (var t in w.Tasks) { <li>@t</li> }</ul>
+            </MudPaper>
+        }
+    </div>
+}
+
+@* ---- Simulationen und letzte Ergebnisse ---------------------------------------------------------------------- *@
+<MudGrid Spacing="2" Class="mb-4">
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Simulationen</MudText>
+            @if (_o.Simulations.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Class="tc-muted">Noch keine abgeschlossen.</MudText>
+            }
+            @foreach (var s in _o.Simulations)
+            {
+                <div class="tc-simrow">
+                    <MudLink Href="@($"telc/simulation/{s.Id}")">@s.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudLink>
+                    <span>schriftlich <b class="@(s.Result.WrittenPassed ? "ok" : "bad")">@s.Result.Written.ToString("0.#")</b>/225</span>
+                    <span>mündlich <b class="@(s.Result.OralPassed ? "ok" : "bad")">@s.Result.Oral.ToString("0.#")</b>/75</span>
+                    <span>@(s.Result.Grade ?? "unvollständig")</span>
+                </div>
+            }
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Letzte Ergebnisse</MudText>
+            @if (_o.Recent.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Class="tc-muted">Noch nichts geübt.</MudText>
+            }
+            @foreach (var a in _o.Recent)
+            {
+                <div class="tc-simrow">
+                    <span>@a.Utc.ToLocalTime().ToString("dd.MM.")</span>
+                    <span>@TelcBlueprint.Info(a.Part).Title</span>
+                    <span class="tc-muted">@a.Title</span>
+                    <b class="@(a.Points / a.Max >= 0.6 ? "ok" : "bad")">@a.Points.ToString("0.#")/@a.Max.ToString("0")</b>
+                </div>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudText Typo="Typo.caption" Class="d-block mb-4" Style="opacity:.7">
+    Format, Punkte und Bewertungskriterien nach: @TelcBlueprint.Source. Alle Aufgaben hier sind eigene Texte im Prüfungsformat, keine Kopien von telc-Material.
+    Sprachbausteine-Fehler landen wie jeder andere Fehler im Fehlerjournal.
+</MudText>
+
+@code {
+    private TelcOverview? _o;
+    private TelcReadiness R => _o!.Readiness;
+
+    protected override async Task OnInitializedAsync() => _o = await Telc.GetOverviewAsync();
+
+    private RenderFragment Half(string label, double points, bool projected, double max, double pass, bool evidence) => __builder =>
+    {
+        var ok = points >= pass;
+        <div class="tc-half">
+            <div class="tc-half-label">@label</div>
+            @if (!evidence)
+            {
+                <div class="tc-half-value tc-muted">noch offen</div>
+                <div class="tc-muted">Hürde @pass.ToString("0") von @max.ToString("0")</div>
+            }
+            else
+            {
+                <div class="tc-half-value @(ok ? "ok" : "bad")">@(projected ? "≈ " : "")@points.ToString("0")<small> / @max.ToString("0")</small></div>
+                <div class="tc-meter"><div class="tc-meter-fill @(ok ? "ok" : "bad")" style="width:@((points / max * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture))%"></div><div class="tc-meter-pass" style="left:60%"></div></div>
+                <div class="tc-muted">@(ok ? $"{points - pass:0} Punkte über der Hürde ({pass:0})" : $"{pass - points:0} Punkte unter der Hürde ({pass:0})")</div>
+            }
+        </div>
+    };
+
+    private async Task MakeTelcAsync()
+    {
+        var profile = await Learning.GetProfileAsync();
+        profile.Exam = ExamProvider.Telc;
+        await Learning.SaveProfileAsync(profile);
+        _o = await Telc.GetOverviewAsync();
+    }
+
+    private async Task SimulationAsync()
+    {
+        var sim = await Telc.StartOrResumeSimulationAsync();
+        Nav.NavigateTo($"telc/simulation/{sim.Id}");
+    }
+}

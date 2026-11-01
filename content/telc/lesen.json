@@ -1,0 +1,342 @@
+{
+  // telc Deutsch B2, Leseverstehen: own texts in the exam's format.
+  // Teil 1: ten headings, five texts; solution[i] = index of the heading for text i (five headings are distractors).
+  // Teil 2: one longer text, five questions a/b/c.
+  // Teil 3: ten situations, twelve ads; solution[i] = index of the ad, -1 = "x" (no ad fits). Each ad at most once.
+  "lesen1": [
+    {
+      "id": "lv1.stadt",
+      "title": "Neues aus der Stadt",
+      "headings": [
+        "Stadt muss sparen: Gebühren steigen",
+        "Gemüse wächst über den Einkaufsregalen",
+        "Jugendliche erklären Älteren das Smartphone",
+        "Bibliotheken schließen wegen Personalmangel",
+        "Bürger entscheiden mit, wofür die Stadt Geld ausgibt",
+        "Kürzere Woche, kaum Unterschied bei der Leistung",
+        "Supermärkte verkaufen nur noch Ware aus der Region",
+        "Lesen am Sonntag – auch ohne Personal",
+        "Vier-Tage-Woche: Beschäftigte verdienen weniger",
+        "Rentner drücken wieder die Schulbank"
+      ],
+      "texts": [
+        "In Rheinfeld können die Einwohnerinnen und Einwohner seit diesem Jahr selbst Vorschläge machen, wie ein Teil des städtischen Haushalts verwendet werden soll. Insgesamt 500.000 Euro stehen zur Verfügung. Über eine Internetplattform gingen mehr als 300 Ideen ein – von neuen Bänken im Park bis zu einer Beleuchtung für den Radweg am Fluss. Anschließend konnten alle Bürgerinnen und Bürger ab 14 Jahren abstimmen. Die zehn Vorschläge mit den meisten Stimmen werden nun umgesetzt. Der Bürgermeister zeigte sich von der Beteiligung begeistert und kündigte an, das Verfahren im nächsten Jahr zu wiederholen.",
+        "Wer sonntags ein Buch ausleihen möchte, stand bisher vor verschlossenen Türen. Das ändert sich nun in drei Stadtteilbibliotheken: Mit ihrem Bibliotheksausweis können Leserinnen und Leser die Räume künftig auch am Wochenende zwischen 10 und 18 Uhr betreten. Ausleihe und Rückgabe funktionieren an Automaten, Kameras sorgen für Sicherheit. Mitarbeitende sind an diesen Tagen nicht vor Ort. Das Modell stammt aus Skandinavien, wo es seit Jahren erfolgreich ist. Die Gewerkschaft befürchtet allerdings, dass langfristig Stellen abgebaut werden könnten. Die Stadt weist das zurück.",
+        "Ein Softwareunternehmen aus Leipzig hat ein halbes Jahr lang getestet, ob seine 80 Beschäftigten ihre Arbeit auch in vier statt fünf Tagen schaffen – bei vollem Lohn. Das Ergebnis überrascht selbst die Geschäftsführung: Die Zahl der abgeschlossenen Projekte blieb nahezu gleich, gleichzeitig sanken die Krankheitstage deutlich. Möglich wurde das vor allem durch kürzere Besprechungen und feste Zeiten, in denen niemand gestört werden darf. Ob das Modell dauerhaft eingeführt wird, soll im Herbst entschieden werden. Die meisten Mitarbeitenden haben sich bereits dafür ausgesprochen.",
+        "Auf dem Dach eines Supermarkts in Berlin-Wedding wachsen seit dem Frühjahr Tomaten, Salat und Kräuter. Ein junges Unternehmen hat dort ein Gewächshaus gebaut, das mit der Abwärme der Kühlanlagen beheizt wird. Das Gemüse wird direkt im Markt darunter verkauft – kürzer kann ein Transportweg kaum sein. Die Kundschaft nimmt das Angebot gut an, obwohl die Produkte etwas teurer sind als herkömmliche Ware. Bis zum Jahresende sollen zwei weitere Märkte folgen. Den Großteil seines Sortiments bezieht der Supermarkt aber weiterhin von den üblichen Lieferanten.",
+        "Wie schicke ich ein Foto an meine Enkelin? Wie funktioniert die App der Bank? Mit solchen Fragen kommen jeden Dienstagnachmittag ältere Menschen in die Gesamtschule am Lindenplatz. Dort helfen ihnen Schülerinnen und Schüler der neunten und zehnten Klasse – geduldig und kostenlos. Für die Jugendlichen ist das Projekt Teil des sozialen Engagements, das die Schule von allen verlangt. „Am Anfang dachte ich, das wird langweilig“, erzählt der 15-jährige Tarek. „Aber man lernt selbst viel, zum Beispiel, Dinge einfach zu erklären.“ Die Nachfrage ist so groß, dass inzwischen eine Warteliste geführt wird."
+      ],
+      "solution": [
+        4,
+        7,
+        5,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "lv1.gesundheit",
+      "title": "Arbeit und Gesundheit",
+      "headings": [
+        "Schwimmen lernen ist keine Frage des Alters",
+        "Medikamente kommen jetzt mit dem Rad",
+        "Apotheken bieten Gesundheitskurse an",
+        "Feierabend gilt auch für das Postfach",
+        "Stehen allein hilft dem Rücken nicht",
+        "Neue Pflegekräfte lernen zuerst die Sprache",
+        "Mitarbeiter müssen abends erreichbar sein",
+        "Krankenhaus schließt Station wegen Personalmangel",
+        "Schwimmbäder erhöhen die Eintrittspreise",
+        "Büromöbel werden immer teurer"
+      ],
+      "texts": [
+        "Bei einem Versicherungskonzern in Stuttgart werden E-Mails, die nach 19 Uhr an Beschäftigte geschickt werden, nicht mehr sofort zugestellt. Sie landen auf einem Server und erscheinen erst am nächsten Morgen um sieben Uhr im Postfach. Ausnahmen gibt es nur für den Notdienst der IT. Mit der Regel reagiert das Unternehmen auf eine interne Befragung: Fast die Hälfte der Mitarbeitenden hatte angegeben, abends regelmäßig dienstliche Nachrichten zu lesen und deshalb schlecht abschalten zu können. Der Betriebsrat begrüßt die Maßnahme ausdrücklich.",
+        "Eine Apotheke in Münster hat einen neuen Lieferservice eingeführt: Wer bis 14 Uhr bestellt, bekommt seine Medikamente noch am selben Tag nach Hause gebracht – und zwar von Fahrradkurieren. Das ist nicht nur umweltfreundlich, sondern in der Innenstadt oft auch schneller als mit dem Auto. Besonders ältere und kranke Menschen nutzen das Angebot. Für rezeptpflichtige Medikamente muss das Rezept allerdings vorher in der Apotheke vorliegen oder per App übermittelt werden. Die Lieferung kostet zwei Euro, ab einem Bestellwert von 30 Euro ist sie kostenlos.",
+        "Viele Firmen haben in den vergangenen Jahren höhenverstellbare Schreibtische angeschafft, um Rückenproblemen vorzubeugen. Eine Studie der Universität Bremen kommt nun zu einem ernüchternden Ergebnis: Wer statt zu sitzen nur lange steht, hat kaum weniger Beschwerden. Entscheidend sei vielmehr, die Haltung häufig zu wechseln und sich zwischendurch zu bewegen. Die Forschenden empfehlen, etwa alle 30 Minuten aufzustehen, ein paar Schritte zu gehen oder Telefonate im Stehen zu führen. Die Tische seien daher nicht nutzlos – man müsse sie nur richtig einsetzen.",
+        "Das Klinikum Kassel hat in diesem Jahr 24 Pflegekräfte aus den Philippinen und aus Indien eingestellt. Bevor sie auf den Stationen arbeiten, besuchen sie einen sechsmonatigen Sprachkurs, den das Krankenhaus bezahlt. Gleichzeitig lernen sie die Abläufe im Haus kennen und werden von erfahrenen Kolleginnen begleitet. Ihre Ausbildung wird in Deutschland erst anerkannt, wenn sie eine Sprachprüfung auf dem Niveau B2 bestanden haben. Die Klinikleitung hofft, auf diese Weise die vielen offenen Stellen besetzen zu können, ohne Stationen schließen zu müssen.",
+        "Laut einer Umfrage kann fast jeder zehnte Erwachsene in Deutschland nicht oder nur schlecht schwimmen. Die Stadt Bochum bietet deshalb ab Oktober kostenlose Schwimmkurse für Erwachsene an. Die Kurse finden abends in zwei Hallenbädern statt, damit auch Berufstätige teilnehmen können. Die Gruppen sind klein, und die Trainerinnen sind speziell für die Arbeit mit Menschen ausgebildet, die Angst vor dem Wasser haben. Der älteste Teilnehmer des ersten Kurses ist 71 Jahre alt. Die Eintrittspreise für die Bäder bleiben unverändert."
+      ],
+      "solution": [
+        3,
+        1,
+        4,
+        5,
+        0
+      ]
+    }
+  ],
+  "lesen2": [
+    {
+      "id": "lv2.sprachenlernen",
+      "title": "Nie zu alt für eine neue Sprache",
+      "text": "Lange galt es als ausgemacht: Wer eine Fremdsprache wirklich gut lernen will, muss früh anfangen. Kinder, so hieß es, nehmen neue Sprachen wie nebenbei auf, während Erwachsene sich mühsam durch Grammatiktabellen kämpfen. Neuere Untersuchungen zeichnen jedoch ein differenzierteres Bild.\n\nZwar haben Kinder einen Vorteil bei der Aussprache: Wer vor der Pubertät mit einer Sprache in Kontakt kommt, spricht sie später häufig ohne hörbaren Akzent. Beim Wortschatz und bei der Grammatik dagegen holen Erwachsene oft erstaunlich schnell auf. „Erwachsene können Regeln bewusst verstehen und auf neue Situationen übertragen“, erklärt die Sprachwissenschaftlerin Dr. Miriam Ostertag. „Außerdem bringen sie Wissen aus ihrer Muttersprache und oft aus weiteren Sprachen mit. Das ist ein enormer Vorteil, der in der öffentlichen Diskussion meist unterschätzt wird.“\n\nEntscheidend für den Erfolg sei weniger das Alter als die Art des Lernens. Viele Erwachsene, so Ostertag, verbringen zu viel Zeit damit, Texte zu lesen und Wörterlisten zu wiederholen, und zu wenig Zeit damit, selbst zu sprechen und zu schreiben. Das führe zu einer typischen Situation: Man versteht fast alles, findet aber im Gespräch nicht schnell genug die passenden Worte. Hilfreich sei es, sich regelmäßig zu zwingen, etwas zu produzieren – und sei es nur ein kurzer Text über den eigenen Tag.\n\nEine wichtige Rolle spielt auch der Umgang mit Fehlern. Kinder machen sich wenig Gedanken darüber, ob ein Satz korrekt ist. Erwachsene dagegen schweigen lieber, als sich zu blamieren. „Wer Angst vor Fehlern hat, bekommt keine Rückmeldung und lernt deshalb langsamer“, sagt Ostertag. Sie empfiehlt, Fehler gezielt zu sammeln und regelmäßig zu überprüfen, ob sie noch vorkommen.\n\nSchließlich kommt es auf Regelmäßigkeit an. Studien zeigen, dass mehrere kurze Lerneinheiten über die Woche verteilt mehr bringen als eine lange Sitzung am Wochenende. Das Gehirn braucht Pausen, um Neues zu festigen. Wer also jeden Tag zwanzig Minuten übt, ist auf Dauer erfolgreicher als jemand, der einmal pro Woche drei Stunden investiert.\n\nFür Ostertag steht fest: Das Alter ist keine Ausrede. „Es gibt Menschen, die mit sechzig eine neue Sprache auf hohem Niveau gelernt haben. Sie hatten keine besondere Begabung – sie hatten eine gute Methode und viel Geduld.“",
+      "questions": [
+        {
+          "question": "Was sagt der Text über Kinder beim Sprachenlernen?",
+          "options": [
+            "Sie lernen Grammatik schneller als Erwachsene.",
+            "Sie haben vor allem bei der Aussprache einen Vorteil.",
+            "Sie lernen eine Sprache nur im Unterricht gut."
+          ],
+          "correct": 1,
+          "explanation": "„Zwar haben Kinder einen Vorteil bei der Aussprache“ - bei Grammatik holen Erwachsene auf."
+        },
+        {
+          "question": "Welchen Vorteil haben Erwachsene laut Dr. Ostertag?",
+          "options": [
+            "Sie können auf Kenntnisse aus anderen Sprachen zurückgreifen.",
+            "Sie haben mehr Zeit zum Lernen.",
+            "Sie sprechen mit weniger Akzent."
+          ],
+          "correct": 0,
+          "explanation": "„Außerdem bringen sie Wissen aus ihrer Muttersprache und oft aus weiteren Sprachen mit.“"
+        },
+        {
+          "question": "Was ist nach Ostertag ein typisches Problem vieler erwachsener Lerner?",
+          "options": [
+            "Sie verstehen gesprochene Sprache schlecht.",
+            "Sie lernen zu wenige Wörter.",
+            "Sie verstehen mehr, als sie selbst ausdrücken können."
+          ],
+          "correct": 2,
+          "explanation": "„Man versteht fast alles, findet aber im Gespräch nicht schnell genug die passenden Worte.“"
+        },
+        {
+          "question": "Wie sollten Lernende mit Fehlern umgehen?",
+          "options": [
+            "Sie sollten möglichst wenig sprechen, bis sie sicher sind.",
+            "Sie sollten ihre Fehler sammeln und später kontrollieren.",
+            "Sie sollten sich vor allem auf die Aussprache konzentrieren."
+          ],
+          "correct": 1,
+          "explanation": "„Fehler gezielt zu sammeln und regelmäßig zu überprüfen“."
+        },
+        {
+          "question": "Was empfiehlt der Text zur Lernzeit?",
+          "options": [
+            "Lieber oft und kurz als selten und lang.",
+            "Am Wochenende mehrere Stunden am Stück.",
+            "Nur lernen, wenn man sich ausgeruht fühlt."
+          ],
+          "correct": 0,
+          "explanation": "„mehrere kurze Lerneinheiten über die Woche verteilt mehr bringen als eine lange Sitzung“."
+        }
+      ]
+    },
+    {
+      "id": "lv2.secondhand",
+      "title": "Kleidung mit zweitem Leben",
+      "text": "Der Pullover ist kaum getragen, die Jeans hat noch das Etikett: Auf Online-Plattformen für gebrauchte Kleidung werden jeden Tag Hunderttausende Teile angeboten. Was früher nach Flohmarkt und Kleiderkammer klang, ist heute ein Milliardengeschäft. Vor allem junge Menschen kaufen inzwischen ganz selbstverständlich gebraucht – aus Umweltgründen, aber auch, weil es billiger ist.\n\nDie Textilindustrie gehört zu den Branchen mit dem höchsten Ressourcenverbrauch. Für die Herstellung eines einzigen Baumwoll-T-Shirts werden mehrere Tausend Liter Wasser benötigt. Wer ein Kleidungsstück länger nutzt oder weitergibt, spart also tatsächlich Ressourcen. Umweltverbände begrüßen den Trend deshalb grundsätzlich.\n\nDoch es gibt auch Kritik. „Viele Menschen kaufen auf den Plattformen nicht statt neuer Kleidung, sondern zusätzlich“, sagt der Konsumforscher Jonas Brehm. Weil gebrauchte Teile so günstig seien und sich leicht wieder verkaufen ließen, werde Kleidung immer mehr zu einer Art Wegwerfware auf Zeit. Man kaufe etwas, trage es zweimal und stelle es wieder online. Hinzu komme der Versand: Jedes Paket verursache Verkehr und Verpackungsmüll. Bei Teilen, die nur wenige Euro kosten, sei die Umweltbilanz deshalb oft schlechter, als die Käufer glaubten.\n\nAuch für den traditionellen Handel ist die Entwicklung eine Herausforderung. Einige große Modeketten haben bereits reagiert und nehmen gebrauchte Kleidung in ihren Filialen zurück. Die Kundinnen und Kunden erhalten dafür Gutscheine, mit denen sie – natürlich – neue Ware kaufen können. Kritiker sprechen von geschicktem Marketing, das das schlechte Gewissen der Kundschaft beruhigen soll.\n\nBrehm hält den Trend dennoch für positiv, wenn er richtig genutzt wird. Sein Rat: vor dem Kauf überlegen, ob man das Teil wirklich braucht, möglichst mehrere Dinge auf einmal bestellen und Kleidung lange tragen. „Das nachhaltigste Kleidungsstück“, sagt er, „ist immer noch das, das schon im eigenen Schrank hängt.“",
+      "questions": [
+        {
+          "question": "Warum kaufen laut Text viele junge Menschen gebrauchte Kleidung?",
+          "options": [
+            "Weil neue Kleidung schlechter geworden ist.",
+            "Weil es günstiger und umweltfreundlicher ist.",
+            "Weil sie lieber auf Flohmärkten einkaufen."
+          ],
+          "correct": 1,
+          "explanation": "„aus Umweltgründen, aber auch, weil es billiger ist“."
+        },
+        {
+          "question": "Was sagt der Text über die Textilindustrie?",
+          "options": [
+            "Sie verbraucht sehr viele Ressourcen.",
+            "Sie produziert vor allem T-Shirts.",
+            "Sie unterstützt Umweltverbände."
+          ],
+          "correct": 0,
+          "explanation": "„gehört zu den Branchen mit dem höchsten Ressourcenverbrauch“."
+        },
+        {
+          "question": "Was kritisiert Jonas Brehm?",
+          "options": [
+            "Dass gebrauchte Kleidung zu teuer ist.",
+            "Dass die Plattformen zu wenig Auswahl bieten.",
+            "Dass gebrauchte Kleidung oft zusätzlich gekauft und schnell weiterverkauft wird."
+          ],
+          "correct": 2,
+          "explanation": "„nicht statt neuer Kleidung, sondern zusätzlich“ und „trage es zweimal und stelle es wieder online“."
+        },
+        {
+          "question": "Wie reagieren einige Modeketten?",
+          "options": [
+            "Sie verkaufen nur noch gebrauchte Kleidung.",
+            "Sie tauschen alte Kleidung gegen Gutscheine für neue Ware.",
+            "Sie verzichten auf Werbung."
+          ],
+          "correct": 1,
+          "explanation": "„nehmen gebrauchte Kleidung … zurück. Die Kunden erhalten dafür Gutscheine“."
+        },
+        {
+          "question": "Was empfiehlt Brehm?",
+          "options": [
+            "Überhaupt keine Kleidung mehr online zu kaufen.",
+            "Nur noch in Filialen einzukaufen.",
+            "Bewusst zu kaufen und Kleidung lange zu nutzen."
+          ],
+          "correct": 2,
+          "explanation": "„überlegen, ob man das Teil wirklich braucht … Kleidung lange tragen“."
+        }
+      ]
+    }
+  ],
+  "lesen3": [
+    {
+      "id": "lv3.freizeit",
+      "title": "Kurse und Freizeit",
+      "situations": [
+        "Eine Kollegin braucht für den Führerschein einen Erste-Hilfe-Kurs und hat nur am Wochenende Zeit.",
+        "Ein Freund möchte abends nach der Arbeit lernen, besser mit Excel umzugehen. Grundkenntnisse hat er.",
+        "Ihre Nachbarin möchte, dass ihr vierjähriger Sohn sich ans Wasser gewöhnt – und will selbst dabei sein.",
+        "Ein Kollege möchte lernen, wie er kleine Reparaturen an seinem Fahrrad selbst machen kann.",
+        "Ihre Eltern (beide über 75) möchten die Altstadt kennenlernen, können aber nicht lange zu Fuß gehen.",
+        "Eine Bekannte möchte in einem Chor singen, kann aber keine Noten lesen.",
+        "Ihr Mitbewohner sucht einen günstigen Gitarrenkurs in einer Gruppe für Anfänger.",
+        "Ein Kollege mit Deutsch als Zweitsprache möchte sich auf Vorstellungsgespräche vorbereiten.",
+        "Sie möchten am Samstag mit Freunden klettern gehen, haben aber keine Ausrüstung.",
+        "Eine Freundin sucht einen Kochkurs für vegane Küche an einem Abend unter der Woche."
+      ],
+      "ads": [
+        {
+          "title": "Fit für das Bewerbungsgespräch",
+          "text": "Training in Kleingruppen für Menschen mit Deutsch als Zweitsprache: typische Fragen, Simulation mit Video, Rückmeldung. Förderung durch die Agentur für Arbeit möglich."
+        },
+        {
+          "title": "Schwimmen für Erwachsene",
+          "text": "Kurs für Anfänger und Wiedereinsteiger ab 18 Jahren, montags 19 Uhr, Hallenbad Nord."
+        },
+        {
+          "title": "Fahrradwerkstatt zum Mitmachen",
+          "text": "Jeden Donnerstag 17–20 Uhr zeigen wir Ihnen, wie Sie Schlauch, Bremsen und Kette selbst reparieren. Werkzeug ist vorhanden, Spende erwünscht."
+        },
+        {
+          "title": "Verborgene Hinterhöfe",
+          "text": "Stadtführung zu Fuß, drei Stunden durch enge Gassen und über viele Treppen. Bitte festes Schuhwerk tragen."
+        },
+        {
+          "title": "Kletterhalle Gipfelstürmer",
+          "text": "Sa und So 9–22 Uhr geöffnet. Schuhe und Gurte können ausgeliehen werden. Gruppenrabatt ab vier Personen."
+        },
+        {
+          "title": "Altstadt im Oldtimer-Bus",
+          "text": "90 Minuten Rundfahrt mit Erklärungen zur Stadtgeschichte. Ein- und Ausstieg barrierefrei, Seniorenpreis 12 €."
+        },
+        {
+          "title": "Kochen mit Gemüse aus der Region",
+          "text": "Sonntagskurs 11–15 Uhr in der Küche des Gemeindezentrums. Saisonale Gerichte, auf Wunsch vegetarisch."
+        },
+        {
+          "title": "Excel kompakt",
+          "text": "Volkshochschule: dienstags 18:30–21:00 Uhr, sechs Abende. Für Berufstätige mit Grundkenntnissen – Tabellen, Formeln, Diagramme."
+        },
+        {
+          "title": "Erste Hilfe am Wochenende",
+          "text": "DRK-Kreisverband: Lehrgang für Führerscheinbewerber, samstags 8–16 Uhr, 45 €, Bescheinigung für die Fahrerlaubnisbehörde inklusive."
+        },
+        {
+          "title": "Gitarrenunterricht",
+          "text": "Einzelstunden beim Diplom-Musiker, 45 Minuten für 40 €. Anfänger und Fortgeschrittene, alle Stilrichtungen."
+        },
+        {
+          "title": "Wassergewöhnung",
+          "text": "Für Kinder von 3 bis 5 Jahren mit einem Elternteil im Wasser. Samstags 10 Uhr, Hallenbad Süd, zehn Termine."
+        },
+        {
+          "title": "Chor „Stimmwerk“ sucht Verstärkung",
+          "text": "Pop und Gospel, Probe mittwochs 19:30 Uhr. Notenkenntnisse sind nicht nötig – wir lernen nach Gehör."
+        }
+      ],
+      "solution": [
+        8,
+        7,
+        10,
+        2,
+        5,
+        11,
+        -1,
+        0,
+        4,
+        -1
+      ]
+    },
+    {
+      "id": "lv3.wohnen",
+      "title": "Wohnen und Dienstleistungen",
+      "situations": [
+        "Ein Kollege sucht ab sofort ein möbliertes Zimmer für drei Monate.",
+        "Sie brauchen am Samstag Hilfe beim Umzug und haben kein eigenes Auto.",
+        "Ihre Nachbarin sucht jemanden, der ihre Katze versorgt, während sie im Urlaub ist.",
+        "Ein Freund möchte seine alte, aber noch funktionierende Waschmaschine kostenlos abholen lassen.",
+        "Sie suchen Nachhilfe in Mathematik für Ihre Tochter, die in die achte Klasse geht.",
+        "Ein Bekannter sucht für seine fünfköpfige Familie ein Haus mit Garten zur Miete.",
+        "Eine Kollegin möchte ihre Steuererklärung von Fachleuten machen lassen, hat aber wenig Geld.",
+        "Sie suchen einen Handwerker, der noch diese Woche einen tropfenden Wasserhahn repariert.",
+        "Ein Freund möchte für einen Tag günstig einen Transporter mieten.",
+        "Ihre Eltern suchen eine Haushaltshilfe, die einmal pro Woche bei ihnen putzt."
+      ],
+      "ads": [
+        {
+          "title": "Tiersitterin mit Erfahrung",
+          "text": "Ich versorge Ihre Katze in Ihrer Wohnung, während Sie verreist sind: Füttern, Katzenklo, Streicheleinheiten. 10 € pro Besuch."
+        },
+        {
+          "title": "Reihenhaus zu vermieten",
+          "text": "Fünf Zimmer, Garten mit Terrasse, ruhige Lage, Schulen und Kita in der Nähe. Frei ab 1. August."
+        },
+        {
+          "title": "WG-Zimmer frei",
+          "text": "Möbliertes Zimmer, 16 m², in netter Dreier-WG, frei ab 1. Juni – Mindestmietdauer ein Jahr."
+        },
+        {
+          "title": "Lohnsteuerhilfeverein",
+          "text": "Wir erstellen Ihre Steuererklärung für Arbeitnehmer und Rentner. Der Jahresbeitrag richtet sich nach Ihrem Einkommen – schon ab 60 €."
+        },
+        {
+          "title": "Zwischenmiete",
+          "text": "Möbliertes Ein-Zimmer-Apartment, sofort frei, für zwei bis vier Monate. Miete 650 € warm, inklusive Internet."
+        },
+        {
+          "title": "Nachhilfe Mathe und Physik",
+          "text": "Lehramtsstudentin gibt Nachhilfe für die Klassen 5 bis 10, bei Ihnen zu Hause oder online. 18 € pro Stunde."
+        },
+        {
+          "title": "Umzugshelfer Max & Co.",
+          "text": "Zwei kräftige Studenten helfen Ihnen beim Umzug, auch am Wochenende. Mit eigenem Transporter, Abrechnung nach Stunden."
+        },
+        {
+          "title": "Zu schade für den Müll",
+          "text": "Wir holen gut erhaltene Möbel und funktionierende Elektrogeräte kostenlos bei Ihnen ab und geben sie an Bedürftige weiter."
+        },
+        {
+          "title": "Garten in guten Händen",
+          "text": "Erfahrener Gärtner übernimmt Rasenmähen, Heckenschnitt und Pflege von Beeten – regelmäßig oder einmalig."
+        },
+        {
+          "title": "Reinigungskraft gesucht",
+          "text": "Büro in der Innenstadt sucht zuverlässige Reinigungskraft, Montag bis Freitag ab 18 Uhr, auf Minijob-Basis."
+        },
+        {
+          "title": "Autovermietung Schnell",
+          "text": "Transporter ab 59 € pro Tag, inklusive 150 Kilometer. Günstige Wochenendpauschale."
+        },
+        {
+          "title": "Sanitär Krüger",
+          "text": "Badsanierung, Heizungsbau, Wartung. Termine nach Vereinbarung, derzeitige Wartezeit etwa sechs Wochen."
+        }
+      ],
+      "solution": [
+        4,
+        6,
+        0,
+        7,
+        5,
+        1,
+        3,
+        -1,
+        10,
+        -1
+      ]
+    }
+  ]
+}

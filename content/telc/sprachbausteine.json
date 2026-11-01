@@ -1,0 +1,118 @@
+{
+  // telc Deutsch B2, Sprachbausteine: own texts in the exam's format. Teil 1 = ten gaps, three options each;
+  // Teil 2 = ten gaps and a box of fifteen words (each at most once). Every gap names the node it tests, so a wrong
+  // answer reaches the Fehlerjournal like any other mistake. Gaps in the text are written [1] … [10].
+  "sprachbausteine": [
+    {
+      "id": "sb1.kollegin",
+      "teil": 1,
+      "title": "E-Mail an eine frühere Kollegin",
+      "text": "Liebe Frau Hellwig,\n\nvielen Dank für Ihre Nachricht, [1] ich mich sehr gefreut habe. Es ist schon fast ein Jahr her, [2] wir zuletzt zusammen an einem Projekt gearbeitet haben. Inzwischen hat sich bei mir einiges verändert: Seit März arbeite ich bei einem Energieversorger in Köln. Dort bin ich für die Wartung der Ladestationen zuständig, [3] in der ganzen Region stehen. Die Arbeit macht mir Spaß, [4] die Wege sind manchmal ziemlich lang.\n\nSie haben gefragt, ob ich Ihnen bei der Suche [5] einem neuen Mitarbeiter helfen kann. Ein ehemaliger Kollege von mir interessiert sich sehr [6] eine Stelle im Raum Düsseldorf. Er hat mehrere Jahre Berufserfahrung und [7] sicher gut in Ihr Team passen. Wenn Sie einverstanden sind, gebe ich ihm Ihre Kontaktdaten weiter, [8] er sich direkt bei Ihnen melden kann.\n\nÜbrigens: Im Oktober [9] in Köln eine große Fachmesse für Elektromobilität veranstaltet. Hätten Sie vielleicht Lust, mich dort zu besuchen? Ich würde mich sehr freuen, [10] wir uns endlich wieder einmal persönlich sehen könnten.\n\nHerzliche Grüße\nMarko Petrović",
+      "gaps": [
+        { "options": [ "worüber", "über die", "auf die" ], "correct": 1, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "sich freuen über + Akk. Nach einem Nomen steht im Relativsatz Präposition + Relativpronomen („über die“), nicht „worüber“." },
+        { "options": [ "seit", "als", "dass" ], "correct": 2, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Fester Ausdruck: Es ist … her, dass …" },
+        { "options": [ "die", "deren", "denen" ], "correct": 0, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "Die Ladestationen stehen … - Subjekt, Plural: Nominativ „die“." },
+        { "options": [ "obwohl", "aber", "trotzdem" ], "correct": 1, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_STELLUNG", "explanation": "Nach der Lücke folgt „die Wege sind“: Subjekt, dann Verb. Das passt nur zu „aber“ (Position 0). „obwohl“ schickt das Verb ans Ende, nach „trotzdem“ käme das Verb sofort." },
+        { "options": [ "von", "für", "nach" ], "correct": 2, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "die Suche nach + Dat. (wie: suchen nach)." },
+        { "options": [ "für", "an", "auf" ], "correct": 0, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich interessieren für + Akk. - Achtung: Interesse an + Dat., aber interessieren für." },
+        { "options": [ "wäre", "würde", "hätte" ], "correct": 1, "nodeId": "GR.KONJUNKTIV2", "errorCode": "KONJ2_FORM", "explanation": "Am Satzende steht der Infinitiv „passen“ - also würde + Infinitiv." },
+        { "options": [ "um", "damit", "dafür" ], "correct": 1, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Zweck mit eigenem Subjekt (er) und Verb am Ende: damit. „um“ braucht „zu“ + Infinitiv und dasselbe Subjekt." },
+        { "options": [ "wird", "ist", "hat" ], "correct": 0, "nodeId": "GR.PASSIV", "errorCode": "PASSIV_FORM", "explanation": "Vorgangspassiv: werden + Partizip II (wird veranstaltet)." },
+        { "options": [ "ob", "als", "wenn" ], "correct": 2, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Ich würde mich freuen, wenn … - eine Bedingung, keine indirekte Frage." }
+      ]
+    },
+    {
+      "id": "sb1.hausverwaltung",
+      "teil": 1,
+      "title": "Anfrage an die Hausverwaltung",
+      "text": "Sehr geehrte Damen und Herren,\n\nin Ihrem Schreiben vom 12. Mai haben Sie mitgeteilt, dass in unserem Haus ab Juni die Fenster ausgetauscht [1]. Grundsätzlich begrüße ich diese Maßnahme sehr, [2] die alten Fenster im Winter kaum noch dicht sind. Allerdings habe ich noch einige Fragen, [3] Sie mir hoffentlich beantworten können.\n\nZunächst wüsste ich gern, [4] die Arbeiten in meiner Wohnung genau stattfinden. Ich arbeite zwar überwiegend im Homeoffice, muss aber an zwei Tagen pro Woche ins Büro. Es wäre daher hilfreich, [5] ich den Termin rechtzeitig erfahren würde.\n\nAußerdem möchte ich wissen, ob die Mieter [6] den Kosten beteiligt werden. In Ihrem Schreiben ist nur von einer „Modernisierung“ die Rede. [7] ich weiß, kann die Miete nach einer Modernisierung erhöht werden. Bevor ich mir darüber Sorgen mache, [8] ich gern genauere Informationen.\n\nSchließlich bitte ich Sie, mir einen Ansprechpartner zu nennen, [9] ich mich bei Problemen während der Bauarbeiten wenden kann.\n\nIch bedanke mich im Voraus für Ihre Mühe und freue mich [10] Ihre Antwort.\n\nMit freundlichen Grüßen\nAna Kovač",
+      "gaps": [
+        { "options": [ "worden", "werden", "würden" ], "correct": 1, "nodeId": "GR.PASSIV", "errorCode": "PASSIV_FORM", "explanation": "Passiv Präsens im Nebensatz: … ausgetauscht werden. „worden“ gibt es nur im Perfekt/Plusquamperfekt." },
+        { "options": [ "denn", "deshalb", "weil" ], "correct": 2, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_STELLUNG", "explanation": "Das Verb „sind“ steht am Ende: Nebensatz mit weil. Nach „denn“ stünde das Verb an Position 2." },
+        { "options": [ "die", "denen", "deren" ], "correct": 0, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "Fragen beantworten (Akk.), Plural: die." },
+        { "options": [ "ob", "wann", "wenn" ], "correct": 1, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "„genau“ fragt nach dem Zeitpunkt: indirekte W-Frage mit wann." },
+        { "options": [ "als", "ob", "wenn" ], "correct": 2, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Es wäre hilfreich, wenn … - Bedingung im Konjunktiv II." },
+        { "options": [ "an", "bei", "mit" ], "correct": 0, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "jemanden an etwas (Dat.) beteiligen." },
+        { "options": [ "Sobald", "Soweit", "Solange" ], "correct": 1, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Fester Ausdruck: Soweit ich weiß, …" },
+        { "options": [ "würde", "wäre", "hätte" ], "correct": 2, "nodeId": "GR.KONJUNKTIV2", "errorCode": "KONJ2_FORM", "explanation": "Höfliche Bitte: Ich hätte gern … (haben im Konjunktiv II)." },
+        { "options": [ "an den", "dem", "bei dem" ], "correct": 0, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich an jemanden (Akk.) wenden - im Relativsatz: an den." },
+        { "options": [ "über", "auf", "für" ], "correct": 1, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich freuen auf = auf etwas, das noch kommt (die Antwort). sich freuen über = über etwas, das schon da ist." }
+      ]
+    },
+    {
+      "id": "sb1.weiterbildung",
+      "teil": 1,
+      "title": "Antrag auf eine Weiterbildung",
+      "text": "Sehr geehrter Herr Lindner,\n\nwie in unserem Gespräch am Montag besprochen, schicke ich Ihnen heute die Informationen zu der Weiterbildung, [1] ich im Herbst gern teilnehmen würde. Es handelt sich um einen Kurs für Projektmanagement, [2] von der Industrie- und Handelskammer angeboten wird.\n\nDer Kurs findet an sechs Wochenenden statt, [3] meine normale Arbeitszeit kaum betroffen wäre. Lediglich für die Abschlussprüfung [4] ich einen Tag Urlaub nehmen. Die Kosten betragen 1.200 Euro. Ich wäre Ihnen sehr dankbar, wenn sich die Firma zumindest teilweise daran beteiligen [5].\n\nIch bin überzeugt, dass ich das Gelernte direkt in unserem Team anwenden kann. Gerade bei größeren Projekten fehlt uns oft ein klarer Zeitplan. [6] kommt es immer wieder zu Verzögerungen. [7] ich den Kurs abgeschlossen habe, könnte ich meine Kolleginnen und Kollegen bei der Planung unterstützen.\n\nDie Anmeldefrist endet am 15. Juli. [8] Sie noch Fragen haben, stehe ich Ihnen jederzeit gern zur Verfügung. Ich würde mich freuen, [9] Sie meinen Antrag unterstützen [10].\n\nMit freundlichen Grüßen\nIvan Nikolić",
+      "gaps": [
+        { "options": [ "bei der", "an der", "für die" ], "correct": 1, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "teilnehmen an + Dat. - im Relativsatz: an der (die Weiterbildung)." },
+        { "options": [ "den", "dem", "der" ], "correct": 2, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "der Kurs - im Passivsatz ist er das Subjekt: Nominativ der." },
+        { "options": [ "sodass", "damit", "weil" ], "correct": 0, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Folge, keine Absicht: sodass. „damit“ würde heißen, der Kurs findet am Wochenende statt, um die Arbeitszeit zu schonen." },
+        { "options": [ "müssen", "muss", "musste" ], "correct": 1, "nodeId": "GR.VERBFORMEN", "errorCode": "VERB_FORM", "explanation": "ich + Präsens: muss (die Prüfung liegt in der Zukunft)." },
+        { "options": [ "wird", "wäre", "würde" ], "correct": 2, "nodeId": "GR.KONJUNKTIV2", "errorCode": "KONJ2_FORM", "explanation": "beteiligen würde - Konjunktiv II passt zur höflichen Bitte „Ich wäre Ihnen dankbar, wenn …“." },
+        { "options": [ "Deshalb", "Weil", "Obwohl" ], "correct": 0, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_STELLUNG", "explanation": "Nach der Lücke folgt sofort das Verb (kommt): Adverb auf Position 1 - deshalb. „Weil“ und „obwohl“ verlangen das Verb am Ende." },
+        { "options": [ "Bevor", "Nachdem", "Während" ], "correct": 1, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Erst abschließen, dann unterstützen: nachdem + Perfekt." },
+        { "options": [ "Ob", "Damit", "Falls" ], "correct": 2, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Bedingung: Falls Sie noch Fragen haben, …" },
+        { "options": [ "wenn", "dass", "ob" ], "correct": 0, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Ich würde mich freuen, wenn … (Bedingung)." },
+        { "options": [ "werden", "würden", "wären" ], "correct": 1, "nodeId": "GR.KONJUNKTIV2", "errorCode": "KONJ2_FORM", "explanation": "unterstützen würden - würde-Form am Ende des Nebensatzes." }
+      ]
+    },
+    {
+      "id": "sb2.repaircafe",
+      "teil": 2,
+      "title": "Reparieren statt wegwerfen",
+      "text": "Seit gut zwei Jahren treffen sich im Stadtteilzentrum Nord jeden ersten Samstag [1] Monat Menschen, die kaputte Geräte nicht einfach wegwerfen wollen. Das Repair-Café ist [2] einer Idee von drei Nachbarn entstanden. „Wir haben uns darüber geärgert, [3] so viele Dinge im Müll landen, die man mit wenig Aufwand reparieren könnte“, erzählt Mitgründerin Hanna Weiß.\n\nInzwischen kommen pro Treffen [4] sechzig Besucherinnen und Besucher. Sie bringen Toaster, Fahrräder oder Kleidung mit, [5] ehrenamtliche Helfer gemeinsam mit ihnen reparieren. Bezahlen muss niemand etwas, [6] freuen sich die Organisatoren über eine kleine Spende. Wichtig ist ihnen, dass die Besucher nicht nur zuschauen, [7] selbst mit anpacken. „So lernt man, wie die Dinge funktionieren, und hat beim nächsten Mal weniger Angst [8] dem Schraubenzieher“, sagt Weiß.\n\nNicht jede Reparatur gelingt. [9] liegt die Erfolgsquote bei etwa siebzig Prozent – ein Wert, [10] den sich auch professionelle Werkstätten freuen würden.",
+      "box": [ "allerdings", "aus", "darauf", "dass", "denen", "die", "im", "obwohl", "rund", "seit", "sondern", "trotzdem", "über", "vor", "weshalb" ],
+      "gaps": [
+        { "correct": 6, "nodeId": "GR.KASUS_PRAEPOSITIONEN", "errorCode": "KASUS_PRAEP", "explanation": "jeden ersten Samstag im Monat - fester Ausdruck." },
+        { "correct": 1, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "aus etwas entstehen." },
+        { "correct": 3, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "sich darüber ärgern, dass … - das „darüber“ kündigt den dass-Satz an." },
+        { "correct": 8, "nodeId": "WS.MEINUNG_GESELLSCHAFT", "errorCode": "WS_WORTWAHL", "explanation": "rund = ungefähr, vor Zahlen." },
+        { "correct": 5, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "die Geräte, die die Helfer reparieren - Akkusativ Plural: die. „denen“ wäre Dativ." },
+        { "correct": 0, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_STELLUNG", "explanation": "Verb direkt danach (freuen sich): ein Adverb auf Position 1 - allerdings. „obwohl“ bräuchte das Verb am Ende." },
+        { "correct": 10, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "nicht nur …, sondern (auch) …" },
+        { "correct": 13, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "Angst vor + Dat." },
+        { "correct": 11, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_STELLUNG", "explanation": "Gegensatz zum Satz davor, Verb sofort danach: Trotzdem liegt …" },
+        { "correct": 12, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich über etwas freuen - im Relativsatz: über den (der Wert)." }
+      ]
+    },
+    {
+      "id": "sb2.homeoffice",
+      "teil": 2,
+      "title": "Weniger Pendeln, mehr Erschöpfung?",
+      "text": "Immer mehr Beschäftigte in Deutschland arbeiten zumindest [1] Teil von zu Hause aus. Eine neue Umfrage zeigt nun, dass das Homeoffice nicht nur Vorteile hat. Zwar sparen die Befragten im Durchschnitt [2] fünfzig Minuten Fahrzeit am Tag, [3] fällt es vielen schwer, nach Feierabend wirklich abzuschalten. Fast jeder Dritte gab an, abends noch E-Mails zu lesen, [4] er das eigentlich nicht müsste.\n\nDie Forscherinnen raten deshalb [5], feste Arbeitszeiten zu vereinbaren und den Laptop nach der Arbeit bewusst auszuschalten. Auch ein eigener Arbeitsplatz sei wichtig, [6] Beruf und Privatleben nicht ständig vermischt werden. Wer am Küchentisch arbeitet, denkt [7] an die Arbeit, weil er sie ständig vor Augen hat.\n\nDie Arbeitgeber sehen die Entwicklung [8] gemischten Gefühlen. Einerseits sind die Mitarbeitenden im Homeoffice seltener krank, andererseits leidet [9] Meinung vieler Führungskräfte der Austausch im Team. Viele Unternehmen setzen deshalb inzwischen auf ein gemischtes Modell: Die Beschäftigten kommen zwei oder drei Tage pro Woche ins Büro, [10] arbeiten sie von zu Hause.",
+      "box": [ "damit", "darauf", "dazu", "denn", "doch", "mit", "nach", "obwohl", "öfter", "rund", "sonst", "trotz", "um", "weil", "zum" ],
+      "gaps": [
+        { "correct": 14, "nodeId": "GR.KASUS_PRAEPOSITIONEN", "errorCode": "KASUS_PRAEP", "explanation": "zum Teil = teilweise." },
+        { "correct": 9, "nodeId": "WS.MEINUNG_GESELLSCHAFT", "errorCode": "WS_WORTWAHL", "explanation": "rund = ungefähr." },
+        { "correct": 4, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "zwar …, doch/aber … - und das Verb steht sofort danach (fällt)." },
+        { "correct": 7, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Gegensatz mit Verb am Ende (müsste): obwohl." },
+        { "correct": 2, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "PRAEPADVERB", "explanation": "jemandem zu etwas raten - vor einem zu-Infinitiv: dazu raten, … zu …" },
+        { "correct": 0, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Zweck mit eigenem Subjekt (Beruf und Privatleben): damit." },
+        { "correct": 8, "nodeId": "WS.MEINUNG_GESELLSCHAFT", "errorCode": "WS_WORTWAHL", "explanation": "öfter = häufiger. Die Lücke braucht ein Adverb." },
+        { "correct": 5, "nodeId": "GR.KASUS_PRAEPOSITIONEN", "errorCode": "KASUS_PRAEP", "explanation": "etwas mit gemischten Gefühlen sehen." },
+        { "correct": 6, "nodeId": "GR.KASUS_PRAEPOSITIONEN", "errorCode": "KASUS_PRAEP", "explanation": "nach Meinung + Gen. = laut Meinung." },
+        { "correct": 10, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "sonst = an den anderen Tagen; Adverb, Verb sofort danach." }
+      ]
+    },
+    {
+      "id": "sb2.sportverein",
+      "teil": 2,
+      "title": "Neues Kursprogramm im Sportverein",
+      "text": "Liebe Mitglieder,\n\nab September bieten wir [1] den bekannten Kursen zwei neue Angebote an: Yoga für Berufstätige und ein Lauftraining für Anfängerinnen und Anfänger. Beide Kurse richten sich [2] Mitglieder, die bisher wenig Sport getrieben haben. Das Lauftraining findet zweimal pro Woche statt, [3] bei schlechtem Wetter. Treffpunkt ist jeweils der Parkplatz [4] dem Vereinsheim.\n\nDie Teilnahme ist für Mitglieder kostenlos. Wir bitten Sie [5], sich bis zum 20. August verbindlich anzumelden, [6] wir die Gruppen rechtzeitig planen können. Die Zahl der Plätze ist begrenzt. [7] mehr Anmeldungen eingehen, als Plätze vorhanden sind, entscheidet die Reihenfolge der Anmeldung.\n\nAußerdem suchen wir noch Trainerinnen und Trainer, [8] Lust haben, eine Gruppe zu leiten. Eine Übungsleiterlizenz ist von Vorteil, aber keine Voraussetzung. Wer Interesse hat, kann sich [9] unserer Geschäftsstelle melden. Wir freuen uns [10] Ihre Unterstützung!\n\nIhr Vorstand",
+      "box": [ "an", "auch", "auf", "bei", "dafür", "damit", "darum", "denen", "die", "falls", "neben", "obwohl", "seit", "vor", "wegen" ],
+      "gaps": [
+        { "correct": 10, "nodeId": "GR.KASUS_PRAEPOSITIONEN", "errorCode": "KASUS_PRAEP", "explanation": "neben + Dat. = zusätzlich zu." },
+        { "correct": 0, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich an jemanden richten = für jemanden gedacht sein." },
+        { "correct": 1, "nodeId": "WS.MEINUNG_GESELLSCHAFT", "errorCode": "WS_WORTWAHL", "explanation": "auch bei schlechtem Wetter = sogar dann." },
+        { "correct": 13, "nodeId": "GR.WECHSELPRAEPOSITIONEN", "errorCode": "KASUS_WECHSEL", "explanation": "vor dem Vereinsheim - wo? Dativ." },
+        { "correct": 6, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "PRAEPADVERB", "explanation": "jemanden um etwas bitten - vor einem zu-Infinitiv: darum bitten, … zu …" },
+        { "correct": 5, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Zweck mit eigenem Subjekt (wir): damit." },
+        { "correct": 9, "nodeId": "GR.KONNEKTOREN", "errorCode": "KONNEKTOR_WAHL", "explanation": "Bedingung: Falls mehr Anmeldungen eingehen, …" },
+        { "correct": 8, "nodeId": "GR.RELATIVSATZ", "errorCode": "RELATIV_PRONOMEN", "explanation": "Trainer, die Lust haben - Subjekt, Plural: die." },
+        { "correct": 3, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich bei jemandem melden." },
+        { "correct": 2, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich freuen auf - die Unterstützung kommt noch." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  // telc Deutsch B2, Mündlicher Ausdruck: own tasks in the exam's format.
+  // Teil 1 "Über Erfahrungen sprechen": topics prepared at home, ~1.5 minutes each, then the partner asks.
+  // Teil 2 "Diskussion": a short newspaper text read during the preparation, then a discussion.
+  // Teil 3 "Gemeinsam etwas planen": a situation and the points a complete plan covers.
+  "erfahrungen": [
+    {
+      "id": "m1.umzug",
+      "title": "Ein Umzug, den Sie erlebt haben",
+      "stichpunkte": [ "wann und wohin", "warum Sie umgezogen sind", "was schwierig war", "wer oder was Ihnen geholfen hat" ],
+      "partnerQuestions": [ "Was haben Sie am meisten vermisst?", "Würden Sie heute etwas anders machen?", "Wie lange hat es gedauert, bis Sie sich zu Hause gefühlt haben?", "Wie haben Sie die Wohnung gefunden?" ],
+      "redemittel": [ "Ich möchte von … erzählen.", "Das war im Jahr …, als …", "Am schwierigsten war für mich, dass …", "Rückblickend würde ich sagen, …" ],
+      "modelAnswer": "Ich möchte von meinem Umzug nach Deutschland erzählen. Das war vor drei Jahren, als ich eine Stelle als Softwareentwickler in Mannheim bekommen habe. Ich bin damals ganz allein gekommen, nur mit zwei Koffern. Am schwierigsten war am Anfang die Wohnungssuche: Ohne Gehaltsnachweise aus Deutschland wollte mich kaum ein Vermieter haben. Ich habe deshalb die ersten zwei Monate in einem möblierten Zimmer gewohnt. Geholfen hat mir vor allem ein Kollege, der selbst aus Kroatien kommt. Er hat mir gezeigt, wie man sich beim Bürgeramt anmeldet und welche Versicherungen man braucht. Rückblickend würde ich sagen: Der Umzug war anstrengend, aber er war die beste Entscheidung meines Lebens."
+    },
+    {
+      "id": "m1.feier",
+      "title": "Ein Fest, das Ihnen in Erinnerung geblieben ist",
+      "stichpunkte": [ "Anlass", "Ort und Gäste", "was besonders war", "warum Sie sich daran erinnern" ],
+      "partnerQuestions": [ "Wer hat das Fest organisiert?", "Gibt es so ein Fest auch in Deutschland?", "Was hat man gegessen?", "Würden Sie so ein Fest wieder feiern?" ],
+      "redemittel": [ "Ein Fest, an das ich mich gern erinnere, ist …", "Der Anlass war …", "Besonders beeindruckt hat mich, dass …", "Bis heute denke ich gern daran, weil …" ]
+    },
+    {
+      "id": "m1.arbeitstag",
+      "title": "Ihr erster Arbeitstag in einer neuen Firma",
+      "stichpunkte": [ "Firma und Aufgabe", "Ihre Erwartungen", "die Kolleginnen und Kollegen", "was Sie überrascht hat" ],
+      "partnerQuestions": [ "Waren Sie sehr nervös?", "Wie wurden Sie eingearbeitet?", "Was war anders als in Ihrem Heimatland?", "Haben Sie noch Kontakt zu den Kollegen von damals?" ],
+      "redemittel": [ "Ich erinnere mich noch genau an …", "Ich hatte erwartet, dass …, aber …", "Was mich überrascht hat, war …", "Insgesamt war der Tag …" ]
+    },
+    {
+      "id": "m1.hobby",
+      "title": "Ein Hobby, das Ihnen wichtig ist oder war",
+      "stichpunkte": [ "seit wann", "wie Sie dazu gekommen sind", "was Ihnen daran gefällt", "was es Ihnen gebracht hat" ],
+      "partnerQuestions": [ "Wie viel Zeit verbringen Sie damit?", "Kostet das Hobby viel Geld?", "Machen Sie das allein oder mit anderen?", "Würden Sie es anderen empfehlen?" ],
+      "redemittel": [ "Seit ungefähr … Jahren …", "Dazu gekommen bin ich durch …", "Was mir daran besonders gefällt, ist …", "Es hat mir geholfen, …" ]
+    },
+    {
+      "id": "m1.hilfe",
+      "title": "Eine Situation, in der Sie Hilfe bekommen oder gegeben haben",
+      "stichpunkte": [ "was passiert ist", "wer geholfen hat", "wie Sie sich gefühlt haben", "was Sie daraus gelernt haben" ],
+      "partnerQuestions": [ "Haben Sie sich später bedankt?", "Wäre das in Ihrem Heimatland auch so passiert?", "Fällt es Ihnen leicht, um Hilfe zu bitten?", "Wie hätten Sie die Situation sonst gelöst?" ],
+      "redemittel": [ "Es war eine Situation, in der …", "Zum Glück hat mir … geholfen.", "Ich war wirklich erleichtert, als …", "Seitdem weiß ich, dass …" ]
+    },
+    {
+      "id": "m1.ausflug",
+      "title": "Ein Ausflug in die Natur",
+      "stichpunkte": [ "wohin und mit wem", "wie Sie dorthin gekommen sind", "was Sie erlebt haben", "was Ihnen am besten gefallen hat" ],
+      "partnerQuestions": [ "Wie war das Wetter?", "Würden Sie die Gegend weiterempfehlen?", "Machen Sie oft solche Ausflüge?", "Was haben Sie zum Essen mitgenommen?" ],
+      "redemittel": [ "Letzten Sommer bin ich mit … nach … gefahren.", "Wir sind mit … dorthin gekommen.", "Unterwegs haben wir …", "Am schönsten fand ich …" ]
+    },
+    {
+      "id": "m1.deutschlernen",
+      "title": "Ihre Erfahrungen beim Deutschlernen",
+      "stichpunkte": [ "wann und wo Sie angefangen haben", "was schwierig ist", "was Ihnen geholfen hat", "Ihre Ziele" ],
+      "partnerQuestions": [ "Was finden Sie an der deutschen Grammatik am schwierigsten?", "Sprechen Sie bei der Arbeit Deutsch?", "Lernen Sie lieber allein oder im Kurs?", "Was würden Sie Anfängern raten?" ],
+      "redemittel": [ "Angefangen habe ich …", "Besonders schwer fällt mir …", "Sehr geholfen hat mir …", "Mein Ziel ist es, …" ],
+      "modelAnswer": "Ich habe vor etwa vier Jahren in Novi Sad angefangen, Deutsch zu lernen, zuerst in einem Abendkurs und später mit einer App. Richtig gelernt habe ich die Sprache aber erst in Deutschland, bei der Arbeit. Was mir bis heute schwerfällt, sind die Verben mit Präpositionen – also ob man sich für etwas oder auf etwas freut, und dann noch der richtige Kasus. Beim Lesen und Hören habe ich kaum Probleme, aber wenn ich spontan sprechen muss, fehlen mir manchmal die Wörter. Geholfen hat mir vor allem, dass ich meine Fehler aufschreibe und regelmäßig wiederhole. Mein Ziel ist es, im nächsten Jahr die Prüfung telc Deutsch B2 zu bestehen und in Besprechungen sicherer zu werden."
+    },
+    {
+      "id": "m1.behoerde",
+      "title": "Eine Erfahrung mit einer Behörde",
+      "stichpunkte": [ "welche Behörde und warum", "wie es abgelaufen ist", "was schwierig oder überraschend war", "Ihr Tipp für andere" ],
+      "partnerQuestions": [ "Mussten Sie lange warten?", "Konnten Sie alles auf Deutsch erledigen?", "Ist das in Ihrem Heimatland einfacher?", "Hat Ihnen jemand geholfen?" ],
+      "redemittel": [ "Ich musste einmal zum … gehen, weil …", "Zuerst …, dann …, zum Schluss …", "Überrascht hat mich, dass …", "Mein Tipp wäre: …" ]
+    }
+  ],
+  "diskussionen": [
+    {
+      "id": "m2.viertagewoche",
+      "title": "Vier Tage arbeiten – für alle?",
+      "text": "Immer mehr Unternehmen in Deutschland testen die Vier-Tage-Woche. Die Beschäftigten arbeiten dabei nur noch vier Tage, meist bei gleichem Gehalt. Erste Ergebnisse klingen vielversprechend: In einem Pilotprojekt mit rund 45 Firmen berichteten die meisten Teilnehmenden von weniger Stress und mehr Zufriedenheit. Die Produktivität blieb in vielen Betrieben stabil, weil Besprechungen gekürzt und Abläufe vereinfacht wurden.\n\nKritiker warnen jedoch vor zu viel Euphorie. Gerade in Branchen wie der Pflege, im Handel oder im Handwerk sei eine Vier-Tage-Woche kaum umsetzbar, ohne zusätzliches Personal einzustellen – und das fehle schon heute. Arbeitgeberverbände weisen außerdem darauf hin, dass Deutschland angesichts des Fachkräftemangels eher mehr als weniger Arbeitsstunden brauche. Gewerkschaften halten dagegen, dass gerade kürzere Arbeitszeiten Berufe attraktiver machen und so neue Fachkräfte anziehen könnten.",
+      "pro": [ "weniger Stress, mehr Zeit für Familie und Erholung", "Firmen werden für Bewerber attraktiver", "Produktivität bleibt oft gleich, weil effizienter gearbeitet wird" ],
+      "contra": [ "in Pflege, Handel, Handwerk kaum umsetzbar", "Fachkräftemangel: weniger Stunden verschärfen das Problem", "an vier langen Tagen kann der Druck sogar steigen" ],
+      "redemittel": [ "Der Text beschäftigt sich mit der Frage, ob …", "Ich bin der Meinung, dass …, weil …", "Da muss ich Ihnen widersprechen: …", "Was halten Sie davon, wenn …?", "Ein Kompromiss könnte sein, dass …" ]
+    },
+    {
+      "id": "m2.handyverbot",
+      "title": "Handyverbot an Schulen?",
+      "text": "Mehrere Bundesländer diskutieren derzeit ein Handyverbot an Schulen. In einigen Schulen gilt es bereits: Smartphones müssen zu Beginn des Unterrichts ausgeschaltet in einem Schrank abgegeben werden und dürfen erst nach Schulschluss wieder benutzt werden. Die Lehrkräfte dieser Schulen berichten, die Schülerinnen und Schüler seien konzentrierter, in den Pausen werde wieder mehr miteinander gesprochen und gespielt. Auch Fälle von Mobbing über soziale Netzwerke seien zurückgegangen.\n\nAndere Fachleute halten ein generelles Verbot für den falschen Weg. Kinder und Jugendliche müssten lernen, verantwortungsvoll mit digitalen Medien umzugehen – und das gehe nicht, wenn man sie einfach verbiete. Außerdem nutzten viele Lehrkräfte das Smartphone sinnvoll im Unterricht, etwa für Recherchen oder Lern-Apps. Eltern wiederum befürchten, ihre Kinder im Notfall nicht erreichen zu können.",
+      "pro": [ "bessere Konzentration im Unterricht", "mehr echte Kontakte in den Pausen", "weniger Mobbing über soziale Netzwerke" ],
+      "contra": [ "Medienkompetenz lernt man nicht durch Verbote", "Smartphones sind auch ein Lernwerkzeug", "Eltern wollen ihre Kinder erreichen können" ],
+      "redemittel": [ "In dem Text geht es um …", "Aus meiner Erfahrung kann ich sagen, dass …", "Das sehe ich etwas anders, denn …", "Da haben Sie recht, allerdings …", "Wie wäre es, wenn …?" ]
+    },
+    {
+      "id": "m2.autofrei",
+      "title": "Innenstädte ohne Autos?",
+      "text": "Kopenhagen, Gent, Oslo: In vielen europäischen Städten sind große Teile der Innenstadt inzwischen autofrei. Auch in Deutschland wächst die Zahl der Städte, die solche Konzepte prüfen. Befürworter verweisen auf die Vorteile: weniger Lärm und Abgase, mehr Platz für Fußgänger, Radfahrer und Grünflächen. In Gent etwa ist die Zahl der Radfahrten nach der Umgestaltung deutlich gestiegen, und viele Straßen wurden zu Plätzen, auf denen man sich gern aufhält.\n\nDer Einzelhandel sieht die Pläne dagegen oft skeptisch. Geschäftsleute befürchten, dass Kundinnen und Kunden lieber in Einkaufszentren am Stadtrand fahren, wenn sie nicht mehr direkt vor dem Laden parken können. Auch ältere und behinderte Menschen seien auf das Auto angewiesen. Kritiker fordern deshalb, zuerst Busse und Bahnen auszubauen, bevor man Autos aus der Innenstadt verbannt.",
+      "pro": [ "weniger Lärm und bessere Luft", "mehr Platz für Menschen, Cafés und Grün", "Radfahren und Zufußgehen werden sicherer" ],
+      "contra": [ "Geschäfte verlieren Kunden", "ältere und behinderte Menschen brauchen das Auto", "ohne guten Nahverkehr funktioniert es nicht" ],
+      "redemittel": [ "Der Artikel stellt die Frage, ob …", "Meiner Ansicht nach …", "Ich verstehe Ihr Argument, aber …", "Ein wichtiger Punkt ist auch …", "Wir könnten uns darauf einigen, dass …" ]
+    },
+    {
+      "id": "m2.sprachkurse",
+      "title": "Sollen Arbeitgeber Deutschkurse bezahlen?",
+      "text": "Deutschland wirbt im Ausland um Fachkräfte – für Pflege, Handwerk und IT. Viele, die kommen, sprechen anfangs nur wenig Deutsch. Einige Unternehmen bieten deshalb Sprachkurse während der Arbeitszeit an und übernehmen die Kosten vollständig. Sie argumentieren, dass sich die Investition lohne: Mitarbeitende mit guten Deutschkenntnissen arbeiteten sicherer, verständigten sich besser mit Kunden und blieben länger im Betrieb.\n\nVor allem kleinere Firmen sehen das anders. Für sie seien solche Kurse kaum zu bezahlen, und niemand garantiere, dass die Beschäftigten nach dem Kurs nicht zu einem anderen Arbeitgeber wechselten. Sprachförderung sei Aufgabe des Staates, nicht der Unternehmen. Andere schlagen einen Mittelweg vor: Der Staat solle die Kurse finanzieren, die Arbeitgeber sollten dafür Arbeitszeit zur Verfügung stellen.",
+      "pro": [ "bessere Verständigung und mehr Sicherheit bei der Arbeit", "Mitarbeitende bleiben länger", "Betrieb wird für ausländische Fachkräfte attraktiver" ],
+      "contra": [ "für kleine Firmen zu teuer", "Beschäftigte können danach kündigen", "Sprachförderung ist Aufgabe des Staates" ],
+      "redemittel": [ "Der Text behandelt die Frage, wer …", "Ich kann aus eigener Erfahrung sagen, dass …", "Das ist ein guter Punkt, trotzdem …", "Ich schlage vor, dass …", "Wären Sie damit einverstanden, wenn …?" ]
+    }
+  ],
+  "planungen": [
+    {
+      "id": "m3.abschied",
+      "title": "Abschiedsfeier für eine Kollegin",
+      "situation": "Eine langjährige Kollegin geht nach 20 Jahren in Rente. Sie und Ihr Partner / Ihre Partnerin sollen eine Abschiedsfeier in der Firma organisieren. Machen Sie Vorschläge, reagieren Sie auf die Vorschläge Ihres Partners und einigen Sie sich auf einen Plan.",
+      "aspects": [ "Termin und Uhrzeit", "Ort", "Essen und Getränke", "Geschenk", "Programm (Rede, Fotos …)", "Wer übernimmt welche Aufgabe?" ],
+      "redemittel": [ "Was hältst du davon, wenn wir …?", "Das ist eine gute Idee, aber …", "Ich würde lieber … vorschlagen.", "Dann machen wir es so: …", "Wer kümmert sich um …?" ]
+    },
+    {
+      "id": "m3.ausflug-kurs",
+      "title": "Ausflug mit dem Deutschkurs",
+      "situation": "Ihr Deutschkurs möchte zum Kursende einen gemeinsamen Tagesausflug machen. Die Gruppe hat zwölf Personen, einige mit Kindern. Planen Sie gemeinsam den Ausflug.",
+      "aspects": [ "Ziel", "Termin", "Anreise", "Programm", "Kosten", "Verpflegung", "was bei schlechtem Wetter passiert" ],
+      "redemittel": [ "Wie wäre es mit …?", "Da bin ich nicht ganz sicher, weil …", "Einverstanden. Und was machen wir, wenn …?", "Lass uns festhalten: …", "Ich übernehme …" ]
+    },
+    {
+      "id": "m3.tag-der-offenen-tuer",
+      "title": "Tag der offenen Tür im Sportverein",
+      "situation": "Ihr Sportverein sucht neue Mitglieder und will einen Tag der offenen Tür veranstalten. Sie beide gehören zum Organisationsteam. Planen Sie die Veranstaltung.",
+      "aspects": [ "Datum und Dauer", "Programm und Angebote zum Ausprobieren", "Werbung", "Essen und Getränke", "Helferinnen und Helfer", "Angebote für Kinder" ],
+      "redemittel": [ "Ich hätte da eine Idee: …", "Meinst du nicht, dass …?", "Gute Idee! Außerdem könnten wir …", "Darauf können wir uns einigen.", "Fassen wir zusammen: …" ]
+    },
+    {
+      "id": "m3.einarbeitung",
+      "title": "Einarbeitung eines neuen Kollegen",
+      "situation": "Nächsten Monat beginnt ein neuer Kollege aus dem Ausland in Ihrem Team. Er spricht gut Englisch, aber erst wenig Deutsch. Planen Sie zusammen seine erste Woche.",
+      "aspects": [ "Empfang am ersten Tag", "Arbeitsplatz und Technik", "wer ihn einarbeitet", "Hilfe bei Behörden und Wohnungssuche", "Deutschkurs", "gemeinsame Aktivität im Team" ],
+      "redemittel": [ "Als Erstes sollten wir …", "Was meinst du, wäre es sinnvoll, …?", "Das finde ich wichtig, weil …", "Vielleicht wäre es besser, wenn …", "Gut, dann halten wir fest: …" ]
+    }
+  ]
+}

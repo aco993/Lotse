@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Lotse.Core.Model;
+using Lotse.Core.Telc;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.CurrentUser;
 using Lotse.Infrastructure.Data;
@@ -254,6 +255,18 @@ public sealed class TutorRegistry : ITutor, ILearnerBound, IDisposable
     {
         await EnsureCurrentAsync(ct);
         return await _active.Tutor.GenerateReadingAsync(node, band, audioOnly, context, ct);
+    }
+
+    public async Task<TelcAiRating> RateTelcAsync(TelcRatingRequest request, LearnerContext context, CancellationToken ct = default)
+    {
+        await EnsureCurrentAsync(ct);
+        return await _active.Tutor.RateTelcAsync(request, context, ct);
+    }
+
+    public async Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
+    {
+        await EnsureCurrentAsync(ct);
+        return await _active.Tutor.PartnerAsync(part, scenario, history, context, ct);
     }
 
     private sealed record StoredSettings(string PresetId, string? BaseUrl, string Model, string? ProtectedApiKey, string? Effort, int TimeoutSeconds);

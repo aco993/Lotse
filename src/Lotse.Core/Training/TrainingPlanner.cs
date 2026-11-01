@@ -51,6 +51,13 @@ public sealed record TrainingPlan(IReadOnlyList<TrainingItem> Items, string? Top
 /// Composes a training session. Session 1 is the diagnostic. Every later session has three blocks in a fixed order:
 /// the open points in a new context, then one weak topic from controlled to free (gap → transformation → own
 /// sentence → short text), then a speaking simulation on the same topic.
+/// <para>
+/// Two research-led details: the controlled part of the Schwerpunkt is interleaved - a gap from a second, contrasting
+/// topic sits between the topic's own gap and transformation, so the learner has to decide which rule applies
+/// instead of filling in the one rule the block is about (interleaving helps exactly that discrimination in L2
+/// grammar). And a point last got wrong with confidence 3 gets its re-test a week later (<see cref="LearnedRule.HypercorrectionDays"/>),
+/// which the review block puts first once the week is over.
+/// </para>
 /// </summary>
 public static class TrainingPlanner
 {
@@ -64,7 +71,8 @@ public static class TrainingPlanner
         IReadOnlyList<PointAnswer> history,
         ISet<string>? recentExerciseIds = null,
         int seed = 0,
-        Func<Exercise, Exercise>? render = null)
+        Func<Exercise, Exercise>? render = null,
+        DateTime? nowUtc = null)
     {
         if (sessionNumber <= 1) return new TrainingPlan(Diagnostic(content), null);
 
@@ -73,9 +81,12 @@ public static class TrainingPlanner
         var progress = LearnedRule.EvaluateAll(content.Points.Select(p => p.Id), history);
         var items = new List<TrainingItem>();
 
-        // 1. Wiederholung: sure-and-wrong first, then the oldest mistakes.
+        // 1. Wiederholung: the delayed re-tests whose week is over first, then sure-and-wrong, then the oldest mistakes.
+        var now = nowUtc ?? DateTime.UtcNow;
+        bool DelayedCheckDue(PointProgress p) => p.LearnableFromUtc is { } t && now >= t;
         var due = progress.Where(p => p.NeedsReview)
-            .OrderByDescending(p => p.Urgent)
+            .OrderByDescending(DelayedCheckDue)
+            .ThenByDescending(p => p.Urgent)
             .ThenBy(p => p.LastMistakeSession)
             .ThenBy(p => p.PointId, StringComparer.Ordinal)
             .Take(MaxReviewItems)
@@ -84,9 +95,11 @@ public static class TrainingPlanner
         {
             var point = content.Point(p.PointId)!;
             var variant = PickVariant(point, p, history);
-            var reason = p.Urgent
-                ? $"Dringend: in Sitzung {p.LastMistakeSession} sicher und falsch – neuer Kontext"
-                : $"Fehler aus Sitzung {p.LastMistakeSession} – neuer Kontext";
+            var reason = DelayedCheckDue(p)
+                ? $"Nachtest: in Sitzung {p.LastMistakeSession} sicher und falsch, eine Woche her – hält die Korrektur?"
+                : p.Urgent
+                    ? $"Dringend: in Sitzung {p.LastMistakeSession} sicher und falsch – neuer Kontext" + (p.LearnableFromUtc is { } t ? $", Nachtest ab {t.ToLocalTime():dd.MM.}" : "")
+                    : $"Fehler aus Sitzung {p.LastMistakeSession} – neuer Kontext";
             items.Add(FromPoint(point, variant, TrainingBlock.Wiederholung, $"w{items.Count + 1}", reason));
         }
 
@@ -113,7 +126,20 @@ public static class TrainingPlanner
         }
         var gap = Pick(ExerciseType.Cloze);
         var transform = Pick(ExerciseType.Transform) ?? Pick(ExerciseType.Cloze, gap) ?? Pick(ExerciseType.Translate);
+
+        // Interleaving: one gap from the contrast topic - the next-weakest one, on a tie the next in rotation.
+        var order = content.Topics.ToList();
+        var contrast = order.Where(t => t.Id != topic.Id)
+            .OrderByDescending(t => weight[t.Id])
+            .ThenBy(t => (order.IndexOf(t) - order.IndexOf(topic) + order.Count) % order.Count)
+            .FirstOrDefault();
+        var mixed = contrast is null ? null : catalog.Exercises
+            .Where(e => contrast.NodeIds.Contains(e.NodeId) && e.Band >= CefrBand.B1_2 && !recent.Contains(e.Id) && e.Type is ExerciseType.Cloze or ExerciseType.Transform)
+            .OrderBy(e => e.Id, StringComparer.Ordinal)
+            .ToList() is { Count: > 0 } c ? c[rng.Next(c.Count)] : null;
+
         if (gap is not null) items.Add(FromExercise(render(gap), TrainingStage.Lueckentext, "s1", topicReason));
+        if (mixed is not null) items.Add(FromExercise(render(mixed), TrainingStage.Lueckentext, "m1", $"Gemischt mit {contrast!.Title}: erst erkennen, welche Regel gilt"));
         if (transform is not null) items.Add(FromExercise(render(transform), TrainingStage.Umformung, "s2", topicReason));
         items.Add(FromTask(topic.OwnSentence, TrainingBlock.Schwerpunkt, TrainingStage.EigenerSatz, "s3", topicReason));
         items.Add(FromTask(topic.ShortText, TrainingBlock.Schwerpunkt, TrainingStage.KurzerText, "s4", topicReason));

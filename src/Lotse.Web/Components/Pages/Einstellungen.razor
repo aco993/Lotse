@@ -38,7 +38,14 @@ else
                     @foreach (var m in new[] { 30, 60, 90, 120, 180, 300 }) { <MudSelectItem T="int" Value="@m">@m Minuten pro Woche</MudSelectItem> }
                 </MudSelect>
             </MudItem>
-            <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" /></MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="ExamProvider" @bind-Value="_p.Exam" Label="Prüfung" Variant="Variant.Outlined">
+                    <MudSelectItem T="ExamProvider" Value="ExamProvider.Telc">telc Deutsch B2</MudSelectItem>
+                    <MudSelectItem T="ExamProvider" Value="ExamProvider.Goethe">Goethe-Zertifikat B2</MudSelectItem>
+                </MudSelect>
+                <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@(_p.Exam == ExamProvider.Telc ? "Prognose, Plan und Simulation zählen in telc-Punkten: schriftlich 135 von 225 zusammen, mündlich 45 von 75 für sich." : "Prüfungsseite und Prognose folgen dem Goethe-Format: vier Module, jedes einzeln bestehbar.")</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" HelperText="Mit Termin baut die telc-Seite einen Plan rückwärts bis zum Prüfungstag." /></MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect T="TargetLevel" @bind-Value="_p.TargetLevel" Label="Zielniveau" Variant="Variant.Outlined">
                     <MudSelectItem T="TargetLevel" Value="TargetLevel.B2">B2 – Prüfungsvorbereitung</MudSelectItem>

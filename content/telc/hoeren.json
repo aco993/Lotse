@@ -1,0 +1,119 @@
+{
+  // telc Deutsch B2, Hörverstehen: own texts in the exam's format, read by the app's voices and played ONCE.
+  // Teil 1: five news items, one statement each. Teil 2: one radio interview, ten statements.
+  // Teil 3: five short announcements, one statement each. Conversations put each turn on its own line ("Name: …").
+  "hoeren": [
+    {
+      "id": "hv1.nachrichten-a",
+      "teil": 1,
+      "title": "Nachrichten am Mittag",
+      "recordings": [
+        { "label": "Meldung 1", "audio": "Berlin. Die Bundesregierung will die Ausbildung von Pflegekräften stärker fördern. Ab dem kommenden Jahr sollen Auszubildende in der Pflege eine höhere Vergütung erhalten. Außerdem werden die Kosten für Sprachkurse ausländischer Pflegekräfte künftig vollständig vom Bund übernommen. Die Gewerkschaften begrüßten die Pläne, forderten aber zusätzlich bessere Arbeitszeiten.",
+          "statements": [ { "text": "Ausländische Pflegekräfte müssen ihre Sprachkurse in Zukunft selbst bezahlen.", "true": false, "explanation": "Die Kosten werden „vollständig vom Bund übernommen“." } ] },
+        { "label": "Meldung 2", "audio": "Hamburg. Wegen eines Streiks im öffentlichen Nahverkehr fahren morgen in Hamburg nur wenige Busse und U-Bahnen. Die Gewerkschaft hat die Beschäftigten zu einem ganztägigen Warnstreik aufgerufen. Die S-Bahn ist nicht betroffen und fährt nach dem normalen Fahrplan. Pendler sollten trotzdem mehr Zeit einplanen.",
+          "statements": [ { "text": "Die S-Bahn fährt morgen normal.", "true": true, "explanation": "„Die S-Bahn ist nicht betroffen und fährt nach dem normalen Fahrplan.“" } ] },
+        { "label": "Meldung 3", "audio": "München. Die Stadt München hat im vergangenen Jahr so viele Touristen gezählt wie nie zuvor. Mehr als neun Millionen Gäste übernachteten in der Stadt, rund fünf Prozent mehr als im Jahr davor. Die meisten ausländischen Besucher kamen aus den USA, gefolgt von Italien und Großbritannien.",
+          "statements": [ { "text": "Die meisten ausländischen Gäste kamen aus Italien.", "true": false, "explanation": "Die meisten kamen aus den USA; Italien folgt erst danach." } ] },
+        { "label": "Meldung 4", "audio": "Wissenschaft. Forschende der Universität Heidelberg haben herausgefunden, dass regelmäßige Bewegung das Gedächtnis auch im hohen Alter verbessern kann. Bereits drei Spaziergänge von je dreißig Minuten pro Woche hatten in der Studie einen messbaren Effekt. Die Teilnehmenden waren zwischen 65 und 85 Jahre alt.",
+          "statements": [ { "text": "Schon wenig Bewegung hatte in der Studie eine positive Wirkung.", "true": true, "explanation": "„Bereits drei Spaziergänge … hatten … einen messbaren Effekt.“" } ] },
+        { "label": "Wetter", "audio": "Und nun das Wetter. Morgen ist es im Norden zunächst bewölkt, im Laufe des Tages kommt die Sonne heraus. Im Süden regnet es den ganzen Tag, in den Alpen kann es bis auf 1500 Meter schneien. Die Temperaturen liegen zwischen 8 und 14 Grad.",
+          "statements": [ { "text": "Im Süden scheint morgen die Sonne.", "true": false, "explanation": "Die Sonne kommt im Norden heraus; im Süden regnet es den ganzen Tag." } ] }
+      ]
+    },
+    {
+      "id": "hv1.nachrichten-b",
+      "teil": 1,
+      "title": "Nachrichten am Abend",
+      "recordings": [
+        { "label": "Meldung 1", "audio": "Frankfurt. Die Zahl der Beschäftigten in Deutschland ist im vergangenen Quartal leicht gestiegen. Vor allem im Gesundheitswesen und in der IT-Branche wurden neue Stellen geschaffen. In der Industrie dagegen gingen Arbeitsplätze verloren. Experten rechnen damit, dass sich dieser Trend fortsetzt.",
+          "statements": [ { "text": "In der Industrie wurden mehr Menschen eingestellt.", "true": false, "explanation": "„In der Industrie dagegen gingen Arbeitsplätze verloren.“" } ] },
+        { "label": "Meldung 2", "audio": "Köln. Der Kölner Dom wird ab Montag drei Wochen lang jeden Abend in verschiedenen Farben angestrahlt. Mit der Aktion will die Stadt auf das Thema Organspende aufmerksam machen. Tagsüber bleibt der Dom wie gewohnt für Besucher geöffnet.",
+          "statements": [ { "text": "Der Dom ist während der Aktion für Besucher geschlossen.", "true": false, "explanation": "„Tagsüber bleibt der Dom wie gewohnt für Besucher geöffnet.“" } ] },
+        { "label": "Meldung 3", "audio": "Verkehr. Die Bahn baut ihr Angebot an Nachtzügen aus. Ab Dezember gibt es eine neue Verbindung von Berlin nach Paris, die dreimal pro Woche fährt. Tickets können bereits ab nächster Woche gebucht werden. Die Fahrt dauert etwa vierzehn Stunden.",
+          "statements": [ { "text": "Man kann die Tickets für den neuen Nachtzug bald kaufen.", "true": true, "explanation": "„Tickets können bereits ab nächster Woche gebucht werden.“" } ] },
+        { "label": "Meldung 4", "audio": "Bildung. Immer mehr Erwachsene in Deutschland nehmen an Weiterbildungen teil. Laut einer aktuellen Studie besuchte im letzten Jahr fast jede zweite Person zwischen 25 und 64 Jahren einen Kurs oder ein Seminar. Am häufigsten ging es dabei um berufliche Themen, vor allem um digitale Kenntnisse.",
+          "statements": [ { "text": "Die meisten Weiterbildungen hatten mit dem Beruf zu tun.", "true": true, "explanation": "„Am häufigsten ging es dabei um berufliche Themen.“" } ] },
+        { "label": "Sport", "audio": "Sport. Die deutsche Handballnationalmannschaft hat ihr letztes Vorbereitungsspiel vor der Europameisterschaft gewonnen. Gegen Dänemark siegte das Team mit 31 zu 28. Der Bundestrainer zeigte sich mit der Abwehr zufrieden, kritisierte aber die vielen Fehler im Angriff.",
+          "statements": [ { "text": "Der Trainer war mit dem ganzen Spiel zufrieden.", "true": false, "explanation": "Zufrieden nur mit der Abwehr - den Angriff kritisierte er." } ] }
+      ]
+    },
+    {
+      "id": "hv2.anerkennung",
+      "teil": 2,
+      "title": "Interview: Ausländische Abschlüsse",
+      "recordings": [
+        {
+          "audio": "Moderator: Herzlich willkommen zu „Arbeit und Leben“. Heute ist Karin Albrecht bei uns. Sie berät seit vielen Jahren Menschen, die mit einem ausländischen Berufsabschluss nach Deutschland kommen. Frau Albrecht, mit welchen Fragen kommen die Menschen zu Ihnen?\nFrau Albrecht: Meistens geht es um die Anerkennung des Abschlusses. Viele wissen gar nicht, ob ihr Beruf in Deutschland überhaupt anerkannt werden muss. Bei manchen Berufen, zum Beispiel in der Pflege oder bei Ärzten, ist das Pflicht. In vielen anderen Berufen, etwa in der IT, kann man auch ohne Anerkennung arbeiten.\nModerator: Das heißt, ein Softwareentwickler braucht gar keine Anerkennung?\nFrau Albrecht: Nicht unbedingt. Für die Arbeit selbst nicht, aber manchmal für das Visum. Und eine Anerkennung kann bei der Bewerbung helfen, weil Arbeitgeber dann besser einschätzen können, was jemand gelernt hat.\nModerator: Wie lange dauert so ein Verfahren?\nFrau Albrecht: Das Gesetz sagt: drei Monate, nachdem alle Unterlagen vollständig sind. In der Praxis dauert es oft länger, weil Dokumente fehlen oder übersetzt werden müssen. Ich rate deshalb immer, sich so früh wie möglich zu informieren – am besten schon im Heimatland.\nModerator: Und was kostet das?\nFrau Albrecht: Das ist sehr unterschiedlich, meistens zwischen hundert und sechshundert Euro. Dazu kommen die Kosten für Übersetzungen. Es gibt aber Förderprogramme. Wer wenig verdient, kann einen Zuschuss bekommen.\nModerator: Und wenn der Abschluss nur teilweise anerkannt wird?\nFrau Albrecht: Das kommt häufig vor. Dann bekommt man einen Bescheid, in dem genau steht, was fehlt. Oft kann man die Unterschiede mit einem Anpassungslehrgang oder einer Prüfung ausgleichen. Das ist zwar anstrengend, aber es lohnt sich – mit vollständiger Anerkennung verdienen die Leute oft deutlich mehr.\nModerator: Welche Rolle spielt die Sprache?\nFrau Albrecht: Eine sehr große. Für die Anerkennung selbst braucht man in vielen Berufen gar kein bestimmtes Sprachniveau. Aber im Alltag und im Job merkt man schnell: Ohne gutes Deutsch kommt man nicht weit. Viele meiner Klientinnen und Klienten verstehen schon sehr viel, trauen sich aber nicht zu sprechen. Denen sage ich: Sprechen Sie, auch mit Fehlern. Die Kollegen schätzen das.\nModerator: Frau Albrecht, vielen Dank für das Gespräch.",
+          "statements": [
+            { "text": "Frau Albrecht berät Menschen mit ausländischen Abschlüssen.", "true": true },
+            { "text": "Alle Berufe müssen in Deutschland offiziell anerkannt werden.", "true": false, "explanation": "Nur bei manchen Berufen (Pflege, Ärzte) ist das Pflicht." },
+            { "text": "In der IT kann man auch ohne Anerkennung arbeiten.", "true": true },
+            { "text": "Eine Anerkennung bringt bei Bewerbungen keinen Vorteil.", "true": false, "explanation": "Sie „kann bei der Bewerbung helfen“." },
+            { "text": "Das Verfahren dauert in der Praxis manchmal länger als drei Monate.", "true": true },
+            { "text": "Frau Albrecht empfiehlt, sich erst nach der Ankunft in Deutschland zu informieren.", "true": false, "explanation": "„am besten schon im Heimatland“." },
+            { "text": "Menschen mit geringem Einkommen können finanzielle Unterstützung bekommen.", "true": true },
+            { "text": "Bei einer teilweisen Anerkennung erfährt man nicht, was fehlt.", "true": false, "explanation": "Der Bescheid sagt „genau …, was fehlt“." },
+            { "text": "Für die Anerkennung braucht man in jedem Beruf ein bestimmtes Sprachniveau.", "true": false, "explanation": "„in vielen Berufen gar kein bestimmtes Sprachniveau“." },
+            { "text": "Frau Albrecht rät, trotz Fehlern Deutsch zu sprechen.", "true": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv2.coworking",
+      "teil": 2,
+      "title": "Interview: Coworking auf dem Land",
+      "recordings": [
+        {
+          "audio": "Moderatorin: Guten Abend und willkommen bei „Stadt, Land, Arbeit“. Mein Gast ist heute Florian Brandl. Er hat vor zwei Jahren in seinem Heimatdorf in Niederbayern einen Coworking-Space eröffnet. Herr Brandl, wie kam es dazu?\nHerr Brandl: Ich habe lange in München gearbeitet und bin jeden Tag zwei Stunden gependelt. Während der Pandemie habe ich dann von zu Hause gearbeitet und gemerkt, wie viel Zeit ich plötzlich hatte. Aber allein am Küchentisch – das war auf Dauer auch nichts für mich. Mir hat der Austausch mit anderen gefehlt.\nModeratorin: Und dann haben Sie einfach Büroräume gemietet?\nHerr Brandl: Nicht ganz. Im Dorf stand die alte Bäckerei seit Jahren leer. Die Gemeinde hat sie mir günstig vermietet, unter der Bedingung, dass der Raum auch für Veranstaltungen genutzt werden kann. Den Umbau haben wir zum größten Teil selbst gemacht, mit Freunden und Nachbarn.\nModeratorin: Wer arbeitet denn bei Ihnen?\nHerr Brandl: Ganz unterschiedliche Leute. Eine Grafikerin, zwei Programmierer, ein Steuerberater, der zweimal pro Woche kommt, und eine Lehrerin, die hier ihren Unterricht vorbereitet. Im Moment haben wir vierzehn feste Mitglieder. Dazu kommen Gäste, die nur einen Tag buchen.\nModeratorin: Lohnt sich das finanziell?\nHerr Brandl: Reich wird man damit nicht. Die Einnahmen decken die Miete und die Kosten für Internet und Strom, mehr nicht. Ich selbst verdiene mein Geld weiterhin als Softwareentwickler. Der Coworking-Space ist eher ein Projekt für die Gemeinschaft.\nModeratorin: Was hat sich im Dorf verändert?\nHerr Brandl: Erstaunlich viel. Abends finden hier jetzt Sprachkurse und Vorträge statt, und einmal im Monat gibt es ein Repair-Café. Zwei junge Familien sind sogar ins Dorf gezogen, weil sie wussten, dass es hier einen Arbeitsplatz mit schnellem Internet gibt. Das hätte ich am Anfang nie erwartet.\nModeratorin: Was würden Sie anderen raten, die so etwas planen?\nHerr Brandl: Mit der Gemeinde sprechen, und zwar früh. Ohne die Unterstützung des Bürgermeisters hätte ich die Räume nie bekommen. Und man sollte klein anfangen. Wir hatten am Anfang nur sechs Tische.\nModeratorin: Herr Brandl, vielen Dank und weiterhin viel Erfolg.",
+          "statements": [
+            { "text": "Herr Brandl ist früher täglich zur Arbeit nach München gefahren.", "true": true },
+            { "text": "Im Homeoffice hat ihm vor allem der Kontakt zu anderen gefehlt.", "true": true },
+            { "text": "In den Räumen war früher eine Bank.", "true": false, "explanation": "Es war die alte Bäckerei." },
+            { "text": "Den Umbau hat vor allem eine Baufirma gemacht.", "true": false, "explanation": "„zum größten Teil selbst gemacht, mit Freunden und Nachbarn“." },
+            { "text": "Im Coworking-Space arbeiten nur Menschen aus der IT-Branche.", "true": false, "explanation": "Auch eine Grafikerin, ein Steuerberater, eine Lehrerin." },
+            { "text": "Man kann einen Arbeitsplatz auch für einzelne Tage buchen.", "true": true },
+            { "text": "Herr Brandl lebt inzwischen von den Einnahmen des Coworking-Space.", "true": false, "explanation": "Er verdient sein Geld „weiterhin als Softwareentwickler“." },
+            { "text": "In den Räumen finden auch Veranstaltungen für das Dorf statt.", "true": true },
+            { "text": "Wegen des Coworking-Space sind Familien ins Dorf gezogen.", "true": true },
+            { "text": "Herr Brandl empfiehlt, gleich mit einem großen Projekt zu starten.", "true": false, "explanation": "„man sollte klein anfangen“." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv3.ansagen-a",
+      "teil": 3,
+      "title": "Ansagen unterwegs",
+      "recordings": [
+        { "label": "Bahnhof", "audio": "Achtung am Gleis 7: Der ICE 578 nach Hamburg-Altona, planmäßige Abfahrt 14 Uhr 32, fährt heute ausnahmsweise von Gleis 9 ab. Wir wiederholen: ICE 578 nach Hamburg-Altona heute von Gleis 9. Bitte beachten Sie außerdem die geänderte Wagenreihung: Die Wagen der ersten Klasse halten im Abschnitt E.",
+          "statements": [ { "text": "Der Zug nach Hamburg fährt heute von einem anderen Gleis ab.", "true": true, "explanation": "Gleis 9 statt Gleis 7." } ] },
+        { "label": "Anrufbeantworter", "audio": "Guten Tag, Sie sind verbunden mit der Zahnarztpraxis Doktor Weber. Unsere Praxis ist vom 2. bis zum 16. August wegen Urlaub geschlossen. In dringenden Fällen wenden Sie sich bitte an die Praxis Doktor Albers in der Bahnhofstraße 12. Ab dem 17. August sind wir wieder wie gewohnt für Sie da.",
+          "statements": [ { "text": "Während des Urlaubs übernimmt eine andere Praxis die dringenden Fälle.", "true": true } ] },
+        { "label": "Verkehrsfunk", "audio": "Und hier die Verkehrsmeldungen. Auf der A3 zwischen Würzburg und Nürnberg staut sich der Verkehr nach einem Unfall auf acht Kilometern. Die Polizei rät, die Strecke großräumig zu umfahren. Auf der A7 ist die Baustelle bei Kassel inzwischen geräumt, dort fließt der Verkehr wieder.",
+          "statements": [ { "text": "Auf der A7 gibt es wegen einer Baustelle noch Stau.", "true": false, "explanation": "Die Baustelle ist geräumt, der Verkehr fließt wieder." } ] },
+        { "label": "Kaufhaus", "audio": "Liebe Kundinnen und Kunden, nur heute erhalten Sie im dritten Stock zwanzig Prozent Rabatt auf alle Wintermäntel. Ausgenommen sind bereits reduzierte Artikel. Bitte beachten Sie: Unser Haus schließt heute bereits um 18 Uhr – nicht wie üblich um 20 Uhr.",
+          "statements": [ { "text": "Das Kaufhaus ist heute länger geöffnet als sonst.", "true": false, "explanation": "Es schließt früher: 18 statt 20 Uhr." } ] },
+        { "label": "Mailbox", "audio": "Hallo Herr Jovanović, hier ist Sabine Kurz von der Firma Elektro Kurz. Es geht um Ihren Termin für die Reparatur der Heizung. Unser Techniker kann leider nicht wie geplant am Donnerstag kommen, sondern erst am Freitag, und zwar zwischen acht und zehn Uhr. Wenn das nicht passt, rufen Sie mich bitte zurück.",
+          "statements": [ { "text": "Der Techniker kommt wie geplant am Donnerstag.", "true": false, "explanation": "„nicht … am Donnerstag …, sondern erst am Freitag“ - die zweite Angabe zählt." } ] }
+      ]
+    },
+    {
+      "id": "hv3.ansagen-b",
+      "teil": 3,
+      "title": "Ansagen im Alltag",
+      "recordings": [
+        { "label": "Flughafen", "audio": "Information für die Passagiere des Fluges LH 1412 nach Belgrad: Ihr Flug hat wegen eines technischen Problems etwa 45 Minuten Verspätung. Das Boarding beginnt voraussichtlich um 16 Uhr 10 am Gate B 22. Gutscheine für Getränke erhalten Sie am Schalter der Fluggesellschaft.",
+          "statements": [ { "text": "Die Passagiere bekommen einen Gutschein für Getränke.", "true": true } ] },
+        { "label": "Bürgeramt", "audio": "Willkommen beim Bürgeramt der Stadt Mannheim. Termine für Personalausweise und Reisepässe vereinbaren Sie bitte ausschließlich online. Ohne Termin können wir Sie leider nicht bedienen. Für Fragen zur Anmeldung eines Wohnsitzes drücken Sie bitte die Taste 2.",
+          "statements": [ { "text": "Man kann ohne Termin einen Reisepass beantragen.", "true": false, "explanation": "„Ohne Termin können wir Sie leider nicht bedienen.“" } ] },
+        { "label": "Radio-Tipp", "audio": "Unser Tipp für das Wochenende: Am Samstag findet im Stadtpark das große Sommerfest statt. Ab 14 Uhr gibt es Musik, Essensstände und ein Programm für Kinder. Der Eintritt ist frei. Wegen Bauarbeiten ist der Haupteingang allerdings gesperrt – nutzen Sie bitte den Eingang an der Goethestraße.",
+          "statements": [ { "text": "Besucher sollen das Fest über die Goethestraße betreten.", "true": true } ] },
+        { "label": "Hotel", "audio": "Guten Tag, hier ist das Hotel Seeblick. Wir rufen wegen Ihrer Reservierung vom 12. bis 15. Juni an. Leider ist das gebuchte Doppelzimmer mit Seeblick nicht verfügbar. Wir können Ihnen ohne Aufpreis ein größeres Zimmer mit Blick auf den Garten anbieten. Bitte teilen Sie uns bis Freitag mit, ob Sie einverstanden sind.",
+          "statements": [ { "text": "Für das andere Zimmer muss der Gast mehr bezahlen.", "true": false, "explanation": "„ohne Aufpreis“." } ] },
+        { "label": "U-Bahn", "audio": "Sehr geehrte Fahrgäste, wegen einer Signalstörung fährt die Linie U2 zwischen Hauptbahnhof und Messe nur alle zwanzig Minuten. Zwischen Messe und Flughafen verkehren die Züge normal. Wir bitten um Ihr Verständnis.",
+          "statements": [ { "text": "Zwischen Messe und Flughafen gibt es keine Probleme.", "true": true } ] }
+      ]
+    }
+  ]
+}

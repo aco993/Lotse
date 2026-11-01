@@ -11,7 +11,7 @@ public enum ReviewGrade
 }
 
 /// <summary>
-/// Spaced repetition on the FSRS-5 memory model (<see cref="Fsrs"/>). The scheduler owns the practical rules around the
+/// Spaced repetition on the FSRS-6 memory model (<see cref="Fsrs"/>). The scheduler owns the practical rules around the
 /// model: grades are derived from behaviour (wrong / slip / hint / speed), never self-rated; a wrong answer comes back
 /// within ten minutes so it is retrieved once more before the session ends (relearning step); the next interval is the
 /// point where recall probability would fall to <see cref="DesiredRetention"/>; intervals are capped so an exam-bound
@@ -34,7 +34,8 @@ public static class ReviewScheduler
         return durationMs < estimatedSeconds * 600 ? ReviewGrade.Easy : ReviewGrade.Good;
     }
 
-    public static void Apply(ReviewState state, ReviewGrade grade, DateTime nowUtc)
+    /// <param name="decay">The learner's fitted forgetting-curve decay (<see cref="FsrsOptimizer"/>); null = the FSRS-6 default.</param>
+    public static void Apply(ReviewState state, ReviewGrade grade, DateTime nowUtc, double? decay = null)
     {
         var g = (int)grade + 1; // FSRS grades 1..4
         ConvertLegacyState(state);
@@ -54,7 +55,7 @@ public static class ReviewScheduler
             }
             else
             {
-                var r = Fsrs.Retrievability(state.Stability, elapsedDays);
+                var r = Fsrs.Retrievability(state.Stability, elapsedDays, decay);
                 state.Stability = grade == ReviewGrade.Again
                     ? Fsrs.NextForgetStability(state.Difficulty, state.Stability, r)
                     : Fsrs.NextRecallStability(state.Difficulty, state.Stability, r, g);
@@ -70,7 +71,7 @@ public static class ReviewScheduler
         else
         {
             state.Repetitions++;
-            state.IntervalDays = Math.Clamp(Math.Round(Fsrs.IntervalDays(state.Stability, DesiredRetention)), 1, MaxIntervalDays);
+            state.IntervalDays = Math.Clamp(Math.Round(Fsrs.IntervalDays(state.Stability, DesiredRetention, decay)), 1, MaxIntervalDays);
         }
 
         state.LastReviewUtc = nowUtc;

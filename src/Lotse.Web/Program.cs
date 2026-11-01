@@ -108,6 +108,9 @@ builder.Services.AddScoped<ILearningService, LearningService>();
 // B2-Training: content validated against the seed catalogue once at startup, like the exercise bank itself.
 builder.Services.AddSingleton(sp => TrainingContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog));
 builder.Services.AddScoped<ITrainingService, TrainingService>();
+// telc Deutsch B2: own tasks in the exam's format, validated against the catalogue at startup like the rest.
+builder.Services.AddSingleton(sp => TelcContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog));
+builder.Services.AddScoped<ITelcService, TelcService>();
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddHealthChecks();
 

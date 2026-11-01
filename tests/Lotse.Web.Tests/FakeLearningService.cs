@@ -70,6 +70,7 @@ public sealed class FakeLearningService : ILearningService
     public Task<IReadOnlyList<ErrorJournalEntry>> GetErrorJournalAsync(int days = 30, int take = 100, CancellationToken ct = default) => throw Unexpected();
     public Task<IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)>> GetDailyHistoryAsync(int days = 30, CancellationToken ct = default) => throw Unexpected();
     public Task<ProgressStats> GetProgressStatsAsync(CancellationToken ct = default) => throw Unexpected();
+    public Task<LearningService.StoredFsrsFit?> GetForgettingCurveAsync(CancellationToken ct = default) => Task.FromResult<LearningService.StoredFsrsFit?>(null);
     public Task<IReadOnlyList<Exercise>> GenerateForNodeAsync(string nodeId, int count = 6, CancellationToken ct = default) => throw Unexpected();
     public Task<Exercise?> GenerateReadingForNodeAsync(string nodeId, CancellationToken ct = default) => throw Unexpected();
     public Task<IReadOnlyList<(string NodeTitle, int Count)>> FillWeakestAsync(int nodes = 3, int perNode = 6, CancellationToken ct = default) => throw Unexpected();
