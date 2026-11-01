@@ -1,0 +1,36 @@
+@* The tutor's telc rating: band and reason per criterion, the quoted mistakes, the next step. Errors arrive already
+   filtered to those that quote the learner's text, so every line here points at something the learner wrote. *@
+
+<div class="tc-ai">
+    @foreach (var c in Rating.Criteria)
+    {
+        <div class="tc-ai-crit"><span class="tc-band band-@c.Band">@c.Band</span> <b>@c.Criterion</b> – @c.Comment</div>
+    }
+    @if (Rating.ThemaVerfehlt)
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="my-2">Die Bewerterin hält das Thema für verfehlt – das wären 0 Punkte.</MudAlert>
+    }
+    @if (Rating.Errors.Count > 0)
+    {
+        <MudText Typo="Typo.subtitle2" Class="mt-2">Fehler (wörtlich aus deinem Text)</MudText>
+        @foreach (var e in Rating.Errors.Take(MaxErrors))
+        {
+            <div class="tc-ai-err"><s>@e.Snippet</s> → <b>@e.Correction</b> <span class="tc-explain">@e.Explanation</span></div>
+        }
+        @if (Rating.Errors.Count > MaxErrors) { <MudText Typo="Typo.caption" Style="opacity:.7">… und @(Rating.Errors.Count - MaxErrors) weitere.</MudText> }
+    }
+    @if (!string.IsNullOrWhiteSpace(Rating.Feedback))
+    {
+        <MudText Typo="Typo.body2" Class="mt-2">@Rating.Feedback</MudText>
+    }
+    @if (Rating.Upgrades.Count > 0)
+    {
+        <MudText Typo="Typo.subtitle2" Class="mt-2">So klingt es auf B2</MudText>
+        @foreach (var u in Rating.Upgrades) { <div class="tc-upgrade">„@u“</div> }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public TelcAiRating Rating { get; set; } = default!;
+    [Parameter] public int MaxErrors { get; set; } = 8;
+}

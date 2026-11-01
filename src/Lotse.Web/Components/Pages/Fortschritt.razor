@@ -49,6 +49,11 @@ else
                         ? "Noch keine geplanten Wiederholungen."
                         : $"So viel von deinen {_stats.Scheduled} geplanten Aufgaben würdest du gerade auf Anhieb können.")
                 </MudText>
+                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">
+                    @(_curve is { } c
+                        ? $"Vergessenskurve an dich angepasst (FSRS-6, aus {c.Reviews} Wiederholungen{(c.DefaultLogLoss > 0 && c.LogLoss < c.DefaultLogLoss ? $", {1 - c.LogLoss / c.DefaultLogLoss:P0} genauer als der Standard" : "")})."
+                        : "Vergessenskurve: FSRS-6-Standard – ab etwa 150 Wiederholungen wird sie an dich angepasst.")
+                </MudText>
             </MudPaper>
         </MudItem>
     </MudGrid>
@@ -122,12 +127,14 @@ else
     private IReadOnlyDictionary<string, SkillState>? _states;
     private IReadOnlyList<(DateTime Day, int Attempts, double Accuracy)> _history = [];
     private ProgressStats? _stats;
+    private LearningService.StoredFsrsFit? _curve;
 
     protected override async Task OnInitializedAsync()
     {
         _states = await Learning.GetSkillStatesAsync();
         _history = await Learning.GetDailyHistoryAsync();
         _stats = await Learning.GetProgressStatsAsync();
+        _curve = await Learning.GetForgettingCurveAsync();
     }
 
     private static string AreaLabel(SkillArea a) => a switch

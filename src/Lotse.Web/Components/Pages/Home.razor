@@ -1,5 +1,6 @@
 @page "/"
 @inject ILearningService Learning
+@inject ITelcService Telc
 @inject NavigationManager Nav
 
 <PageTitle>Heute – Lotse</PageTitle>
@@ -155,8 +156,37 @@ else
             </MudPaper>
         </MudItem>
         <MudItem xs="12" md="5">
+            @if (_telc is { } t)
+            {
+                @* The learner prepares for telc: the forecast in telc points, with the two separate pass marks. *@
+                <MudPaper Class="pa-4 mb-3" Elevation="1">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-1">
+                        <MudText Typo="Typo.subtitle1" Style="font-weight:600">telc-Prognose</MudText>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Text" Size="Size.Small" Href="telc" EndIcon="@Icons.Material.Filled.ArrowForward">telc B2</MudButton>
+                    </MudStack>
+                    @if (!t.Readiness.HasAnyEvidence)
+                    {
+                        <MudText Typo="Typo.body2">Noch keine telc-Ergebnisse – eine Einstiegssimulation macht die Prognose belastbar.</MudText>
+                    }
+                    else
+                    {
+                        var w = t.Readiness.Written;
+                        var o = t.Readiness.Oral;
+                        <MudText Typo="Typo.body2">Schriftlich @(w.Projected ? "≈ " : "")<b>@w.Points.ToString("0")</b>/225 (Hürde 135) · mündlich @(o.Projected ? "≈ " : "")<b>@(t.Readiness.HasOralEvidence ? o.Points.ToString("0") : "–")</b>/75 (Hürde 45)</MudText>
+                        @if (t.Readiness.Priorities().FirstOrDefault() is { } top)
+                        {
+                            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.8">Die meisten Punkte liegen gerade in: <MudLink Href="@($"telc/ueben/{top.Part}")">@TelcBlueprint.Info(top.Part).Title</MudLink></MudText>
+                        }
+                    }
+                    @if (t.Plan.FirstOrDefault() is { } week)
+                    {
+                        <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.8">Diese Woche: @week.Title</MudText>
+                    }
+                </MudPaper>
+            }
             <MudPaper Class="pa-4 mb-3" Elevation="1">
-                <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">B2-Prognose</MudText>
+                <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">@(_telc is null ? "B2-Prognose" : "Fertigkeiten (Goethe-Module)")</MudText>
                 <MudText Typo="Typo.body2" Class="mb-2">@_m.Readiness.Verdict</MudText>
                 @foreach (var mod in _m.Readiness.Modules)
                 {
@@ -211,7 +241,10 @@ else
     {
         _m = await Learning.GetDashboardAsync();
         _course = await Learning.GetCourseAsync();
+        if (_m.Profile.Exam == ExamProvider.Telc) _telc = await Telc.GetOverviewAsync();
     }
+
+    private TelcOverview? _telc;
 
     private async Task StartAsync(int minutes)
     {

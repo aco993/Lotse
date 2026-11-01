@@ -1,0 +1,136 @@
+{
+  // telc Deutsch B2, Schriftlicher Ausdruck: own task pairs in the exam's format. The candidate picks A or B and
+  // writes a (semi-)formal email treating three of the four Leitpunkte, or two and an aspect of their own, in at
+  // least 150 words. Keywords are lower-case word beginnings; they only drive the "Leitpunkt erkannt?" hint.
+  "schreiben": [
+    {
+      "id": "sa.sprachschule-fitness",
+      "a": {
+        "id": "sa.sprachschule",
+        "kind": "Bitte um Informationen",
+        "situation": "Sie möchten Ihr Deutsch für den Beruf verbessern und haben die folgende Anzeige gelesen. Schreiben Sie eine E-Mail an die Sprachschule und bitten Sie um weitere Informationen.",
+        "stimulus": "Sprachschule Lingua Plus – Intensivkurse Deutsch B2 und C1\nKleine Gruppen (max. 10 Personen) · erfahrene Lehrkräfte · Vorbereitung auf anerkannte Prüfungen\nVormittags-, Abend- und Wochenendkurse · Beginn jeden Monat\nInfo: kurse@lingua-plus.example",
+        "leitpunkte": [
+          { "text": "Erklären Sie, warum Sie den Kurs besuchen möchten und welches Niveau Sie haben.", "keywords": [ "niveau", "b1", "b2", "beruf", "arbeit", "einstuf", "verbessern" ] },
+          { "text": "Fragen Sie nach Kurszeiten, die zu Ihrer Arbeit passen.", "keywords": [ "zeit", "abend", "uhr", "wochenende", "termin", "beginn" ] },
+          { "text": "Erkundigen Sie sich nach den Kosten und nach Ermäßigungen.", "keywords": [ "kost", "preis", "gebühr", "ermäßig", "rabatt", "zahl" ] },
+          { "text": "Fragen Sie, ob der Kurs auf eine Prüfung vorbereitet.", "keywords": [ "prüfung", "zertifikat", "telc", "vorbereit", "test" ] }
+        ],
+        "formal": true,
+        "nodeId": "SC.FORMELLE_NACHRICHT",
+        "modelAnswer": "Betreff: Anfrage zu Ihren Intensivkursen Deutsch B2\n\nSehr geehrte Damen und Herren,\n\nich habe Ihre Anzeige gelesen und interessiere mich sehr für einen Intensivkurs auf dem Niveau B2. Ich arbeite seit zwei Jahren als Softwareentwickler in Mannheim und verstehe im Büro fast alles. Allerdings fällt es mir in Besprechungen noch schwer, mich spontan und genau auszudrücken. Deshalb möchte ich vor allem mein Sprechen und Schreiben verbessern.\n\nDa ich in Vollzeit arbeite, kommen für mich nur Abend- oder Wochenendkurse in Frage. Könnten Sie mir bitte mitteilen, an welchen Tagen und zu welchen Uhrzeiten diese Kurse stattfinden und wann der nächste Kurs beginnt?\n\nAußerdem würde ich gern wissen, wie viel ein solcher Kurs kostet. Gibt es eventuell eine Ermäßigung, wenn man mehrere Monate im Voraus bezahlt?\n\nSchließlich plane ich, im nächsten Frühjahr die Prüfung telc Deutsch B2 abzulegen. Bereiten Ihre Kurse gezielt auf diese Prüfung vor, zum Beispiel mit Modelltests?\n\nIch freue mich auf Ihre Antwort und bedanke mich im Voraus.\n\nMit freundlichen Grüßen\n{Name}"
+      },
+      "b": {
+        "id": "sa.fitness",
+        "kind": "Beschwerde",
+        "situation": "Sie haben vor zwei Monaten einen Vertrag mit einem Fitnessstudio abgeschlossen. Vieles, was in der Werbung versprochen wurde, stimmt nicht. Schreiben Sie eine Beschwerde an die Leitung des Studios.",
+        "stimulus": "FitPoint – Ihr Studio in der Innenstadt\nModerne Geräte · Kurse täglich von 7 bis 22 Uhr · Sauna inklusive · persönliche Betreuung\nJetzt nur 29,90 € im Monat!",
+        "leitpunkte": [
+          { "text": "Beschreiben Sie, was Ihnen bei Vertragsabschluss versprochen wurde.", "keywords": [ "versproch", "werbung", "anzeige", "vertrag", "angebot" ] },
+          { "text": "Erklären Sie, was nicht stimmt.", "keywords": [ "kaputt", "defekt", "geschlossen", "voll", "ausgefallen", "fällt aus" ] },
+          { "text": "Beschreiben Sie, welche Folgen das für Sie hat.", "keywords": [ "folge", "ärger", "umsonst", "verlor", "zeit", "geld" ] },
+          { "text": "Sagen Sie, was Sie jetzt erwarten.", "keywords": [ "erwart", "erstatt", "kündig", "zurück", "lösung", "rabatt" ] }
+        ],
+        "formal": true,
+        "nodeId": "RM.BESCHWERDE_BITTE",
+        "modelAnswer": "Betreff: Beschwerde über die Leistungen Ihres Studios\n\nSehr geehrte Damen und Herren,\n\nvor zwei Monaten habe ich in Ihrem Studio einen Vertrag abgeschlossen. In Ihrer Werbung und auch im Beratungsgespräch wurden mir moderne Geräte, tägliche Kurse von 7 bis 22 Uhr und eine persönliche Betreuung versprochen. Leider muss ich Ihnen mitteilen, dass ich mit Ihren Leistungen sehr unzufrieden bin.\n\nSeit Wochen sind drei der fünf Laufbänder defekt, und die Sauna ist seit Anfang des Monats geschlossen. Außerdem fallen die Abendkurse immer wieder aus, ohne dass die Mitglieder vorher informiert werden. Eine persönliche Betreuung habe ich bisher kein einziges Mal erlebt.\n\nDas hat für mich ärgerliche Folgen: Ich arbeite bis 18 Uhr und kann nur abends trainieren. Mehrmals bin ich umsonst ins Studio gefahren und habe dadurch Zeit und Geld verloren.\n\nIch erwarte deshalb, dass die Geräte bis Ende des Monats repariert werden. Für die Zeit, in der ich Ihre Leistungen nicht nutzen konnte, bitte ich um eine Erstattung eines Teils der Beiträge. Sollte sich nichts ändern, werde ich den Vertrag fristlos kündigen.\n\nMit freundlichen Grüßen\n{Name}"
+      }
+    },
+    {
+      "id": "sa.wohnung-laptop",
+      "a": {
+        "id": "sa.wohnung",
+        "kind": "Bitte um Informationen",
+        "situation": "Sie suchen eine neue Wohnung und haben die folgende Anzeige gefunden. Schreiben Sie an die Wohnungsgesellschaft und bitten Sie um weitere Informationen.",
+        "stimulus": "Wohnbau Rhein-Neckar\nHelle 3-Zimmer-Wohnung, 78 m², 2. OG, Balkon, Einbauküche, ruhige Lage, gute Verkehrsanbindung\nFrei ab 1. März · Kontakt: vermietung@wohnbau-rn.example",
+        "leitpunkte": [
+          { "text": "Stellen Sie sich kurz vor und erklären Sie, warum die Wohnung für Sie interessant ist.", "keywords": [ "suche", "familie", "arbeit", "umzug", "interess", "beruf" ] },
+          { "text": "Fragen Sie nach den genauen Kosten.", "keywords": [ "miete", "nebenkosten", "kaution", "kost", "heiz" ] },
+          { "text": "Bitten Sie um einen Besichtigungstermin.", "keywords": [ "besichtig", "termin", "anschau", "ansehen" ] },
+          { "text": "Fragen Sie, welche Unterlagen Sie brauchen und ob Haustiere erlaubt sind.", "keywords": [ "unterlag", "dokument", "schufa", "haustier", "katze", "hund", "nachweis" ] }
+        ],
+        "formal": true,
+        "nodeId": "SC.FORMELLE_NACHRICHT",
+        "modelAnswer": "Betreff: Ihre Anzeige – 3-Zimmer-Wohnung, 78 m²\n\nSehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Anzeige für die 3-Zimmer-Wohnung gelesen. Ich bin 33 Jahre alt, arbeite als Softwareentwickler bei einer Firma in Mannheim und suche zusammen mit meiner Partnerin eine größere Wohnung. Da wir beide oft im Homeoffice arbeiten, brauchen wir ein zusätzliches Zimmer als Arbeitszimmer. Die ruhige Lage und die gute Verkehrsanbindung wären für uns deshalb ideal.\n\nIn der Anzeige ist leider keine Miete angegeben. Könnten Sie mir bitte mitteilen, wie hoch die Kaltmiete und die Nebenkosten sind und ob eine Kaution verlangt wird?\n\nFalls die Wohnung noch frei ist, würde ich sie mir gern ansehen. Ein Besichtigungstermin wäre für mich am besten an einem Nachmittag nach 16 Uhr oder am Samstag möglich.\n\nAußerdem würde ich gern wissen, welche Unterlagen Sie von uns benötigen, zum Beispiel Gehaltsnachweise oder eine Schufa-Auskunft.\n\nÜber eine baldige Antwort würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\n{Name}"
+      },
+      "b": {
+        "id": "sa.laptop",
+        "kind": "Beschwerde",
+        "situation": "Sie haben in einem Online-Shop einen Laptop bestellt. Die Lieferung kam spät, und das Gerät funktioniert nicht richtig. Schreiben Sie an den Kundenservice.",
+        "stimulus": "TechDirekt – Elektronik zum Bestpreis\nLieferung in 24 Stunden · 30 Tage Rückgaberecht · Kundenservice rund um die Uhr",
+        "leitpunkte": [
+          { "text": "Beschreiben Sie, was Sie wann bestellt haben.", "keywords": [ "bestell", "gekauft", "datum", "bestellnummer", "laptop" ] },
+          { "text": "Erklären Sie, welche Probleme es gab.", "keywords": [ "defekt", "kaputt", "funktion", "spät", "verspät", "lieferung", "akku", "bildschirm" ] },
+          { "text": "Berichten Sie, was Sie schon unternommen haben.", "keywords": [ "angerufen", "hotline", "kontakt", "geschrieben", "versucht", "erreich" ] },
+          { "text": "Sagen Sie, was Sie jetzt erwarten.", "keywords": [ "erwart", "ersatz", "umtausch", "erstatt", "geld", "frist" ] }
+        ],
+        "formal": true,
+        "nodeId": "RM.BESCHWERDE_BITTE"
+      }
+    },
+    {
+      "id": "sa.lehrgang-hotel",
+      "a": {
+        "id": "sa.lehrgang",
+        "kind": "Bitte um Informationen",
+        "situation": "Ihr Arbeitgeber unterstützt Weiterbildungen. Sie haben die folgende Anzeige gesehen und möchten mehr wissen. Schreiben Sie an die Industrie- und Handelskammer.",
+        "stimulus": "IHK-Zertifikatslehrgang „Projektmanagement in der Praxis“\n120 Unterrichtsstunden · Präsenz und online · Abschluss mit IHK-Zertifikat\nNächster Start: September",
+        "leitpunkte": [
+          { "text": "Fragen Sie nach den Inhalten des Lehrgangs.", "keywords": [ "inhalt", "thema", "modul", "lern", "methode" ] },
+          { "text": "Erkundigen Sie sich nach den Voraussetzungen.", "keywords": [ "vorausset", "erfahrung", "abschluss", "kenntnis", "sprach" ] },
+          { "text": "Fragen Sie nach dem zeitlichen Ablauf.", "keywords": [ "zeit", "online", "präsenz", "wochenende", "dauer", "abend", "termin" ] },
+          { "text": "Fragen Sie nach Kosten und Fördermöglichkeiten.", "keywords": [ "kost", "förder", "zuschuss", "bildungsurlaub", "preis", "gebühr" ] }
+        ],
+        "formal": true,
+        "nodeId": "SC.FORMELLE_NACHRICHT",
+        "modelAnswer": "Betreff: Anfrage zum Zertifikatslehrgang Projektmanagement\n\nSehr geehrte Damen und Herren,\n\nich arbeite seit drei Jahren als Entwickler in einem IT-Unternehmen und übernehme inzwischen immer häufiger die Koordination kleinerer Projekte. Deshalb interessiere ich mich für Ihren Zertifikatslehrgang „Projektmanagement in der Praxis“ und hätte dazu einige Fragen.\n\nZunächst würde ich gern genauer wissen, welche Themen im Lehrgang behandelt werden. Geht es eher um klassische Planung oder auch um agile Methoden wie Scrum, die in meiner Firma verwendet werden?\n\nAußerdem möchte ich fragen, ob es bestimmte Voraussetzungen gibt. Ich habe einen Hochschulabschluss aus Serbien, aber noch keine formale Ausbildung im Projektmanagement. Reicht meine Berufserfahrung für die Teilnahme aus?\n\nDa ich in Vollzeit arbeite, ist auch der zeitliche Ablauf wichtig für mich. Wie viele Termine finden in Präsenz statt, und an welchen Wochentagen?\n\nSchließlich wüsste ich gern, welche Kosten entstehen und ob der Lehrgang staatlich gefördert werden kann.\n\nVielen Dank im Voraus für Ihre Antwort.\n\nMit freundlichen Grüßen\n{Name}"
+      },
+      "b": {
+        "id": "sa.hotel",
+        "kind": "Beschwerde",
+        "situation": "Sie waren auf einer Dienstreise und haben drei Nächte in einem Hotel verbracht. Der Aufenthalt war sehr enttäuschend. Schreiben Sie an die Hotelleitung.",
+        "stimulus": "Hotel Stadtblick ★★★★\nRuhige Zimmer mit Schreibtisch · schnelles WLAN · Frühstück ab 6 Uhr · ideal für Geschäftsreisende",
+        "leitpunkte": [
+          { "text": "Beschreiben Sie, was Sie gebucht hatten.", "keywords": [ "gebucht", "buchung", "reserv", "nächte", "zimmer" ] },
+          { "text": "Erklären Sie, was nicht in Ordnung war.", "keywords": [ "laut", "lärm", "wlan", "internet", "schmutz", "sauber", "frühstück" ] },
+          { "text": "Beschreiben Sie, wie das Personal reagiert hat.", "keywords": [ "personal", "rezeption", "mitarbeit", "reagier", "unfreundlich", "beschwert" ] },
+          { "text": "Sagen Sie, was Sie von der Hotelleitung erwarten.", "keywords": [ "erwart", "erstatt", "entschädig", "rückzahl", "gutschein", "preisnachlass" ] }
+        ],
+        "formal": true,
+        "nodeId": "RM.BESCHWERDE_BITTE"
+      }
+    },
+    {
+      "id": "sa.ehrenamt-heizung",
+      "a": {
+        "id": "sa.ehrenamt",
+        "kind": "Bitte um Informationen",
+        "situation": "Sie möchten sich in Ihrer Freizeit ehrenamtlich engagieren und haben den folgenden Aufruf gelesen. Schreiben Sie eine E-Mail an den Verein.",
+        "stimulus": "Mannheimer Tafel e. V. sucht Helferinnen und Helfer!\nLebensmittel abholen, sortieren, ausgeben – jede Stunde zählt.\nMelden Sie sich bei Frau Hauser: ehrenamt@tafel-ma.example",
+        "leitpunkte": [
+          { "text": "Stellen Sie sich vor und erklären Sie, warum Sie helfen möchten.", "keywords": [ "helfen", "engag", "interess", "möchte", "warum", "sinnvoll" ] },
+          { "text": "Fragen Sie, welche Aufgaben es gibt.", "keywords": [ "aufgab", "tätig", "sortier", "abhol", "ausgab", "mach" ] },
+          { "text": "Erklären Sie, wann Sie Zeit haben.", "keywords": [ "zeit", "stunde", "woche", "samstag", "abend", "nachmittag" ] },
+          { "text": "Fragen Sie nach Voraussetzungen und Einarbeitung.", "keywords": [ "vorausset", "einarbeit", "schulung", "erfahrung", "führerschein", "sprach" ] }
+        ],
+        "formal": false,
+        "nodeId": "SC.FORMELLE_NACHRICHT",
+        "modelAnswer": "Betreff: Mitarbeit bei der Tafel\n\nSehr geehrte Frau Hauser,\n\nich habe Ihren Aufruf in der Zeitung gelesen und würde mich gern bei der Mannheimer Tafel engagieren. Ich lebe seit drei Jahren in Mannheim und habe hier viel Unterstützung bekommen, als ich neu war. Nun möchte ich selbst etwas zurückgeben und mich für Menschen einsetzen, denen es nicht so gut geht.\n\nZunächst würde ich gern wissen, welche Aufgaben es bei Ihnen genau gibt. Ich habe einen Führerschein und könnte deshalb zum Beispiel auch Lebensmittel bei Supermärkten abholen. Aber natürlich helfe ich auch gern beim Sortieren oder bei der Ausgabe.\n\nDa ich unter der Woche arbeite, habe ich vor allem samstags Zeit. Unter der Woche wäre es höchstens am Abend nach 18 Uhr möglich. Wäre das für Sie interessant?\n\nAußerdem möchte ich fragen, ob es Voraussetzungen gibt und wie die Einarbeitung abläuft. Gibt es zum Beispiel eine Schulung zum Umgang mit Lebensmitteln?\n\nIch freue mich auf Ihre Antwort.\n\nMit freundlichen Grüßen\n{Name}"
+      },
+      "b": {
+        "id": "sa.heizung",
+        "kind": "Beschwerde",
+        "situation": "In Ihrer Mietwohnung funktioniert seit über einer Woche die Heizung nicht. Die Hausverwaltung hat noch nichts unternommen. Schreiben Sie eine Beschwerde.",
+        "stimulus": "Hausverwaltung Berger & Söhne\nIhr Partner für zuverlässige Betreuung · Notdienst 24 Stunden erreichbar",
+        "leitpunkte": [
+          { "text": "Beschreiben Sie das Problem.", "keywords": [ "heizung", "kalt", "defekt", "kaputt", "warm", "grad" ] },
+          { "text": "Berichten Sie, was Sie bisher unternommen haben.", "keywords": [ "gemeldet", "angerufen", "informiert", "notdienst", "geschrieben", "erreich" ] },
+          { "text": "Erklären Sie die Folgen für Sie und Ihre Familie.", "keywords": [ "krank", "kind", "erkält", "homeoffice", "arbeit", "folge" ] },
+          { "text": "Sagen Sie, was Sie jetzt erwarten.", "keywords": [ "erwart", "sofort", "reparatur", "minder", "frist", "spätestens" ] }
+        ],
+        "formal": true,
+        "nodeId": "RM.BESCHWERDE_BITTE"
+      }
+    }
+  ]
+}

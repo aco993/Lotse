@@ -52,8 +52,8 @@ public sealed class ReviewState
     public bool IsNew => Repetitions == 0 && LastReviewUtc is null;
 
     /// <summary>Current probability of recalling this item, from the FSRS forgetting curve.</summary>
-    public double RetrievabilityAt(DateTime nowUtc)
-        => LastReviewUtc is { } last ? Engine.Fsrs.Retrievability(Stability, (nowUtc - last).TotalDays) : 0;
+    public double RetrievabilityAt(DateTime nowUtc, double? decay = null)
+        => LastReviewUtc is { } last ? Engine.Fsrs.Retrievability(Stability, (nowUtc - last).TotalDays, decay) : 0;
 }
 
 public enum Outcome

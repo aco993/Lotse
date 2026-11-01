@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Lotse.Core.Model;
+using Lotse.Core.Telc;
 using Lotse.Core.Tutor;
 using Lotse.Infrastructure.Content;
 using Microsoft.Extensions.Logging;
@@ -63,6 +64,7 @@ public abstract class TutorBase(ILogger logger) : ITutor
             .AppendLine()
             .AppendLine("BEWERTUNGSKRITERIEN (je 0–5 Punkte, 3 = B2 bestanden):")
             .AppendJoin("\n", exercise.Rubric.Select(r => "- " + r)).AppendLine()
+            .AppendLine("Jeder gemeldete Fehler muss im Feld snippet WÖRTLICH aus dem Text des Lerners zitiert sein. Melde nichts, was du nicht zitieren kannst.")
             .AppendLine(mode == ProductionMode.Writing
                 ? "Bewerte zusätzlich immer die vier Prüfungskriterien: Erfüllung der Aufgabe, Kohärenz und Aufbau, Wortschatz, Strukturen."
                 : "Bewerte zusätzlich immer: Erfüllung der Aufgabe, Kohärenz, Wortschatz, Strukturen, Flüssigkeit.")
@@ -81,6 +83,8 @@ public abstract class TutorBase(ILogger logger) : ITutor
             .ToList();
         var dropped = (dto.Errors?.Count ?? 0) - errors.Count;
         if (dropped > 0) Logger.LogInformation("Tutor lieferte {Count} unbekannte Fehlercodes, verworfen.", dropped);
+        errors = QuotedErrors.Filter(errors, learnerText, out var unquoted).ToList();
+        if (unquoted > 0) Logger.LogInformation("Tutor meldete {Count} Fehler, die nicht wörtlich im Text stehen, verworfen.", unquoted);
 
         return new ProductionEvaluation(
             Math.Clamp(dto.OverallScore, 0, 1),
@@ -238,6 +242,113 @@ public abstract class TutorBase(ILogger logger) : ITutor
         var turns = new List<ChatTurn>();
         if (history.Count == 0 || !history[0].FromLearner)
             turns.Add(new ChatTurn(true, "Bitte eröffnen Sie die Diskussion mit Ihrer Position zur These."));
+        turns.AddRange(history);
+        return CompleteChatAsync(system, turns, ct);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // telc Deutsch B2: rating on telc's own criteria, and the exam partner
+    // ------------------------------------------------------------------------------------------
+
+    protected const string TelcRatingSchema = """
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["themaVerfehlt", "criteria", "errors", "feedback", "upgrades"],
+          "properties": {
+            "themaVerfehlt": { "type": "boolean", "description": "Nur true, wenn der Text mit der Aufgabe keine oder kaum eine Verbindung hat" },
+            "criteria": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["criterion", "band", "comment"],
+              "properties": { "criterion": { "type": "string" }, "band": { "type": "string", "enum": ["A", "B", "C", "D"] }, "comment": { "type": "string", "description": "1-2 Sätze Begründung, mit einem Zitat aus dem Text" } } } },
+            "errors": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["code", "snippet", "correction", "explanation"],
+              "properties": { "code": { "type": "string", "description": "Fehlercode aus dem Katalog" }, "snippet": { "type": "string", "description": "WÖRTLICHES Zitat aus dem Text des Lerners" }, "correction": { "type": "string" }, "explanation": { "type": "string" } } } },
+            "feedback": { "type": "string", "description": "Auf Deutsch: was die nächsthöhere Stufe bringen würde, konkret und kurz" },
+            "upgrades": { "type": "array", "items": { "type": "string" }, "description": "2-3 Sätze des Lerners in besserer B2-Qualität" }
+          }
+        }
+        """;
+
+    private sealed record TelcRatingDto(bool ThemaVerfehlt, List<TelcCriterionDto>? Criteria, List<ErrorDto>? Errors, string? Feedback, List<string>? Upgrades);
+    private sealed record TelcCriterionDto(string? Criterion, string? Band, string? Comment);
+
+    public async Task<TelcAiRating> RateTelcAsync(TelcRatingRequest request, LearnerContext context, CancellationToken ct = default)
+    {
+        var criteria = request.Speaking ? TelcSpeakingRating.Criteria : TelcWritingRating.Criteria;
+        var system = BuildSystemPrompt(context) + "\n\n" + TelcRaterBrief(request.Part);
+        var user = new StringBuilder()
+            .AppendLine($"PRÜFUNGSTEIL: {TelcBlueprint.Info(request.Part).Title}")
+            .AppendLine("AUFGABE:").AppendLine(request.Task.Trim()).AppendLine()
+            .AppendLine($"KRITERIEN - gib GENAU diese {criteria.Count} in dieser Reihenfolge, jeweils Band A, B, C oder D:")
+            .AppendJoin("\n", criteria.Select(c => $"- {c.Title}: {c.Question}")).AppendLine().AppendLine();
+        if (request.Conversation is { Length: > 0 } conversation)
+            user.AppendLine("GESPRÄCHSVERLAUF (nur zum Verständnis; bewertet wird nur der Lerner):").AppendLine(conversation.Trim()).AppendLine();
+        user.AppendLine(request.Speaking
+                ? "BEITRÄGE DES LERNERS (automatisches Transkript - Satzzeichen und Groß-/Kleinschreibung nicht bewerten; Aussprache nur bewerten, wenn das Transkript Hinweise gibt, sonst B):"
+                : "TEXT DES LERNERS:")
+            .AppendLine(request.LearnerText.Trim());
+
+        var json = await CompleteJsonAsync(system, user.ToString(), "telc_bewertung", TelcRatingSchema, ct);
+        var dto = JsonSerializer.Deserialize<TelcRatingDto>(json, ContentLoader.Options) ?? throw new InvalidOperationException("Leere Bewertung vom Tutor.");
+
+        var rated = dto.Criteria ?? [];
+        var bands = criteria.Select((c, i) =>
+        {
+            var r = i < rated.Count ? rated[i] : null;
+            var band = r?.Band is { } b && Enum.TryParse<TelcBand>(b, ignoreCase: true, out var parsed) ? parsed : TelcBand.C;
+            return new TelcCriterionRating(c.Title, band, r?.Comment ?? "");
+        }).ToList();
+
+        var knownCodes = context.ErrorCatalogue.Select(e => e.Code).ToHashSet(StringComparer.Ordinal);
+        var errors = (dto.Errors ?? [])
+            .Where(e => e.Code is not null && knownCodes.Contains(e.Code))
+            .Select(e => new TutorError(e.Code, e.Snippet ?? "", e.Correction ?? "", e.Explanation ?? ""));
+        var quoted = QuotedErrors.Filter(errors, request.LearnerText, out var unquoted);
+        if (unquoted > 0) Logger.LogInformation("telc-Bewertung: {Count} nicht zitierbare Fehler verworfen.", unquoted);
+
+        return new TelcAiRating(bands, quoted, dto.Feedback ?? "", dto.Upgrades ?? [], dto.ThemaVerfehlt && !request.Speaking);
+    }
+
+    private static string TelcRaterBrief(TelcPart part) => TelcBlueprint.IsWritten(part)
+        ? """
+          Du bist jetzt lizenzierte Bewerterin für telc Deutsch B2, Schriftlicher Ausdruck. Bewerte streng nach den telc-Kriterien:
+          I Aufgabenbewältigung: A = drei Leitpunkte (oder zwei und ein eigener Aspekt) angemessen bearbeitet, B = zwei, C = einer, D = keiner. Ein Leitpunkt braucht mehr als ein einziges Satzgefüge.
+          II Kommunikative Gestaltung: Register, Verknüpfung, Wortschatzspektrum. Kein A ohne Betreff, Anrede und Schlussformel. Kein B, wenn das Register schwankt oder die Leitpunkte linear ohne Verknüpfung aufgelistet sind.
+          III Formale Richtigkeit: A kaum Fehler, B wenige systematische Fehler, C mehrere systematische Fehler, aber verständlich, D viele elementare Fehler.
+          „Thema verfehlt“ nur, wenn der Text mit dem Schreibanlass keine oder kaum eine Verbindung hat. B bedeutet „B2 erfüllt“, C bedeutet B1.
+          Jeder gemeldete Fehler muss WÖRTLICH aus dem Text zitiert sein - melde nichts, was du nicht zitieren kannst.
+          """
+        : """
+          Du bist jetzt lizenzierte Prüferin für telc Deutsch B2, Mündlicher Ausdruck. Bewerte nach den vier telc-Kriterien:
+          Ausdrucksfähigkeit (inhalts- und rollenbezogen, Vielfalt, Absicht kommt an), Aufgabenbewältigung (Gesprächsbeteiligung, Strategien, Flüssigkeit),
+          Formale Richtigkeit (Satzbau, Formen), Aussprache und Intonation. A = voll angemessen, B = im Großen und Ganzen, C = kaum noch akzeptabel, D = nicht ausreichend.
+          Ein Beitrag aus nur wenigen Sätzen, oder einer, der nicht auf den Partner eingeht, kommt in der Aufgabenbewältigung nicht über C.
+          Jeder gemeldete Fehler muss WÖRTLICH aus den Beiträgen des Lerners zitiert sein.
+          """;
+
+    public Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
+    {
+        var role = part switch
+        {
+            TelcPart.Sprechen1 => """
+                Du bist Prüfungspartner in telc Deutsch B2, Mündlicher Ausdruck Teil 1 „Über Erfahrungen sprechen“. Der Lerner hat gerade über sein Thema erzählt.
+                Stelle wie ein echter Partner EINE interessierte, konkrete Nachfrage pro Beitrag (höchstens zwei Sätze), die an etwas anknüpft, das er gesagt hat. Sprich ihn mit „Sie“ an.
+                Nach drei Nachfragen erzählst du selbst kurz (vier bis fünf Sätze) von einer eigenen Erfahrung zu einem anderen Thema, damit der Lerner dir Fragen stellen kann.
+                """,
+            TelcPart.Sprechen2 => """
+                Du bist Prüfungspartner in telc Deutsch B2, Mündlicher Ausdruck Teil 2 „Diskussion“ über den Zeitungstext unten.
+                Vertritt eine erkennbar andere Position als der Lerner, bring pro Beitrag EIN Argument, eine Erfahrung oder eine Nachfrage, höchstens drei bis vier Sätze, sprich ihn mit „Sie“ an.
+                Geh auf sein letztes Argument ein, bevor du deins bringst. Nach etwa fünf Wechseln steuere auf eine mögliche Lösung oder einen Kompromiss zu.
+                """,
+            _ => """
+                Du bist Prüfungspartner in telc Deutsch B2, Mündlicher Ausdruck Teil 3 „Gemeinsam etwas planen“. Ihr duzt euch.
+                Mach pro Beitrag höchstens EINEN Vorschlag oder reagiere auf den Vorschlag des Lerners (zustimmen, begründet ablehnen, ergänzen), höchstens drei Sätze.
+                Lehne ab und zu einen Vorschlag mit Begründung ab, damit der Lerner verhandeln muss. Achte darauf, dass alle Planungspunkte drankommen, und fasse das Ergebnis zusammen, wenn alles geklärt ist.
+                """,
+        };
+        var system = BuildSystemPrompt(context) + "\n\n" + role + $"\n\nAUFGABE:\n{scenario}\n\n"
+            + "Am Ende jedes deiner Beiträge hänge - getrennt durch eine Leerzeile und beginnend mit „✎ “ - höchstens EINE knappe Korrektur des letzten Lernerbeitrags an (Fehler → richtig), oder „✎ Sprachlich gut.“ Keine weiteren Meta-Kommentare.";
+        var turns = new List<ChatTurn>();
+        if (history.Count == 0 || !history[0].FromLearner)
+            turns.Add(new ChatTurn(true, part == TelcPart.Sprechen3 ? "Fang du bitte an." : "Bitte beginnen Sie."));
         turns.AddRange(history);
         return CompleteChatAsync(system, turns, ct);
     }

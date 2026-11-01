@@ -1,0 +1,15 @@
+@* The phrases a task suggests, folded away so they help in practice without reading like a script. *@
+
+@if (Items.Count > 0)
+{
+    <details class="tc-redemittel">
+        <summary>Redemittel</summary>
+        <ul>
+            @foreach (var r in Items) { <li>@r</li> }
+        </ul>
+    </details>
+}
+
+@code {
+    [Parameter] public IReadOnlyList<string> Items { get; set; } = [];
+}

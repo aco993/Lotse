@@ -449,7 +449,7 @@ public sealed class LearningService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var reviews = await db.ReviewStates.AsNoTracking()
             .Where(r => EF.Property<string>(r, LotseDbContext.UserIdShadow) == userId).ToListAsync(ct);
-        return ProgressStatsCalculator.Compute(reviews, Now);
+        return ProgressStatsCalculator.Compute(reviews, Now, (await StoredFitAsync(db, userId, ct))?.Decay);
     }
 
     /// <summary>
@@ -584,9 +584,56 @@ public sealed class LearningService(
             // An abandoned placement (less than 70 % answered) does not calibrate anything; the banner stays.
             if (session.Kind == SessionKind.Placement && session.StepsDone >= session.StepsTotal * 0.7)
                 await MarkPlacementCompletedAsync(db, userId, ct);
+            await RefitForgettingCurveAsync(db, userId, ct);
             await db.SaveChangesAsync(ct);
         }
         return session;
+    }
+
+    // ---- Personal forgetting curve (FSRS-6 decay) ----------------------------------------------------------------
+
+    /// <summary>Settings key of the learner's fitted FSRS-6 decay. Not the tutor row, so a data reset removes it.</summary>
+    public const string FsrsFitKey = "fsrs.fit";
+    private static readonly TimeSpan RefitEvery = TimeSpan.FromDays(7);
+
+    public sealed record StoredFsrsFit(double Decay, int Reviews, double LogLoss, double DefaultLogLoss, DateTime FittedUtc);
+
+    private static async Task<StoredFsrsFit?> StoredFitAsync(LotseDbContext db, string userId, CancellationToken ct)
+    {
+        var row = await db.Settings.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.Key == FsrsFitKey, ct);
+        if (row is null) return null;
+        try { return JsonSerializer.Deserialize<StoredFsrsFit>(row.Value); }
+        catch (JsonException) { return null; }
+    }
+
+    public async Task<StoredFsrsFit?> GetForgettingCurveAsync(CancellationToken ct = default)
+    {
+        var userId = await UserIdAsync();
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        return await StoredFitAsync(db, userId, ct);
+    }
+
+    /// <summary>
+    /// Re-fits the learner's decay once a week, after a session: replays every review of a catalogue exercise with
+    /// the grade the scheduler gave it (<see cref="FsrsOptimizer"/>). Too little history leaves the default in place.
+    /// </summary>
+    private async Task RefitForgettingCurveAsync(LotseDbContext db, string userId, CancellationToken ct)
+    {
+        var stored = await StoredFitAsync(db, userId, ct);
+        if (stored is not null && Now - stored.FittedUtc < RefitEvery) return;
+        var rows = await db.Attempts.AsNoTracking().Where(a => a.UserId == userId && a.Outcome != Outcome.Graded)
+            .Select(a => new { a.ExerciseId, a.Utc, a.Outcome, a.HintUsed, a.DurationMs }).ToListAsync(ct);
+        var reviews = rows
+            .Where(r => Catalog.Exercise(r.ExerciseId) is { IsProduction: false })
+            .Select(r => new FsrsReview(r.ExerciseId, r.Utc,
+                (int)ReviewScheduler.GradeFor(r.Outcome, r.HintUsed, r.DurationMs, Catalog.Exercise(r.ExerciseId)!.EstimatedSeconds) + 1))
+            .ToList();
+        var fit = FsrsOptimizer.FitDecay(reviews);
+        if (fit is null) return;
+        var json = JsonSerializer.Serialize(new StoredFsrsFit(fit.Decay, fit.Reviews, fit.LogLoss, fit.DefaultLogLoss, Now));
+        var row = await db.Settings.FirstOrDefaultAsync(x => x.UserId == userId && x.Key == FsrsFitKey, ct);
+        if (row is null) db.Settings.Add(new SettingEntity { UserId = userId, Key = FsrsFitKey, Value = json });
+        else row.Value = json;
     }
 
     private async Task MarkPlacementCompletedAsync(LotseDbContext db, string userId, CancellationToken ct)
@@ -693,7 +740,7 @@ public sealed class LearningService(
             entry.Property(LotseDbContext.UserIdShadow).CurrentValue = userId;
             entry.State = EntityState.Added;
         }
-        ReviewScheduler.Apply(review, ReviewScheduler.GradeFor(check.Outcome, hintUsed, durationMs, exercise.EstimatedSeconds), now);
+        ReviewScheduler.Apply(review, ReviewScheduler.GradeFor(check.Outcome, hintUsed, durationMs, exercise.EstimatedSeconds), now, (await StoredFitAsync(db, userId, ct))?.Decay);
 
         var complete = false;
         if (sessionId is not null)
@@ -1130,9 +1177,13 @@ public sealed class LearningService(
         // it had just deleted. The isolation test now enumerates every per-user entity type, so the next table
         // cannot be forgotten silently.
         await db.ReadinessSnapshots.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.TelcAttempts.Where(a => a.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.TelcSimulations.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
         await db.TrainingAnswers.Where(a => a.UserId == userId).ExecuteDeleteAsync(ct);
         await db.TrainingSessions.Where(s => s.UserId == userId).ExecuteDeleteAsync(ct);
         await db.Profiles.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
+        // The fitted forgetting curve was learned from the history just deleted; the tutor setup stays.
+        await db.Settings.Where(x => x.UserId == userId && x.Key == FsrsFitKey).ExecuteDeleteAsync(ct);
         await tx.CommitAsync(ct);
     }
 }

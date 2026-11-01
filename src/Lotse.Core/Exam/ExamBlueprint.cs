@@ -6,8 +6,8 @@ public sealed record ExamModule(string Name, int Minutes, IReadOnlyList<ExamPart
 
 /// <summary>
 /// Structure of the Goethe-Zertifikat B2 (format valid since 2019). Encoded as data so the exam simulator, the
-/// readiness report and the tips all speak about the same thing. telc Deutsch B2 is close enough that the same
-/// preparation transfers; the differences are noted in <see cref="TelcDifferences"/>.
+/// readiness report and the tips all speak about the same thing. telc Deutsch B2 has its own blueprint in
+/// <see cref="Telc.TelcBlueprint"/>; <see cref="TelcDifferences"/> sums up how the two differ.
 /// </summary>
 public static class ExamBlueprint
 {
@@ -42,9 +42,11 @@ public static class ExamBlueprint
         ], "Bewertet nach Erfüllung, Interaktion, Kohärenz, Wortschatz, Strukturen, Aussprache. Mindestens 60 %."),
     ];
 
+    /// <summary>The differences in one paragraph; the full telc format lives in <see cref="Telc.TelcBlueprint"/>.</summary>
     public const string TelcDifferences =
-        "telc Deutsch B2: zusätzlich „Sprachbausteine“ (Grammatik/Wortschatz-Lückentexte), Schreiben ist ein halbformeller Brief zu einer von zwei Aufgaben, "
-        + "Sprechen hat drei Teile (Präsentation, Diskussion, gemeinsame Planung). Die B2-Kompetenzen sind identisch – wer Goethe besteht, besteht telc.";
+        "telc Deutsch B2 zählt anders: Die schriftliche Prüfung (Lesen, Sprachbausteine, Hören, E-Mail) wird zusammengezählt – 135 von 225 Punkten reichen, "
+        + "starke Teile gleichen schwache aus. Die mündliche Prüfung (Erfahrungen, Diskussion, gemeinsam planen) braucht für sich 45 von 75. "
+        + "Neu gegenüber Goethe sind die Sprachbausteine, und geschrieben wird eine einzige (halb)formelle E-Mail.";
 
     public static readonly IReadOnlyList<string> WritingCriteria = ["Erfüllung der Aufgabe", "Kohärenz und Aufbau", "Wortschatz", "Strukturen (Grammatik)"];
     public static readonly IReadOnlyList<string> SpeakingCriteria = ["Erfüllung der Aufgabe", "Interaktion", "Kohärenz", "Wortschatz", "Strukturen", "Aussprache"];

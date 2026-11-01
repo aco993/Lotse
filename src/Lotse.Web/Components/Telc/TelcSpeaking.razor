@@ -1,0 +1,465 @@
+@* One part of the telc oral exam. Teil 1: tell about an experience for about 1½ minutes, then answer the partner's
+   questions - or train the same story with 4/3/2: three rounds, each shorter, with two or three corrections in
+   between. Teil 2: sum up the newspaper text in a minute, then discuss. Teil 3: plan together. The partner is the
+   AI tutor when one is configured, otherwise a scripted partner built from the task (its questions, the
+   counter-arguments, the planning points), so the part can always be practised as a conversation. *@
+@inject ITelcService Telc
+@inject SpeechService Speech
+@implements IDisposable
+
+@if (Title is null)
+{
+    <MudAlert Severity="Severity.Error">Aufgabe nicht gefunden.</MudAlert>
+    return;
+}
+
+<div class="tc-bar">
+    <span class="tc-part">@TelcBlueprint.Info(Part).Title</span>
+    @if (_recording || _countdown > 0)
+    {
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Left <= 15 ? Color.Warning : Color.Default)">⏱ @Clock(Left)</MudChip>
+    }
+    <span class="tc-points">25 Punkte</span>
+</div>
+
+<MudPaper Elevation="0" Class="pa-3 mb-3 tc-task">
+    @switch (Part)
+    {
+        case TelcPart.Sprechen1:
+            var e = Telc.Content.FindErfahrung(TaskId)!;
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">@e.Title</MudText>
+            <MudText Typo="Typo.body2" Class="mb-1">(@string.Join(", ", e.Stichpunkte))</MudText>
+            <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.8">Erzählen Sie Ihrer Partnerin / Ihrem Partner etwa 1½ Minuten von Ihren Erfahrungen. Danach beantworten Sie ihre/seine Fragen. Die Themen bereiten Sie in der Prüfung zu Hause vor.</MudText>
+            <Redemittel Items="e.Redemittel" />
+            break;
+        case TelcPart.Sprechen2:
+            var d = Telc.Content.FindDiskussion(TaskId)!;
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">@d.Title</MudText>
+            <div class="reading-text tc-stimulus my-2">@d.Text</div>
+            <MudText Typo="Typo.caption" Class="d-block" Style="opacity:.8">Fassen Sie den Text kurz zusammen (höchstens eine Minute). Diskutieren Sie dann mit Ihrer Partnerin / Ihrem Partner, bringen Sie Ihre Erfahrungen ein, begründen Sie Ihre Meinung und sprechen Sie über mögliche Lösungen.</MudText>
+            <Redemittel Items="d.Redemittel" />
+            break;
+        default:
+            var p = Telc.Content.FindPlanung(TaskId)!;
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600">@p.Title</MudText>
+            <MudText Typo="Typo.body2" Class="my-1">@p.Situation</MudText>
+            <div class="tc-aspects">
+                @foreach (var a in p.Aspects)
+                {
+                    var covered = Covers(a);
+                    <span class="tc-aspect @(covered ? "ok" : "")">@(covered ? "✓ " : "")@a</span>
+                }
+            </div>
+            <Redemittel Items="p.Redemittel" />
+            break;
+    }
+</MudPaper>
+
+@* ---- 1. The monologue: Teil 1 story (or 4/3/2 rounds), Teil 2 summary. Teil 3 starts straight with the conversation. *@
+@if (Part != TelcPart.Sprechen3 && _phase == Phase.Monolog)
+{
+    @if (Part == TelcPart.Sprechen1 && SimulationId is null)
+    {
+        <div class="tr-conf mb-2" role="radiogroup" aria-label="Übungsform">
+            <button type="button" class="tr-conf-btn @(!_fourThreeTwo ? "selected" : "")" disabled="@(_rounds.Count > 0)" @onclick="() => _fourThreeTwo = false"><b>1½ min</b> wie in der Prüfung</button>
+            <button type="button" class="tr-conf-btn @(_fourThreeTwo ? "selected" : "")" disabled="@(_rounds.Count > 0)" @onclick="() => _fourThreeTwo = true"><b>3 – 2 – 1½</b> 4/3/2-Methode</button>
+        </div>
+        @if (_fourThreeTwo)
+        {
+            <MudText Typo="Typo.caption" Class="d-block mb-2" Style="opacity:.8">Dieselbe Geschichte dreimal, jedes Mal mit weniger Zeit. Das zwingt zu flüssigeren Formulierungen; zwischen den Runden bekommst du zwei, drei Korrekturen, die du in der nächsten Runde einbaust. Die letzte Runde hat die Prüfungslänge.</MudText>
+        }
+    }
+    <MudPaper Elevation="0" Class="pa-3 mb-2 tc-record">
+        <MudText Typo="Typo.subtitle2">@MonologTitle</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="my-2" Wrap="Wrap.Wrap">
+            @if (!_recording)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Mic" OnClick="StartMonologAsync">Start (@Clock(RoundSeconds))</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Stop" Class="recording" OnClick="StopMonologAsync">Fertig</MudButton>
+            }
+            <MudText Typo="Typo.caption" Style="opacity:.7">Kein Mikrofon? Tippe deinen Beitrag ins Feld und drücke „Fertig“.</MudText>
+        </MudStack>
+        <MudTextField @bind-Value="_live" Variant="Variant.Outlined" Lines="4" Immediate="true" Placeholder="Transkript erscheint hier …" />
+        @if (!_recording && !string.IsNullOrWhiteSpace(_live))
+        {
+            <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="() => SaveRoundAsync()">Fertig – ohne Aufnahme übernehmen</MudButton>
+        }
+    </MudPaper>
+    @foreach (var (round, i) in _rounds.Select((r, i) => (r, i)))
+    {
+        <MudPaper Elevation="0" Class="pa-3 mb-2 tc-round">
+            <MudText Typo="Typo.subtitle2">Runde @(i + 1): @round.Words Wörter in @Clock(round.Seconds) · @round.WordsPerMinute.ToString("0") Wörter/Minute</MudText>
+            <div class="tc-transcript-small">@round.Text</div>
+            @if (round.Corrections.Count > 0)
+            {
+                <MudText Typo="Typo.caption" Class="d-block mt-1"><b>Für die nächste Runde:</b></MudText>
+                @foreach (var c in round.Corrections) { <div class="tc-ai-err"><s>@c.Snippet</s> → <b>@c.Correction</b> <span class="tc-explain">@c.Explanation</span></div> }
+            }
+            else if (i < 2 && _fourThreeTwo) { <MudText Typo="Typo.caption" Style="opacity:.7">Keine sicheren Fehler gefunden – achte auf flüssigere Übergänge (zuerst, danach, deshalb, am Ende).</MudText> }
+        </MudPaper>
+    }
+    @if (_correcting) { <MudProgressLinear Indeterminate="true" Class="mb-2" /> }
+}
+
+@* ---- 2. The conversation with the partner. *@
+@if (_phase == Phase.Gespraech)
+{
+    @if (_rounds.Count > 0)
+    {
+        <MudText Typo="Typo.caption" Class="d-block mb-1" Style="opacity:.75">Dein Beitrag: @_rounds[^1].Words Wörter · @_rounds[^1].WordsPerMinute.ToString("0") Wörter/Minute</MudText>
+    }
+    <MudPaper Elevation="0" Class="pa-3 mb-2 tc-chat">
+        @foreach (var t in _history)
+        {
+            <div class="tc-turn @(t.FromLearner ? "me" : "partner")">@t.Text</div>
+        }
+        @if (_thinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+        @if (!_ai && _history.Count > 0 && _scriptIndex >= Script.Count && !_thinking)
+        {
+            <MudText Typo="Typo.caption" Style="opacity:.75">Der Übungspartner hat keine weiteren Fragen. Du kannst bewerten.</MudText>
+        }
+    </MudPaper>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+        @if (!_recording)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Mic" Color="Color.Secondary" Variant="Variant.Filled" OnClick="StartTurnAsync" Disabled="_thinking" aria-label="Aufnahme starten" />
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Stop" Color="Color.Error" Variant="Variant.Filled" Class="recording" OnClick="StopTurnAsync" aria-label="Aufnahme stoppen" />
+        }
+        <MudTextField @bind-Value="_live" Variant="Variant.Outlined" Lines="2" Immediate="true" Placeholder="Sprich oder tippe deinen Beitrag …" Class="flex-grow-1" />
+        <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" Variant="Variant.Filled" OnClick="SendAsync" Disabled="@(_thinking || string.IsNullOrWhiteSpace(_live))" aria-label="Senden" />
+    </MudStack>
+    <MudStack Row="true" Spacing="2" Class="mt-2" Wrap="Wrap.Wrap">
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="ReadLastAsync" Disabled="@(!_history.Any(h => !h.FromLearner))">Partner vorlesen</MudButton>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToRating" Disabled="@(!LearnerText.Any())">Gespräch beenden und bewerten</MudButton>
+    </MudStack>
+    @if (_partnerError is not null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-2">@_partnerError</MudAlert> }
+}
+
+@* ---- 3. Rating on the four telc criteria. *@
+@if (_phase == Phase.Bewertung && _result is null)
+{
+    <MudPaper Elevation="0" Class="pa-3 mt-2 tc-rate">
+        <MudText Typo="Typo.subtitle2" Class="mb-2">Bewertung nach den telc-Kriterien (A/B/C/D = 7/5/3/0, Aussprache 4/2/1/0)</MudText>
+        @if (Telc.TutorAvailable && _rating is null)
+        {
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="RateAiAsync" Disabled="_busy">KI-Prüferin fragen</MudButton>
+                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+                <MudText Typo="Typo.caption" Style="opacity:.75">Aussprache kann die KI aus dem Transkript nur schätzen – korrigiere sie, wenn du es besser weißt.</MudText>
+            </MudStack>
+        }
+        @if (_aiError is not null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@_aiError</MudAlert> }
+        @if (_rating is not null) { <AiRatingView Rating="_rating" /> }
+        @for (var c = 0; c < TelcSpeakingRating.Criteria.Count; c++)
+        {
+            var ci = c;
+            var crit = TelcSpeakingRating.Criteria[ci];
+            <div class="tc-crit">
+                <div><b>@crit.Title</b> <span class="tc-crit-q">@crit.Question</span></div>
+                <div class="tr-conf">
+                    @foreach (var band in Enum.GetValues<TelcBand>())
+                    {
+                        var b = band;
+                        <button type="button" class="tr-conf-btn @(_bands[ci] == b ? "selected" : "")" @onclick="() => _bands[ci] = b"><b>@b</b> @(ci == 3 ? TelcSpeakingRating.PronunciationPoints(b) : TelcSpeakingRating.MainPoints(b))</button>
+                    }
+                </div>
+            </div>
+        }
+        @if (Part == TelcPart.Sprechen1 && Telc.Content.FindErfahrung(TaskId)?.ModelAnswer is { } model)
+        {
+            <MudExpansionPanels Elevation="0" Dense="true" Class="mt-2">
+                <MudExpansionPanel Text="Musterbeitrag zum Vergleich"><div class="reading-text">@model</div></MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+        <div class="tc-submit">
+            <MudText Typo="Typo.caption" Style="opacity:.75">Vorschau: @Preview von 25 Punkten</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _bands.Any(b => b is null))">Speichern</MudButton>
+        </div>
+    </MudPaper>
+}
+
+@if (_result is not null)
+{
+    <MudPaper Elevation="1" Class="pa-3 mt-3 tc-score">
+        <MudText Typo="Typo.h6">@_result.Points.ToString("0") von 25 Punkten · @string.Join(" · ", _result.Bands)</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">@(_result.Points >= 15 ? "Über der 60-%-Marke für diesen Teil." : "Unter 15 Punkten – im Mündlichen gleicht kein anderer Teil das aus. Genau hier lohnt sich tägliches Üben.")</MudText>
+    </MudPaper>
+    <div class="tc-submit">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">@DoneLabel</MudButton>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public TelcPart Part { get; set; }
+    [Parameter, EditorRequired] public string TaskId { get; set; } = "";
+    [Parameter] public Guid? SimulationId { get; set; }
+    [Parameter] public string DoneLabel { get; set; } = "Weiter";
+    [Parameter] public EventCallback<TelcProductionResult> OnDone { get; set; }
+
+    private enum Phase { Monolog, Gespraech, Bewertung }
+
+    private sealed record Round(string Text, int Seconds, int Words, IReadOnlyList<TutorError> Corrections)
+    {
+        public double WordsPerMinute => Seconds <= 0 ? 0 : Words * 60.0 / Seconds;
+    }
+
+    private Phase _phase;
+    private bool _fourThreeTwo, _recording, _thinking, _busy, _correcting, _subscribed, _ai;
+    private string _live = "";
+    private readonly List<Round> _rounds = [];
+    private readonly List<ChatTurn> _history = [];
+    private int _scriptIndex;
+    private string? _partnerError, _aiError;
+    private TelcAiRating? _rating;
+    private readonly TelcBand?[] _bands = new TelcBand?[4];
+    private TelcProductionResult? _result;
+    private int _countdown, _elapsed;
+    private DateTime _startedAt, _roundStart;
+    private System.Threading.Timer? _timer;
+    private string? _loaded;
+
+    private static readonly int[] FourThreeTwo = [180, 120, TelcBlueprint.ExperienceSeconds];
+
+    private string? Title => Telc.Content.TaskTitle(Part, TaskId);
+    private int RoundSeconds => Part == TelcPart.Sprechen2 ? TelcBlueprint.TextSummarySeconds : _fourThreeTwo ? FourThreeTwo[Math.Min(_rounds.Count, 2)] : TelcBlueprint.ExperienceSeconds;
+    private string MonologTitle => Part == TelcPart.Sprechen2 ? "Zusammenfassung des Textes (höchstens 1 Minute)"
+        : _fourThreeTwo ? $"Runde {_rounds.Count + 1} von 3 – {Clock(RoundSeconds)}" : "Ihr Beitrag (etwa 1½ Minuten)";
+    private int Left => Math.Max(0, _countdown - _elapsed);
+    private static string Clock(int s) => $"{s / 60}:{s % 60:00}";
+    /// <summary>What gets rated: the learner's turns. The final monologue round is the first of them; 4/3/2 warm-up rounds are practice and stay out.</summary>
+    private IEnumerable<string> LearnerText => _history.Where(h => h.FromLearner && !string.IsNullOrWhiteSpace(h.Text)).Select(h => h.Text);
+    private string Preview => _bands.Any(b => b is null) ? "–" : new TelcSpeakingRating(_bands[0]!.Value, _bands[1]!.Value, _bands[2]!.Value, _bands[3]!.Value).Points.ToString("0");
+
+    /// <summary>The offline partner's lines: Teil 1 asks the task's questions, Teil 2 brings the counter-arguments, Teil 3 walks the planning points.</summary>
+    private IReadOnlyList<string> Script => Part switch
+    {
+        TelcPart.Sprechen1 => Telc.Content.FindErfahrung(TaskId)?.PartnerQuestions ?? [],
+        TelcPart.Sprechen2 => (Telc.Content.FindDiskussion(TaskId)?.Contra ?? []).Select(c => $"Ich sehe das etwas anders: {c}. Was sagen Sie dazu?")
+            .Append("Welche Lösung würden Sie vorschlagen?").ToList(),
+        _ => (Telc.Content.FindPlanung(TaskId)?.Aspects ?? []).Select((a, i) => i == 0 ? $"Okay, lass uns anfangen. Was schlägst du vor: {a}?" : $"Gut. Und was machen wir mit dem Punkt „{a}“?")
+            .Append("Kannst du zum Schluss noch einmal zusammenfassen, was wir geplant haben?").ToList(),
+    };
+
+    protected override void OnParametersSet()
+    {
+        var id = $"{Part}|{TaskId}";
+        if (_loaded == id) return;
+        _loaded = id;
+        _phase = Part == TelcPart.Sprechen3 ? Phase.Gespraech : Phase.Monolog;
+        _ai = Telc.TutorAvailable;
+        _startedAt = DateTime.UtcNow;
+        _rounds.Clear();
+        _history.Clear();
+        _scriptIndex = 0;
+        if (_phase == Phase.Gespraech) _ = PartnerTurnAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender || _subscribed) return;
+        _subscribed = true;
+        Speech.Transcript += OnTranscript;
+        Speech.RecognitionEnded += OnEnded;
+    }
+
+    private void OnTranscript(string text, bool isFinal) { _live = text; _ = InvokeAsync(StateHasChanged); }
+    private void OnEnded() { _recording = false; _ = InvokeAsync(StateHasChanged); }
+
+    private static readonly HashSet<string> AspectStopWords = ["und", "mit", "was", "wer", "für", "bei", "der", "die", "das", "welche", "aufgabe", "übernimmt", "passiert", "schlechtem"];
+
+    /// <summary>A planning point counts as covered once the learner (not the partner) said a word starting like one of its key words.</summary>
+    private bool Covers(string aspect)
+    {
+        var keys = aspect.ToLowerInvariant().Split([' ', '(', ')', ',', '…', '.', '?'], StringSplitOptions.RemoveEmptyEntries)
+            .Where(w => w.Length >= 3 && !AspectStopWords.Contains(w)).Select(w => w[..Math.Min(w.Length, 6)]).ToList();
+        var said = string.Join(' ', LearnerText).ToLowerInvariant().Split([' ', ',', '.', '!', '?', ':', ';', '"', '„', '“'], StringSplitOptions.RemoveEmptyEntries);
+        return keys.Count > 0 && keys.Any(k => said.Any(w => w.StartsWith(k, StringComparison.Ordinal)));
+    }
+
+    // ---- Monologue ----------------------------------------------------------------------------------------------
+
+    private async Task StartMonologAsync()
+    {
+        _live = "";
+        _roundStart = DateTime.UtcNow;
+        StartCountdown(RoundSeconds);
+        _recording = await Speech.StartRecognitionAsync();
+    }
+
+    private async Task StopMonologAsync()
+    {
+        await Speech.StopRecognitionAsync();
+        _recording = false;
+        await SaveRoundAsync();
+    }
+
+    private async Task SaveRoundAsync()
+    {
+        StopCountdown();
+        var text = _live.Trim();
+        if (text.Length == 0) return;
+        var seconds = _roundStart == default ? RoundSeconds : Math.Max(1, (int)(DateTime.UtcNow - _roundStart).TotalSeconds);
+        _roundStart = default;
+        var words = TelcWritingCheck.CountWords(text);
+        IReadOnlyList<TutorError> corrections = [];
+        var moreRounds = _fourThreeTwo && _rounds.Count < 2;
+        if (moreRounds)
+        {
+            _correcting = true;
+            StateHasChanged();
+            corrections = await CorrectionsAsync(text);
+            _correcting = false;
+        }
+        _rounds.Add(new Round(text, seconds, words, corrections));
+        _live = "";
+        if (!moreRounds)
+        {
+            _phase = Phase.Gespraech;
+            if (Part == TelcPart.Sprechen1) _history.Add(new ChatTurn(true, text));
+            else _history.Add(new ChatTurn(true, "(Zusammenfassung) " + text));
+            await PartnerTurnAsync();
+        }
+    }
+
+    /// <summary>Two or three corrections for the next round: the tutor's quoted errors, otherwise the analyzer's findings.</summary>
+    private async Task<IReadOnlyList<TutorError>> CorrectionsAsync(string text)
+    {
+        if (Telc.TutorAvailable)
+        {
+            try { return (await Telc.RateWithAiAsync(Part, TaskId, text)).Errors.Take(3).ToList(); }
+            catch { /* fall through to the analyzer */ }
+        }
+        return Telc.QuickFindings(text, spoken: true).Take(3).Select(f => new TutorError(f.Code, f.Snippet, f.Correction, f.Explanation)).ToList();
+    }
+
+    // ---- Conversation -------------------------------------------------------------------------------------------
+
+    private async Task PartnerTurnAsync()
+    {
+        _partnerError = null;
+        if (_ai)
+        {
+            _thinking = true;
+            StateHasChanged();
+            try { _history.Add(new ChatTurn(false, await Telc.PartnerAsync(Part, TaskId, _history))); }
+            catch (Exception e)
+            {
+                // Without a working tutor the scripted partner takes over, so the conversation does not stall.
+                _partnerError = "KI-Partner nicht erreichbar (" + TutorRegistry.Friendly(e) + ") – der Übungspartner übernimmt.";
+                _ai = false;
+                ScriptedTurn();
+            }
+            finally { _thinking = false; StateHasChanged(); }
+        }
+        else ScriptedTurn();
+    }
+
+    private void ScriptedTurn()
+    {
+        if (_scriptIndex < Script.Count) _history.Add(new ChatTurn(false, Script[_scriptIndex++]));
+    }
+
+    private async Task StartTurnAsync()
+    {
+        _live = "";
+        _recording = await Speech.StartRecognitionAsync();
+    }
+
+    private async Task StopTurnAsync()
+    {
+        await Speech.StopRecognitionAsync();
+        _recording = false;
+    }
+
+    private async Task SendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_live)) return;
+        if (_recording) await StopTurnAsync();
+        _history.Add(new ChatTurn(true, _live.Trim()));
+        _live = "";
+        await PartnerTurnAsync();
+    }
+
+    private async Task ReadLastAsync()
+    {
+        var last = _history.LastOrDefault(t => !t.FromLearner);
+        if (last is null) return;
+        var idx = last.Text.IndexOf("✎", StringComparison.Ordinal);
+        await Speech.SpeakAsync(idx > 0 ? last.Text[..idx] : last.Text);
+    }
+
+    private void ToRating() => _phase = Phase.Bewertung;
+
+    // ---- Rating ---------------------------------------------------------------------------------------------------
+
+    private string Conversation => string.Join("\n", _history.Select(h => (h.FromLearner ? "Lerner: " : "Partner: ") + StripCorrection(h.Text)));
+
+    private static string StripCorrection(string text)
+    {
+        var idx = text.IndexOf("✎", StringComparison.Ordinal);
+        return idx > 0 ? text[..idx].Trim() : text;
+    }
+
+    private async Task RateAiAsync()
+    {
+        _busy = true;
+        _aiError = null;
+        try
+        {
+            _rating = await Telc.RateWithAiAsync(Part, TaskId, string.Join("\n", LearnerText), Conversation);
+            for (var i = 0; i < 4; i++) _bands[i] = _rating.Band(i);
+        }
+        catch (Exception e) { _aiError = "KI-Bewertung nicht möglich: " + TutorRegistry.Friendly(e) + " – bitte selbst einstufen."; }
+        finally { _busy = false; }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_bands.Any(b => b is null)) return;
+        _busy = true;
+        try
+        {
+            var seconds = (int)(DateTime.UtcNow - _startedAt).TotalSeconds;
+            _result = await Telc.SubmitProductionAsync(Part, TaskId, string.Join("\n", LearnerText), _bands.Select(b => b!.Value).ToList(), false, _rating, seconds, SimulationId);
+        }
+        finally { _busy = false; }
+    }
+
+    // ---- Clock ----------------------------------------------------------------------------------------------------
+
+    private void StartCountdown(int seconds)
+    {
+        _countdown = seconds;
+        _elapsed = 0;
+        _timer?.Dispose();
+        _timer = new System.Threading.Timer(_ => _ = InvokeAsync(async () =>
+        {
+            _elapsed++;
+            // Time is up: the examiner would stop you here.
+            if (_recording && Left == 0) await StopMonologAsync();
+            StateHasChanged();
+        }), null, 1000, 1000);
+    }
+
+    private void StopCountdown()
+    {
+        _timer?.Dispose();
+        _timer = null;
+        _countdown = 0;
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        if (!_subscribed) return;
+        Speech.Transcript -= OnTranscript;
+        Speech.RecognitionEnded -= OnEnded;
+    }
+}

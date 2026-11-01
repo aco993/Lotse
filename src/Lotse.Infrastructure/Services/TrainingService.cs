@@ -51,7 +51,8 @@ public sealed record TrainingOverview(
     int NextNumber,
     Guid? OpenSessionId,
     TrainingSessionState? OpenState,
-    IReadOnlyList<TrainingPointRow> Points);
+    IReadOnlyList<TrainingPointRow> Points,
+    ConfidenceCalibration Calibration);
 
 public interface ITrainingService
 {
@@ -95,7 +96,11 @@ public sealed class TrainingService(
         var rows = content.Points
             .Select(p => new TrainingPointRow(p, content.Topic(p.TopicId)?.Title ?? p.TopicId, LearnedRule.Evaluate(p.Id, history), history.Count(a => a.PointId == p.Id)))
             .ToList();
-        return new TrainingOverview(completed, completed + 1, open?.Id, open is null ? null : StateOf(open), rows);
+        // Every judged answer counts, free items included: calibration is about the learner's sense of certainty, not about points.
+        var judged = await db.TrainingAnswers.AsNoTracking().Where(a => a.UserId == userId && a.Correct != null)
+            .Select(a => new { a.Confidence, a.Correct }).ToListAsync(ct);
+        var calibration = ConfidenceCalibration.From(judged.Select(a => (a.Confidence, a.Correct!.Value)));
+        return new TrainingOverview(completed, completed + 1, open?.Id, open is null ? null : StateOf(open), rows, calibration);
     }
 
     public async Task<TrainingSessionView> StartOrResumeAsync(CancellationToken ct = default)
@@ -110,7 +115,7 @@ public sealed class TrainingService(
         var since = Now.AddDays(-14);
         var recent = (await db.Attempts.AsNoTracking().Where(a => a.UserId == userId && a.Utc >= since).Select(a => a.ExerciseId).ToListAsync(ct)).ToHashSet();
         var view = await LearnerViewAsync(db, userId, ct);
-        var plan = TrainingPlanner.Plan(number, content, Catalog, history, recent, seed: StableHash.Seed($"{userId}|{number}"), render: e => NameTemplate.Render(e, view));
+        var plan = TrainingPlanner.Plan(number, content, Catalog, history, recent, seed: StableHash.Seed($"{userId}|{number}"), render: e => NameTemplate.Render(e, view), nowUtc: Now);
 
         var session = new TrainingSessionEntity
         {
@@ -340,7 +345,7 @@ public sealed class TrainingService(
         var rows = await db.TrainingAnswers.AsNoTracking()
             .Where(a => a.UserId == userId && a.PointId != null && a.Correct != null && completed.Contains(a.SessionId))
             .ToListAsync(ct);
-        return rows.Select(a => new PointAnswer(a.PointId!, a.VariantId ?? "", a.SessionNumber, a.Correct!.Value, a.Confidence, a.Kind)).ToList();
+        return rows.Select(a => new PointAnswer(a.PointId!, a.VariantId ?? "", a.SessionNumber, a.Correct!.Value, a.Confidence, a.Kind, a.Utc)).ToList();
     }
 
     private static async Task<LearnerView> LearnerViewAsync(LotseDbContext db, string userId, CancellationToken ct)

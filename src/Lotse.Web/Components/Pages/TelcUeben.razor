@@ -1,0 +1,70 @@
+@page "/telc/ueben/{PartName}"
+@inject ITelcService Telc
+@inject NavigationManager Nav
+
+<PageTitle>@(_part is { } p ? TelcBlueprint.Info(p).Title : "telc") – Lotse</PageTitle>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="@(Sim is { } s ? $"telc/simulation/{s}" : "telc")">@(Sim is null ? "telc-Übersicht" : "Zur Simulation")</MudButton>
+    @if (Sim is not null) { <span class="tr-tag">Simulation</span> }
+    <MudSpacer />
+    @if (_part is { } part && Sim is null && _tasks.Count > 1)
+    {
+        <MudSelect T="string" Value="_taskId" ValueChanged="Pick" Label="Aufgabe" Dense="true" Variant="Variant.Outlined" Style="max-width:320px">
+            @foreach (var id in _tasks) { <MudSelectItem T="string" Value="@id">@Telc.Content.TaskTitle(part, id)</MudSelectItem> }
+        </MudSelect>
+    }
+</MudStack>
+
+@if (_part is not { } current || _taskId is null)
+{
+    <MudAlert Severity="Severity.Error">Diesen Prüfungsteil gibt es nicht.</MudAlert>
+}
+else if (TelcBlueprint.IsObjective(current))
+{
+    <TelcObjective @key="_taskId" Part="current" TaskId="@_taskId" SimulationId="Sim" DoneLabel="@DoneLabel" OnDone="_ => DoneAsync()" />
+}
+else if (current == TelcPart.Schreiben)
+{
+    <TelcWriting @key="_taskId" TaskId="@_taskId" SimulationId="Sim" DoneLabel="@DoneLabel" OnDone="_ => DoneAsync()" />
+}
+else
+{
+    <TelcSpeaking @key="_taskId" Part="current" TaskId="@_taskId" SimulationId="Sim" DoneLabel="@DoneLabel" OnDone="_ => DoneAsync()" />
+}
+
+@code {
+    [Parameter] public string PartName { get; set; } = "";
+    [SupplyParameterFromQuery(Name = "aufgabe")] public string? Aufgabe { get; set; }
+    [SupplyParameterFromQuery(Name = "sim")] public Guid? Sim { get; set; }
+
+    private TelcPart? _part;
+    private string? _taskId;
+    private IReadOnlyList<string> _tasks = [];
+
+    private string DoneLabel => Sim is null ? "Nächste Aufgabe" : "Weiter in der Simulation";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _part = Enum.TryParse<TelcPart>(PartName, ignoreCase: true, out var p) ? p : null;
+        if (_part is not { } part) return;
+        _tasks = Telc.Content.TaskIds(part);
+        _taskId = Aufgabe is { } a && (_tasks.Contains(a) || (part == TelcPart.Schreiben && Telc.Content.FindWritingTask(a) is not null))
+            ? a
+            : await Telc.NextTaskIdAsync(part);
+    }
+
+    private void Pick(string id) => Nav.NavigateTo($"telc/ueben/{_part}?aufgabe={Uri.EscapeDataString(id)}");
+
+    private async Task DoneAsync()
+    {
+        if (Sim is { } sim)
+        {
+            Nav.NavigateTo($"telc/simulation/{sim}");
+            return;
+        }
+        // Practice: straight on to the task of this part done least recently.
+        var next = await Telc.NextTaskIdAsync(_part!.Value);
+        Nav.NavigateTo($"telc/ueben/{_part}?aufgabe={Uri.EscapeDataString(next ?? _taskId!)}", forceLoad: false);
+    }
+}
