@@ -1,0 +1,37 @@
+@page "/kurz"
+@* The app icon's "3 Minuten" shortcut lands here: one tap from the home screen into a quick session. *@
+@inject ILearningService Learning
+@inject NavigationManager Nav
+
+<PageTitle>3 Minuten – Lotse</PageTitle>
+
+@if (_error is null)
+{
+    <MudProgressLinear Indeterminate="true" />
+    <MudText Typo="Typo.body2" Class="mt-2">Drei Minuten Wiederholung werden zusammengestellt …</MudText>
+}
+else
+{
+    <MudAlert Severity="Severity.Warning">@_error</MudAlert>
+    <MudButton Href="/" Variant="Variant.Text" Class="mt-2">Zu Heute</MudButton>
+}
+
+@code {
+    private string? _error;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            // An open session is resumed rather than abandoned for a new one - three minutes are better spent finishing it.
+            var session = await Learning.GetOpenSessionAsync() ?? await Learning.StartSessionAsync(SessionPlanner.QuickMinutes);
+            Nav.NavigateTo($"session/{session.Id}", replace: true);
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+            StateHasChanged();
+        }
+    }
+}

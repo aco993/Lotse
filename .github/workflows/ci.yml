@@ -45,3 +45,28 @@ jobs:
           name: playwright-traces
           path: tests/Lotse.E2E/bin/Release/net10.0/playwright-traces/
           if-no-files-found: ignore
+
+  # The image a server would run: it must build, start, migrate an empty volume and answer as the demo instance.
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build -t lotse:ci .
+
+      - name: Start with a demo account and check it answers
+        run: |
+          docker run -d --name lotse -p 8080:8080 \
+            -e Lotse__Hosting__Demo__Enabled=true -e Lotse__Hosting__RegistrationOpen=false lotse:ci
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/health >/dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          curl -fsS http://localhost:8080/health
+          curl -fsS http://localhost:8080/Account/Login | grep -q "Demo ansehen"
+          curl -fsS http://localhost:8080/Account/Register | grep -q "Registrierung geschlossen"
+
+      - name: Container log
+        if: always()
+        run: docker logs lotse || true

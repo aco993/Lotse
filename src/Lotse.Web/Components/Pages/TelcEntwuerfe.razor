@@ -1,0 +1,205 @@
+@page "/telc/entwuerfe"
+@inject ITelcGenerator Generator
+@inject ITelcService Telc
+@inject ISnackbar Snackbar
+
+<PageTitle>Neue telc-Aufgaben – Lotse</PageTitle>
+
+<div class="page-intro intro-pruefung">
+    <div class="page-intro-icon"><MudIcon Icon="@Icons.Material.Filled.AutoAwesome" /></div>
+    <div>
+        <MudText Typo="Typo.h5" HtmlTag="h1">Neue telc-Aufgaben</MudText>
+        <MudText Typo="Typo.body2" Style="opacity:.85">
+            Der Tutor schreibt eine Aufgabe im Format eines Beispiels, die Formatregeln prüfen sie, ein zweiter Durchgang begutachtet sie mit Lösungsschlüssel –
+            und erst wenn du sie freigibst, kommt sie in Übung und Simulation. Freigegebene Aufgaben sehen alle Konten auf diesem Rechner.
+        </MudText>
+    </div>
+</div>
+
+@if (_stats is null)
+{
+    <MudProgressLinear Indeterminate="true" />
+    return;
+}
+
+<MudGrid Spacing="2" Class="mb-3">
+    <MudItem xs="12" md="7">
+        <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Aufgabe schreiben lassen</MudText>
+            @if (!Generator.Available)
+            {
+                <MudText Typo="Typo.body2">Dafür braucht es einen KI-Tutor (Einstellungen). Ohne ihn bleiben die mitgelieferten Aufgaben.</MudText>
+            }
+            else
+            {
+                <div class="tc-gen-grid">
+                    @foreach (var part in TelcContent.GeneratableParts)
+                    {
+                        var p = part;
+                        <MudButton Variant="Variant.Outlined" Size="Size.Small" Disabled="_busy" OnClick="() => GenerateAsync(p)">
+                            @TelcBlueprint.Info(p).Title <span class="tc-muted" style="margin-left:.4em">(@Telc.Content.TaskIds(p).Count)</span>
+                        </MudButton>
+                    }
+                </div>
+                @if (_busy)
+                {
+                    <MudProgressLinear Indeterminate="true" Class="mt-2" />
+                    <MudText Typo="Typo.caption">Schreiben und begutachten dauert je nach Anbieter 20 Sekunden bis wenige Minuten.</MudText>
+                }
+                <MudText Typo="Typo.caption" Class="d-block mt-2" Style="opacity:.7">In Klammern: Aufgaben, die es für den Teil schon gibt.</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudPaper Elevation="1" Class="pa-3" Style="height:100%">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Wie gut die Pipeline ist</MudText>
+            @if (_stats.Total == 0)
+            {
+                <MudText Typo="Typo.body2">Noch nichts generiert.</MudText>
+            }
+            else
+            {
+                <table class="tc-stats">
+                    <tr><td>Generiert</td><td>@_stats.Total</td></tr>
+                    <tr><td>Am Format gescheitert</td><td>@_stats.Invalid</td></tr>
+                    <tr><td>Warten auf dich</td><td>@_stats.Pending</td></tr>
+                    <tr><td>Freigegeben / abgelehnt</td><td>@_stats.Approved / @_stats.Rejected</td></tr>
+                    <tr><td>Durchlaufquote</td><td>@Pct(_stats.AcceptanceRate)</td></tr>
+                    <tr><td>Gutachter stimmt mit dir überein</td><td>@Pct(_stats.CriticAgreement)</td></tr>
+                    <tr><td>Dauer (Median)</td><td>@(_stats.MedianLatencyMs is { } ms ? $"{ms / 1000.0:0.#} s" : "–")</td></tr>
+                </table>
+                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.7">Durchlaufquote: freigegeben von allen fertig entschiedenen, gescheiterte mitgezählt.</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" ActivePanelIndexChanged="TabChanged" ActivePanelIndex="_tab">
+    <MudTabPanel Text="@($"Zur Prüfung ({_stats.Pending})")" />
+    <MudTabPanel Text="Freigegeben" />
+    <MudTabPanel Text="Abgelehnt" />
+    <MudTabPanel Text="Gescheitert" />
+</MudTabs>
+
+@if (_drafts.Count == 0)
+{
+    <MudText Typo="Typo.body2" Class="my-3" Style="opacity:.8">Hier ist nichts.</MudText>
+}
+@foreach (var d in _drafts)
+{
+    var draft = d;
+    <MudPaper Elevation="1" Class="pa-3 mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="2" Class="mb-2">
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@TelcBlueprint.Info(draft.Part).Title</MudChip>
+            <MudText Typo="Typo.subtitle2" Style="font-weight:600">@draft.Title</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.caption" Class="tc-muted">@draft.Topic · @(draft.LatencyMs / 1000.0).ToString("0.#") s · @draft.CreatedUtc.ToLocalTime().ToString("dd.MM. HH:mm")</MudText>
+        </MudStack>
+
+        @if (draft.Status == TelcDraftStatus.Pending)
+        {
+            <MudAlert Severity="@(draft.CriticOk ? Severity.Success : Severity.Warning)" Dense="true" Class="mb-2" Variant="Variant.Text">
+                @if (draft.CriticOk)
+                {
+                    <span>Gutachter: keine Einwände. Lies trotzdem jede Lösung nach – der Gutachter ist dasselbe Modell.</span>
+                }
+                else
+                {
+                    <span>Gutachter hat Einwände:</span>
+                    <ul class="mb-0">@foreach (var p in draft.Problems) { <li>@p</li> }</ul>
+                }
+            </MudAlert>
+        }
+        else if (draft.Status == TelcDraftStatus.Invalid)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-2" Variant="Variant.Text">
+                <ul class="mb-0">@foreach (var p in draft.Problems) { <li>@p</li> }</ul>
+            </MudAlert>
+        }
+        else if (draft.RejectReason is { } reason)
+        {
+            <MudText Typo="Typo.body2" Class="mb-2">Abgelehnt: @reason</MudText>
+        }
+
+        <details open="@(draft.Status == TelcDraftStatus.Pending)">
+            <summary class="tc-muted" style="cursor:pointer">Aufgabe mit Lösungen</summary>
+            <pre class="tc-draft">@draft.Text</pre>
+        </details>
+
+        @if (draft.Status == TelcDraftStatus.Pending)
+        {
+            <MudStack Row="true" Spacing="2" Class="mt-2" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Check" Disabled="_busy" OnClick="() => ReviewAsync(draft, true)">Freigeben</MudButton>
+                <MudTextField T="string" @bind-Value="_reasons[draft.Id]" Placeholder="Warum ablehnen? (optional)" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width:14rem" />
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Close" Disabled="_busy" OnClick="() => ReviewAsync(draft, false)">Ablehnen</MudButton>
+            </MudStack>
+        }
+    </MudPaper>
+}
+
+@code {
+    private TelcPipelineStats? _stats;
+    private List<TelcDraftView> _drafts = [];
+    private readonly Dictionary<string, string?> _reasons = [];
+    private int _tab;
+    private bool _busy;
+
+    private static readonly TelcDraftStatus[] TabStatus = [TelcDraftStatus.Pending, TelcDraftStatus.Approved, TelcDraftStatus.Rejected, TelcDraftStatus.Invalid];
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _stats = await Generator.StatsAsync();
+        _drafts = [.. await Generator.DraftsAsync(TabStatus[_tab])];
+        foreach (var d in _drafts) _reasons.TryAdd(d.Id, null);
+    }
+
+    private async Task TabChanged(int index)
+    {
+        _tab = index;
+        await LoadAsync();
+    }
+
+    private async Task GenerateAsync(TelcPart part)
+    {
+        _busy = true;
+        try
+        {
+            var draft = await Generator.GenerateAsync(part);
+            Snackbar.Add(draft.Status == TelcDraftStatus.Invalid ? "Die Aufgabe hat die Formatprüfung nicht bestanden – siehe „Gescheitert“." : "Neue Aufgabe wartet auf deine Prüfung.",
+                draft.Status == TelcDraftStatus.Invalid ? Severity.Warning : Severity.Success);
+            _tab = draft.Status == TelcDraftStatus.Invalid ? 3 : 0;
+            await LoadAsync();
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ReviewAsync(TelcDraftView draft, bool approve)
+    {
+        _busy = true;
+        try
+        {
+            await Generator.ReviewAsync(draft.Id, approve, _reasons.GetValueOrDefault(draft.Id));
+            Snackbar.Add(approve ? "Freigegeben – die Aufgabe ist ab sofort in Übung und Simulation." : "Abgelehnt.", Severity.Info);
+            await LoadAsync();
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string Pct(double? v) => v is { } x ? $"{x:P0}" : "–";
+}

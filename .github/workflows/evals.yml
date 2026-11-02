@@ -1,0 +1,51 @@
+name: Evals
+
+# The AI rater against the golden set (docs/EVALS.md). On demand only: it needs a provider key as a repository
+# secret and spends real requests, so it is not part of every push - the deterministic layer (golden set valid,
+# metrics correct, hint ladder leak-free) already runs in CI with the other tests.
+on:
+  workflow_dispatch:
+    inputs:
+      preset:
+        description: "Provider preset (groq, anthropic, openrouter, mistral, deepseek, openai)"
+        default: groq
+      model:
+        description: "Model id (empty = the preset's default)"
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Run the golden set
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Inputs reach the script as variables, never spliced into it.
+          PRESET: ${{ inputs.preset }}
+          MODEL: ${{ inputs.model }}
+        run: |
+          model_args=()
+          if [ -n "$MODEL" ]; then model_args=(--model "$MODEL"); fi
+          dotnet run --project tools/Lotse.Evals -c Release -- --preset "$PRESET" "${model_args[@]}" --hints 40 --write
+
+      - name: Upload results
+        uses: actions/upload-artifact@v7
+        with:
+          name: eval-results
+          path: |
+            evals/results/
+            docs/EVALS.md

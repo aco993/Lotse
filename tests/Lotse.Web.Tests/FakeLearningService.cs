@@ -15,6 +15,10 @@ public sealed class FakeLearningService : ILearningService
 
     public ITutor Tutor { get; set; } = new NullTutor();
 
+    public Task<IReadOnlyList<HintStep>> GetHintsAsync(string exerciseId, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<HintStep>>([]);
+
+    public Task<string?> GetAiHintAsync(string exerciseId, string? attempt, CancellationToken ct = default) => Task.FromResult<string?>(null);
+
     public Task<AnswerResult> SubmitAnswerAsync(Guid? sessionId, int stepIndex, string exerciseId, string? answer, int durationMs, bool hintUsed, CancellationToken ct = default)
     {
         Answers.Add((exerciseId, answer, hintUsed));

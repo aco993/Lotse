@@ -89,6 +89,18 @@ public sealed record TelcContent(
 {
     public static TelcContent Empty { get; } = new([], [], [], [], [], [], [], [], []);
 
+    /// <summary>This content followed by <paramref name="extra"/>, part by part - the seed first, so its order stays.</summary>
+    public TelcContent With(TelcContent extra) => new(
+        [.. Lesen1, .. extra.Lesen1], [.. Lesen2, .. extra.Lesen2], [.. Lesen3, .. extra.Lesen3],
+        [.. Sprachbausteine, .. extra.Sprachbausteine], [.. Hoeren, .. extra.Hoeren], [.. Schreiben, .. extra.Schreiben],
+        [.. Erfahrungen, .. extra.Erfahrungen], [.. Diskussionen, .. extra.Diskussionen], [.. Planungen, .. extra.Planungen]);
+
+    /// <summary>The parts the tutor can write new tasks for: the objective ones, whose solutions can be checked.</summary>
+    public static IReadOnlyList<TelcPart> GeneratableParts { get; } = [.. Enum.GetValues<TelcPart>().Where(TelcBlueprint.IsObjective)];
+
+    /// <summary>A task written by the tutor rather than shipped with the app.</summary>
+    public static bool IsGenerated(string taskId) => taskId.StartsWith("gen.", StringComparison.Ordinal);
+
     /// <summary>Task ids available for one part, in content order.</summary>
     public IReadOnlyList<string> TaskIds(TelcPart part) => part switch
     {

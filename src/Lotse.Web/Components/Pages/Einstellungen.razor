@@ -5,6 +5,7 @@
 @inject HealthService Health
 @inject ISnackbar Snackbar
 @inject Lotse.Web.Services.LearnerProfileState ProfileState
+@inject Lotse.Web.Services.HostingOptions Hosting
 
 <PageTitle>Einstellungen – Lotse</PageTitle>
 
@@ -75,6 +76,13 @@ else
             <MudText Typo="Typo.body2">@Tutors.Description</MudText>
         </MudStack>
         <MudText Typo="Typo.body2" Class="mb-3">Der Tutor bewertet Texte und Aufnahmen nach den Prüfungskriterien, spielt den Diskussionspartner und erzeugt neue Aufgaben. Wähle einen Anbieter – Groq ist kostenlos und schnell. Der Schlüssel wird verschlüsselt auf diesem Rechner gespeichert und verlässt ihn nur Richtung Anbieter.</MudText>
+        @if (_demo)
+        {
+            @* A shared account must not hold anyone's key: whoever clicks "Demo" next would spend it. *@
+            <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Text">Im Demo-Konto lässt sich kein eigener Schlüssel hinterlegen – es ist für alle Besucher dasselbe Konto.</MudAlert>
+        }
+        else
+        {
 
         <MudGrid Spacing="2">
             <MudItem xs="12" md="6">
@@ -115,6 +123,7 @@ else
             <MudButton Variant="Variant.Text" OnClick="ClearTutorAsync" Disabled="_probing">Zurück auf Standard</MudButton>
             @if (_probing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
         </MudStack>
+        }
         @if (_probe is not null)
         {
             <MudAlert Severity="@(_probe.Ok ? Severity.Success : Severity.Error)" Dense="true" Class="mt-2" Variant="Variant.Text">
@@ -209,8 +218,12 @@ else
     private bool _checking;
     private List<string> _repairLog = [];
 
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+    private bool _demo;
+
     protected override async Task OnInitializedAsync()
     {
+        _demo = AuthState is not null && (await AuthState).User.IsDemo(Hosting);
         _p = await Learning.GetProfileAsync();
         _examDate = _p.TargetExamDate?.ToDateTime(TimeOnly.MinValue);
         var s = Tutors.Settings;
@@ -262,6 +275,7 @@ else
 
     private async Task SaveTutorAsync()
     {
+        if (_demo) return;
         await Tutors.SaveAsync(Draft());
         Snackbar.Add(Tutors.IsAvailable ? "Tutor aktiviert: " + Tutors.Description : Tutors.Description, Tutors.IsAvailable ? Severity.Success : Severity.Warning);
     }

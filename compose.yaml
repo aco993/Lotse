@@ -1,0 +1,22 @@
+# One Lotse instance with its data in a named volume. Put a TLS-terminating proxy in front (Caddy example in
+# docs/DEPLOY.md) - passkeys and the microphone need https on any address other than localhost.
+services:
+  lotse:
+    build: .
+    image: lotse:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"   # only the proxy on this host reaches the app
+    volumes:
+      - lotse-data:/data
+    environment:
+      # Personal server: create your account, then set this to "false" and restart.
+      Lotse__Hosting__RegistrationOpen: "true"
+      Lotse__Hosting__BehindProxy: "true"
+      # Public portfolio instance: a shared demo account behind a "Demo ansehen" button, reset daily.
+      Lotse__Hosting__Demo__Enabled: "false"
+      # Optional: a provider key as the default for every account on this server. Leave empty on a public
+      # instance unless you accept that every visitor spends it (Groq's free tier caps it at 1,000 requests a day).
+      GROQ_API_KEY: ""
+volumes:
+  lotse-data:

@@ -269,5 +269,23 @@ public sealed class TutorRegistry : ITutor, ILearnerBound, IDisposable
         return await _active.Tutor.PartnerAsync(part, scenario, history, context, ct);
     }
 
+    public async Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+    {
+        await EnsureCurrentAsync(ct);
+        return await _active.Tutor.HintAsync(exercise, attempt, context, ct);
+    }
+
+    public async Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)
+    {
+        await EnsureCurrentAsync(ct);
+        return await _active.Tutor.GenerateTelcAsync(part, brief, exampleJson, context, ct);
+    }
+
+    public async Task<TaskCritique> CritiqueTelcAsync(TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default)
+    {
+        await EnsureCurrentAsync(ct);
+        return await _active.Tutor.CritiqueTelcAsync(part, taskWithKey, context, ct);
+    }
+
     private sealed record StoredSettings(string PresetId, string? BaseUrl, string Model, string? ProtectedApiKey, string? Effort, int TimeoutSeconds);
 }

@@ -504,3 +504,16 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-subtests { margin-top: 10px; border-collapse: collapse; font-size: .92rem; }
 .tc-subtests td { padding: 3px 16px 3px 0; }
 .tc-calib { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 12px; align-items: center; font-size: .9rem; }
+
+/* Hint ladder: each rung on its own line, label first, so a learner sees how far up they had to climb. */
+.hint-ladder { display: flex; flex-direction: column; gap: .4rem; padding: .6rem .8rem; border-left: 3px solid var(--mud-palette-info); background: color-mix(in srgb, var(--mud-palette-info) 7%, transparent); border-radius: 4px; }
+.hint-step { line-height: 1.45; }
+.hint-label { display: inline-block; min-width: 4.5em; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; opacity: .75; }
+
+/* telc draft review: the generation buttons wrap on phones, the task text keeps its line breaks. */
+.tc-gen-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
+.tc-stats { border-collapse: collapse; width: 100%; font-size: .875rem; }
+.tc-stats td { padding: .15rem 0; }
+.tc-stats td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.tc-draft { white-space: pre-wrap; font-family: inherit; font-size: .9rem; line-height: 1.5; max-height: 32rem; overflow: auto; margin: .5rem 0 0; padding: .6rem .8rem; background: var(--mud-palette-background-gray); border-radius: 4px; }
+.acct-demo { margin-top: 14px; text-align: center; }

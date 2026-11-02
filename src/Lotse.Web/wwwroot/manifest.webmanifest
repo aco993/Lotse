@@ -7,6 +7,10 @@
   "background_color": "#F6F7F9",
   "theme_color": "#1F5F8B",
   "lang": "de",
+  "shortcuts": [
+    { "name": "3 Minuten üben", "short_name": "3 Minuten", "url": "/kurz", "icons": [{ "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }] },
+    { "name": "telc B2", "short_name": "telc", "url": "/telc", "icons": [{ "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }] }
+  ],
   "icons": [
     { "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
     { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }

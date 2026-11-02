@@ -243,7 +243,8 @@ public sealed class TelcServiceTests : IAsyncLifetime
         var user = new FakeCurrentUserAccessor(UserId);
         var learning = new Lotse.Infrastructure.Services.LearningService(_factory, provider, new Lotse.Core.Tutor.NullTutor(), new Lotse.Core.Engine.SessionPlanner(), TimeProvider.System,
             user, Microsoft.Extensions.Logging.Abstractions.NullLogger<Lotse.Infrastructure.Services.LearningService>.Instance);
-        _svc = new Lotse.Infrastructure.Services.TelcService(_factory, provider, _content, new Lotse.Core.Tutor.NullTutor(), learning, TimeProvider.System, user);
+        var telc = new TelcContentProvider(_content, provider, _factory, Microsoft.Extensions.Logging.Abstractions.NullLogger<TelcContentProvider>.Instance);
+        _svc = new Lotse.Infrastructure.Services.TelcService(_factory, provider, telc, new Lotse.Core.Tutor.NullTutor(), learning, TimeProvider.System, user);
     }
 
     public async ValueTask DisposeAsync()

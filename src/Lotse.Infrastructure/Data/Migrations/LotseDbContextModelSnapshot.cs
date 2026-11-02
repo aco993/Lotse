@@ -567,6 +567,58 @@ namespace Lotse.Infrastructure.Data.Migrations
                     b.ToTable("TelcAttempts");
                 });
 
+            modelBuilder.Entity("Lotse.Infrastructure.Data.TelcDraftEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("CriticOk")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Json")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LatencyMs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Part")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Problems")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ReviewedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Topic")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("TelcDrafts");
+                });
+
             modelBuilder.Entity("Lotse.Infrastructure.Data.TelcSimulationEntity", b =>
                 {
                     b.Property<Guid>("Id")

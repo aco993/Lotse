@@ -5,6 +5,7 @@
 @using Lotse.Infrastructure.Data
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
+@inject Lotse.Web.Services.HostingOptions Hosting
 
 @* Static SSR by design – see Register.razor's doc comment for why. Two ways in: password, or a passkey (WebAuthn)
    via PasskeySubmit, which posts the credential back through this same form as Input.Passkey. *@
@@ -51,7 +52,20 @@
     </PasskeySubmit>
 </EditForm>
 
-<div class="acct-alt">Neu hier? <a href="@RegisterUrl">Konto erstellen</a></div>
+@if (Hosting.Demo.Enabled)
+{
+    @* A plain form, not the EditForm above: the demo needs no field, only the antiforgery token. *@
+    <form method="post" action="Account/Demo" class="acct-demo">
+        <AntiforgeryToken />
+        <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+        <button type="submit" class="acct-btn secondary">Demo ansehen – ohne Konto</button>
+        <p class="acct-hint">Ein gemeinsames Beispielkonto mit zwei Wochen Lernverlauf. Wird täglich zurückgesetzt.</p>
+    </form>
+}
+@if (Hosting.RegistrationOpen)
+{
+    <div class="acct-alt">Neu hier? <a href="@RegisterUrl">Konto erstellen</a></div>
+}
 
 @code {
     private static readonly Dictionary<string, string> FieldIds = new()

@@ -11,7 +11,7 @@
     @if (_part is { } part && Sim is null && _tasks.Count > 1)
     {
         <MudSelect T="string" Value="_taskId" ValueChanged="Pick" Label="Aufgabe" Dense="true" Variant="Variant.Outlined" Style="max-width:320px">
-            @foreach (var id in _tasks) { <MudSelectItem T="string" Value="@id">@Telc.Content.TaskTitle(part, id)</MudSelectItem> }
+            @foreach (var id in _tasks) { <MudSelectItem T="string" Value="@id">@Telc.Content.TaskTitle(part, id)@(TelcContent.IsGenerated(id) ? " · KI, freigegeben" : "")</MudSelectItem> }
         </MudSelect>
     }
 </MudStack>

@@ -16,14 +16,16 @@ public sealed record TelcCriterionRating(string Criterion, TelcBand Band, string
 
 /// <summary>
 /// The tutor's rating of a telc production. <see cref="Errors"/> only ever holds mistakes whose snippet occurs in
-/// the learner's text - see <see cref="QuotedErrors"/>.
+/// the learner's text - see <see cref="QuotedErrors"/>; <see cref="DroppedUnquoted"/> counts the reports that did
+/// not, so the evaluation can measure how often the model invents a mistake.
 /// </summary>
 public sealed record TelcAiRating(
     IReadOnlyList<TelcCriterionRating> Criteria,
     IReadOnlyList<TutorError> Errors,
     string Feedback,
     IReadOnlyList<string> Upgrades,
-    bool ThemaVerfehlt = false)
+    bool ThemaVerfehlt = false,
+    int DroppedUnquoted = 0)
 {
     public TelcBand Band(int index) => index < Criteria.Count ? Criteria[index].Band : TelcBand.D;
 

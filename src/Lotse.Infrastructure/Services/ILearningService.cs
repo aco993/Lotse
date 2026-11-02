@@ -26,6 +26,10 @@ public interface ILearningService
     Task SkipStepAsync(Guid sessionId, int stepIndex, CancellationToken ct = default);
 
     Task<AnswerResult> SubmitAnswerAsync(Guid? sessionId, int stepIndex, string exerciseId, string? answer, int durationMs, bool hintUsed, CancellationToken ct = default);
+    /// <summary>The hint ladder for one exercise, in the learner's helper language - none of its rungs contains an accepted answer.</summary>
+    Task<IReadOnlyList<HintStep>> GetHintsAsync(string exerciseId, CancellationToken ct = default);
+    /// <summary>A Socratic question from the tutor, or null when there is no tutor or its question gave the answer away.</summary>
+    Task<string?> GetAiHintAsync(string exerciseId, string? attempt, CancellationToken ct = default);
     Task<AnswerResult> SubmitReadingAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default);
     Task<AnswerResult> SubmitDialogueAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosen, int durationMs, CancellationToken ct = default);
     Task<AnswerResult> SubmitMatchAsync(Guid? sessionId, int stepIndex, string exerciseId, IReadOnlyList<int> chosenRight, int durationMs, CancellationToken ct = default);
