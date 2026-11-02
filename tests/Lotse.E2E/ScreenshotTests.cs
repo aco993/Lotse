@@ -48,9 +48,9 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     // The label itself is rendered twice by an outlined MudSelect (label + fieldset legend), so the
                     // consequence sentence is the unambiguous thing to wait for.
                     await Expect(page.GetByText("Schwerpunkte bleiben bei B2.2")).ToBeVisibleAsync();
-                    await page.Locator("div.mud-input-control:has(input[aria-label='Zielniveau'])").ClickAsync();
+                    await page.GetByRole(AriaRole.Combobox, new() { Name = "Zielniveau", Exact = true }).ClickAsync();
                     await page.Locator(".mud-list-item", new() { HasTextString = "C1 – darüber hinaus" }).First.ClickAsync();
-                    await page.Locator("div.mud-input-control:has(input[aria-label='Branche'])").ClickAsync();
+                    await page.GetByRole(AriaRole.Combobox, new() { Name = "Branche", Exact = true }).ClickAsync();
                     await page.Locator(".mud-list-item", new() { HasTextString = "Pflege" }).First.ClickAsync();
                     await page.GetByLabel("Vorname").First.FillAsync("Marko");
                     await page.GetByLabel("Nachname").First.FillAsync("Petrović");
@@ -76,7 +76,7 @@ public class ScreenshotTests(LotseE2EFixture app) : IClassFixture<LotseE2EFixtur
                     // The same lesson with English as the helper language: second column and heading switch,
                     // everything around them stays German.
                     await page.GotoAsync("/einstellungen");
-                    await page.Locator("div.mud-input-control:has(input[aria-label='Erklärsprache'])").ClickAsync();
+                    await page.GetByRole(AriaRole.Combobox, new() { Name = "Erklärsprache", Exact = true }).ClickAsync();
                     await page.Locator(".mud-list-item", new() { HasTextString = "Englisch" }).First.ClickAsync();
                     await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
                     await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();

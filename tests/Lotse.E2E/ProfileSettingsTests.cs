@@ -10,9 +10,11 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
 {
     private const string Password = "lozinka-e2e-2026";
 
-    /// <summary>MudSelect's own input is type=hidden, so the click has to land on the control wrapper around it.</summary>
+    /// <summary>MudSelect's own input is type=hidden; the visible presenter next to it is the combobox and carries the
+    /// label (since MudBlazor 9.12 the aria-label lives there, not on the hidden input). Going by role and name keeps
+    /// the helper independent of MudBlazor's class names and of which element holds the attribute.</summary>
     private static Task OpenSelectAsync(IPage page, string label)
-        => page.Locator($"div.mud-input-control:has(input[aria-label='{label}'])").ClickAsync();
+        => page.GetByRole(AriaRole.Combobox, new() { Name = label, Exact = true }).ClickAsync();
 
     private static Task OpenTargetLevelAsync(IPage page) => OpenSelectAsync(page, "Zielniveau");
 
@@ -35,8 +37,8 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
         await Expect(page.GetByText("Dein Kurs auf B2")).ToBeVisibleAsync();
 
         await page.GotoAsync("/einstellungen");
-        // MudSelect's own input is type=hidden (it only carries the value and the a11y role), so the click has to
-        // go to the control wrapper around it - clicking the input itself waits forever for something visible.
+        // MudSelect's own input is type=hidden (it only carries the value), so the click goes to the visible
+        // combobox - clicking the input itself waits forever for something visible.
         await OpenTargetLevelAsync(page);
         await page.Locator(".mud-list-item", new() { HasTextString = "C1 – darüber hinaus" }).First.ClickAsync();
         await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
