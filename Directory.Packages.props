@@ -13,7 +13,7 @@
          in the ASP.NET Core shared framework already referenced by Lotse.Web (Microsoft.NET.Sdk.Web) - no separate
          package needed for those. -->
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
-    <PackageVersion Include="Anthropic" Version="13.3.0" />
+    <PackageVersion Include="Anthropic" Version="13.4.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
