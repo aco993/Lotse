@@ -49,7 +49,7 @@ public sealed class ClaudeTutor : TutorBase, IDisposable
             // was enough for the answer alone and cut the JSON off mid-object at higher effort.
             MaxTokens = 16000,
             System = system,
-            Messages = [new MessageParam { Role = Role.User, Content = user }],
+            Messages = [new UserMessageParam(user)],
             OutputConfig = new OutputConfig
             {
                 Effort = ParseEffort(_options.Effort),
@@ -80,7 +80,8 @@ public sealed class ClaudeTutor : TutorBase, IDisposable
 
     protected override async Task<string> CompleteChatAsync(string system, IReadOnlyList<ChatTurn> turns, CancellationToken ct)
     {
-        var messages = turns.Select(t => new MessageParam { Role = t.FromLearner ? Role.User : Role.Assistant, Content = t.Text }).ToList();
+        // Since SDK 13 MessageParam is a union of the per-role types; each constructor sets its own role.
+        var messages = turns.Select(MessageParam (t) => t.FromLearner ? new UserMessageParam(t.Text) : new AssistantMessageParam(t.Text)).ToList();
         var response = await _client.Value.Messages.Create(new MessageCreateParams
         {
             Model = _options.Model,
