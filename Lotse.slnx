@@ -4,6 +4,9 @@
     <Project Path="src/Lotse.Infrastructure/Lotse.Infrastructure.csproj" />
     <Project Path="src/Lotse.Web/Lotse.Web.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Lotse.Evals/Lotse.Evals.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Lotse.Core.Tests/Lotse.Core.Tests.csproj" />
     <Project Path="tests/Lotse.E2E/Lotse.E2E.csproj" />

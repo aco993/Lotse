@@ -242,6 +242,42 @@ public sealed class TelcSimulationEntity
     public string TasksJson { get; set; } = "{}";
 }
 
+public enum TelcDraftStatus
+{
+    /// <summary>Failed the format rules (<see cref="TelcContent.Validate"/>) or could not be read; kept only for the statistics.</summary>
+    Invalid,
+    /// <summary>Valid and reviewed by the critic model; waits for a human.</summary>
+    Pending,
+    Approved,
+    Rejected,
+}
+
+/// <summary>
+/// A telc task written by the AI tutor, on its way through the pipeline: format rules, critic model, human review.
+/// Only <see cref="TelcDraftStatus.Approved"/> drafts reach the practice pages and simulations - shared by every
+/// account, like <see cref="GeneratedExerciseEntity"/>, because the content is not personal. Invalid and rejected
+/// drafts stay so the pipeline's acceptance rate can be measured honestly.
+/// </summary>
+public sealed class TelcDraftEntity
+{
+    public required string Id { get; set; }
+    public TelcPart Part { get; set; }
+    /// <summary>The task as JSON in the shape of its content record, or the raw model output when it could not be read.</summary>
+    public required string Json { get; set; }
+    public TelcDraftStatus Status { get; set; }
+    /// <summary>Format problems (Invalid) or the critic's problems, one per line.</summary>
+    public string? Problems { get; set; }
+    public bool CriticOk { get; set; }
+    public string? Topic { get; set; }
+    /// <summary>Which provider and model wrote it, and how long generation and critique took together.</summary>
+    public string? Model { get; set; }
+    public int LatencyMs { get; set; }
+    public required string CreatedByUserId { get; set; }
+    public DateTime CreatedUtc { get; set; }
+    public DateTime? ReviewedUtc { get; set; }
+    public string? RejectReason { get; set; }
+}
+
 /// <summary>One named setting for one learner — today only <c>"tutor.settings"</c> (the AI tutor configuration,
 /// including the API key encrypted at rest). Scoped per user: one learner's key must never be readable, let alone
 /// usable, from another account.</summary>
@@ -293,6 +329,7 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
     public DbSet<TrainingAnswerEntity> TrainingAnswers => Set<TrainingAnswerEntity>();
     public DbSet<TelcAttemptEntity> TelcAttempts => Set<TelcAttemptEntity>();
     public DbSet<TelcSimulationEntity> TelcSimulations => Set<TelcSimulationEntity>();
+    public DbSet<TelcDraftEntity> TelcDrafts => Set<TelcDraftEntity>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -400,6 +437,14 @@ public sealed class LotseDbContext(DbContextOptions<LotseDbContext> options) : I
         });
 
         b.Entity<GeneratedExerciseEntity>().HasKey(g => g.Id);
+
+        b.Entity<TelcDraftEntity>(e =>
+        {
+            e.HasKey(d => d.Id);
+            e.HasIndex(d => d.Status);
+            e.Property(d => d.Part).HasConversion<string>();
+            e.Property(d => d.Status).HasConversion<string>();
+        });
 
         b.Entity<SettingEntity>(e =>
         {

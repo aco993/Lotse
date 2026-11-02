@@ -667,6 +667,29 @@ public sealed class LearningService(
     // Answers
     // ------------------------------------------------------------------------------------------
 
+    public async Task<IReadOnlyList<HintStep>> GetHintsAsync(string exerciseId, CancellationToken ct = default)
+    {
+        var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var view = await LearnerViewAsync(db, await UserIdAsync(), ct);
+        return HintLadder.For(exercise, Catalog.Node(exercise.NodeId), view.HelperLanguage);
+    }
+
+    public async Task<string?> GetAiHintAsync(string exerciseId, string? attempt, CancellationToken ct = default)
+    {
+        var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);
+        var t = await TutorAsync(ct);
+        if (!t.IsAvailable) return null;
+        var hint = (await t.HintAsync(exercise, attempt, await BuildLearnerContextAsync(ct), ct)).Trim();
+        // The guardrail itself: a question that spells out the solution is discarded, not shown.
+        if (hint.Length == 0 || HintLadder.Leaks(hint, exercise))
+        {
+            logger.LogInformation("KI-Hinweis zu {Id} verworfen: {Reason}.", exerciseId, hint.Length == 0 ? "leer" : "verrät die Lösung");
+            return null;
+        }
+        return hint;
+    }
+
     public async Task<AnswerResult> SubmitAnswerAsync(Guid? sessionId, int stepIndex, string exerciseId, string? answer, int durationMs, bool hintUsed, CancellationToken ct = default)
     {
         var exercise = Catalog.Exercise(exerciseId) ?? throw new KeyNotFoundException(exerciseId);

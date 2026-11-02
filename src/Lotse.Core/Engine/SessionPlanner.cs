@@ -61,6 +61,13 @@ public sealed class SessionPlanner
 {
     private const double PriorTheta = -0.2; // a self-declared B1–B2 learner before any data
 
+    /// <summary>
+    /// The "Leerlauf" session: three minutes on the phone - at the bus stop, between two meetings. Reviews and
+    /// short drills only; a writing or speaking task does not fit the moment and would just be skipped, so it waits
+    /// for the next longer session. The habit is the point: a short session that happens beats a long one that does not.
+    /// </summary>
+    public const int QuickMinutes = 3;
+
     public SessionPlan Plan(PlannerInput input)
     {
         if (input.RequestedNodeId is not null && input.Catalog.Node(input.RequestedNodeId) is not null)
@@ -110,7 +117,8 @@ public sealed class SessionPlanner
 
         // ---- 3. Production ------------------------------------------------------------------------
         var daysSinceProduction = input.LastProductionUtc is null ? 99 : (now - input.LastProductionUtc.Value).TotalDays;
-        var wantsProduction = input.TimeBudgetMinutes >= 10 || daysSinceProduction >= 2 || input.SessionsCompleted % 3 == 2;
+        var wantsProduction = input.TimeBudgetMinutes > QuickMinutes
+            && (input.TimeBudgetMinutes >= 10 || daysSinceProduction >= 2 || input.SessionsCompleted % 3 == 2);
         if (wantsProduction)
         {
             var preferSpeaking = input.SessionsCompleted % 2 == 1;

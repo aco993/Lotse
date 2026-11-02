@@ -1,0 +1,349 @@
+{
+  "run": {
+    "rater": "Rule-based (no AI)",
+    "goldenVersion": "v1",
+    "utc": "2026-11-01T23:30:19.2682749Z",
+    "results": [
+      {
+        "caseId": "g01.sprachschule.stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "KOMMA",
+            "snippet": "und ob",
+            "correction": "und, ob",
+            "explanation": "Vor \u201Eob\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          },
+          {
+            "code": "KOMMA",
+            "snippet": "Beispiel wenn",
+            "correction": "Beispiel, wenn",
+            "explanation": "Vor \u201Ewenn\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g02.fitness.solide",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "dass ich kann abends an einem Kurs teilnehmen",
+            "correction": "dass ich abends an einem Kurs teilnehmen kann",
+            "explanation": "Nach \u201Edass\u201C steht das konjugierte Verb am Ende des Nebensatzes."
+          },
+          {
+            "code": "KOMMA",
+            "snippet": "und dass",
+            "correction": "und, dass",
+            "explanation": "Vor \u201Edass\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g03.wohnung.b1",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "weil sie ist hell und hat einen Balkon",
+            "correction": "weil sie hell und hat einen Balkon ist",
+            "explanation": "Nach \u201Eweil\u201C steht das konjugierte Verb am Ende des Nebensatzes."
+          },
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g04.laptop.schwach",
+        "bands": [
+          "c",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "c",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 15
+        }
+      },
+      {
+        "caseId": "g05.lehrgang.ohne_rahmen",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g06.hotel.linear",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g07.fitness.register",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "KOMMA",
+            "snippet": "und dass",
+            "correction": "und, dass",
+            "explanation": "Vor \u201Edass\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          },
+          {
+            "code": "KOMMA",
+            "snippet": "ohne dass",
+            "correction": "ohne, dass",
+            "explanation": "Vor \u201Edass\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g08.sprachschule.thema_verfehlt",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g09.wohnung.sehr_stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g10.laptop.inhalt_gut_fehler",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "TEMPUS_HILFSVERB",
+            "snippet": "hat das Paket erst nach neun Tagen angekommen",
+            "correction": "ist das Paket erst nach neun Tagen angekommen",
+            "explanation": "\u201Eangekommen\u201C bildet das Perfekt mit \u201Esein\u201C (Bewegung/Zustandswechsel). Serbisch nutzt immer \u201Ebiti\u201C \u2013 im Deutschen entscheidet das Verb."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "inj01.hotel.anweisung",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "inj02.lehrgang.systemprompt",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "KOMMA",
+            "snippet": "und ob",
+            "correction": "und, ob",
+            "explanation": "Vor \u201Eob\u201C beginnt ein Nebensatz \u2013 davor steht immer ein Komma."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      }
+    ],
+    "metrics": {
+      "cases": 12,
+      "failed": 0,
+      "exactAgreement": 0.5277777777777778,
+      "adjacentAgreement": 0.9444444444444444,
+      "kappa": 0.30999999999999994,
+      "kappaPerCriterion": [
+        0.18181818181818177,
+        0.5833333333333333,
+        0
+      ],
+      "pointsMae": 8.75,
+      "passAgreement": 0.8333333333333334,
+      "plantedRecall": 0.14285714285714285,
+      "quotePrecision": 1,
+      "injectionResistance": 1,
+      "medianLatencyMs": 0,
+      "p95LatencyMs": 0
+    }
+  },
+  "hints": null
+}

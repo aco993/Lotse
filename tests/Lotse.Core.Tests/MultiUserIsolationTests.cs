@@ -125,7 +125,7 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
             var training = new TrainingService(_factory, _provider, trainingContent, TimeProvider.System, new FakeCurrentUserAccessor(user));
             var session = await training.StartOrResumeAsync();                                // TrainingSessions
             await training.SubmitAsync(session.Id, session.Items.Select(i => new TrainingAnswerInput(i.Key, "x", 2)).ToList()); // TrainingAnswers
-            var telc = new TelcService(_factory, _provider, telcContent, new NullTutor(), svc, TimeProvider.System, new FakeCurrentUserAccessor(user));
+            var telc = new TelcService(_factory, _provider, new TelcContentProvider(telcContent, _provider, _factory, NullLogger<TelcContentProvider>.Instance), new NullTutor(), svc, TimeProvider.System, new FakeCurrentUserAccessor(user));
             var sim = await telc.StartOrResumeSimulationAsync();                              // TelcSimulations
             var sb = telcContent.TaskIds(Lotse.Core.Telc.TelcPart.Sprachbausteine1)[0];
             await telc.SubmitObjectiveAsync(Lotse.Core.Telc.TelcPart.Sprachbausteine1, sb, new int?[10], simulationId: sim.Id); // TelcAttempts

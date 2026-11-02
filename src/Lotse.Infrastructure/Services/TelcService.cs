@@ -76,7 +76,7 @@ public interface ITelcService
 public sealed class TelcService(
     IDbContextFactory<LotseDbContext> dbFactory,
     ContentCatalogProvider catalogProvider,
-    TelcContent content,
+    TelcContentProvider telcContent,
     ITutor tutor,
     ILearningService learning,
     TimeProvider clock,
@@ -84,7 +84,9 @@ public sealed class TelcService(
 {
     private ContentCatalog Catalog => catalogProvider.Catalog;
     private DateTime Now => clock.GetUtcNow().UtcDateTime;
-    public TelcContent Content => content;
+    /// <summary>Read once per call: approving a draft swaps the provider's content between two pages, never within one.</summary>
+    private TelcContent Bank => telcContent.Content;
+    public TelcContent Content => Bank;
     public bool TutorAvailable => tutor.IsAvailable;
 
     public async Task<TelcOverview> GetOverviewAsync(CancellationToken ct = default)
@@ -116,7 +118,7 @@ public sealed class TelcService(
 
     public async Task<string?> NextTaskIdAsync(TelcPart part, CancellationToken ct = default)
     {
-        var ids = content.TaskIds(part);
+        var ids = Bank.TaskIds(part);
         if (ids.Count == 0) return null;
         var userId = await currentUser.GetUserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
@@ -132,7 +134,7 @@ public sealed class TelcService(
         var result = new Dictionary<string, DateTime>();
         foreach (var r in rows)
         {
-            var key = part == TelcPart.Schreiben && content.FindWritingTask(r.Key) is { } w ? w.Pair.Id : r.Key;
+            var key = part == TelcPart.Schreiben && Bank.FindWritingTask(r.Key) is { } w ? w.Pair.Id : r.Key;
             if (!result.TryGetValue(key, out var t) || r.Last > t) result[key] = r.Last;
         }
         return result;
@@ -151,16 +153,16 @@ public sealed class TelcService(
     private TelcAttemptRow Row(TelcAttemptEntity a) => new(a.Id, a.Part, a.TaskId, Title(a.Part, a.TaskId), a.Points, a.MaxPoints, a.Utc, a.SimulationId is not null);
 
     private string Title(TelcPart part, string taskId)
-        => part == TelcPart.Schreiben && content.FindWritingTask(taskId) is { } w
+        => part == TelcPart.Schreiben && Bank.FindWritingTask(taskId) is { } w
             ? $"{w.Task.Kind} ({(w.Pair.A.Id == taskId ? "A" : "B")})"
-            : content.TaskTitle(part, taskId) ?? taskId;
+            : Bank.TaskTitle(part, taskId) ?? taskId;
 
     // ---- Objective parts ---------------------------------------------------------------------------------------
 
     public async Task<TelcObjectiveResult> SubmitObjectiveAsync(TelcPart part, string taskId, IReadOnlyList<int?> answers, int? durationSeconds = null, Guid? simulationId = null, CancellationToken ct = default)
     {
         if (!TelcBlueprint.IsObjective(part)) throw new ArgumentException($"{part} ist kein geschlossener Teil.", nameof(part));
-        var key = content.Key(part, taskId) ?? throw new KeyNotFoundException(taskId);
+        var key = Bank.Key(part, taskId) ?? throw new KeyNotFoundException(taskId);
         var correct = TelcObjectiveScoring.Check(key, answers);
         var points = TelcBlueprint.ObjectivePoints(part, correct.Count(c => c));
         var userId = await currentUser.GetUserIdAsync();
@@ -183,7 +185,7 @@ public sealed class TelcService(
 
         if (part is TelcPart.Sprachbausteine1 or TelcPart.Sprachbausteine2)
         {
-            var task = content.FindSprachbausteine(taskId)!;
+            var task = Bank.FindSprachbausteine(taskId)!;
             for (var i = 0; i < task.Gaps.Count; i++)
             {
                 var gap = task.Gaps[i];
@@ -251,7 +253,7 @@ public sealed class TelcService(
         string nodeId;
         if (!speaking)
         {
-            var writing = content.FindWritingTask(taskId) ?? throw new KeyNotFoundException(taskId);
+            var writing = Bank.FindWritingTask(taskId) ?? throw new KeyNotFoundException(taskId);
             check = TelcWritingCheck.Analyze(text, writing.Task);
             var rating = new TelcWritingRating(bands[0], bands[1], bands[2], themaVerfehlt).Capped(check);
             points = rating.Points;
@@ -260,7 +262,7 @@ public sealed class TelcService(
         }
         else
         {
-            if (content.TaskTitle(part, taskId) is null) throw new KeyNotFoundException(taskId);
+            if (Bank.TaskTitle(part, taskId) is null) throw new KeyNotFoundException(taskId);
             points = new TelcSpeakingRating(bands[0], bands[1], bands[2], bands[3]).Points;
             nodeId = part == TelcPart.Sprechen1 ? "SP.VORTRAG" : "SP.DISKUSSION";
         }
@@ -305,7 +307,7 @@ public sealed class TelcService(
         var tasks = new Dictionary<TelcPart, string>();
         foreach (var part in Enum.GetValues<TelcPart>())
         {
-            var ids = content.TaskIds(part);
+            var ids = Bank.TaskIds(part);
             if (ids.Count == 0) throw new InvalidOperationException($"Für {TelcBlueprint.Info(part).Title} gibt es keine Aufgabe.");
             var last = await LastDoneAsync(db, userId, part, ct);
             tasks[part] = ids.OrderBy(id => last.TryGetValue(id, out var t) ? t : DateTime.MinValue).ThenBy(ids.ToList().IndexOf).First();
@@ -431,30 +433,33 @@ public sealed class TelcService(
 
     // ---- Task text for the tutor -------------------------------------------------------------------------------
 
-    public string TaskText(TelcPart part, string taskId)
+    public string TaskText(TelcPart part, string taskId) => TaskText(Bank, part, taskId);
+
+    /// <summary>The task as the candidate reads it - shared with the evaluation harness, so it rates on the same prompt as the app.</summary>
+    public static string TaskText(TelcContent bank, TelcPart part, string taskId)
     {
         var sb = new StringBuilder();
         switch (part)
         {
-            case TelcPart.Schreiben when content.FindWritingTask(taskId) is { } w:
+            case TelcPart.Schreiben when bank.FindWritingTask(taskId) is { } w:
                 sb.AppendLine($"Aufgabe: {w.Task.Kind}").AppendLine(w.Task.Situation);
                 if (w.Task.Stimulus is { } stim) sb.AppendLine().AppendLine("Anzeige/Anlass:").AppendLine(stim);
                 sb.AppendLine().AppendLine("Behandeln Sie entweder drei der folgenden Punkte oder zwei und einen weiteren Aspekt Ihrer Wahl:");
                 foreach (var l in w.Task.Leitpunkte) sb.AppendLine("- " + l.Text);
                 sb.AppendLine($"Register: {(w.Task.Formal ? "formell" : "halbformell")}. Mindestens {TelcBlueprint.WritingMinWords} Wörter, Betreff, Anrede, Einleitung, Schluss.");
                 break;
-            case TelcPart.Sprechen1 when content.FindErfahrung(taskId) is { } e:
+            case TelcPart.Sprechen1 when bank.FindErfahrung(taskId) is { } e:
                 sb.AppendLine($"Thema: {e.Title} ({string.Join(", ", e.Stichpunkte)})").AppendLine("Der Kandidat spricht ca. 1,5 Minuten und beantwortet danach Fragen des Partners.");
                 break;
-            case TelcPart.Sprechen2 when content.FindDiskussion(taskId) is { } d:
+            case TelcPart.Sprechen2 when bank.FindDiskussion(taskId) is { } d:
                 sb.AppendLine($"Zeitungstext: {d.Title}").AppendLine(d.Text).AppendLine()
                   .AppendLine("Diskutieren Sie über den Inhalt des Textes, bringen Sie Ihre Erfahrungen ein und äußern Sie Ihre Meinung. Begründen Sie Ihre Argumente. Sprechen Sie über mögliche Lösungen.");
                 break;
-            case TelcPart.Sprechen3 when content.FindPlanung(taskId) is { } p:
+            case TelcPart.Sprechen3 when bank.FindPlanung(taskId) is { } p:
                 sb.AppendLine(p.Title).AppendLine(p.Situation).AppendLine("Mögliche Planungspunkte: " + string.Join(", ", p.Aspects));
                 break;
             default:
-                sb.Append(content.TaskTitle(part, taskId) ?? taskId);
+                sb.Append(bank.TaskTitle(part, taskId) ?? taskId);
                 break;
         }
         return sb.ToString().Trim();

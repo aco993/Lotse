@@ -43,6 +43,10 @@ public sealed record LearnerContext(
 
 public sealed record ChatTurn(bool FromLearner, string Text);
 
+/// <summary>A second model's verdict on a generated exam task, before a human sees it.</summary>
+/// <param name="Problems">Each problem in one sentence, naming the item ("Aufgabe 3: zwei Optionen passen").</param>
+public sealed record TaskCritique(bool Ok, IReadOnlyList<string> Problems);
+
 /// <summary>
 /// The AI tutor. The application works without it (deterministic checking, self-check rubrics, seed content);
 /// with it, free production gets rubric-based feedback with tagged errors, the item bank grows on demand
@@ -71,6 +75,21 @@ public interface ITutor
     /// the text (Teil 2) or planning together (Teil 3). <paramref name="scenario"/> is the task as both candidates see it.
     /// </summary>
     Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>
+    /// One Socratic question that moves the learner a step towards the answer of <paramref name="exercise"/>
+    /// without stating it. The caller still filters the result with <see cref="Engine.HintLadder.Leaks(string, Exercise)"/>.
+    /// </summary>
+    Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>
+    /// A new task for an objective telc part as raw JSON in the shape of <paramref name="exampleJson"/>. The caller
+    /// assigns the id and validates it with <see cref="TelcContent.Validate"/>; nothing generated is used unchecked.
+    /// </summary>
+    Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default);
+
+    /// <summary>Reviews a generated task with its solution key: exactly one right answer per item, plausible distractors, correct German.</summary>
+    Task<TaskCritique> CritiqueTelcAsync(TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default);
 }
 
 /// <summary>Used when no provider is configured. Evaluation calls throw a clear message; the UI falls back to self-checks.</summary>
@@ -95,5 +114,14 @@ public sealed class NullTutor(string? description = null) : ITutor
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
 
     public Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
+        => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
+
+    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+        => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
+
+    public Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)
+        => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
+
+    public Task<TaskCritique> CritiqueTelcAsync(TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default)
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
 }

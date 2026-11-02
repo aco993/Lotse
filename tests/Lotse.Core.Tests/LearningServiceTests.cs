@@ -59,6 +59,15 @@ public sealed class LearningServiceTests : IAsyncLifetime
         public Task<string> PartnerAsync(Lotse.Core.Telc.TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
             => Task.FromResult("Antwort");
 
+        public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+            => Task.FromResult("Welcher Fall folgt auf diese Präposition?");
+
+        public Task<string> GenerateTelcAsync(Lotse.Core.Telc.TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)
+            => throw new NotSupportedException();
+
+        public Task<TaskCritique> CritiqueTelcAsync(Lotse.Core.Telc.TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default)
+            => throw new NotSupportedException();
+
         public Task<Exercise?> GenerateReadingAsync(SkillNode node, CefrBand band, bool audioOnly, LearnerContext context, CancellationToken ct = default)
             => Task.FromResult<Exercise?>(new Exercise
             {

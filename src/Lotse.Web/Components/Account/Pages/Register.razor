@@ -7,6 +7,7 @@
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
+@inject Lotse.Web.Services.HostingOptions Hosting
 
 @* Static SSR by design (no @@rendermode line anywhere on this route): setting the auth cookie via
    SignInManager.SignInAsync needs a real HTTP response, which a live Blazor Server circuit no longer has. The rest
@@ -16,6 +17,12 @@
 <PageTitle>Registrieren – Lotse</PageTitle>
 
 <h1>Konto erstellen</h1>
+@if (!Hosting.RegistrationOpen)
+{
+    <p class="acct-sub">Auf diesem Server ist die Registrierung geschlossen.</p>
+    <div class="acct-alt"><a href="Account/Login">Zur Anmeldung</a></div>
+    return;
+}
 <p class="acct-sub">Dein eigener Lernstand – komplett getrennt von jedem anderen Konto auf diesem Rechner.</p>
 
 @if (_identityErrors is { } errors)
@@ -76,6 +83,8 @@
 
     public async Task RegisterUserAsync()
     {
+        // The form is not rendered when registration is closed; a hand-made POST gets no account either.
+        if (!Hosting.RegistrationOpen) return;
         var user = Activator.CreateInstance<ApplicationUser>();
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = (IUserEmailStore<ApplicationUser>)UserStore;

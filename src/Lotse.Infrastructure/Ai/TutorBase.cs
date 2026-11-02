@@ -304,7 +304,7 @@ public abstract class TutorBase(ILogger logger) : ITutor
         var quoted = QuotedErrors.Filter(errors, request.LearnerText, out var unquoted);
         if (unquoted > 0) Logger.LogInformation("telc-Bewertung: {Count} nicht zitierbare Fehler verworfen.", unquoted);
 
-        return new TelcAiRating(bands, quoted, dto.Feedback ?? "", dto.Upgrades ?? [], dto.ThemaVerfehlt && !request.Speaking);
+        return new TelcAiRating(bands, quoted, dto.Feedback ?? "", dto.Upgrades ?? [], dto.ThemaVerfehlt && !request.Speaking, unquoted);
     }
 
     private static string TelcRaterBrief(TelcPart part) => TelcBlueprint.IsWritten(part)
@@ -351,6 +351,133 @@ public abstract class TutorBase(ILogger logger) : ITutor
             turns.Add(new ChatTurn(true, part == TelcPart.Sprechen3 ? "Fang du bitte an." : "Bitte beginnen Sie."));
         turns.AddRange(history);
         return CompleteChatAsync(system, turns, ct);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Socratic hint: one question, never the answer
+    // ------------------------------------------------------------------------------------------
+
+    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+    {
+        var system = BuildSystemPrompt(context) + """
+
+
+            Du gibst jetzt einen sokratischen Hinweis zu einer Übung. Der Lerner soll die Lösung SELBST finden.
+            Regeln, ohne Ausnahme:
+            - Nenne NIEMALS die Lösung, kein Wort der Lösung, keine Endung, die sie verrät.
+            - Stelle genau EINE Frage (höchstens zwei Sätze), die auf den nächsten Denkschritt führt: welche Regel, welcher Fall, welches Signalwort, wo im Satz.
+            - Wenn ein Versuch des Lerners vorliegt, knüpfe an seinen Denkfehler an, ohne ihn zu korrigieren.
+            - Nur die Frage, keine Einleitung, kein Lob.
+            """;
+        var user = new StringBuilder()
+            .AppendLine($"ÜBUNG ({exercise.Type}): {exercise.Prompt}");
+        if (exercise.Instruction is { } instruction) user.AppendLine($"Anweisung: {instruction}");
+        if (exercise.Options.Count > 0 && exercise.Type == ExerciseType.MultipleChoice) user.AppendLine("Optionen: " + string.Join(" | ", exercise.Options));
+        // The model needs the solution to aim at it; the caller's leak filter makes sure it never comes back.
+        user.AppendLine("LÖSUNG (nur für dich, niemals nennen): " + (exercise.Type == ExerciseType.MultipleChoice && exercise.CorrectIndex is { } c ? exercise.Options[c] : string.Join(" | ", exercise.Answers)));
+        if (!string.IsNullOrWhiteSpace(attempt)) user.AppendLine($"VERSUCH DES LERNERS: {attempt}");
+        return CompleteChatAsync(system, [new ChatTurn(true, user.ToString())], ct);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // telc task generation and critique
+    // ------------------------------------------------------------------------------------------
+
+    private const string NullableString = """{ "type": ["string", "null"] }""";
+
+    /// <summary>Strict JSON schemas for the objective telc parts, mirroring the content records (ids are assigned by the caller).</summary>
+    public static string TelcSchema(TelcPart part) => part switch
+    {
+        TelcPart.Lesen1 => """
+            { "type": "object", "additionalProperties": false, "required": ["title", "headings", "texts", "solution"],
+              "properties": {
+                "title": { "type": "string" },
+                "headings": { "type": "array", "items": { "type": "string" }, "description": "Genau 10 Überschriften" },
+                "texts": { "type": "array", "items": { "type": "string" }, "description": "Genau 5 Texte, je 60-110 Wörter" },
+                "solution": { "type": "array", "items": { "type": "integer" }, "description": "Für jeden Text der Index (0-9) seiner Überschrift, jede höchstens einmal" } } }
+            """,
+        TelcPart.Lesen2 => $$"""
+            { "type": "object", "additionalProperties": false, "required": ["title", "text", "questions"],
+              "properties": {
+                "title": { "type": "string" },
+                "text": { "type": "string", "description": "Ein Zeitungs- oder Magazintext, 450-600 Wörter" },
+                "questions": { "type": "array", "description": "Genau 5 Aufgaben in Textreihenfolge", "items": { "type": "object", "additionalProperties": false, "required": ["question", "options", "correct", "explanation"],
+                  "properties": { "question": { "type": "string" }, "options": { "type": "array", "items": { "type": "string" }, "description": "Genau 3 Optionen" }, "correct": { "type": "integer" }, "explanation": {{NullableString}} } } } } }
+            """,
+        TelcPart.Lesen3 => """
+            { "type": "object", "additionalProperties": false, "required": ["title", "situations", "ads", "solution"],
+              "properties": {
+                "title": { "type": "string" },
+                "situations": { "type": "array", "items": { "type": "string" }, "description": "Genau 10 Situationen: wer sucht was" },
+                "ads": { "type": "array", "description": "Genau 12 Anzeigen", "items": { "type": "object", "additionalProperties": false, "required": ["title", "text"],
+                  "properties": { "title": { "type": "string" }, "text": { "type": "string" } } } },
+                "solution": { "type": "array", "items": { "type": "integer" }, "description": "Für jede Situation der Anzeigen-Index (0-11) oder -1, wenn keine passt; jede Anzeige höchstens einmal, genau eine bis zwei Situationen mit -1" } } }
+            """,
+        TelcPart.Sprachbausteine1 or TelcPart.Sprachbausteine2 => $$"""
+            { "type": "object", "additionalProperties": false, "required": ["title", "text", "gaps", "box"],
+              "properties": {
+                "title": { "type": "string" },
+                "text": { "type": "string", "description": "Ein Brief oder eine E-Mail mit den Lücken [1] bis [10] im Text" },
+                "gaps": { "type": "array", "description": "Genau 10 Lücken in Textreihenfolge", "items": { "type": "object", "additionalProperties": false, "required": ["correct", "nodeId", "options", "errorCode", "explanation"],
+                  "properties": {
+                    "correct": { "type": "integer", "description": "Teil 1: Index der richtigen Option (0-2). Teil 2: Index des richtigen Wortes im Kasten (0-14)" },
+                    "nodeId": { "type": "string", "description": "Knoten-Id aus der Liste" },
+                    "options": { "type": ["array", "null"], "items": { "type": "string" }, "description": "Teil 1: genau 3 Optionen. Teil 2: null" },
+                    "errorCode": {{NullableString}},
+                    "explanation": {{NullableString}} } } },
+                "box": { "type": ["array", "null"], "items": { "type": "string" }, "description": "Teil 2: genau 15 verschiedene Wörter, davon 10 Lösungen. Teil 1: null" } } }
+            """,
+        TelcPart.Hoeren1 or TelcPart.Hoeren2 or TelcPart.Hoeren3 => $$"""
+            { "type": "object", "additionalProperties": false, "required": ["title", "recordings"],
+              "properties": {
+                "title": { "type": "string" },
+                "recordings": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["audio", "label", "statements"],
+                  "properties": {
+                    "audio": { "type": "string", "description": "Der gesprochene Text; bei Gesprächen jede Zeile „Name: …“" },
+                    "label": {{NullableString}},
+                    "statements": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["text", "true", "explanation"],
+                      "properties": { "text": { "type": "string" }, "true": { "type": "boolean" }, "explanation": {{NullableString}} } } } } } } } }
+            """,
+        _ => throw new ArgumentException($"{part} wird nicht generiert.", nameof(part)),
+    };
+
+    public Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)
+    {
+        var system = BuildSystemPrompt(context) + """
+
+
+            Du schreibst jetzt eine NEUE Aufgabe im Format von telc Deutsch B2 - einen eigenen Text, keine Kopie veröffentlichter Prüfungsmaterialien.
+            Der Text klingt authentisch (Zeitung, Forum, Anzeige, Radio, Durchsage, Brief) und ist für Erwachsene relevant, die in Deutschland leben und arbeiten.
+            Jede Aufgabe hat GENAU EINE eindeutig richtige Lösung; Distraktoren sind plausibel, aber am Text klar widerlegbar.
+            Halte das Format des Beispiels exakt ein: dieselbe Zahl an Elementen, dieselben Felder.
+            """;
+        var user = $"PRÜFUNGSTEIL: {TelcBlueprint.Info(part).Title} - {TelcBlueprint.Info(part).Format}\n\n{brief}\n\nBEISPIEL IM GEWÜNSCHTEN FORMAT (nicht kopieren, nur das Format übernehmen):\n{exampleJson}";
+        return CompleteJsonAsync(system, user, "telc_aufgabe", TelcSchema(part), ct);
+    }
+
+    protected const string CritiqueSchema = """
+        { "type": "object", "additionalProperties": false, "required": ["ok", "problems"],
+          "properties": {
+            "ok": { "type": "boolean", "description": "true nur, wenn jede Aufgabe genau eine richtige Lösung hat und das Deutsch fehlerfrei ist" },
+            "problems": { "type": "array", "items": { "type": "string" }, "description": "Je Problem ein Satz mit Nummer der Aufgabe; leer, wenn ok" } } }
+        """;
+
+    private sealed record CritiqueDto(bool Ok, List<string>? Problems);
+
+    public async Task<TaskCritique> CritiqueTelcAsync(TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default)
+    {
+        const string system = """
+            Du bist Gutachterin für Prüfungsaufgaben (telc Deutsch B2). Prüfe die Aufgabe unten samt Lösungsschlüssel streng:
+            1. Ist für jede Aufgabe die angegebene Lösung richtig - und ist sie die EINZIGE richtige?
+            2. Lässt sich jede Lösung am Text belegen, ohne Weltwissen?
+            3. Ist das Deutsch fehlerfrei und auf B2-Niveau?
+            4. Passt das Format zum Prüfungsteil?
+            Melde nur echte Probleme, jedes in einem Satz mit der Nummer der Aufgabe.
+            """;
+        var json = await CompleteJsonAsync(system, $"PRÜFUNGSTEIL: {TelcBlueprint.Info(part).Title}\n\n{taskWithKey}", "gutachten", CritiqueSchema, ct);
+        var dto = JsonSerializer.Deserialize<CritiqueDto>(json, ContentLoader.Options) ?? throw new InvalidOperationException("Leeres Gutachten.");
+        var problems = dto.Problems ?? [];
+        return new TaskCritique(dto.Ok && problems.Count == 0, problems);
     }
 
     // ------------------------------------------------------------------------------------------

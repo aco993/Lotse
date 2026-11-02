@@ -11,6 +11,7 @@ using Lotse.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
@@ -78,6 +79,26 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+// ---- Hosting: local by default; a server closes registration, trusts its proxy, may offer a demo account ----------
+var hosting = builder.Configuration.GetSection("Lotse:Hosting").Get<HostingOptions>() ?? new HostingOptions();
+builder.Services.AddSingleton(hosting);
+if (hosting.BehindProxy)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(o =>
+    {
+        o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+        // The proxy sits in front of the container on an address not known in advance (a Docker network, a
+        // platform's ingress). Opting in with BehindProxy is the statement that only that proxy can reach the app.
+        o.KnownIPNetworks.Clear();
+        o.KnownProxies.Clear();
+    });
+}
+if (hosting.Demo.Enabled)
+{
+    builder.Services.AddSingleton<DemoSeeder>();
+    builder.Services.AddHostedService<DemoResetService>();
+}
+
 // Secure by default: every page requires a signed-in learner unless explicitly marked [AllowAnonymous]
 // (the /Account/* pages, /Error, /not-found).
 builder.Services.AddAuthorization(o => o.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
@@ -108,9 +129,15 @@ builder.Services.AddScoped<ILearningService, LearningService>();
 // B2-Training: content validated against the seed catalogue once at startup, like the exercise bank itself.
 builder.Services.AddSingleton(sp => TrainingContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog));
 builder.Services.AddScoped<ITrainingService, TrainingService>();
-// telc Deutsch B2: own tasks in the exam's format, validated against the catalogue at startup like the rest.
-builder.Services.AddSingleton(sp => TelcContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog));
+// telc Deutsch B2: own tasks in the exam's format, validated against the catalogue at startup like the rest, plus
+// the tutor-written tasks a human approved on /telc/entwuerfe.
+builder.Services.AddSingleton(sp => new TelcContentProvider(
+    TelcContentLoader.Load(contentDir, sp.GetRequiredService<ContentCatalogProvider>().Catalog),
+    sp.GetRequiredService<ContentCatalogProvider>(),
+    sp.GetRequiredService<IDbContextFactory<LotseDbContext>>(),
+    sp.GetRequiredService<ILogger<TelcContentProvider>>()));
 builder.Services.AddScoped<ITelcService, TelcService>();
+builder.Services.AddScoped<ITelcGenerator, TelcGenerator>();
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddHealthChecks();
 
@@ -148,12 +175,15 @@ using (var scope = app.Services.CreateScope())
     await using var db = await factory.CreateDbContextAsync();
     foreach (var line in await DatabaseInitializer.InitializeAsync(db, app.Logger)) app.Logger.LogInformation("{Line}", line);
     await scope.ServiceProvider.GetRequiredService<ContentCatalogProvider>().RefreshAsync();
+    await scope.ServiceProvider.GetRequiredService<TelcContentProvider>().RefreshAsync();
     // Resolved here purely so its "local voice active / not set up" line appears at boot rather than only once
     // the first learner presses Vorlesen - which voice you get is exactly the kind of thing you want in the log.
     scope.ServiceProvider.GetRequiredService<ITextToSpeech>();
-    app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Konten: ASP.NET Core Identity (Registrierung offen).", dbPath);
+    app.Logger.LogInformation("Lotse bereit. Datenbank: {Db}. Konten: ASP.NET Core Identity (Registrierung {Registration}{Demo}).",
+        dbPath, hosting.RegistrationOpen ? "offen" : "geschlossen", hosting.Demo.Enabled ? ", Demo-Konto aktiv" : "");
 }
 
+if (hosting.BehindProxy) app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -165,6 +195,7 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+if (hosting.Demo.Enabled) app.UseDemoGuard(hosting.Demo);
 app.UseAntiforgery();
 // Static assets (app.css, MudBlazor css/js, favicon, blazor.web.js, ...) are endpoints too, so the fallback
 // "must be signed in" policy above would apply to them as well - a signed-out visitor would get every stylesheet
@@ -184,6 +215,7 @@ app.MapGet("/api/tts/{key}.wav", (string key, ITextToSpeech tts) =>
 });
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapAdditionalIdentityEndpoints();
+if (hosting.Demo.Enabled) app.MapDemoSignIn();
 
 app.Run();
 

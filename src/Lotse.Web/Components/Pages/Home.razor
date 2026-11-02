@@ -105,7 +105,7 @@ else
                 <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">Der Lotse schlägt vor: <b>@_m.NextSessionPreview</b></MudText>
                 <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@(_busy ? null : Icons.Material.Filled.PlayArrow)" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }@_m.Profile.DailyMinutes Minuten starten</MudButton>
-                    @foreach (var m in new[] { 5, 10, 15, 30 }.Where(x => x != _m.Profile.DailyMinutes))
+                    @foreach (var m in new[] { SessionPlanner.QuickMinutes, 5, 10, 15, 30 }.Where(x => x != _m.Profile.DailyMinutes))
                     {
                         var minutes = m;
                         <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => StartAsync(minutes)" Disabled="_busy">@minutes min</MudButton>
