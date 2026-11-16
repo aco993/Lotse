@@ -5,14 +5,16 @@
 
 @if (Items.Count == 0)
 {
-    <MudText Typo="Typo.body2" Style="opacity:.7">Keine Aufgaben in dieser Kategorie.</MudText>
+    <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Keine Aufgaben in dieser Kategorie.</MudText>
 }
 <MudStack Spacing="2">
     @foreach (var item in Items)
     {
-        @* Whole card is the control: role/tabindex/keydown make it reachable and operable from the keyboard. *@
+        @* Whole card is the control: role/tabindex/keydown make it reachable and operable from the keyboard. Its name
+           is its visible text (no aria-label): a label that left out the word count, time and topic did not contain
+           what a voice-control user sees and says (WCAG 2.5.3, axe label-content-name-mismatch). *@
         <MudPaper @key="item.Id" Class="@($"task-card pa-3 {ContextClass(item.Context)}")" Elevation="1"
-                  role="button" tabindex="0" aria-label="@($"{ContextLabel(item.Context)}, {item.Band.Label()}: {item.Prompt}")"
+                  role="button" tabindex="0"
                   @onclick="() => OnPick.InvokeAsync(item)" @onkeydown="e => OnKeyAsync(e, item)">
             <div class="task-row">
                 <div class="task-icon"><MudIcon Icon="@IconFor(item.Type)" Size="Size.Small" /></div>

@@ -83,7 +83,7 @@
         </div>
         @if (_check.ConnectorsUsed.Count > 0)
         {
-            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">Verknüpft mit: @string.Join(", ", _check.ConnectorsUsed)</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="color:var(--mud-palette-text-secondary)">Verknüpft mit: @string.Join(", ", _check.ConnectorsUsed)</MudText>
         }
         @foreach (var h in hints)
         {
@@ -104,8 +104,8 @@
         {
             <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap">
                 <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="RateAiAsync" Disabled="_busy">KI-Bewerterin fragen</MudButton>
-                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
-                <MudText Typo="Typo.caption" Style="opacity:.75">oder unten selbst einstufen</MudText>
+                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" aria-label="Lädt …" /> }
+                <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">oder unten selbst einstufen</MudText>
             </MudStack>
         }
         @if (_aiError is not null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@_aiError</MudAlert> }
@@ -139,7 +139,7 @@
             </MudExpansionPanels>
         }
         <div class="tc-submit">
-            <MudText Typo="Typo.caption" Style="opacity:.75">Vorschau: @Preview.ToString("0") von 45 Punkten</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Vorschau: @Preview.ToString("0") von 45 Punkten</MudText>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _bands.Any(b => b is null))">Speichern</MudButton>
         </div>
     </MudPaper>

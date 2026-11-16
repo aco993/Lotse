@@ -48,6 +48,9 @@ public sealed class LotseE2EFixture : IAsyncLifetime
             ?? _host.CreateClient().BaseAddress?.ToString()
             ?? throw new InvalidOperationException("Kestrel started without an address.");
         BaseUrl = $"http://localhost:{new Uri(address).Port}";
+        // A shared CI runner is slower than a laptop; 5 s (Playwright's default) is a guess about the machine, not
+        // about the app. Tests that need a tighter bound still pass their own timeout.
+        Assertions.SetDefaultExpectTimeout(15_000);
         _playwright = await Playwright.CreateAsync();
         // Headless is not silent: a dictation auto-plays on render and "Gespräch anhören" streams a WAV rendered
         // by Piper, so without --mute-audio a test run talks German through the machine's speakers.

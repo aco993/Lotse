@@ -15,7 +15,7 @@
 
 @if (_o is null)
 {
-    <MudProgressLinear Indeterminate="true" />
+    <MudProgressLinear Indeterminate="true" aria-label="Lädt …" />
     return;
 }
 
@@ -166,7 +166,7 @@ else
     </MudItem>
 </MudGrid>
 
-<MudText Typo="Typo.caption" Class="d-block mb-4" Style="opacity:.7">
+<MudText Typo="Typo.caption" Class="d-block mb-4" Style="color:var(--mud-palette-text-secondary)">
     Format, Punkte und Bewertungskriterien nach: @TelcBlueprint.Source. Alle Aufgaben hier sind eigene Texte im Prüfungsformat, keine Kopien von telc-Material.
     Sprachbausteine-Fehler landen wie jeder andere Fehler im Fehlerjournal.
     Mehr Aufgaben: <MudLink Href="/telc/entwuerfe" Typo="Typo.caption">vom Tutor schreiben lassen und selbst freigeben</MudLink>.

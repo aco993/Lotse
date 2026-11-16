@@ -20,6 +20,9 @@
     <MudTabPanel Text="Spontan (1–2 min)" Icon="@Icons.Material.Filled.RecordVoiceOver">
         <TaskList Items="Alltag" OnPick="StartAsync" />
     </MudTabPanel>
+    <MudTabPanel Text="Aussprache" Icon="@Icons.Material.Filled.Hearing">
+        <ReadAloudPractice />
+    </MudTabPanel>
     <MudTabPanel Text="Prüfung Teil 1 – Vortrag" Icon="@Icons.Material.Filled.Campaign">
         <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3" Variant="Variant.Text">In der Prüfung hast du 15 Minuten Vorbereitung für beide Teile. Nutze Stichworte, keine ganzen Sätze. Struktur: Einleitung → Leitpunkte → Fazit. Für mehr Flüssigkeit: dieselbe Geschichte dreimal mit immer weniger Zeit – die <MudLink Href="telc/ueben/Sprechen1">4/3/2-Übung im telc-Teil 1</MudLink>.</MudAlert>
         <TaskList Items="Vortrag" OnPick="StartAsync" />
@@ -56,7 +59,7 @@
                         </MudPaper>
                     </MudStack>
                 }
-                @if (_partnerThinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+                @if (_partnerThinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" aria-label="Lädt …" /> }
             </MudPaper>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
                 @if (!_recording)

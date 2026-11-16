@@ -4,7 +4,7 @@
 @inject ContentCatalogProvider CatalogProvider
 
 @if (_items is null) { <MudSkeleton Height="80px" /> }
-else if (_items.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch nichts eingereicht.</MudText> }
+else if (_items.Count == 0) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch nichts eingereicht.</MudText> }
 else
 {
     <MudStack Spacing="2">

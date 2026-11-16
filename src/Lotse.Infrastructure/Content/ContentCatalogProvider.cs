@@ -49,11 +49,26 @@ public sealed class ContentCatalogProvider
     public int SeedExerciseCount => _seed.Exercises.Count;
     public int GeneratedExerciseCount => _current.Exercises.Count - _seed.Exercises.Count;
 
+    private (int Count, DateTime? Newest) _loaded = (0, null);
+
+    /// <summary>
+    /// Reloads only when the generated rows changed since the last load: one COUNT and one MAX, not the whole table.
+    /// Another process may add rows - the MCP server (tools/Lotse.Mcp) writes exercises from a chat into this same
+    /// database - and a session should be planned from them without restarting the app.
+    /// </summary>
+    public async Task RefreshIfChangedAsync(CancellationToken ct = default)
+    {
+        await using var db = await _dbFactory.CreateDbContextAsync(ct);
+        var now = (await db.GeneratedExercises.CountAsync(ct), await db.GeneratedExercises.MaxAsync(e => (DateTime?)e.CreatedUtc, ct));
+        if (now != _loaded) await RefreshAsync(ct);
+    }
+
     /// <summary>Loads generated exercises from the database and merges them. Called once at startup and after each generation.</summary>
     public async Task RefreshAsync(CancellationToken ct = default)
     {
         await using var db = await _dbFactory.CreateDbContextAsync(ct);
         var rows = await db.GeneratedExercises.AsNoTracking().ToListAsync(ct);
+        _loaded = (rows.Count, rows.Count == 0 ? null : rows.Max(r => r.CreatedUtc));
         var extra = new List<Exercise>();
         foreach (var row in rows)
         {

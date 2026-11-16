@@ -27,8 +27,8 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 /* Streak / KPI tiles */
 .kpi { text-align: center; padding: 12px 8px; }
 .kpi .v { font-size: 1.8rem; font-weight: 600; line-height: 1.1; }
-.kpi .l { font-size: .8rem; opacity: .75; }
-.kpi .kpi-sub { font-size: .7rem; opacity: .8; }
+.kpi .l { font-size: .8rem; color: var(--mud-palette-text-secondary); }
+.kpi .kpi-sub { font-size: .7rem; color: var(--mud-palette-text-secondary); }
 
 /* Keyboard accessibility: a focus ring every interactive control shows only for keyboard focus (MudBlazor removes
    the browser outline), a skip link that appears on the first Tab, and a visually hidden live region. */
@@ -80,7 +80,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .dlg-line.me { flex-direction: row-reverse; }
 .dlg-bubble { max-width: 88%; background: var(--mud-palette-background-gray); border-radius: 14px; padding: 8px 12px; position: relative; }
 .dlg-line.me .dlg-bubble { background: rgba(224,122,31,.10); border: 1px solid rgba(224,122,31,.25); }
-.dlg-speaker { font-size: .72rem; opacity: .65; margin-bottom: 2px; font-weight: 600; }
+.dlg-speaker { font-size: .72rem; color: var(--mud-palette-text-secondary); margin-bottom: 2px; font-weight: 600; }
 .dlg-option .mud-button-label { white-space: normal; text-align: left; }
 /* 40 px touch target on a small icon: every read-aloud button (dialogue bubbles, the vocabulary table on a lesson)
    measured 26 x 26 on a phone. The icon stays small; the hit area does not. */
@@ -132,7 +132,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 .lesson-hero-text { position: absolute; left: 20px; right: 20px; bottom: 16px; text-shadow: 0 1px 6px rgba(0,0,0,.45); z-index: 1; }
 .text-none, .text-none .mud-button-label { text-transform: none !important; letter-spacing: normal; }
 .example-table { width: 100%; border-collapse: collapse; }
-.example-table th { text-align: left; font-size: .75rem; opacity: .65; padding: 4px 8px; }
+.example-table th { text-align: left; font-size: .75rem; color: var(--mud-palette-text-secondary); padding: 4px 8px; }
 .example-table td { padding: 8px; border-top: 1px solid var(--mud-palette-lines-default); vertical-align: top; }
 @media (max-width: 600px) { .lesson-card.compact { flex-direction: column; } .lesson-card.compact .lesson-art-wrap { width: 100%; } .lesson-hero { aspect-ratio: 320 / 150; } }
 
@@ -141,8 +141,8 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 
 /* Signed-in learner chip + logout, top of the nav drawer */
 .nav-account { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px; }
-.nav-account-email { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; opacity: .85; color: inherit; text-decoration: none; }
-.nav-account-email:hover { opacity: 1; text-decoration: underline; }
+.nav-account-email { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; color: var(--mud-palette-text-secondary); text-decoration: none; }
+.nav-account-email:hover { color: inherit; text-decoration: underline; }
 .nav-account form { margin: 0; }
 .nav-account-logout {
     display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer;
@@ -202,7 +202,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     .acct-points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 1rem; }
     .acct-points li { display: flex; align-items: flex-start; gap: 12px; opacity: .95; }
     .acct-points svg { width: 22px; height: 22px; flex: none; color: #F2A65A; margin-top: 1px; }
-    .acct-foot { margin: 40px 0 0; font-size: .85rem; opacity: .7; max-width: 30em; line-height: 1.5; }
+    .acct-foot { margin: 40px 0 0; font-size: .85rem; color: var(--acct-muted); max-width: 30em; line-height: 1.5; }
 }
 
 /* Form card */
@@ -222,7 +222,7 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
     width: 100%; box-sizing: border-box; height: 46px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--acct-line);
     background: var(--acct-input-bg); color: var(--acct-text); font: inherit; font-size: 1rem; transition: border-color .15s, box-shadow .15s;
 }
-.acct input::placeholder { color: var(--acct-muted); opacity: .75; }
+.acct input::placeholder { color: var(--acct-muted); opacity: 1; }
 .acct input:not([type="checkbox"]):focus { outline: none; border-color: var(--acct-primary); box-shadow: 0 0 0 4px var(--acct-ring); }
 .acct input.invalid { border-color: var(--acct-error); }
 .acct input:-webkit-autofill { -webkit-box-shadow: 0 0 0 100px var(--acct-input-bg) inset; -webkit-text-fill-color: var(--acct-text); }
@@ -318,7 +318,7 @@ a.acct-btn:hover { text-decoration: none; }
    the white and the dark surface (pure #7C6BD6 / #A07850 on #1A2430 would not). */
 .task-ctx { font-size: .76rem; font-weight: 700; color: color-mix(in srgb, var(--task-accent) 55%, var(--mud-palette-text-primary)); text-transform: uppercase; letter-spacing: .5px; }
 .task-chip.mud-chip { margin: 0; height: 22px; }
-.task-node { margin-left: auto; font-size: .72rem; opacity: .65; font-weight: 500; text-align: right; }
+.task-node { margin-left: auto; font-size: .72rem; color: var(--mud-palette-text-secondary); font-weight: 500; text-align: right; }
 .task-prompt { line-height: 1.5; }
 .task-go { align-self: center; opacity: .35; transition: opacity .15s, transform .15s; }
 .task-card:hover .task-go { opacity: .85; transform: translateX(2px); }
@@ -329,7 +329,7 @@ a.acct-btn:hover { text-decoration: none; }
 .page-intro-icon { width: 42px; height: 42px; min-width: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--intro-color); }
 .intro-schreiben { --intro-color: var(--mud-palette-primary); --intro-tint-strong: rgba(31,95,139,.16); --intro-tint-weak: rgba(31,95,139,.03); }
 .intro-sprechen { --intro-color: var(--mud-palette-secondary); --intro-tint-strong: rgba(224,122,31,.18); --intro-tint-weak: rgba(224,122,31,.03); }
-.task-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .75rem; opacity: .8; margin: 0 4px 2px; }
+.task-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .75rem; color: var(--mud-palette-text-secondary); margin: 0 4px 2px; }
 .task-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .task-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); }
 
@@ -345,7 +345,7 @@ a.acct-btn:hover { text-decoration: none; }
 .area-sprechen { --task-accent: #A07850; }
 .area-head { display: flex; align-items: baseline; gap: 10px; margin: 20px 4px 8px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: color-mix(in srgb, var(--task-accent) 55%, var(--mud-palette-text-primary)); }
 .area-head::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--task-accent); align-self: center; }
-.area-head small { font-weight: 500; text-transform: none; letter-spacing: 0; opacity: .6; color: var(--mud-palette-text-primary); }
+.area-head small { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--mud-palette-text-secondary); }
 .topic-title { font-weight: 600; font-size: .95rem; }
 .topic-mastery { display: inline-flex; align-items: center; gap: 8px; }
 .topic-heat { width: 64px; height: 6px; display: inline-block; }
@@ -387,7 +387,7 @@ a.acct-btn:hover { text-decoration: none; }
 .tr-instruction { font-size: .9rem; opacity: .85; }
 .tr-prompt { font-size: 1.1rem; }
 .tr-conf, .tr-kinds { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.tr-conf-label { font-size: .8rem; opacity: .75; margin-right: 4px; }
+.tr-conf-label { font-size: .8rem; color: var(--mud-palette-text-secondary); margin-right: 4px; }
 .tr-conf-btn, .tr-kind-btn { display: inline-flex; align-items: baseline; gap: 6px; min-height: 40px; padding: 6px 12px; border-radius: 10px; cursor: pointer; font: inherit; font-size: .85rem;
     border: 1px solid var(--mud-palette-lines-inputs); background: transparent; color: var(--mud-palette-text-primary); }
 .tr-conf-btn b, .tr-kind-btn b { font-size: 1rem; }
@@ -413,7 +413,7 @@ a.acct-btn:hover { text-decoration: none; }
 /* ---- telc Deutsch B2 ------------------------------------------------------------------------------------------ */
 .tc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
 .tc-part { font-weight: 600; font-size: 1.05rem; }
-.tc-points, .tc-muted { font-size: .8rem; opacity: .75; }
+.tc-points, .tc-muted { font-size: .8rem; color: var(--mud-palette-text-secondary); }
 .tc-points { margin-left: auto; }
 .tc-item { border: 1px solid var(--mud-palette-lines-default); border-radius: 12px; }
 .tc-item-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
@@ -444,7 +444,7 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-leitpunkte li.hit::marker { content: "✓ "; color: var(--mud-palette-success); }
 .tc-leitpunkte li.miss::marker { content: "? "; color: var(--mud-palette-warning); }
 .tc-textarea textarea { font-family: inherit; line-height: 1.6; }
-.tc-wordcount { text-align: right; font-size: .8rem; opacity: .75; margin-top: 2px; }
+.tc-wordcount { text-align: right; font-size: .8rem; color: var(--mud-palette-text-secondary); margin-top: 2px; }
 .tc-wordcount.ok { color: var(--mud-palette-success); opacity: 1; }
 .tc-checkrow { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .9rem; }
 .tc-checkrow .ok, .tc-simrow .ok, .tc-half-value.ok { color: var(--mud-palette-success); }
@@ -475,9 +475,9 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-turn.me { align-self: flex-end; background: var(--mud-palette-primary); color: var(--mud-palette-primary-text); }
 .tc-transcript-small { font-size: .88rem; opacity: .85; margin-top: 4px; }
 .tc-halves { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 8px; }
-.tc-half-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; opacity: .7; }
+.tc-half-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--mud-palette-text-secondary); }
 .tc-half-value { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
-.tc-half-value small { font-size: .9rem; font-weight: 400; opacity: .7; }
+.tc-half-value small { font-size: .9rem; font-weight: 400; color: var(--mud-palette-text-secondary); }
 .tc-meter { position: relative; height: 8px; border-radius: 4px; background: var(--mud-palette-lines-default); margin: 6px 0; overflow: visible; }
 .tc-meter-fill { height: 100%; border-radius: 4px; }
 .tc-meter-fill.ok { background: var(--mud-palette-success); }
@@ -508,7 +508,7 @@ a.acct-btn:hover { text-decoration: none; }
 /* Hint ladder: each rung on its own line, label first, so a learner sees how far up they had to climb. */
 .hint-ladder { display: flex; flex-direction: column; gap: .4rem; padding: .6rem .8rem; border-left: 3px solid var(--mud-palette-info); background: color-mix(in srgb, var(--mud-palette-info) 7%, transparent); border-radius: 4px; }
 .hint-step { line-height: 1.45; }
-.hint-label { display: inline-block; min-width: 4.5em; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; opacity: .75; }
+.hint-label { display: inline-block; min-width: 4.5em; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--mud-palette-text-secondary); }
 
 /* telc draft review: the generation buttons wrap on phones, the task text keeps its line breaks. */
 .tc-gen-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
@@ -517,3 +517,20 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-stats td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .tc-draft { white-space: pre-wrap; font-family: inherit; font-size: .9rem; line-height: 1.5; max-height: 32rem; overflow: auto; margin: .5rem 0 0; padding: .6rem .8rem; background: var(--mud-palette-background-gray); border-radius: 4px; }
 .acct-demo { margin-top: 14px; text-align: center; }
+
+/* A link is underlined, not told apart from the text around it by colour alone (WCAG 1.4.1, axe link-in-text-block).
+   Navigation uses MudNavLink and buttons, so this reaches only links inside text. */
+.mud-link, .mud-link.mud-link-underline-hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Aussprache: the sentence read aloud, then each word marked by what the recogniser understood. Status is in the
+   colour AND in the underline style AND in the tooltip, so it never rests on colour alone. */
+.ra-sentence { font-size: 1.35rem; line-height: 1.9; margin: 8px 0 12px; }
+.ra-word { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0 1px; border-radius: 4px; cursor: pointer;
+    text-decoration-line: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+.ra-word:focus-visible { outline: 2px solid var(--mud-palette-primary); outline-offset: 2px; }
+.ra-heard { text-decoration-color: var(--mud-palette-success); }
+.ra-misheard { text-decoration-color: var(--mud-palette-warning); text-decoration-style: wavy; background: color-mix(in srgb, var(--mud-palette-warning) 14%, transparent); }
+.ra-missing { text-decoration-color: var(--mud-palette-error); text-decoration-style: dotted; background: color-mix(in srgb, var(--mud-palette-error) 14%, transparent); }
+.ra-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; color: var(--mud-palette-text-secondary); }
+.ra-legend .ra-word { cursor: default; }
+@media (max-width: 600px) { .ra-sentence { font-size: 1.15rem; } }

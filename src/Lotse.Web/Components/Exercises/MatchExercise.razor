@@ -34,7 +34,7 @@
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _assigned.Count < Exercise.Pairs.Count)">Prüfen</MudButton>
         <MudButton Variant="Variant.Text" OnClick="Reset" Disabled="_busy">Zurücksetzen</MudButton>
         <MudSpacer />
-        <MudText Typo="Typo.caption" Style="opacity:.6">@_assigned.Count / @Exercise.Pairs.Count Paare</MudText>
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">@_assigned.Count / @Exercise.Pairs.Count Paare</MudText>
     </MudStack>
 }
 else

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- MCP server over stdio: a chat assistant (Claude Desktop, Claude Code, any MCP client) reads one learner's state
+       and writes checked exercises and mistakes back. See docs/MCP.md. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Lotse.Mcp</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Lotse.Infrastructure\Lotse.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

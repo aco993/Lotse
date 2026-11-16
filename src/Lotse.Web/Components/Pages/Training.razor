@@ -179,7 +179,7 @@ else
                         {
                             <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Mic" OnClick="() => StartRecordingAsync(item.Key)" Disabled="@(_recordingKey is not null)">Sprechen</MudButton>
                         }
-                        <MudText Typo="Typo.caption" Style="opacity:.75">Die Erkennung schreibt mit; du kannst danach korrigieren – aber nur Tippfehler der Erkennung, nicht deine Grammatik.</MudText>
+                        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Die Erkennung schreibt mit; du kannst danach korrigieren – aber nur Tippfehler der Erkennung, nicht deine Grammatik.</MudText>
                     </MudStack>
                     @if (_recognitionError is not null && _recordingKey is null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-1">@_recognitionError</MudAlert> }
                 }
@@ -203,7 +203,7 @@ else
             <div class="tr-footer-inner">
                 <div style="flex:1;min-width:180px">
                     <MudText Typo="Typo.body2"><b>@Filled/@view.Items.Count</b> ausgefüllt</MudText>
-                    <MudProgressLinear Value="@(100.0 * Filled / Math.Max(1, view.Items.Count))" Color="Color.Primary" Rounded="true" Class="mt-1" />
+                    <MudProgressLinear Value="@(100.0 * Filled / Math.Max(1, view.Items.Count))" Color="Color.Primary" Rounded="true" Class="mt-1" aria-label="Ausgefüllte Aufgaben" />
                     @if (missing.Count > 0)
                     {
                         <MudText Typo="Typo.caption" Style="opacity:.8">Es fehlt noch etwas bei Nr. @string.Join(", ", missing.Select(Number))</MudText>
@@ -301,10 +301,10 @@ else
                     @if (r.Item.Stage is { } stage) { <span class="tr-tag">@stage.Label()</span> }
                 </div>
                 <div class="tr-prompt mb-1" style="opacity:.85">@Prompt(r.Item.Prompt)</div>
-                <MudText Typo="Typo.body2" Class="preline"><span style="opacity:.7">Deine Antwort:</span> @r.Answer</MudText>
+                <MudText Typo="Typo.body2" Class="preline"><span style="color:var(--mud-palette-text-secondary)">Deine Antwort:</span> @r.Answer</MudText>
                 @if (r.Item.IsFree)
                 {
-                    @if (r.Expected is not null) { <MudText Typo="Typo.body2" Class="mt-1 preline"><span style="opacity:.7">Musterlösung:</span> <b>@r.Expected</b></MudText> }
+                    @if (r.Expected is not null) { <MudText Typo="Typo.body2" Class="mt-1 preline"><span style="color:var(--mud-palette-text-secondary)">Musterlösung:</span> <b>@r.Expected</b></MudText> }
                     <MudText Typo="Typo.caption" Class="d-block mt-2" Style="opacity:.8">Prüfpunkte</MudText>
                     <ul class="tr-checks">@foreach (var c in r.Item.Checks) { <li>@c</li> }</ul>
                     @if (r.Findings.Count > 0)
@@ -322,7 +322,7 @@ else
                 }
                 else
                 {
-                    @if (v.Correct != true || r.AlmostCorrect) { <MudText Typo="Typo.body2" Class="mt-1"><span style="opacity:.7">Richtig:</span> <b>@r.Expected</b></MudText> }
+                    @if (v.Correct != true || r.AlmostCorrect) { <MudText Typo="Typo.body2" Class="mt-1"><span style="color:var(--mud-palette-text-secondary)">Richtig:</span> <b>@r.Expected</b></MudText> }
                     @if (r.AlmostCorrect) { <MudText Typo="Typo.caption" Class="d-block">@r.Feedback</MudText> }
                     @if (v.Correct == false && r.Item.Trap is not null) { <div class="ex-serbian mt-2"><MudText Typo="Typo.body2"><b>Falle:</b> @r.Item.Trap</MudText></div> }
                     @if (v.Correct == false && r.Item.Explanation is not null) { <MudText Typo="Typo.body2" Class="mt-1">@r.Item.Explanation</MudText> }

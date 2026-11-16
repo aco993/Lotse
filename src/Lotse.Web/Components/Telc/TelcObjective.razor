@@ -138,7 +138,7 @@
                 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopAsync" Disabled="!_playing">Stopp</MudButton>
                 @if (_playing && _nowPlaying is { } np) { <MudText Typo="Typo.caption">▶ @np</MudText> }
             </MudStack>
-            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">
+            <MudText Typo="Typo.caption" Class="d-block mt-1" Style="color:var(--mud-palette-text-secondary)">
                 @if (_result is null)
                 {
                     <span>Wie in der Prüfung: Lies zuerst alle Aussagen, dann einmal hören und sofort markieren. Nach der Abgabe kannst du beliebig oft nachhören und den Text lesen.</span>
@@ -174,7 +174,7 @@
 @if (_result is null)
 {
     <div class="tc-submit">
-        <MudText Typo="Typo.caption" Style="opacity:.75">@_answers.Count(a => a is not null) von @_answers.Length beantwortet@(Missing > 0 ? " – leere Felder zählen als falsch" : "")</MudText>
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">@_answers.Count(a => a is not null) von @_answers.Length beantwortet@(Missing > 0 ? " – leere Felder zählen als falsch" : "")</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="_busy">Abgeben</MudButton>
     </div>
 }

@@ -15,7 +15,7 @@ else
             <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
                 <MudText Typo="Typo.h4" Style="font-weight:600">@(_stats?.Stuck ?? 0)</MudText>
                 <MudText Typo="Typo.subtitle2">Wörter, die sitzen</MudText>
-                <MudText Typo="Typo.caption" Style="opacity:.75">
+                <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">
                     Erinnerung hält länger als @ProgressStatsCalculator.StuckDays.ToString("0") Tage@(_stats is { StuckReviewedThisWeek: > 0 } s ? $" · {s.StuckReviewedThisWeek} davon diese Woche wiederholt" : "").
                 </MudText>
             </MudPaper>
@@ -23,7 +23,7 @@ else
         <MudItem xs="12" sm="4">
             <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
                 <MudText Typo="Typo.subtitle2" Class="mb-1">Fällig in den nächsten 7 Tagen</MudText>
-                @if (_stats is null || _stats.DueNext7Days.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch nichts geplant.</MudText> }
+                @if (_stats is null || _stats.DueNext7Days.Count == 0) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch nichts geplant.</MudText> }
                 else
                 {
                     <div style="display:flex; align-items:flex-end; gap:6px; height:70px">
@@ -36,7 +36,7 @@ else
                             </MudTooltip>
                         }
                     </div>
-                    <MudText Typo="Typo.caption" Style="opacity:.75">Heute enthält alles Überfällige. Gesamt: @_stats.DueNext7Days.Sum(d => d.Count).</MudText>
+                    <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Heute enthält alles Überfällige. Gesamt: @_stats.DueNext7Days.Sum(d => d.Count).</MudText>
                 }
             </MudPaper>
         </MudItem>
@@ -44,12 +44,12 @@ else
             <MudPaper Class="pa-4" Elevation="1" Style="height:100%">
                 <MudText Typo="Typo.h4" Style="font-weight:600">@((_stats?.AverageRetrievability ?? 0).ToString("P0"))</MudText>
                 <MudText Typo="Typo.subtitle2">Behalten</MudText>
-                <MudText Typo="Typo.caption" Style="opacity:.75">
+                <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">
                     @(_stats is null || _stats.Scheduled == 0
                         ? "Noch keine geplanten Wiederholungen."
                         : $"So viel von deinen {_stats.Scheduled} geplanten Aufgaben würdest du gerade auf Anhieb können.")
                 </MudText>
-                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.75">
+                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="color:var(--mud-palette-text-secondary)">
                     @(_curve is { } c
                         ? $"Vergessenskurve an dich angepasst (FSRS-6, aus {c.Reviews} Wiederholungen{(c.DefaultLogLoss > 0 && c.LogLoss < c.DefaultLogLoss ? $", {1 - c.LogLoss / c.DefaultLogLoss:P0} genauer als der Standard" : "")})."
                         : "Vergessenskurve: FSRS-6-Standard – ab etwa 150 Wiederholungen wird sie an dich angepasst.")
@@ -60,7 +60,7 @@ else
 
     <MudPaper Class="pa-4 mb-4" Elevation="1">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Letzte 30 Tage</MudText>
-        @if (_history.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine Aufgaben bearbeitet.</MudText> }
+        @if (_history.Count == 0) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch keine Aufgaben bearbeitet.</MudText> }
         else
         {
             <div style="display:flex; align-items:flex-end; gap:3px; height:90px">
@@ -75,7 +75,7 @@ else
                     </MudTooltip>
                 }
             </div>
-            <MudText Typo="Typo.caption" Style="opacity:.6">Balkenhöhe = Aufgaben pro Tag, Farbe = Trefferquote (grün ≥ 80 %, blau ≥ 60 %).</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Balkenhöhe = Aufgaben pro Tag, Farbe = Trefferquote (grün ≥ 80 %, blau ≥ 60 %).</MudText>
         }
     </MudPaper>
 
@@ -95,7 +95,7 @@ else
                         @foreach (var n in strong)
                         {
                             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
-                                <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="opacity:.5">@n.Band.Label()</span></MudText>
+                                <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="color:var(--mud-palette-text-secondary)">@n.Band.Label()</span></MudText>
                                 <div style="flex:1"><MasteryBar Value="@(_states.GetValueOrDefault(n.Id)!.Mastery)" Confidence="@(_states.GetValueOrDefault(n.Id)!.Confidence)" /></div>
                                 <MudText Typo="Typo.caption" Style="width:110px;text-align:right">@($"{_states.GetValueOrDefault(n.Id)!.Mastery:P0} · {_states.GetValueOrDefault(n.Id)!.Attempts}×")</MudText>
                                 <MudIcon Icon="@Icons.Material.Filled.Verified" Size="Size.Small" Color="Color.Tertiary" />
@@ -108,10 +108,10 @@ else
             {
                 var s = _states.GetValueOrDefault(n.Id);
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1">
-                    <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="opacity:.5">@n.Band.Label()</span></MudText>
+                    <MudText Typo="Typo.body2" Style="width:min(52%, 320px)">@n.Title <span style="color:var(--mud-palette-text-secondary)">@n.Band.Label()</span></MudText>
                     <div style="flex:1"><MasteryBar Value="@(s?.Mastery ?? 0.5)" Confidence="@(s?.Confidence ?? 0)" /></div>
                     <MudText Typo="Typo.caption" Style="width:110px;text-align:right">
-                        @if (s is null || s.Attempts == 0) { <span style="opacity:.5">noch nicht geübt</span> }
+                        @if (s is null || s.Attempts == 0) { <span style="color:var(--mud-palette-text-secondary)">noch nicht geübt</span> }
                         else { @($"{s.Mastery:P0} · {s.Attempts}×") }
                     </MudText>
                     @if (s?.RecheckDueUtc is not null) { <MudTooltip Text="@($"Wiedervorlage am {s.RecheckDueUtc:dd.MM.}")"><MudIcon Icon="@Icons.Material.Filled.EventRepeat" Size="Size.Small" Color="Color.Warning" /></MudTooltip> }

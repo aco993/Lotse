@@ -31,7 +31,7 @@ else
             <MudSpacer />
             <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="ReadStoryAsync" Disabled="_reading">@(_reading ? "Liest vor …" : "Gespräch anhören")</MudButton>
         </MudStack>
-        <MudText Typo="Typo.caption" Class="mb-2 d-block" Style="opacity:.7">Bei jeder deiner Repliken: Wähle die beste – jede Option wird erklärt. Das ist der Kern der Lektion.</MudText>
+        <MudText Typo="Typo.caption" Class="mb-2 d-block" Style="color:var(--mud-palette-text-secondary)">Bei jeder deiner Repliken: Wähle die beste – jede Option wird erklärt. Das ist der Kern der Lektion.</MudText>
         <div class="dlg">
             @for (var i = 0; i < _lesson.Story.Count; i++)
             {
@@ -51,7 +51,7 @@ else
                                     @for (var o = 0; o < line.Options!.Count; o++)
                                     {
                                         var oi = o;
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-2 dlg-option" OnClick="() => _storyChoices[idx] = oi"><span style="opacity:.55;margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span></MudButton>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-2 dlg-option" OnClick="() => _storyChoices[idx] = oi"><span style="color:var(--mud-palette-text-secondary);margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span></MudButton>
                                     }
                                 </MudStack>
                             }
@@ -60,7 +60,7 @@ else
                                 var ok = chosen == line.CorrectIndex;
                                 <div>@line.Options![chosen]</div>
                                 <MudAlert Severity="@(ok ? Severity.Success : Severity.Warning)" Dense="true" Variant="Variant.Text" Class="mt-2">@(line.Feedback is { Count: > 0 } ? line.Feedback[chosen] : "")</MudAlert>
-                                @if (!ok) { <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="opacity:.75">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText> }
+                                @if (!ok) { <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="color:var(--mud-palette-text-secondary)">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText> }
                                 <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => _storyChoices.Remove(idx)">Andere Antwort probieren</MudButton>
                             }
                         }
@@ -86,7 +86,7 @@ else
                     <tr>
                         <td><b>@ex.German</b> <MudIconButton Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" OnClick="async () => await Speech.SpeakAsync(ex.German)" aria-label="Vorlesen" /></td>
                         <td style="opacity:.85">@ex.Helper(_lang)</td>
-                        <td style="opacity:.7;font-size:.85rem">@ex.Note</td>
+                        <td style="color:var(--mud-palette-text-secondary);font-size:.85rem">@ex.Note</td>
                     </tr>
                 }
                 </tbody>
@@ -104,7 +104,7 @@ else
             <MudSpacer />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="StartAsync" Disabled="_busy">Lektion starten</MudButton>
         </MudStack>
-        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Merksatz: „@_lesson.Merksatz“</MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Merksatz: „@_lesson.Merksatz“</MudText>
     </MudPaper>
 
     <MudStack Row="true" Justify="Justify.SpaceBetween">

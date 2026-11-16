@@ -250,6 +250,7 @@ public sealed class LearningService(
 
     public async Task<SessionEntity> StartSessionAsync(int minutes, string? requestedNode = null, CancellationToken ct = default)
     {
+        await catalogProvider.RefreshIfChangedAsync(ct);
         var userId = await UserIdAsync();
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         // Starting is idempotent: a second click (or a reload that replays the click) resumes the session that is

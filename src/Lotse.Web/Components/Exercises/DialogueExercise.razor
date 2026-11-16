@@ -20,13 +20,13 @@
                     var chosen = _choices.GetValueOrDefault(idx, -1);
                     if (chosen < 0)
                     {
-                        <MudText Typo="Typo.caption" Class="mb-1 d-block" Style="opacity:.7">Deine Antwort – wähle die beste:</MudText>
+                        <MudText Typo="Typo.caption" Class="mb-1 d-block" Style="color:var(--mud-palette-text-secondary)">Deine Antwort – wähle die beste:</MudText>
                         <MudStack Spacing="1">
                             @for (var o = 0; o < line.Options!.Count; o++)
                             {
                                 var oi = o;
                                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-2 dlg-option" OnClick="() => Choose(idx, oi)">
-                                    <span style="opacity:.55;margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span>
+                                    <span style="color:var(--mud-palette-text-secondary);margin-right:.6em">@(oi + 1)</span><span style="text-align:left">@line.Options[oi]</span>
                                 </MudButton>
                             }
                         </MudStack>
@@ -40,7 +40,7 @@
                         </MudAlert>
                         @if (!ok)
                         {
-                            <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="opacity:.75">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText>
+                            <MudText Typo="Typo.caption" Class="mt-1 d-block"><b>Besser:</b> @line.Options[line.CorrectIndex!.Value] <span style="color:var(--mud-palette-text-secondary)">– @(line.Feedback is { Count: > 0 } ? line.Feedback[line.CorrectIndex.Value] : "")</span></MudText>
                         }
                     }
                 }
@@ -66,7 +66,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="_busy">Gespräch auswerten</MudButton>
         }
         <MudSpacer />
-        <MudText Typo="Typo.caption" Style="opacity:.6">@TurnsDone / @TotalTurns Antworten</MudText>
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">@TurnsDone / @TotalTurns Antworten</MudText>
     </MudStack>
 }
 else
