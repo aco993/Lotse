@@ -17,7 +17,7 @@
         {
             <div class="tc-ai-err"><s>@e.Snippet</s> → <b>@e.Correction</b> <span class="tc-explain">@e.Explanation</span></div>
         }
-        @if (Rating.Errors.Count > MaxErrors) { <MudText Typo="Typo.caption" Style="opacity:.7">… und @(Rating.Errors.Count - MaxErrors) weitere.</MudText> }
+        @if (Rating.Errors.Count > MaxErrors) { <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">… und @(Rating.Errors.Count - MaxErrors) weitere.</MudText> }
     }
     @if (!string.IsNullOrWhiteSpace(Rating.Feedback))
     {

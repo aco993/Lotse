@@ -12,10 +12,17 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="Deque.AxeCore.Playwright" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lotse.Web\Lotse.Web.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Every test class starts its own Kestrel host and Chromium. Seven at once on a four-core machine made Blazor's
+         first interactive render late enough that an Expect failed somewhere different on every run; two at a time
+         keeps the run short without that. -->
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

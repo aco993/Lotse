@@ -196,6 +196,7 @@ Kako se ocenjuje: velika/mala slova, ä→ae, ß→ss, jedna slovna greška u du
 
 - **Schreiben**: kratki zadaci (5 min) za posao i svakodnevicu, plus ispitni formati Teil 1 (forum, 150 reči) i Teil 2 (formalna poruka, 100 reči). Bez API ključa: predaš tekst i sam se oceniš po rubrici uz uzorno rešenje. Sa ključem: Claude ocenjuje po ispitnim kriterijumima, označava greške kodom i prepisuje tvoje rečenice na B2.
 - **Sprechen**: klikni mikrofon, govori, transkript se pojavljuje i možeš ga ispraviti pre slanja. Vortrag (Teil 1) ima standardne četiri tačke; Diskussion (Teil 2) sa ključem ima KI-partnera koji zastupa suprotnu poziciju.
+- **Sprechen → Aussprache**: čitaš naglas rečenice koje se koriste na usmenom delu ispita (mišljenje, diskusija, izlaganje, sastanak). Browser zapisuje šta je čuo, a svaka reč dobije oznaku: zelena linija znači razumeo, talasasta narandžasta znači čuo nešto drugo, a tačkasta crvena znači nije čuo. Klikom na reč čuješ kako se izgovara. Ovo meri koliko te razume program za prepoznavanje govora, a ne tačnu fonetiku. Ipak dobro pokazuje koju reč treba da ponoviš. Radi u Chrome-u i Edge-u.
 - **Prüfung B2**: format ispita sa savetima po delovima, prognoza po modulima i simulacije.
 
 ## 5. Praćenje
@@ -271,7 +272,14 @@ Iskreno o kvalitetu: modeli od 3B parametara greše u nemačkoj gramatici i pone
 
 ## 8. Uz Claude Chat
 
-Za razgovor, dubinske ispravke i coaching koristi prompt iz `docs/CLAUDE_CHAT_PROMPT.md` u Claude Projektu. Greške koje tamo dobiješ vežbaj ovde kao Fokus-Session; „häufigste Fehler" odavde zalepi u chat.
+**Najbolje preko MCP-a** ([MCP.md](MCP.md)). Kad povežeš Claude Desktop ili Claude Code sa Lotse-om, chat sam vidi tvoj datum ispita, najslabije teme i dnevnik grešaka. Ne moraš ništa da kopiraš. Na kraju razgovora upiše greške u Lotse i doda vežbe za tvoje slabe teme, a sledeća sesija u aplikaciji onda cilja baš njih. Bodove i ponavljanja ne može da menja: vežba se i dalje u aplikaciji. Kratko uputstvo:
+
+1. Pokreni Lotse bar jednom.
+2. Pokreni `dotnet build tools/Lotse.Mcp`.
+3. U Claude Desktop → Settings → Developer → Edit Config dodaj `lotse` server sa `--user tvoj@email` (primer je u MCP.md).
+4. U chatu izaberi prompt **„Mit Lotse üben“**.
+
+Bez MCP-a: u Claude Projektu koristi prompt iz `docs/CLAUDE_CHAT_PROMPT.md`. Greške koje tamo dobiješ vežbaj ovde kao Fokus-Session, a „häufigste Fehler“ odavde zalepi u chat.
 
 ## 9. Ako nešto ne radi
 

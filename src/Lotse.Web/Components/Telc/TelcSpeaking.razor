@@ -80,7 +80,7 @@
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Stop" Class="recording" OnClick="StopMonologAsync">Fertig</MudButton>
             }
-            <MudText Typo="Typo.caption" Style="opacity:.7">Kein Mikrofon? Tippe deinen Beitrag ins Feld und drücke „Fertig“.</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Kein Mikrofon? Tippe deinen Beitrag ins Feld und drücke „Fertig“.</MudText>
         </MudStack>
         <MudTextField @bind-Value="_live" Variant="Variant.Outlined" Lines="4" Immediate="true" Placeholder="Transkript erscheint hier …" />
         @if (!_recording && !string.IsNullOrWhiteSpace(_live))
@@ -98,10 +98,10 @@
                 <MudText Typo="Typo.caption" Class="d-block mt-1"><b>Für die nächste Runde:</b></MudText>
                 @foreach (var c in round.Corrections) { <div class="tc-ai-err"><s>@c.Snippet</s> → <b>@c.Correction</b> <span class="tc-explain">@c.Explanation</span></div> }
             }
-            else if (i < 2 && _fourThreeTwo) { <MudText Typo="Typo.caption" Style="opacity:.7">Keine sicheren Fehler gefunden – achte auf flüssigere Übergänge (zuerst, danach, deshalb, am Ende).</MudText> }
+            else if (i < 2 && _fourThreeTwo) { <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Keine sicheren Fehler gefunden – achte auf flüssigere Übergänge (zuerst, danach, deshalb, am Ende).</MudText> }
         </MudPaper>
     }
-    @if (_correcting) { <MudProgressLinear Indeterminate="true" Class="mb-2" /> }
+    @if (_correcting) { <MudProgressLinear Indeterminate="true" Class="mb-2" aria-label="Lädt …" /> }
 }
 
 @* ---- 2. The conversation with the partner. *@
@@ -109,17 +109,17 @@
 {
     @if (_rounds.Count > 0)
     {
-        <MudText Typo="Typo.caption" Class="d-block mb-1" Style="opacity:.75">Dein Beitrag: @_rounds[^1].Words Wörter · @_rounds[^1].WordsPerMinute.ToString("0") Wörter/Minute</MudText>
+        <MudText Typo="Typo.caption" Class="d-block mb-1" Style="color:var(--mud-palette-text-secondary)">Dein Beitrag: @_rounds[^1].Words Wörter · @_rounds[^1].WordsPerMinute.ToString("0") Wörter/Minute</MudText>
     }
     <MudPaper Elevation="0" Class="pa-3 mb-2 tc-chat">
         @foreach (var t in _history)
         {
             <div class="tc-turn @(t.FromLearner ? "me" : "partner")">@t.Text</div>
         }
-        @if (_thinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+        @if (_thinking) { <MudProgressCircular Size="Size.Small" Indeterminate="true" aria-label="Lädt …" /> }
         @if (!_ai && _history.Count > 0 && _scriptIndex >= Script.Count && !_thinking)
         {
-            <MudText Typo="Typo.caption" Style="opacity:.75">Der Übungspartner hat keine weiteren Fragen. Du kannst bewerten.</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Der Übungspartner hat keine weiteren Fragen. Du kannst bewerten.</MudText>
         }
     </MudPaper>
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
@@ -151,8 +151,8 @@
         {
             <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap">
                 <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="RateAiAsync" Disabled="_busy">KI-Prüferin fragen</MudButton>
-                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
-                <MudText Typo="Typo.caption" Style="opacity:.75">Aussprache kann die KI aus dem Transkript nur schätzen – korrigiere sie, wenn du es besser weißt.</MudText>
+                @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" aria-label="Lädt …" /> }
+                <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Aussprache kann die KI aus dem Transkript nur schätzen – korrigiere sie, wenn du es besser weißt.</MudText>
             </MudStack>
         }
         @if (_aiError is not null) { <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@_aiError</MudAlert> }
@@ -179,7 +179,7 @@
             </MudExpansionPanels>
         }
         <div class="tc-submit">
-            <MudText Typo="Typo.caption" Style="opacity:.75">Vorschau: @Preview von 25 Punkten</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Vorschau: @Preview von 25 Punkten</MudText>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync" Disabled="@(_busy || _bands.Any(b => b is null))">Speichern</MudButton>
         </div>
     </MudPaper>

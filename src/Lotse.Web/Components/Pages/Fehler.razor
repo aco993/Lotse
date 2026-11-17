@@ -30,7 +30,7 @@ else
                 <td style="white-space:nowrap">@e.Utc.ToLocalTime().ToString("dd.MM. HH:mm")</td>
                 <td><MudTooltip Text="@e.Code"><span>@e.Title</span></MudTooltip></td>
                 <td style="opacity:.8">@e.NodeTitle</td>
-                <td>@if (!string.IsNullOrWhiteSpace(e.Snippet)) { <s style="opacity:.7">@Trim(e.Snippet)</s> <span> → </span> } <b>@Trim(e.Correction)</b></td>
+                <td>@if (!string.IsNullOrWhiteSpace(e.Snippet)) { <s style="color:var(--mud-palette-text-secondary)">@Trim(e.Snippet)</s> <span> → </span> } <b>@Trim(e.Correction)</b></td>
                 <td>@if (e.FromAi) { <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Size="Size.Small" Title="vom Tutor erkannt" /> }</td>
             </tr>
         }

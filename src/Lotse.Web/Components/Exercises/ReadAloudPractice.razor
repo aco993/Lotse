@@ -1,0 +1,168 @@
+@* Read a spoken Redemittel sentence aloud; the browser transcribes it and each word shows whether it was understood. *@
+@using Lotse.Core.Engine
+@inject ContentCatalogProvider CatalogProvider
+@inject SpeechService Speech
+@implements IDisposable
+
+<MudText Typo="Typo.body2" Class="mb-3" Style="color:var(--mud-palette-text-secondary)">
+    Lies den Satz laut vor. Die Spracherkennung des Browsers schreibt mit, und jedes Wort zeigt, ob es verstanden wurde.
+    Das misst Verständlichkeit, keine Lautanalyse – aber es zeigt, welches Wort du noch einmal sagen solltest.
+</MudText>
+
+@if (!_sttSupported)
+{
+    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">Dieser Browser kann keine Sprache erkennen. Chrome oder Edge können es.</MudAlert>
+}
+
+@if (_sentences.Count > 0)
+{
+    var (_, nodeId, sentence) = _sentences[_index];
+    <MudPaper Class="pa-4 read-aloud" Elevation="1">
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Satz @(_index + 1) von @_sentences.Count · @(CatalogProvider.Catalog.NodeTitle(nodeId))</MudText>
+        @if (_result is null)
+        {
+            <p class="ra-sentence" lang="de">@sentence</p>
+        }
+        else
+        {
+            <p class="ra-sentence" lang="de" aria-label="@($"{sentence} – {_result.Words.Count(w => w.Status == WordHeard.Heard)} von {_result.Words.Count} Wörtern verstanden")">
+                @foreach (var w in _result.Words)
+                {
+                    var word = w;
+                    <button type="button" class="@($"ra-word ra-{word.Status.ToString().ToLowerInvariant()}")" title="@Tip(word)" @onclick="() => SayAsync(word.Word)">@word.Word</button>
+                }
+            </p>
+            <MudText Typo="Typo.body2" Class="mb-1"><b>@($"{_result.Score:P0}")</b> der Wörter verstanden@(_result.Extra.Count > 0 ? $" · zusätzlich gehört: {string.Join(" ", _result.Extra)}" : "")</MudText>
+            <MudText Typo="Typo.caption" Class="d-block mb-2" Style="color:var(--mud-palette-text-secondary)">Erkannt: „@(_result.Transcript.Length == 0 ? "–" : _result.Transcript)“ · Ein Wort antippen, um es zu hören.</MudText>
+            <div class="ra-legend"><span class="ra-word ra-heard">verstanden</span><span class="ra-word ra-misheard">anders gehört</span><span class="ra-word ra-missing">nicht gehört</span></div>
+        }
+
+        @if (_recording)
+        {
+            <MudText Typo="Typo.body2" Class="mt-2" Style="min-height:1.5em">@(_transcript.Length == 0 ? "Ich höre zu …" : _transcript)</MudText>
+        }
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-2">@_error</MudAlert>
+        }
+
+        <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2" Class="mt-3">
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => SayAsync(sentence)" Disabled="_recording">Anhören</MudButton>
+            @if (!_recording)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Mic" OnClick="StartAsync" Disabled="!_sttSupported">@(_result is null ? "Vorlesen" : "Noch einmal")</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Stop" OnClick="StopAsync" Class="recording">Fertig</MudButton>
+            }
+            <MudButton Variant="Variant.Text" EndIcon="@Icons.Material.Filled.SkipNext" OnClick="Next" Disabled="_recording">Nächster Satz</MudButton>
+        </MudStack>
+    </MudPaper>
+
+    @if (_done.Count > 0)
+    {
+        <MudText Typo="Typo.caption" Class="d-block mt-3" Style="color:var(--mud-palette-text-secondary)">
+            Heute @_done.Count @(_done.Count == 1 ? "Satz" : "Sätze") gelesen, im Schnitt @($"{_done.Values.Average():P0}") verstanden.
+            @if (_done.Any(d => d.Value < 1))
+            {
+                <span> Unter 100 %: @string.Join(", ", _done.Where(d => d.Value < 1).Select(d => $"Satz {d.Key + 1}"))</span>
+            }
+        </MudText>
+    }
+}
+
+@code {
+    private IReadOnlyList<(string Id, string NodeId, string Sentence)> _sentences = [];
+    private readonly Dictionary<int, double> _done = [];
+    private int _index;
+    private bool _recording;
+    private bool _sttSupported = true;
+    private string _transcript = "";
+    private string? _error;
+    private ReadAloudResult? _result;
+    private bool _subscribed;
+
+    protected override void OnInitialized()
+    {
+        // A different order each visit, so the first sentences are not the only ones ever read.
+        var all = ReadAloud.Sentences(CatalogProvider.Catalog);
+        _sentences = all.OrderBy(_ => Random.Shared.Next()).ToList();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _sttSupported = await Speech.SttSupportedAsync();
+        Speech.Transcript += OnTranscript;
+        Speech.RecognitionEnded += OnEnded;
+        Speech.RecognitionError += OnError;
+        _subscribed = true;
+        StateHasChanged();
+    }
+
+    private async Task StartAsync()
+    {
+        _error = null;
+        _transcript = "";
+        _result = null;
+        await Speech.StopSpeakingAsync();
+        _recording = await Speech.StartRecognitionAsync();
+        if (!_recording) _error = "Die Aufnahme ließ sich nicht starten. Erlaube das Mikrofon in der Adressleiste und versuche es erneut.";
+    }
+
+    private async Task StopAsync() => await Speech.StopRecognitionAsync();
+
+    private void OnTranscript(string text, bool isFinal)
+    {
+        _transcript = text;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnEnded()
+    {
+        _recording = false;
+        var target = _sentences[_index].Sentence;
+        _result = ReadAloud.Compare(target, _transcript);
+        _done[_index] = _result.Score;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnError(string error)
+    {
+        _error = error switch
+        {
+            "not-allowed" or "permission-denied" or "service-not-allowed" => "Mikrofonzugriff wurde nicht erlaubt. Erlaube ihn in der Adressleiste (Mikrofonsymbol) und versuche es erneut.",
+            "audio-capture" => "Kein Mikrofon gefunden.",
+            "network" => "Die Spracherkennung braucht eine Internetverbindung – Chrome und Edge erkennen auf dem Server ihres Anbieters.",
+            _ => $"Spracherkennung gerade nicht verfügbar ({error}).",
+        };
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void Next()
+    {
+        _index = (_index + 1) % _sentences.Count;
+        _result = null;
+        _transcript = "";
+        _error = null;
+    }
+
+    private async Task SayAsync(string text) => await Speech.SpeakAsync(text, 0.9);
+
+    private static string Tip(WordResult w) => w.Status switch
+    {
+        WordHeard.Heard => "verstanden",
+        WordHeard.Misheard => $"gehört als „{w.HeardAs}“",
+        _ => "nicht gehört",
+    };
+
+    public void Dispose()
+    {
+        if (!_subscribed) return;
+        Speech.Transcript -= OnTranscript;
+        Speech.RecognitionEnded -= OnEnded;
+        Speech.RecognitionError -= OnError;
+        if (_recording) _ = Speech.StopRecognitionAsync();
+    }
+}

@@ -16,6 +16,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
+// The interface is German, so numbers are too: "75 %" and "0,5", whatever language the host machine runs in.
+// Without this an English Windows showed "75%" and a container showed invariant formats.
+System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.DefaultThreadCurrentUICulture
+    = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
+
 var builder = WebApplication.CreateBuilder(args);
 // The documented home for one machine's own settings (gitignored). It was documented before it was loaded: a
 // learner's permanent Ollama configuration in this file vanished without a word, because only the default

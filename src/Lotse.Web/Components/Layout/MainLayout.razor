@@ -15,7 +15,7 @@
     <MudAppBar Elevation="0" Dense="true" Class="lotse-appbar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _drawerOpen = !_drawerOpen)" Class="d-md-none" aria-label="Menü" />
         <MudText Typo="Typo.h6" Class="ml-1" Style="font-weight:600; letter-spacing:.3px">Lotse</MudText>
-        <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.75">Dein Kurs auf @_target.Label()</MudText>
+        <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.85">Dein Kurs auf @_target.Label()</MudText>
         <MudSpacer />
         <MudTooltip Text="@(_dark ? "Helles Design" : "Dunkles Design")">
             <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" aria-label="Design wechseln" />
@@ -39,7 +39,7 @@
                     <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mt-2">
                         <MudText Typo="Typo.subtitle1" Style="font-weight:600">Das hat gerade nicht geklappt.</MudText>
                         <MudText Typo="Typo.body2" Class="mb-2">Dein Lernstand ist gespeichert. Versuch es noch einmal – wenn es wieder passiert, hilft „Reparieren“ in den Einstellungen.</MudText>
-                        <MudText Typo="Typo.caption" Class="mono d-block mb-2" Style="opacity:.7">@ex.GetType().Name: @ex.Message</MudText>
+                        <MudText Typo="Typo.caption" Class="mono d-block mb-2" Style="color:var(--mud-palette-text-secondary)">@ex.GetType().Name: @ex.Message</MudText>
                         <MudStack Row="true" Spacing="2">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Recover">Noch einmal</MudButton>
                             <MudButton Variant="Variant.Text" Href="einstellungen">Einstellungen</MudButton>
@@ -133,6 +133,9 @@
             AppbarBackground = "#1F5F8B",
             Background = "#F6F7F9",
             Surface = "#FFFFFF",
+            // Secondary text (hints, counts, captions) is this colour, not the body text at reduced opacity: opacity
+            // .7 measured 4.0-4.4:1 on Background, below the 4.5:1 AA floor. #5A626C is 5.8:1 on Background.
+            TextSecondary = "#5A626C",
         },
         PaletteDark = new PaletteDark
         {
@@ -161,6 +164,8 @@
             Background = "#111820",
             Surface = "#1A2430",
             DrawerBackground = "#16202B",
+            // Same role as in the light palette: 7.0:1 on Surface and on the drawer, where the account e-mail sat at 3.4:1.
+            TextSecondary = "#A3AFBC",
         },
         LayoutProperties = new LayoutProperties { DefaultBorderRadius = "10px", DrawerWidthLeft = "230px" },
         Typography = new Typography { Default = new DefaultTypography { FontFamily = ["Roboto", "Segoe UI", "Helvetica", "Arial", "sans-serif"] } },

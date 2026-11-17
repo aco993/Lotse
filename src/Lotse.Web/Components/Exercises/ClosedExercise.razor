@@ -9,7 +9,7 @@
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolumeUp" OnClick="() => PlayAsync()" Disabled="_playing">Anhören</MudButton>
             <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.SlowMotionVideo" OnClick="() => PlayAsync(0.75)" Disabled="_playing">Langsam</MudButton>
-            <MudText Typo="Typo.body2" Style="opacity:.75">@Exercise.Prompt</MudText>
+            <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">@Exercise.Prompt</MudText>
         </MudStack>
     }
     else
@@ -32,7 +32,7 @@
                 {
                     var idx = i;
                     <MudButton Variant="@(_choice == idx ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" FullWidth="true" Class="justify-start text-none py-3"
-                               OnClick="() => _choice = idx"><span style="opacity:.55;margin-right:.6em">@(idx + 1)</span>@Exercise.Options[idx]</MudButton>
+                               OnClick="() => _choice = idx"><span style="color:var(--mud-palette-text-secondary);margin-right:.6em">@(idx + 1)</span>@Exercise.Options[idx]</MudButton>
                 }
             </MudStack>
             break;
@@ -49,7 +49,7 @@
             <div class="wo-answer mb-2">
                 @if (_placed.Count == 0)
                 {
-                    <MudText Typo="Typo.body2" Style="opacity:.5">Tippe die Bausteine in der richtigen Reihenfolge an …</MudText>
+                    <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Tippe die Bausteine in der richtigen Reihenfolge an …</MudText>
                 }
                 @foreach (var p in _placed)
                 {
@@ -88,7 +88,7 @@
     </MudStack>
     @if (_hints is { Count: 0 } && !_aiAsked)
     {
-        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Für diese Aufgabe gibt es keinen Tipp.</MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Für diese Aufgabe gibt es keinen Tipp.</MudText>
     }
     else if (_hints is not null)
     {
@@ -101,7 +101,7 @@
             {
                 <div class="hint-step"><span class="hint-label">Tutor</span> @(_aiHint ?? (_busy ? "…" : "Dazu hat der Tutor gerade keine Frage, die die Lösung nicht verrät. Versuch es selbst – oder „Weiß ich nicht“."))</div>
             }
-            <MudText Typo="Typo.caption" Style="opacity:.7">Mit Tipp zählt die Aufgabe als „schwer“ und kommt früher wieder. Die Lösung verrät kein Tipp.</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Mit Tipp zählt die Aufgabe als „schwer“ und kommt früher wieder. Die Lösung verrät kein Tipp.</MudText>
         </div>
     }
 }
@@ -109,7 +109,7 @@ else
 {
     <FeedbackPanel Result="_result" />
     <MudStack Row="true" Class="mt-3" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
-        <MudText Typo="Typo.caption" Class="kbd-hint" Style="opacity:.6">Enter = weiter</MudText>
+        <MudText Typo="Typo.caption" Class="kbd-hint" Style="color:var(--mud-palette-text-secondary)">Enter = weiter</MudText>
         <MudButton @ref="_nextButton" Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => OnDone.InvokeAsync(_result)">Weiter</MudButton>
     </MudStack>
 }

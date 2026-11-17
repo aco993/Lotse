@@ -46,7 +46,7 @@ else
                 </MudSelect>
                 <MudText Typo="Typo.caption" Class="mt-1 d-block" Style="opacity:.8">@(_p.Exam == ExamProvider.Telc ? "Prognose, Plan und Simulation zählen in telc-Punkten: schriftlich 135 von 225 zusammen, mündlich 45 von 75 für sich." : "Prüfungsseite und Prognose folgen dem Goethe-Format: vier Module, jedes einzeln bestehbar.")</MudText>
             </MudItem>
-            <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" Variant="Variant.Outlined" HelperText="Mit Termin baut die telc-Seite einen Plan rückwärts bis zum Prüfungstag." /></MudItem>
+            <MudItem xs="12" sm="6"><MudDatePicker @bind-Date="_examDate" Label="Prüfungstermin (optional)" AdornmentAriaLabel="Kalender öffnen" Variant="Variant.Outlined" HelperText="Mit Termin baut die telc-Seite einen Plan rückwärts bis zum Prüfungstag." /></MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect T="TargetLevel" @bind-Value="_p.TargetLevel" Label="Zielniveau" Variant="Variant.Outlined">
                     <MudSelectItem T="TargetLevel" Value="TargetLevel.B2">B2 – Prüfungsvorbereitung</MudSelectItem>
@@ -65,7 +65,7 @@ else
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="SaveAsync">Speichern</MudButton>
         @if (_p.PlacementCompletedUtc is { } done)
         {
-            <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Einstufung am @done.ToLocalTime().ToString("dd.MM.yyyy") abgeschlossen.</MudText>
+            <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Einstufung am @done.ToLocalTime().ToString("dd.MM.yyyy") abgeschlossen.</MudText>
         }
     </MudPaper>
 
@@ -91,14 +91,14 @@ else
                 </MudSelect>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudAutocomplete T="string" @bind-Value="_model" Label="Modell" Variant="Variant.Outlined" CoerceText="false" CoerceValue="true"
+                <MudAutocomplete T="string" @bind-Value="_model" Label="Modell" AdornmentAriaLabel="Modelle anzeigen" Variant="Variant.Outlined" CoerceText="false" CoerceValue="true"
                                  SearchFunc="SearchModels" HelperText="@("Vorschläge des Anbieters; eigener Name möglich")" />
             </MudItem>
             @if (Preset.NeedsKey || Preset.Id == "custom")
             {
                 <MudItem xs="12" md="6">
                     <MudTextField @bind-Value="_apiKey" Label="@(Preset.NeedsKey ? "API-Schlüssel" : "API-Schlüssel (optional)")" Variant="Variant.Outlined" InputType="@(_showKey ? InputType.Text : InputType.Password)"
-                                  Adornment="Adornment.End" AdornmentIcon="@(_showKey ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)" OnAdornmentClick="() => _showKey = !_showKey"
+                                  Adornment="Adornment.End" AdornmentIcon="@(_showKey ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)" OnAdornmentClick="() => _showKey = !_showKey" AdornmentAriaLabel="@(_showKey ? "Schlüssel verbergen" : "Schlüssel anzeigen")"
                                   HelperText="@KeyHelp" />
                 </MudItem>
             }
@@ -115,20 +115,20 @@ else
                                  Min="MinTimeoutSeconds" Max="MaxTimeoutSeconds" Step="30" HelperText="@TimeoutHelp" />
             </MudItem>
         </MudGrid>
-        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.8">@Preset.Note @(Preset.SignupUrl is null ? "" : "Schlüssel: ")@if (Preset.SignupUrl is not null) { <MudLink Href="@Preset.SignupUrl" Target="_blank">@Preset.SignupUrl</MudLink> }</MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">@Preset.Note @(Preset.SignupUrl is null ? "" : "Schlüssel: ")@if (Preset.SignupUrl is not null) { <MudLink Href="@Preset.SignupUrl" Target="_blank">@Preset.SignupUrl</MudLink> }</MudText>
 
         <MudStack Row="true" Spacing="2" Class="mt-3" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ProbeAsync" Disabled="_probing" StartIcon="@Icons.Material.Filled.NetworkCheck">@(_probing ? "Teste …" : "Verbindung testen")</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTutorAsync" Disabled="_probing">Speichern & aktivieren</MudButton>
             <MudButton Variant="Variant.Text" OnClick="ClearTutorAsync" Disabled="_probing">Zurück auf Standard</MudButton>
-            @if (_probing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" /> }
+            @if (_probing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" aria-label="Lädt …" /> }
         </MudStack>
         }
         @if (_probe is not null)
         {
             <MudAlert Severity="@(_probe.Ok ? Severity.Success : Severity.Error)" Dense="true" Class="mt-2" Variant="Variant.Text">
                 @_probe.Message @(_probe.Ok ? $"· {_probe.LatencyMs} ms" : "")
-                @if (_probe.Sample is not null) { <span style="opacity:.7"> · Antwort: „@_probe.Sample“</span> }
+                @if (_probe.Sample is not null) { <span style="color:var(--mud-palette-text-secondary)"> · Antwort: „@_probe.Sample“</span> }
             </MudAlert>
         }
     </MudPaper>
@@ -140,7 +140,7 @@ else
             <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="CheckHealthAsync" Disabled="_checking">Prüfen</MudButton>
             <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary" OnClick="RepairAsync" Disabled="_checking" StartIcon="@Icons.Material.Filled.Build">Reparieren</MudButton>
         </MudStack>
-        @if (_health is null) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch nicht geprüft.</MudText> }
+        @if (_health is null) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch nicht geprüft.</MudText> }
         else
         {
             @foreach (var item in _health.Items)
@@ -149,7 +149,7 @@ else
                     <MudIcon Size="Size.Small" Icon="@StateIcon(item.State)" Color="@StateColor(item.State)" />
                     <MudText Typo="Typo.body2" Style="width:110px;font-weight:500">@item.Name</MudText>
                     <MudText Typo="Typo.body2">@item.Detail</MudText>
-                    @if (item.Fix is not null) { <MudText Typo="Typo.caption" Style="opacity:.7">– @item.Fix</MudText> }
+                    @if (item.Fix is not null) { <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">– @item.Fix</MudText> }
                 </MudStack>
             }
             @if (_repairLog.Count > 0)
@@ -157,7 +157,7 @@ else
                 <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Text" Class="mt-2">@string.Join(" ", _repairLog)</MudAlert>
             }
         }
-        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="opacity:.7">Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4" Elevation="1" Style="border:1px solid var(--mud-palette-error)">

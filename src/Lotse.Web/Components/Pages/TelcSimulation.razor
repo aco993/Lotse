@@ -9,7 +9,7 @@
 @if (_sim is null)
 {
     @if (_missing) { <MudAlert Severity="Severity.Error">Diese Simulation gibt es nicht (mehr).</MudAlert> }
-    else { <MudProgressLinear Indeterminate="true" /> }
+    else { <MudProgressLinear Indeterminate="true" aria-label="Lädt …" /> }
     return;
 }
 
@@ -97,7 +97,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CompleteAsync">Simulation abschließen</MudButton>
         }
         <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="AbandonAsync">Abbrechen</MudButton>
-        <MudText Typo="Typo.caption" Style="opacity:.7">Abbrechen behält die schon abgegebenen Teile als normale Übungsergebnisse.</MudText>
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Abbrechen behält die schon abgegebenen Teile als normale Übungsergebnisse.</MudText>
     }
 </MudStack>
 

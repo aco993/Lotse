@@ -17,7 +17,7 @@
             <MudButton Variant="Variant.Text" OnClick="() => _showTranscript = !_showTranscript">@(_showTranscript ? "Text verbergen" : "Text anzeigen")</MudButton>
         }
     </MudStack>
-    <MudText Typo="Typo.caption" Class="d-block mb-3" Style="opacity:.7">
+    <MudText Typo="Typo.caption" Class="d-block mb-3" Style="color:var(--mud-palette-text-secondary)">
         @if (_turns.Count > 1) { <span>Gespräch zwischen @Speakers – jede Person mit eigener Stimme. </span> }
         @if (_result is null && !CanPlay) { <span>In der Prüfung hörst du diesen Teil @(MaxPlays == 1 ? "nur einmal" : "zweimal") – jetzt beantworten, danach kannst du beliebig oft nachhören.</span> }
         else if (_result is null && MaxPlays == 1) { <span>Dieser Teil wird in der Prüfung nur einmal gespielt – lies zuerst die Fragen.</span> }
@@ -33,7 +33,7 @@ else
     {
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2" Wrap="Wrap.Wrap">
             <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 120 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
-            <MudText Typo="Typo.caption" Style="opacity:.7">Prüfungszeit für diesen Teil: @(limit / 60) Minuten – danach wird ausgewertet.</MudText>
+            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Prüfungszeit für diesen Teil: @(limit / 60) Minuten – danach wird ausgewertet.</MudText>
         </MudStack>
     }
     <MudPaper Elevation="0" Class="pa-4 mb-3 reading-text" Style="background: var(--mud-palette-background-gray); max-height: 46vh; overflow:auto">@Exercise.Text</MudPaper>

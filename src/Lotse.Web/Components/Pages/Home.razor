@@ -18,7 +18,7 @@ else
             @if (_m.OpenSession is { Kind: SessionKind.Placement } placement)
             {
                 <MudText Typo="Typo.body2">Deine Einstufung ist angefangen – @placement.StepsDone von @placement.StepsTotal Aufgaben sind geschafft. Du kannst jederzeit weitermachen; nichts geht verloren.</MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="@(() => Go($"session/{placement.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }Einstufung fortsetzen</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-2" OnClick="@(() => Go($"session/{placement.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" aria-label="Lädt …" /> }Einstufung fortsetzen</MudButton>
             }
             else
             {
@@ -77,7 +77,7 @@ else
             <MudSpacer />
             <MudText Typo="Typo.body2">@_m.MinutesThisWeek von @_m.Profile.WeeklyGoalMinutes Minuten diese Woche</MudText>
         </MudStack>
-        <MudProgressLinear Color="@(WeekProgress >= 100 ? Color.Tertiary : Color.Primary)" Value="@WeekProgress" Size="Size.Large" Rounded="true" />
+        <MudProgressLinear Color="@(WeekProgress >= 100 ? Color.Tertiary : Color.Primary)" Value="@WeekProgress" Size="Size.Large" Rounded="true" aria-label="Wochenziel" />
         @if (_m.WeeklyReview is { } wr)
         {
             <MudText Typo="Typo.body2" Class="mt-3" Style="font-weight:600">Wochenrückblick</MudText>
@@ -95,7 +95,7 @@ else
                 <MudText Typo="Typo.h6" HtmlTag="h1">Session läuft noch</MudText>
                 <MudText Typo="Typo.body2" Class="mb-2">@_m.OpenSession.Summary · @_m.OpenSession.StepsDone / @_m.OpenSession.StepsTotal erledigt</MudText>
                 <MudStack Row="true" Spacing="2">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Go($"session/{_m.OpenSession.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }Weitermachen</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Go($"session/{_m.OpenSession.Id}"))" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" aria-label="Lädt …" /> }Weitermachen</MudButton>
                     <MudButton Variant="Variant.Text" OnClick="AbandonAsync">Abbrechen</MudButton>
                 </MudStack>
             }
@@ -104,7 +104,7 @@ else
                 <MudText Typo="Typo.h6" HtmlTag="h1">Deine Session heute</MudText>
                 <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">Der Lotse schlägt vor: <b>@_m.NextSessionPreview</b></MudText>
                 <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@(_busy ? null : Icons.Material.Filled.PlayArrow)" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" /> }@_m.Profile.DailyMinutes Minuten starten</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" StartIcon="@(_busy ? null : Icons.Material.Filled.PlayArrow)" OnClick="() => StartAsync(_m.Profile.DailyMinutes)" Disabled="_busy">@if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" aria-label="Lädt …" /> }@_m.Profile.DailyMinutes Minuten starten</MudButton>
                     @foreach (var m in new[] { SessionPlanner.QuickMinutes, 5, 10, 15, 30 }.Where(x => x != _m.Profile.DailyMinutes))
                     {
                         var minutes = m;
@@ -138,7 +138,7 @@ else
                 <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-2">Woran du gerade arbeitest</MudText>
                 @if (_m.WeakAreas.Count == 0)
                 {
-                    <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine Daten. Nach der Einstufung erscheinen hier deine Schwerpunkte.</MudText>
+                    <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch keine Daten. Nach der Einstufung erscheinen hier deine Schwerpunkte.</MudText>
                 }
                 @foreach (var w in _m.WeakAreas.Take(6))
                 {
@@ -200,7 +200,7 @@ else
                         else
                         {
                             @* The bar would only show the prior. Say what is missing instead, and what the foundation is. *@
-                            <MudText Typo="Typo.caption" Style="flex:1;opacity:.75">noch nicht geübt · Fundament @mod.Foundation.ToString("P0")</MudText>
+                            <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary);flex:1">noch nicht geübt · Fundament @mod.Foundation.ToString("P0")</MudText>
                             <MudText Typo="Typo.caption" Style="width:38px;text-align:right">–</MudText>
                         }
                     </MudStack>
@@ -208,7 +208,7 @@ else
             </MudPaper>
             <MudPaper Class="pa-4" Elevation="1">
                 <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Häufigste Fehler (30 Tage)</MudText>
-                @if (_m.TopErrors.Count == 0) { <MudText Typo="Typo.body2" Style="opacity:.7">Noch keine.</MudText> }
+                @if (_m.TopErrors.Count == 0) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch keine.</MudText> }
                 @foreach (var e in _m.TopErrors.Take(5))
                 {
                     <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
@@ -222,7 +222,7 @@ else
         </MudItem>
     </MudGrid>
 
-    <MudText Typo="Typo.caption" Class="mt-4 d-block" Style="opacity:.6">Tutor: @_m.TutorDescription</MudText>
+    <MudText Typo="Typo.caption" Class="mt-4 d-block" Style="color:var(--mud-palette-text-secondary)">Tutor: @_m.TutorDescription</MudText>
 }
 
 @code {

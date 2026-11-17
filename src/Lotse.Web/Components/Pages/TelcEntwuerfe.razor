@@ -18,7 +18,7 @@
 
 @if (_stats is null)
 {
-    <MudProgressLinear Indeterminate="true" />
+    <MudProgressLinear Indeterminate="true" aria-label="Lädt …" />
     return;
 }
 
@@ -43,10 +43,10 @@
                 </div>
                 @if (_busy)
                 {
-                    <MudProgressLinear Indeterminate="true" Class="mt-2" />
+                    <MudProgressLinear Indeterminate="true" Class="mt-2" aria-label="Lädt …" />
                     <MudText Typo="Typo.caption">Schreiben und begutachten dauert je nach Anbieter 20 Sekunden bis wenige Minuten.</MudText>
                 }
-                <MudText Typo="Typo.caption" Class="d-block mt-2" Style="opacity:.7">In Klammern: Aufgaben, die es für den Teil schon gibt.</MudText>
+                <MudText Typo="Typo.caption" Class="d-block mt-2" Style="color:var(--mud-palette-text-secondary)">In Klammern: Aufgaben, die es für den Teil schon gibt.</MudText>
             }
         </MudPaper>
     </MudItem>
@@ -68,7 +68,7 @@
                     <tr><td>Gutachter stimmt mit dir überein</td><td>@Pct(_stats.CriticAgreement)</td></tr>
                     <tr><td>Dauer (Median)</td><td>@(_stats.MedianLatencyMs is { } ms ? $"{ms / 1000.0:0.#} s" : "–")</td></tr>
                 </table>
-                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="opacity:.7">Durchlaufquote: freigegeben von allen fertig entschiedenen, gescheiterte mitgezählt.</MudText>
+                <MudText Typo="Typo.caption" Class="d-block mt-1" Style="color:var(--mud-palette-text-secondary)">Durchlaufquote: freigegeben von allen fertig entschiedenen, gescheiterte mitgezählt.</MudText>
             }
         </MudPaper>
     </MudItem>

@@ -18,7 +18,7 @@ else if (_finished || _view.IsComplete)
             @if (_view.Session.Kind == SessionKind.Lesson && _view.Session.LessonId is { } lid && Catalog.Lesson(lid) is { } lesson)
             {
                 <MudPaper Elevation="0" Class="pa-3 mb-3" Style="background: var(--mud-palette-background-gray); border-left: 4px solid var(--mud-palette-secondary)">
-                    <MudText Typo="Typo.caption" Style="opacity:.7">Merksatz aus „@lesson.Title“</MudText>
+                    <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">Merksatz aus „@lesson.Title“</MudText>
                     <MudText Typo="Typo.subtitle1" Style="font-weight:600">„@lesson.Merksatz“</MudText>
                 </MudPaper>
             }
@@ -74,7 +74,7 @@ else
         <MudSpacer />
         <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Default" OnClick="FinishEarlyAsync">Beenden</MudButton>
     </MudStack>
-    <MudProgressLinear Color="Color.Primary" Value="@Progress" Rounded="true" Size="Size.Medium" Class="mb-3" />
+    <MudProgressLinear Color="Color.Primary" Value="@Progress" Rounded="true" Size="Size.Medium" Class="mb-3" aria-label="Fortschritt in dieser Session" />
 
     var step = _view.Steps[_index];
     var ex = _view.Exercises[_index];

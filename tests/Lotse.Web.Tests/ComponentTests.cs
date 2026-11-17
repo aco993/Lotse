@@ -15,6 +15,9 @@ public abstract class LotseComponentTest : BunitContext
 
     protected LotseComponentTest()
     {
+        // As in Program.cs: the app formats German, so the tests do too, on any machine.
+        System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.CurrentUICulture
+            = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
         JSInterop.Mode = JSRuntimeMode.Loose;
         JSInterop.SetupModule("./js/speech.js").Mode = JSRuntimeMode.Loose;
         Services.AddMudServices();
