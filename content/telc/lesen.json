@@ -63,6 +63,96 @@
         5,
         0
       ]
+    },
+    {
+      "id": "lv1.technik",
+      "title": "Technik im Alltag",
+      "headings": [
+        "Paketboten kommen bald nicht mehr nach Hause",
+        "Kostenloses WLAN in der ganzen Innenstadt",
+        "Ein Roboter erinnert ans Trinken",
+        "Die App weiß, wo noch Platz ist",
+        "Schüler dürfen Handys wieder im Unterricht benutzen",
+        "Ohne Handy lernt es sich besser",
+        "Alte Handys helfen einem guten Zweck",
+        "Neue Geräte gehen immer schneller kaputt",
+        "Pflegekräfte werden durch Maschinen ersetzt",
+        "Bahn erhöht die Preise für Reservierungen"
+      ],
+      "texts": [
+        "Seit Anfang des Monats können Besucherinnen und Besucher der Oldenburger Innenstadt kostenlos im Internet surfen. An mehr als 60 Punkten – vom Bahnhof über die Fußgängerzone bis zum Schlossplatz – hat die Stadt Sender installiert. Eine Anmeldung mit Namen oder E-Mail-Adresse ist nicht nötig; man muss lediglich einmal den Nutzungsbedingungen zustimmen. Die Verbindung ist allerdings auf zwei Stunden pro Tag begrenzt. Die Stadt erhofft sich davon mehr Kundschaft für die Geschäfte, die unter der Konkurrenz des Onlinehandels leiden. Finanziert wird das Netz zum Teil von den Händlern selbst.",
+        "Wer mit dem Regionalexpress zwischen Hannover und Göttingen pendelt, kennt das Problem: Im vorderen Teil des Zuges stehen die Fahrgäste dicht gedrängt, während hinten noch Sitze frei sind. Eine neue Funktion in der App des Verkehrsverbunds soll das ändern. Sensoren in den Wagen zählen, wie viele Menschen ein- und aussteigen, und die App zeigt schon vor der Ankunft des Zuges an, in welchem Abschnitt es noch freie Plätze gibt. Nach drei Monaten Testbetrieb sind die Rückmeldungen positiv. Für die Funktion entstehen den Fahrgästen keine zusätzlichen Kosten.",
+        "Am Gymnasium in Lüneburg müssen die Schülerinnen und Schüler ihre Smartphones seit einem Jahr morgens in einem abschließbaren Fach abgeben. Erst nach der letzten Stunde bekommen sie die Geräte zurück. Anfangs gab es heftige Proteste, vor allem von den älteren Jahrgängen. Inzwischen fällt die Bilanz der Lehrkräfte positiv aus: Die Jugendlichen seien im Unterricht konzentrierter, und in den Pausen werde wieder mehr miteinander gesprochen. Auch viele Eltern unterstützen die Regel. Die Schulleitung will sie deshalb beibehalten.",
+        "In vielen Schubladen liegen alte Handys, die niemand mehr benutzt. Ein Umweltverband ruft nun dazu auf, diese Geräte zu spenden. In Supermärkten, Rathäusern und Schulen stehen Sammelboxen bereit. Die Handys werden fachgerecht recycelt, wertvolle Rohstoffe wie Gold und Kupfer werden zurückgewonnen. Für jedes abgegebene Gerät zahlt ein Recyclingunternehmen einen kleinen Betrag, der vollständig in Projekte zum Schutz von Wäldern fließt. Wer sein Handy abgibt, sollte vorher alle persönlichen Daten löschen und die SIM-Karte entfernen.",
+        "Im Seniorenzentrum „Am Mühlbach“ fährt seit dem Sommer ein kleiner Roboter über die Flure. Er heißt Karl, ist etwa einen Meter groß und hat eine wichtige Aufgabe: Er erinnert die Bewohnerinnen und Bewohner regelmäßig daran, genug zu trinken. Gerade ältere Menschen spüren oft keinen Durst und trinken deshalb zu wenig. Karl bringt Wasser und Tee und spricht die Menschen freundlich an. Die Pflegekräfte betonen, dass der Roboter ihre Arbeit nicht ersetzt, sondern sie entlastet. Die meisten Bewohner haben sich schnell an den neuen Kollegen gewöhnt."
+      ],
+      "solution": [
+        1,
+        3,
+        5,
+        6,
+        2
+      ]
+    },
+    {
+      "id": "lv1.umwelt",
+      "title": "Umwelt und Verkehr",
+      "headings": [
+        "Wälder leiden unter der Trockenheit",
+        "Lastenräder zum Ausleihen",
+        "Nachtzüge so beliebt wie nie",
+        "Strompreise steigen auch auf dem Land",
+        "Ein Baum für jedes neugeborene Kind",
+        "Autofahrer müssen in der Innenstadt mehr zahlen",
+        "Ein Dorf erzeugt mehr Strom, als es braucht",
+        "Restaurants dürfen kein Plastik mehr verwenden",
+        "Weniger Müll durch Mehrweg beim Mittagessen",
+        "Flughafen baut neues Terminal"
+      ],
+      "texts": [
+        "In Wernsdorf, einem Dorf mit rund 900 Einwohnern im Süden Niedersachsens, drehen sich zwölf Windräder, und auf fast jedem zweiten Dach liegen Solarmodule. Zusammen erzeugen sie etwa viermal so viel Strom, wie das Dorf selbst verbraucht. Den Überschuss verkauft eine Genossenschaft, an der sich viele Bewohner beteiligt haben. Mit den Einnahmen wurden unter anderem der Kindergarten renoviert und ein Bürgerbus angeschafft. Anfangs gab es auch Widerstand gegen die Windräder, heute ist die Zustimmung groß. Regelmäßig kommen Besuchergruppen aus dem In- und Ausland, um sich das Modell erklären zu lassen.",
+        "Wer einen Kinderwagen, einen Wocheneinkauf oder eine Kiste Getränke transportieren muss, braucht in Freiburg kein Auto mehr. Die Stadt stellt an zwölf Stationen Lastenräder mit elektrischer Unterstützung zur Verfügung. Die Räder können über eine App für bis zu drei Stunden gebucht werden; die erste halbe Stunde ist kostenlos, danach kostet jede weitere halbe Stunde einen Euro. Vor der ersten Fahrt muss man sich einmal registrieren und ein kurzes Video zur sicheren Nutzung ansehen. Vor allem Familien nutzen das Angebot.",
+        "In der Kantine eines großen Versicherungsunternehmens in Düsseldorf gibt es seit April keine Einwegverpackungen mehr. Wer sein Mittagessen mit an den Schreibtisch nehmen möchte, bekommt es in einer Schale aus robustem Kunststoff, für die er fünf Euro Pfand bezahlt. Die Schale kann an jeder Ausgabe zurückgegeben werden und wird in der Kantine gespült. Nach Angaben des Unternehmens fallen dadurch jeden Monat mehrere Tausend Verpackungen weniger an. Das System wurde gemeinsam mit einem Start-up entwickelt und soll nun auch anderen Firmen angeboten werden.",
+        "Die Gemeinde Hohenfels hat eine besondere Tradition eingeführt: Für jedes Kind, das in der Gemeinde geboren wird, pflanzt sie einen Baum. Die Eltern dürfen zwischen Apfel, Kirsche und Linde wählen und erhalten ein kleines Schild mit dem Namen des Kindes. Die Bäume stehen auf einer Wiese am Ortsrand, die nach und nach zu einem kleinen Park werden soll. Im vergangenen Jahr kamen so 34 neue Bäume dazu. Die Pflanzaktion findet jedes Jahr im Herbst statt, und die ganze Familie ist eingeladen, mitzuhelfen.",
+        "Immer mehr Reisende entscheiden sich für den Nachtzug, wenn sie in eine andere europäische Hauptstadt fahren. Die Österreichischen Bundesbahnen meldeten für das vergangene Jahr einen Rekord bei den Fahrgastzahlen ihrer Nachtverbindungen. Besonders gefragt sind die Strecken nach Wien, Rom und Amsterdam. Viele Kundinnen und Kunden nennen den Klimaschutz als Grund, andere schätzen es, ausgeruht im Stadtzentrum anzukommen. Ein Problem bleibt jedoch: Die Plätze in den Schlafwagen sind oft schon Wochen vorher ausgebucht, und neue Wagen werden erst in einigen Jahren geliefert."
+      ],
+      "solution": [
+        6,
+        1,
+        8,
+        4,
+        2
+      ]
+    },
+    {
+      "id": "lv1.arbeitswelt",
+      "title": "Neues aus der Arbeitswelt",
+      "headings": [
+        "Neue Regeln für Überstunden",
+        "Kinderbetreuung direkt im Betrieb",
+        "Rentner müssen länger arbeiten",
+        "Bewerben ohne Anschreiben",
+        "Homeoffice im Ausland wird verboten",
+        "Arbeiten, wo andere Urlaub machen",
+        "Firma zahlt Prämie für Empfehlungen",
+        "Weniger Bewerbungen für Ausbildungsplätze im Handwerk",
+        "Ältere geben ihr Wissen an Jüngere weiter",
+        "Kitas schließen früher"
+      ],
+      "texts": [
+        "Fachkräfte sind knapp – das spürt auch ein mittelständischer Maschinenbauer aus Schwaben. Das Unternehmen setzt deshalb auf die eigenen Mitarbeitenden: Wer einen Bekannten erfolgreich für eine offene Stelle empfiehlt, erhält 2.000 Euro. Die Hälfte wird ausgezahlt, wenn der neue Kollege anfängt, die andere Hälfte nach dem Ende der Probezeit. Seit Einführung des Programms wurde fast jede dritte Stelle auf diesem Weg besetzt. Die Personalabteilung sieht einen weiteren Vorteil: Wer über Freunde kommt, kennt das Unternehmen schon vorher und bleibt meist länger.",
+        "Ein Lebenslauf und ein Klick – mehr braucht es nicht, um sich bei einer großen Drogeriekette zu bewerben. Das Unternehmen verzichtet seit diesem Jahr auf das klassische Anschreiben. Die Erfahrung habe gezeigt, dass viele dieser Texte kaum etwas über die Bewerberinnen und Bewerber aussagen, heißt es aus der Personalabteilung. Stattdessen beantworten Interessierte online drei kurze Fragen zu ihrer Motivation. Seitdem ist die Zahl der Bewerbungen um ein Viertel gestiegen, besonders bei jungen Menschen und bei Menschen, deren Muttersprache nicht Deutsch ist.",
+        "In vielen Unternehmen gehen in den nächsten Jahren erfahrene Fachkräfte in Rente – und mit ihnen viel Wissen. Ein Energieversorger in Thüringen hat darauf reagiert: Wer in den kommenden drei Jahren in den Ruhestand geht, bekommt eine jüngere Kollegin oder einen jüngeren Kollegen zur Seite gestellt. Ein Jahr lang arbeiten die beiden eng zusammen. Die Älteren erklären nicht nur technische Abläufe, sondern auch, an wen man sich bei Problemen wenden kann. Die Teilnehmenden beider Generationen bewerten das Programm sehr positiv.",
+        "Ein Krankenhaus in Augsburg hat auf seinem Gelände eine eigene Kita eröffnet. Sie ist von 5:30 bis 21 Uhr geöffnet – passend zu den Schichtzeiten des Pflegepersonals. Die 60 Plätze sind ausschließlich für Kinder von Beschäftigten der Klinik reserviert. Die Leitung erhofft sich davon, dass Mütter und Väter nach der Elternzeit schneller in den Beruf zurückkehren. Schon jetzt gibt es eine Warteliste, und ein zweites Gebäude ist bereits in Planung.",
+        "Zwei Wochen auf Teneriffa, morgens am Laptop, nachmittags am Strand: Ein Softwareunternehmen aus Hamburg erlaubt seinen Mitarbeitenden, bis zu vier Wochen im Jahr aus einem anderen EU-Land zu arbeiten. Voraussetzung sind eine stabile Internetverbindung und die Erreichbarkeit zu den üblichen Kernzeiten. Steuerliche und versicherungsrechtliche Fragen hat die Firma vorab mit Fachleuten geklärt. Das Angebot ist beliebt: Mehr als die Hälfte der Belegschaft hat es im ersten Jahr genutzt."
+      ],
+      "solution": [
+        6,
+        3,
+        8,
+        1,
+        5
+      ]
     }
   ],
   "lesen2": [
@@ -177,6 +267,177 @@
           ],
           "correct": 2,
           "explanation": "„überlegen, ob man das Teil wirklich braucht … Kleidung lange tragen“."
+        }
+      ]
+    },
+    {
+      "id": "lv2.schlaf",
+      "title": "Müde Gesellschaft",
+      "text": "Fast jeder dritte Erwachsene in Deutschland schläft nach eigenen Angaben regelmäßig schlecht. Das ist das Ergebnis einer Befragung, die eine große Krankenkasse im vergangenen Jahr durchgeführt hat. Besonders betroffen sind Menschen zwischen 30 und 50 Jahren – also jene, die im Beruf oft stark gefordert sind und sich gleichzeitig um Kinder oder ältere Angehörige kümmern.\n\nDass zu wenig Schlaf auf Dauer krank machen kann, ist inzwischen gut belegt. Wer über längere Zeit weniger als sechs Stunden pro Nacht schläft, hat ein höheres Risiko für Herz-Kreislauf-Erkrankungen, Übergewicht und Depressionen. Hinzu kommen die unmittelbaren Folgen: Müde Menschen machen mehr Fehler, reagieren langsamer und sind schneller gereizt. „Viele unterschätzen, wie stark ihre Leistung schon nach wenigen kurzen Nächten nachlässt“, sagt die Schlafmedizinerin Dr. Katrin Seidel. „Das Gefährliche ist, dass man es selbst kaum bemerkt.“\n\nAls einen Hauptgrund für die schlechten Nächte nennen Fachleute das Smartphone. Wer abends im Bett noch Nachrichten liest oder Videos schaut, hält sein Gehirn wach. Dabei sei weniger das helle Licht des Bildschirms das Problem, wie lange angenommen wurde, sondern vor allem der Inhalt, erklärt Seidel. „Eine spannende Serie oder eine ärgerliche E-Mail vom Chef – das beschäftigt uns, und dann liegen wir wach.“\n\nWas also tun? Seidel rät zu festen Schlafenszeiten, auch am Wochenende. Der Körper gewöhne sich an einen Rhythmus, und das Einschlafen falle leichter. Außerdem sollte das Schlafzimmer kühl, dunkel und ruhig sein. Von Schlaftabletten hält die Ärztin wenig: Sie könnten kurzfristig helfen, lösten aber nicht die Ursachen und machten bei längerer Einnahme oft abhängig.\n\nAuch Arbeitgeber haben das Thema inzwischen entdeckt. Einige Unternehmen bieten Kurse zum Umgang mit Stress an, andere erlauben einen kurzen Mittagsschlaf. In manchen Ländern ist das seit langem üblich, in Deutschland dagegen noch eine Ausnahme. Studien zeigen, dass schon zwanzig Minuten Ruhe am frühen Nachmittag die Konzentration deutlich verbessern können. Länger sollte der Mittagsschlaf allerdings nicht dauern, sonst fühlt man sich danach oft noch müder als vorher.",
+      "questions": [
+        {
+          "question": "Wer schläft laut der Befragung besonders schlecht?",
+          "options": [
+            "Menschen über 60 Jahre.",
+            "Menschen, die gleichzeitig viele Pflichten haben.",
+            "Junge Menschen in der Ausbildung."
+          ],
+          "correct": 1,
+          "explanation": "„zwischen 30 und 50 … im Beruf oft stark gefordert … und sich gleichzeitig um Kinder oder ältere Angehörige kümmern“."
+        },
+        {
+          "question": "Was sagt Dr. Seidel über die Folgen von zu wenig Schlaf?",
+          "options": [
+            "Man merkt selbst oft nicht, dass die eigene Leistung sinkt.",
+            "Man wird schon nach wenigen kurzen Nächten krank.",
+            "Die Folgen zeigen sich erst nach vielen Jahren."
+          ],
+          "correct": 0,
+          "explanation": "„Das Gefährliche ist, dass man es selbst kaum bemerkt.“ Krank macht Schlafmangel erst „auf Dauer“."
+        },
+        {
+          "question": "Warum stört das Smartphone den Schlaf vor allem?",
+          "options": [
+            "Wegen des hellen Lichts des Bildschirms.",
+            "Weil es nachts ständig Nachrichten empfängt.",
+            "Weil uns die Inhalte innerlich beschäftigen."
+          ],
+          "correct": 2,
+          "explanation": "„weniger das helle Licht … sondern vor allem der Inhalt“ - die Falle ist Option a, die der Text ausdrücklich zurückweist."
+        },
+        {
+          "question": "Was hält Dr. Seidel von Schlaftabletten?",
+          "options": [
+            "Sie sind bei Stress die beste Lösung.",
+            "Sie bekämpfen nicht die Ursache des Problems.",
+            "Man sollte sie nur am Wochenende nehmen."
+          ],
+          "correct": 1,
+          "explanation": "„lösten aber nicht die Ursachen“."
+        },
+        {
+          "question": "Was gilt laut Text für den Mittagsschlaf?",
+          "options": [
+            "Ein kurzer Mittagsschlaf kann die Konzentration verbessern.",
+            "Er ist in deutschen Firmen weit verbreitet.",
+            "Er sollte möglichst lange dauern."
+          ],
+          "correct": 0,
+          "explanation": "„schon zwanzig Minuten Ruhe … die Konzentration deutlich verbessern können“; in Deutschland ist er „noch eine Ausnahme“."
+        }
+      ]
+    },
+    {
+      "id": "lv2.ehrenamt",
+      "title": "Helfen – aber nicht für immer",
+      "text": "Millionen Menschen in Deutschland engagieren sich ehrenamtlich – im Sportverein, bei der freiwilligen Feuerwehr, in der Nachbarschaftshilfe oder bei der Ausgabe von Lebensmitteln an Bedürftige. Ohne sie würde vieles im gesellschaftlichen Leben nicht funktionieren. Doch die Art, wie sich Menschen engagieren, verändert sich. Das zeigt eine aktuelle Untersuchung des Instituts für Zivilgesellschaft in Bonn.\n\nDie Zahl der Freiwilligen ist demnach in den letzten zehn Jahren kaum zurückgegangen. Was sich geändert hat, ist die Dauer der Bindung. „Früher ist man mit zwanzig in den Verein eingetreten und hat dort vierzig Jahre lang mitgemacht“, sagt der Soziologe Tobias Wendt, der die Studie geleitet hat. „Heute wollen sich viele lieber für ein bestimmtes Projekt engagieren, das einen klaren Anfang und ein klares Ende hat.“ Ein Beispiel sei die Hilfe bei einem Stadtfest oder die Begleitung einer geflüchteten Familie für ein halbes Jahr.\n\nFür die traditionellen Vereine ist diese Entwicklung ein Problem. Vor allem Ämter wie Kassenwart oder Vorsitzender bleiben immer häufiger unbesetzt. Diese Aufgaben sind mit viel Verantwortung und Bürokratie verbunden, und kaum jemand möchte sich für mehrere Jahre festlegen. Manche Vereine mussten sich deshalb bereits auflösen, obwohl sie noch genug Mitglieder hatten.\n\nWendt sieht dennoch keinen Grund für Pessimismus. Die Bereitschaft zu helfen sei nach wie vor groß, sie müsse nur anders organisiert werden. Er empfiehlt den Vereinen, Aufgaben in kleinere Einheiten aufzuteilen und Ämter zeitlich zu begrenzen. Auch digitale Angebote könnten helfen: Auf Online-Plattformen finden Interessierte heute mit wenigen Klicks Projekte in ihrer Nähe, die zu ihren Fähigkeiten und ihrer verfügbaren Zeit passen.\n\nEine Gruppe verdient nach Ansicht des Forschers besondere Aufmerksamkeit: Menschen, die gerade in Rente gegangen sind. Sie haben Zeit, Erfahrung und oft den Wunsch, weiterhin gebraucht zu werden. „Wer diese Menschen in den ersten Monaten nach dem Berufsende anspricht, hat gute Chancen, sie für viele Jahre zu gewinnen“, sagt Wendt. Später sei das deutlich schwieriger, weil sich dann bereits neue Gewohnheiten gebildet hätten.",
+      "questions": [
+        {
+          "question": "Was hat sich laut der Studie beim Ehrenamt verändert?",
+          "options": [
+            "Es gibt deutlich weniger Freiwillige als früher.",
+            "Viele möchten sich nur für eine begrenzte Zeit engagieren.",
+            "Die meisten Freiwilligen sind jünger als früher."
+          ],
+          "correct": 1,
+          "explanation": "Die Zahl ist „kaum zurückgegangen“; geändert hat sich „die Dauer der Bindung“."
+        },
+        {
+          "question": "Welches Problem haben traditionelle Vereine?",
+          "options": [
+            "Sie finden kaum Leute für verantwortungsvolle Ämter.",
+            "Sie verlieren die meisten ihrer Mitglieder.",
+            "Sie bekommen keine staatliche Unterstützung mehr."
+          ],
+          "correct": 0,
+          "explanation": "„Ämter wie Kassenwart oder Vorsitzender bleiben immer häufiger unbesetzt.“"
+        },
+        {
+          "question": "Warum haben sich manche Vereine aufgelöst?",
+          "options": [
+            "Weil sie zu wenige Mitglieder hatten.",
+            "Weil ihre Projekte beendet waren.",
+            "Weil niemand die Leitung übernehmen wollte."
+          ],
+          "correct": 2,
+          "explanation": "„deshalb“ verweist auf die unbesetzten Ämter - „obwohl sie noch genug Mitglieder hatten“."
+        },
+        {
+          "question": "Was empfiehlt Tobias Wendt den Vereinen?",
+          "options": [
+            "Ämter nur für eine bestimmte Zeit zu vergeben.",
+            "Ihre Arbeit vollständig ins Internet zu verlegen.",
+            "Mehr Geld für ihre Mitglieder auszugeben."
+          ],
+          "correct": 0,
+          "explanation": "„Ämter zeitlich zu begrenzen“."
+        },
+        {
+          "question": "Was sagt Wendt über Menschen, die gerade in Rente gegangen sind?",
+          "options": [
+            "Sie brauchen zuerst eine längere Pause.",
+            "Man sollte sie möglichst früh ansprechen.",
+            "Sie haben meistens kein Interesse am Ehrenamt."
+          ],
+          "correct": 1,
+          "explanation": "„in den ersten Monaten nach dem Berufsende anspricht“ - später sei es „deutlich schwieriger“."
+        }
+      ]
+    },
+    {
+      "id": "lv2.ki-buero",
+      "title": "Der neue Kollege ist eine Software",
+      "text": "Ein Protokoll zusammenfassen, eine Kundenanfrage beantworten, eine Tabelle auswerten: Aufgaben, für die man früher eine Stunde brauchte, erledigt Software mit künstlicher Intelligenz heute in Sekunden. In vielen Büros gehören solche Programme inzwischen zum Alltag. Laut einer Umfrage eines Digitalverbands nutzt bereits mehr als die Hälfte der Beschäftigten in Büroberufen regelmäßig KI-Werkzeuge – oft allerdings, ohne dass der Arbeitgeber davon weiß.\n\nGenau darin sehen Fachleute ein Risiko. „Wer vertrauliche Kundendaten in ein frei verfügbares Programm kopiert, weiß nicht, was damit passiert“, warnt die IT-Juristin Sabine Kraus. Viele Unternehmen hätten bisher keine klaren Regeln aufgestellt. Die Folge sei eine Grauzone, in der sich die Mitarbeitenden unsicher fühlten: Einige verzichteten aus Angst ganz auf die neuen Möglichkeiten, andere gingen zu sorglos damit um. Kraus rät Firmen deshalb, gemeinsam mit den Beschäftigten Richtlinien zu entwickeln, statt die Programme einfach zu verbieten.\n\nUnd wie steht es um die Arbeitsplätze? Die Sorge, dass KI massenhaft Stellen vernichtet, hat sich bisher nicht bestätigt. Was sich jedoch verändert, sind die Tätigkeiten selbst. Routineaufgaben fallen weg, dafür wird es wichtiger, Ergebnisse zu prüfen und einzuordnen. „Die Software macht Fehler, und zwar mit großer Selbstsicherheit“, sagt der Arbeitsforscher Daniel Meyer. „Wer ihre Antworten ungeprüft übernimmt, bekommt früher oder später Probleme.“ Gefragt seien deshalb Fachwissen und kritisches Denken.\n\nMeyer beobachtet außerdem einen Effekt, der in der Diskussion oft übersehen wird: Berufseinsteiger lernen weniger, wenn sie einfache Aufgaben von Anfang an der Software überlassen. „Man wird nur zum Experten, wenn man die Grundlagen selbst beherrscht“, sagt er. Unternehmen sollten deshalb darauf achten, dass junge Mitarbeitende nicht nur Ergebnisse abliefern, sondern auch verstehen, wie sie zustande kommen.\n\nFür die Zukunft rechnet Meyer damit, dass der Umgang mit KI so selbstverständlich wird wie heute der Umgang mit E-Mails. Wer sich jetzt damit beschäftige, habe einen Vorteil. Angst sei jedoch ein schlechter Ratgeber – genauso wie blinde Begeisterung.",
+      "questions": [
+        {
+          "question": "Was sagt der Text über die Nutzung von KI im Büro?",
+          "options": [
+            "Nur wenige Beschäftigte haben KI schon ausprobiert.",
+            "Viele Beschäftigte nutzen KI, ohne dass ihre Firma es weiß.",
+            "Die meisten Firmen schreiben die Nutzung vor."
+          ],
+          "correct": 1,
+          "explanation": "„mehr als die Hälfte … oft allerdings, ohne dass der Arbeitgeber davon weiß“."
+        },
+        {
+          "question": "Was empfiehlt Sabine Kraus den Unternehmen?",
+          "options": [
+            "Mit den Mitarbeitenden Regeln für KI festzulegen.",
+            "KI-Programme vollständig zu verbieten.",
+            "Nur noch kostenpflichtige Programme zu kaufen."
+          ],
+          "correct": 0,
+          "explanation": "„gemeinsam mit den Beschäftigten Richtlinien zu entwickeln, statt die Programme einfach zu verbieten“."
+        },
+        {
+          "question": "Wie verändert KI laut Text die Arbeit?",
+          "options": [
+            "Viele Menschen haben bereits ihre Stelle verloren.",
+            "Routineaufgaben werden wichtiger.",
+            "Das Prüfen von Ergebnissen gewinnt an Bedeutung."
+          ],
+          "correct": 2,
+          "explanation": "„Routineaufgaben fallen weg, dafür wird es wichtiger, Ergebnisse zu prüfen“."
+        },
+        {
+          "question": "Welches Problem sieht Daniel Meyer bei Berufseinsteigern?",
+          "options": [
+            "Sie lehnen KI meistens ab.",
+            "Sie arbeiten zu langsam.",
+            "Sie lernen die Grundlagen nicht, wenn die Software alles übernimmt."
+          ],
+          "correct": 2,
+          "explanation": "„Berufseinsteiger lernen weniger, wenn sie einfache Aufgaben … der Software überlassen“."
+        },
+        {
+          "question": "Welche Haltung empfiehlt Meyer gegenüber KI?",
+          "options": [
+            "Abzuwarten, bis die Technik ausgereift ist.",
+            "Weder Angst noch blinde Begeisterung.",
+            "Möglichst viele Aufgaben an die Software abzugeben."
+          ],
+          "correct": 1,
+          "explanation": "„Angst sei jedoch ein schlechter Ratgeber – genauso wie blinde Begeisterung.“"
         }
       ]
     }
@@ -336,6 +597,240 @@
         -1,
         10,
         -1
+      ]
+    },
+    {
+      "id": "lv3.beruf",
+      "title": "Beruf und Weiterbildung",
+      "situations": [
+        "Eine Kollegin möchte ihr Englisch für Telefonate mit internationalen Kunden verbessern – am liebsten online.",
+        "Ein Freund hat seine Stelle verloren und sucht eine kostenlose Beratung, wie es beruflich weitergehen kann.",
+        "Ihr Nachbar ist Elektriker und möchte die Meisterprüfung machen, ohne seine Arbeit aufzugeben.",
+        "Sie suchen für Ihre Firma einen Raum für eine eintägige Besprechung mit 20 Personen, inklusive Verpflegung.",
+        "Eine Bekannte aus Brasilien möchte wissen, ob ihr Abschluss als Ingenieurin in Deutschland anerkannt wird.",
+        "Ein Kollege möchte lernen, vor Publikum sicher zu präsentieren.",
+        "Ihre Schwester sucht einen Minijob am Wochenende.",
+        "Ein Freund möchte sich selbstständig machen und braucht Hilfe bei seinem Businessplan.",
+        "Sie möchten Ihren Lebenslauf prüfen lassen, bevor Sie sich bewerben.",
+        "Eine Kollegin möchte eine Ausbildung zur Erzieherin machen, aber nur in Teilzeit."
+      ],
+      "ads": [
+        {
+          "title": "Bewerbungsmappen-Check",
+          "text": "Wir prüfen Lebenslauf und Anschreiben und geben Ihnen innerhalb von drei Tagen eine schriftliche Rückmeldung. 25 €."
+        },
+        {
+          "title": "Englisch für Reisende",
+          "text": "Wochenendkurs an der Volkshochschule: Hotel, Restaurant, Flughafen – die wichtigsten Sätze für den Urlaub."
+        },
+        {
+          "title": "Meisterschule Elektrotechnik",
+          "text": "Vorbereitung auf die Meisterprüfung in Teilzeit: freitags abends und samstags, Dauer zwei Jahre. Förderung über das Aufstiegs-BAföG möglich."
+        },
+        {
+          "title": "Gründerzentrum Nord",
+          "text": "Sie haben eine Geschäftsidee? Unsere Beraterinnen helfen bei Finanzierung, Businessplan und Anmeldung – die ersten drei Termine sind kostenlos."
+        },
+        {
+          "title": "Coworking-Space Mitte",
+          "text": "Schreibtische ab 15 € pro Tag, Besprechungsraum für bis zu sechs Personen buchbar."
+        },
+        {
+          "title": "Neustart im Beruf",
+          "text": "Nach einer Kündigung oder einer langen Pause? Die Agentur für Arbeit bietet Erwachsenen eine kostenlose Berufsberatung an."
+        },
+        {
+          "title": "Souverän auftreten",
+          "text": "Rhetorik-Workshop: Vorträge strukturieren, Lampenfieber kontrollieren, mit Video-Feedback. Zwei Samstage, höchstens acht Teilnehmende."
+        },
+        {
+          "title": "Business English online",
+          "text": "Kleingruppen per Video, Schwerpunkt Telefonieren und Verhandeln mit internationalen Kunden. Abendtermine, Probestunde gratis."
+        },
+        {
+          "title": "Bäckerei Hansen sucht Aushilfe",
+          "text": "Für den Verkauf montags bis freitags von 6 bis 10 Uhr, auf Minijob-Basis."
+        },
+        {
+          "title": "Beratungsstelle Anerkennung",
+          "text": "Wir beraten kostenlos zur Anerkennung ausländischer Berufs- und Studienabschlüsse – auf Deutsch, Englisch, Spanisch und Portugiesisch."
+        },
+        {
+          "title": "Fachschule für Sozialpädagogik",
+          "text": "Ausbildung zur staatlich anerkannten Erzieherin / zum staatlich anerkannten Erzieher in Vollzeit, Beginn jeweils im August."
+        },
+        {
+          "title": "Tagungshotel am See",
+          "text": "Seminarräume für 10 bis 120 Personen, Technik inklusive, Tagespauschale mit Mittagessen und Kaffeepausen."
+        }
+      ],
+      "solution": [
+        7,
+        5,
+        2,
+        11,
+        9,
+        6,
+        -1,
+        3,
+        0,
+        -1
+      ]
+    },
+    {
+      "id": "lv3.gesundheit",
+      "title": "Gesundheit und Alltag",
+      "situations": [
+        "Ihr Kollege hat vom vielen Sitzen Rückenschmerzen und sucht einen Kurs nach Feierabend.",
+        "Eine Freundin möchte mit dem Rauchen aufhören und sucht Unterstützung in einer Gruppe.",
+        "Ihre Mutter braucht nach einer Operation für einige Wochen Hilfe im Haushalt.",
+        "Sie möchten Ihre Kinder gegen Grippe impfen lassen, ohne lange auf einen Termin zu warten.",
+        "Sie brauchen am Sonntag dringend ein Medikament.",
+        "Ein Bekannter möchte Blut spenden.",
+        "Eine Bekannte sucht eine Psychotherapeutin oder einen Psychotherapeuten mit freien Terminen noch in diesem Monat.",
+        "Ihr Nachbar sucht einen Hausarzt, der Serbisch spricht.",
+        "Eine Kollegin möchte mit ihrem Baby schwimmen gehen.",
+        "Ein Freund möchte gesünder kochen, hat aber abends wenig Zeit."
+      ],
+      "ads": [
+        {
+          "title": "Yoga im Park",
+          "text": "Sommerkurs für alle Altersgruppen, sonntags 10 Uhr, bei Regen in der Turnhalle."
+        },
+        {
+          "title": "Apothekennotdienst",
+          "text": "Welche Apotheke heute Nacht oder am Wochenende geöffnet hat, erfahren Sie rund um die Uhr unter einer kostenlosen Telefonnummer."
+        },
+        {
+          "title": "Babyschwimmen",
+          "text": "Für Babys ab vier Monaten mit Mama oder Papa, freitags vormittags, Hallenbad West."
+        },
+        {
+          "title": "Psychotherapeutische Praxis Lenz",
+          "text": "Derzeit keine Aufnahme neuer Patientinnen und Patienten. Wartezeit etwa sechs Monate."
+        },
+        {
+          "title": "Rückenfit nach der Arbeit",
+          "text": "Gymnastik für Menschen mit Bürojob, dienstags und donnerstags 18:30 Uhr, von vielen Krankenkassen bezuschusst."
+        },
+        {
+          "title": "Blutspendetermin",
+          "text": "Das Rote Kreuz kommt am 14. März in die Stadthalle. Bitte Personalausweis mitbringen und vorher ausreichend essen und trinken."
+        },
+        {
+          "title": "Kochkurs: Gesund in 20 Minuten",
+          "text": "Schnelle Gerichte für Berufstätige, drei Abende, Rezepte zum Mitnehmen."
+        },
+        {
+          "title": "Fitnessstudio Aktiv",
+          "text": "Geräte, Sauna, Kurse. Jetzt ohne Aufnahmegebühr – Vertragslaufzeit 24 Monate."
+        },
+        {
+          "title": "Pflegedienst Sonnenschein",
+          "text": "Häusliche Krankenpflege und Hilfe im Haushalt – auch vorübergehend, zum Beispiel nach einem Krankenhausaufenthalt."
+        },
+        {
+          "title": "Praxis Dr. Marković – Allgemeinmedizin",
+          "text": "Wir sprechen Deutsch, Serbisch, Kroatisch und Bosnisch. Neue Patientinnen und Patienten sind willkommen."
+        },
+        {
+          "title": "Grippeimpfung in der Kinderarztpraxis",
+          "text": "Impfung für Kinder ab sechs Monaten nur nach Terminvereinbarung. Nächste freie Termine im Dezember."
+        },
+        {
+          "title": "Rauchfrei in sechs Wochen",
+          "text": "Gruppenprogramm mit Ärztin und Psychologin, wöchentliche Treffen, Erfolgsquote über 40 Prozent."
+        }
+      ],
+      "solution": [
+        4,
+        11,
+        8,
+        -1,
+        1,
+        5,
+        -1,
+        9,
+        2,
+        6
+      ]
+    },
+    {
+      "id": "lv3.reisen",
+      "title": "Reisen und Ausflüge",
+      "situations": [
+        "Ihre Abteilung möchte einen Betriebsausflug mit 25 Personen machen, gern mit einer Schifffahrt.",
+        "Ein Freund sucht eine günstige Übernachtung für eine Nacht in der Innenstadt.",
+        "Ein Bekannter möchte einen Monat in einer Gastfamilie in Spanien leben und dabei Spanisch lernen.",
+        "Ihre Eltern möchten eine Woche verreisen, ohne selbst Auto zu fahren – am liebsten mit dem Bus.",
+        "Eine Bekannte möchte ihren Hund mit in den Urlaub nehmen.",
+        "Sie möchten am Wochenende mit Ihren Kindern einen Bauernhof besuchen.",
+        "Ein Kollege möchte im Winter Skifahren lernen.",
+        "Ein Paar sucht für seine Hochzeitsnacht ein Hotel mit besonderem Service.",
+        "Ihre Freundin sucht eine geführte Wanderung, bei der man etwas über Pflanzen erfährt.",
+        "Sie möchten Ihr Fahrrad im Regionalzug mitnehmen und suchen Informationen dazu."
+      ],
+      "ads": [
+        {
+          "title": "Kräuterwanderung",
+          "text": "Mit einer Biologin durch das Naturschutzgebiet: Welche Pflanzen kann man essen, welche sind giftig? Jeden ersten Sonntag im Monat."
+        },
+        {
+          "title": "Campingplatz Seeufer",
+          "text": "Stellplätze für Zelte und Wohnwagen direkt am Wasser. Hunde sind leider nicht erlaubt."
+        },
+        {
+          "title": "Hof Lindenhof",
+          "text": "Tiere füttern, Traktor fahren, Stockbrot backen: Unser Hof ist jeden Samstag und Sonntag für Familien geöffnet."
+        },
+        {
+          "title": "Jugendherberge am Markt",
+          "text": "Übernachtung im Mehrbettzimmer ab 29 € inklusive Frühstück, fünf Minuten zum Hauptbahnhof, für alle Altersgruppen."
+        },
+        {
+          "title": "Landhotel Rosengarten",
+          "text": "Ruhige Lage außerhalb der Stadt, Doppelzimmer ab 140 €, kostenlose Parkplätze."
+        },
+        {
+          "title": "Busreisen Hofmann",
+          "text": "Sieben Tage Gardasee: Fahrt im modernen Reisebus, Hotel mit Halbpension, Ausflüge inklusive. Abholung an Ihrer Haustür."
+        },
+        {
+          "title": "Rad und Bahn",
+          "text": "Fahrradmitnahme in Regionalzügen: Alle Regeln, Preise und Sperrzeiten finden Sie in unserer kostenlosen Broschüre und online."
+        },
+        {
+          "title": "Wanderkarten-Shop",
+          "text": "Karten und Wanderführer für alle Regionen Deutschlands – auch als App."
+        },
+        {
+          "title": "Hafenrundfahrt & mehr",
+          "text": "Schiffsausflüge für Gruppen ab 15 Personen, auf Wunsch mit Buffet an Bord. Bitte frühzeitig reservieren!"
+        },
+        {
+          "title": "Sprachreisen Sol",
+          "text": "Spanischkurse in Valencia für Schülerinnen und Schüler von 14 bis 18 Jahren, Unterkunft im Internat."
+        },
+        {
+          "title": "Ferienhaus Ostsee",
+          "text": "Strandnah, eingezäunter Garten, Haustiere willkommen. Mindestaufenthalt eine Woche."
+        },
+        {
+          "title": "Skischule Alpenblick",
+          "text": "Kurse für Anfänger und Fortgeschrittene, Ausrüstung kann geliehen werden. Von Dezember bis März."
+        }
+      ],
+      "solution": [
+        8,
+        3,
+        -1,
+        5,
+        10,
+        2,
+        11,
+        -1,
+        0,
+        6
       ]
     }
   ]

@@ -99,13 +99,11 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
     }
 
     /// <summary>
-    /// Reset is eight scoped bulk deletes; this checks every one of them, not just the first. Each learner gets a
-    /// session, a wrong answer (attempt + error event + skill/review state) and a profile row; A additionally
-    /// stores tutor settings, which a reset must NOT touch. After A's reset: A has no learning rows left in any
-    /// table, B has lost nothing, and A's tutor row is still there.
+    /// Both learners get a row in every per-account table: a session, a wrong answer (attempt, error event, skill and
+    /// review state), a profile, lesson progress, a production, readiness snapshots, a B2 training and a telc
+    /// simulation with an attempt. A additionally stores tutor settings with an API key.
     /// </summary>
-    [Fact]
-    public async Task Reset_empties_every_table_of_the_caller_and_none_of_the_other()
+    private async Task SeedEveryTableAsync()
     {
         var ex = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze && e.NodeId == "GR.PASSIV");
         var writing = _provider.Catalog.Exercises.First(e => e.Type == ExerciseType.FreeWrite);
@@ -133,6 +131,47 @@ public sealed class MultiUserIsolationTests : IAsyncLifetime
         var dp = new EphemeralDataProtectionProvider();
         await new TutorRegistry(_factory, dp, NullLoggerFactory.Instance, new FakeCurrentUserAccessor(UserA), env: _ => null)
             .SaveAsync(new TutorSettings("groq", null, "openai/gpt-oss-120b", "gsk_A_secret"));
+    }
+
+    /// <summary>
+    /// The download on Einstellungen: every per-account table is in the file with the caller's rows and none of the
+    /// other account's, and the tutor row - the one with the API key - is not there at all.
+    /// </summary>
+    [Fact]
+    public async Task Export_holds_every_table_of_the_caller_and_nothing_of_the_other()
+    {
+        await SeedEveryTableAsync();
+        var export = new DataExport(_factory, TimeProvider.System);
+
+        using var file = new MemoryStream();
+        await export.WriteAsync(UserA, "a@example.org", file);
+        var text = System.Text.Encoding.UTF8.GetString(file.ToArray());
+        using var doc = System.Text.Json.JsonDocument.Parse(text);
+        var root = doc.RootElement;
+
+        Assert.Equal(DataExport.Format, root.GetProperty("format").GetString());
+        Assert.Equal("a@example.org", root.GetProperty("account").GetString());
+        await using var db = _factory.CreateDbContext();
+        var tables = DataExport.PerUserTables(db);
+        Assert.True(tables.Count >= 10, "Modell kennt weniger Konto-Tabellen als erwartet: " + string.Join(", ", tables.Select(t => t.Table)));
+        foreach (var (table, _) in tables.Where(t => t.Table is not "Settings" and not "GeneratedExercises"))
+            Assert.True(root.GetProperty("tables").GetProperty(table).GetArrayLength() > 0, $"{table}: keine Zeile von A im Export");
+
+        Assert.DoesNotContain(UserB, text);
+        Assert.DoesNotContain("gsk_A_secret", text);
+        Assert.DoesNotContain(DataExport.TutorSettingsKey, text);
+    }
+
+    /// <summary>
+    /// Reset is eight scoped bulk deletes; this checks every one of them, not just the first. Each learner gets a
+    /// session, a wrong answer (attempt + error event + skill/review state) and a profile row; A additionally
+    /// stores tutor settings, which a reset must NOT touch. After A's reset: A has no learning rows left in any
+    /// table, B has lost nothing, and A's tutor row is still there.
+    /// </summary>
+    [Fact]
+    public async Task Reset_empties_every_table_of_the_caller_and_none_of_the_other()
+    {
+        await SeedEveryTableAsync();
 
         await _svcA.ResetAllDataAsync();
 

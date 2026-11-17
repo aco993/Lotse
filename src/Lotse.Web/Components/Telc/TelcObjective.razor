@@ -12,7 +12,7 @@
 }
 
 <div class="tc-bar">
-    <span class="tc-part">@Info.Title</span>
+    <h1 class="tc-part">@Info.Title</h1>
     @if (_limit is { } limit && _result is null)
     {
         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 120 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
@@ -71,10 +71,14 @@
         <MudGrid Spacing="2" Class="mb-3">
             @for (var a = 0; a < l3.Ads.Count; a++)
             {
+                // Copies, not the loop variable: MudItem and MudPaper render their content later, when the loop has
+                // already run to Ads.Count - reading l3.Ads[a] there threw for every ad and took the page down.
+                var ad = l3.Ads[a];
+                var letter = Letter(a);
                 <MudItem xs="12" sm="6" md="4">
                     <MudPaper Elevation="0" Class="pa-3 tc-ad">
-                        <div><b class="tc-letter">@Letter(a)</b> <b>@l3.Ads[a].Title</b></div>
-                        <div class="tc-ad-text">@l3.Ads[a].Text</div>
+                        <div><b class="tc-letter">@letter</b> <b>@ad.Title</b></div>
+                        <div class="tc-ad-text">@ad.Text</div>
                     </MudPaper>
                 </MudItem>
             }

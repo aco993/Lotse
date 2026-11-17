@@ -33,6 +33,9 @@ public class AccessibilityTests(LotseE2EFixture app) : IClassFixture<LotseE2EFix
         ("/themen", null),
         ("/sprechen", null),
         ("/einstellungen", "Schwerpunkte bleiben bei B2.2"),
+        // The exam itself: twelve ads in a grid, and the email with its live checks.
+        ("/telc/ueben/Lesen3", null),
+        ("/telc/ueben/Schreiben", null),
     ];
 
     public static TheoryData<int, int, ColorScheme> Layouts => new()

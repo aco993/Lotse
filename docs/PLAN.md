@@ -52,8 +52,8 @@ The goal of this phase is that the author uses Lotse every day and the data driv
 
 ## Phase 5 – Portfolio polish ⬜
 
-- ⬜ README with screenshots and a short architecture diagram; English/German.
-- ✅ CI (GitHub Actions): format gate, build, all test tiers incl. Playwright, traces on failure; Dependabot. ⬜ Release artefact (self-contained win-x64).
+- ✅ README with screenshots and an architecture diagram; the full feature list moved to docs/FEATURES.md.
+- ✅ CI (GitHub Actions): format gate, build, all test tiers incl. Playwright, traces on failure; Dependabot. ✅ Release artefact: a tag builds, smoke-tests and attaches a self-contained win-x64 zip; `tools/install-windows.ps1` installs from source.
 - ✅ Playwright end-to-end: the daily loop (register → placement → answer → logout → login → resume) and the passkey ceremony, on Kestrel via `WebApplicationFactory.UseKestrel`.
 - ✅ Passkeys (WebAuthn) next to the password (0.7.2).
 - ✅ Persona test with ten simulated learners (`docs/NUTZERTEST_2026-09.md`), harness in `tools/persona-harness` (0.8.0).

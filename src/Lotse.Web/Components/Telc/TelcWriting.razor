@@ -12,7 +12,7 @@
 }
 
 <div class="tc-bar">
-    <span class="tc-part">Schriftlicher Ausdruck</span>
+    <h1 class="tc-part">Schriftlicher Ausdruck</h1>
     @if (_task is not null && _result is null && !_finished)
     {
         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Remaining <= 300 ? Color.Warning : Color.Default)">⏱ noch @Clock(Remaining)</MudChip>
