@@ -142,6 +142,7 @@ builder.Services.AddSingleton(sp => new TelcContentProvider(
     sp.GetRequiredService<IDbContextFactory<LotseDbContext>>(),
     sp.GetRequiredService<ILogger<TelcContentProvider>>()));
 builder.Services.AddScoped<ITelcService, TelcService>();
+builder.Services.AddScoped<DataExport>();
 builder.Services.AddScoped<ITelcGenerator, TelcGenerator>();
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddHealthChecks();
@@ -217,6 +218,15 @@ app.MapGet("/api/tts/{key}.wav", (string key, ITextToSpeech tts) =>
 {
     var path = tts.ResolveCached(key);
     return path is null ? Results.NotFound() : Results.File(path, "audio/wav", enableRangeProcessing: true);
+});
+// The learner's own data as a download (Einstellungen -> Deine Daten). Behind the fallback "signed in" policy like
+// every endpoint; the id comes from the cookie, never from the request, so no one can ask for another account's file.
+app.MapGet("/konto/export", async (HttpContext http, UserManager<ApplicationUser> users, DataExport export) =>
+{
+    var user = await users.GetUserAsync(http.User);
+    if (user is null) return Results.Unauthorized();
+    http.Response.Headers.CacheControl = "no-store";
+    return Results.Stream(stream => export.WriteAsync(user.Id, user.Email, stream, http.RequestAborted), "application/json", export.FileName());
 });
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapAdditionalIdentityEndpoints();

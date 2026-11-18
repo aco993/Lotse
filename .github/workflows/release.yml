@@ -1,0 +1,68 @@
+name: Release
+
+# A tag like v1.0.0 builds a self-contained Windows package and attaches it to a GitHub release, so Lotse runs on a
+# machine without the .NET SDK: unzip, double-click "Lotse starten.cmd". Run it by hand (workflow_dispatch) to get
+# the same zip as a build artefact without publishing a release.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Publish (win-x64, self-contained)
+        shell: pwsh
+        run: dotnet publish src/Lotse.Web/Lotse.Web.csproj -c Release -r win-x64 --self-contained true -o stage/Lotse/app
+
+      - name: Assemble package
+        shell: pwsh
+        run: |
+          Copy-Item 'tools/release/Lotse starten.cmd' stage/Lotse/
+          Copy-Item LICENSE stage/Lotse/
+          $name = if ($env:GITHUB_REF_TYPE -eq 'tag') { "Lotse-$env:GITHUB_REF_NAME-win-x64.zip" } else { 'Lotse-win-x64.zip' }
+          Compress-Archive -Path stage/Lotse -DestinationPath $name
+          "PACKAGE=$name" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      # The package must start from its own folder on a clean data directory and answer on /health and the login page.
+      - name: Smoke test the package
+        shell: pwsh
+        run: |
+          $env:Lotse__DataDirectory = Join-Path $env:RUNNER_TEMP 'lotse-data'
+          $env:Lotse__ContentDirectory = (Resolve-Path stage/Lotse/app/content).Path
+          $p = Start-Process -FilePath stage/Lotse/app/Lotse.Web.exe -ArgumentList '--urls', 'http://localhost:5178' -PassThru
+          $ok = $false
+          for ($i = 0; $i -lt 60 -and -not $ok; $i++) {
+            try { $ok = (Invoke-WebRequest http://localhost:5178/health -UseBasicParsing -TimeoutSec 2).StatusCode -eq 200 } catch { Start-Sleep 2 }
+          }
+          if (-not $ok) { throw 'Lotse did not answer on /health' }
+          $login = Invoke-WebRequest http://localhost:5178/Account/Login -UseBasicParsing
+          if ($login.Content -notmatch 'Anmelden') { throw 'Login page did not render' }
+          Stop-Process -Id $p.Id
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: lotse-win-x64
+          path: ${{ env.PACKAGE }}
+
+      - name: Attach to the release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release view $env:GITHUB_REF_NAME 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $env:GITHUB_REF_NAME --title "Lotse $env:GITHUB_REF_NAME" --notes "Windows-Paket: entpacken, „Lotse starten.cmd“ doppelklicken. Änderungen: siehe CHANGELOG.md."
+          }
+          gh release upload $env:GITHUB_REF_NAME $env:PACKAGE --clobber

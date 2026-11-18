@@ -113,6 +113,412 @@
         { "correct": 3, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich bei jemandem melden." },
         { "correct": 2, "nodeId": "GR.VERB_PRAEPOSITION", "errorCode": "VERB_PRAEP", "explanation": "sich freuen auf - die Unterstützung kommt noch." }
       ]
+    },
+    {
+      "id": "sb1.reklamation",
+      "teil": 1,
+      "title": "Reklamation einer Bestellung",
+      "text": "Sehr geehrte Damen und Herren,\n\nam 3. November habe ich in Ihrem Onlineshop einen Kaffeevollautomaten bestellt, [1] ich leider nicht zufrieden bin. Das Gerät wurde zwar pünktlich geliefert, [2] schon beim ersten Einschalten zeigte das Display eine Fehlermeldung an. Ich habe daraufhin alle Schritte der Anleitung befolgt, [3] das Problem zu lösen – leider ohne Erfolg.\n\nAm 8. November habe ich mich telefonisch an Ihren Kundenservice gewandt. Dort wurde mir versprochen, dass ich innerhalb von drei Tagen zurückgerufen [4]. Bis heute hat sich jedoch niemand [5] mir gemeldet. [6] ich das Gerät für mein kleines Büro gekauft habe, in dem täglich Kundengespräche stattfinden, ist die Situation für mich besonders ärgerlich.\n\nIch bitte Sie daher, mir bis zum 25. November ein neues Gerät zu schicken. [7] dies nicht möglich ist, erwarte ich die Rückerstattung des Kaufpreises. Außerdem bitte ich Sie, die Kosten [8] die Rücksendung zu übernehmen, da der Fehler nicht von mir verursacht wurde.\n\nEine Kopie der Rechnung sowie ein Foto der Fehlermeldung [9] Sie im Anhang. Ich gehe davon aus, dass Sie sich um eine schnelle Lösung bemühen, und [10] mich, bald von Ihnen zu hören.\n\nMit freundlichen Grüßen\nJelena Ristić",
+      "gaps": [
+        {
+          "options": [
+            "über den",
+            "mit dem",
+            "von dem"
+          ],
+          "correct": 1,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "zufrieden sein mit + Dat. - im Relativsatz: mit dem (der Kaffeevollautomat)."
+        },
+        {
+          "options": [
+            "trotzdem",
+            "obwohl",
+            "aber"
+          ],
+          "correct": 2,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "zwar …, aber … - „aber“ steht auf Position 0, danach kommt „schon beim ersten Einschalten“ und dann das Verb. Nach „trotzdem“ müsste das Verb sofort folgen, „obwohl“ schickt es ans Ende."
+        },
+        {
+          "options": [
+            "um",
+            "damit",
+            "für"
+          ],
+          "correct": 0,
+          "nodeId": "GR.INFINITIV_ZU",
+          "errorCode": "INF_ZU",
+          "explanation": "Zweck mit demselben Subjekt (ich) und zu + Infinitiv: um … zu."
+        },
+        {
+          "options": [
+            "worden",
+            "habe",
+            "werde"
+          ],
+          "correct": 2,
+          "nodeId": "GR.PASSIV",
+          "errorCode": "PASSIV_FORM",
+          "explanation": "Passiv: zurückgerufen werden. In der indirekten Rede steht hier der Konjunktiv I: werde. „worden“ gäbe es nur mit „sein“ (bin … zurückgerufen worden), „habe“ machte daraus Aktiv."
+        },
+        {
+          "options": [
+            "an",
+            "bei",
+            "zu"
+          ],
+          "correct": 1,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich bei jemandem melden. Aber: sich an jemanden wenden (wie im Satz davor)."
+        },
+        {
+          "options": [
+            "Denn",
+            "Da",
+            "Deshalb"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Das Verb „habe“ steht am Ende: ein Nebensatz, der den Grund nennt - da. „Denn“ und „deshalb“ verlangen einen Hauptsatz."
+        },
+        {
+          "options": [
+            "Falls",
+            "Ob",
+            "Damit"
+          ],
+          "correct": 0,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Bedingung: Falls dies nicht möglich ist, … „ob“ leitet eine indirekte Frage ein, „damit“ einen Zweck."
+        },
+        {
+          "options": [
+            "für",
+            "über",
+            "an"
+          ],
+          "correct": 0,
+          "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+          "errorCode": "KASUS_PRAEP",
+          "explanation": "die Kosten für + Akk. (für die Rücksendung)."
+        },
+        {
+          "options": [
+            "sehen",
+            "haben",
+            "finden"
+          ],
+          "correct": 2,
+          "nodeId": "WS.BERUF_BUERO",
+          "errorCode": "REG_FORMELL",
+          "explanation": "Feste Formel im Geschäftsbrief: Im Anhang finden Sie …"
+        },
+        {
+          "options": [
+            "freuen",
+            "freue",
+            "gefreut"
+          ],
+          "correct": 1,
+          "nodeId": "GR.VERBFORMEN",
+          "errorCode": "VERB_FORM",
+          "explanation": "Subjekt ist „ich“ (… und freue mich): 1. Person Singular Präsens."
+        }
+      ]
+    },
+    {
+      "id": "sb1.wohnung",
+      "teil": 1,
+      "title": "Bewerbung um eine Wohnung",
+      "text": "Sehr geehrte Frau Petzold,\n\nmit großem Interesse habe ich Ihre Anzeige gelesen, in [1] Sie eine Drei-Zimmer-Wohnung in der Lindenstraße anbieten. Ich suche zurzeit eine größere Wohnung für mich und meine Familie und würde mich sehr freuen, [2] Sie uns bei der Auswahl berücksichtigen könnten.\n\nZunächst möchte ich mich kurz vorstellen. Ich bin 34 Jahre alt und arbeite seit vier Jahren als Softwareentwickler bei einer Versicherung in der Innenstadt. Meine Frau ist Krankenpflegerin, und unsere Tochter wird im Sommer [3]. Die Wohnung in der Lindenstraße würde sehr gut zu uns passen, [4] sie nur wenige Minuten von der Grundschule entfernt liegt.\n\nUnsere jetzige Wohnung ist leider zu klein [5], seit unsere Tochter auf der Welt ist. Außerdem [6] ich ab Januar überwiegend im Homeoffice arbeiten. [7] brauche ich ein eigenes Arbeitszimmer.\n\nSelbstverständlich kann ich Ihnen alle notwendigen Unterlagen zur Verfügung stellen, [8] eine Bescheinigung über mein Einkommen und eine Bestätigung unseres jetzigen Vermieters, dass wir die Miete immer pünktlich bezahlt haben. Wir rauchen nicht und haben keine Haustiere.\n\nÜber eine Einladung zu einer Besichtigung würde ich mich sehr freuen. [9] Sie noch Fragen haben, erreichen Sie mich am besten nachmittags unter der Nummer 0176 4483921. Ich [10] Ihnen gern auch kurzfristig für einen Termin zur Verfügung.\n\nMit freundlichen Grüßen\nStefan Jovanović",
+      "gaps": [
+        {
+          "options": [
+            "die",
+            "der",
+            "denen"
+          ],
+          "correct": 1,
+          "nodeId": "GR.RELATIVSATZ",
+          "errorCode": "RELATIV_PRONOMEN",
+          "explanation": "die Anzeige - in + Dativ (wo steht das Angebot?): in der."
+        },
+        {
+          "options": [
+            "dass",
+            "ob",
+            "wenn"
+          ],
+          "correct": 2,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Ich würde mich freuen, wenn … - eine Bedingung im Konjunktiv II, keine Tatsache (dass) und keine Frage (ob)."
+        },
+        {
+          "options": [
+            "eingeschult",
+            "eingeschaltet",
+            "eingestellt"
+          ],
+          "correct": 0,
+          "nodeId": "WS.BILDUNG_WISSEN",
+          "errorCode": "WS_WORTWAHL",
+          "explanation": "eingeschult werden = in die erste Klasse kommen. Eingeschaltet wird ein Gerät, eingestellt ein Mitarbeiter."
+        },
+        {
+          "options": [
+            "denn",
+            "weil",
+            "deshalb"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Das Verb „liegt“ steht am Ende: Nebensatz mit weil. Nach „denn“ stünde es an zweiter Stelle."
+        },
+        {
+          "options": [
+            "worden",
+            "geworden",
+            "gewesen"
+          ],
+          "correct": 1,
+          "nodeId": "GR.VERBFORMEN",
+          "errorCode": "VERB_FORM",
+          "explanation": "zu klein werden → Perfekt: ist zu klein geworden. „worden“ gibt es nur im Passiv (ist gebaut worden)."
+        },
+        {
+          "options": [
+            "werde",
+            "habe",
+            "bin"
+          ],
+          "correct": 0,
+          "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR",
+          "errorCode": "TEMPUS_WAHL",
+          "explanation": "Am Satzende steht der Infinitiv „arbeiten“: Futur I mit werden - ein fester Plan ab Januar."
+        },
+        {
+          "options": [
+            "Weil",
+            "Deshalb",
+            "Obwohl"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Direkt nach der Lücke kommt das Verb „brauche“: ein Adverb auf Position 1 - deshalb. „Weil“ und „obwohl“ schicken das Verb ans Ende."
+        },
+        {
+          "options": [
+            "etwa",
+            "so",
+            "als"
+          ],
+          "correct": 0,
+          "nodeId": "WS.MEINUNG_GESELLSCHAFT",
+          "errorCode": "WS_WORTWAHL",
+          "explanation": "etwa = zum Beispiel, vor einer Aufzählung."
+        },
+        {
+          "options": [
+            "Ob",
+            "Falls",
+            "Damit"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Bedingung: Falls Sie noch Fragen haben, …"
+        },
+        {
+          "options": [
+            "stelle",
+            "stehe",
+            "bin"
+          ],
+          "correct": 1,
+          "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+          "errorCode": "WS_KOLLOKATION",
+          "explanation": "jemandem zur Verfügung stehen = für ihn da sein. Etwas zur Verfügung stellen = es geben (wie oben bei den Unterlagen)."
+        }
+      ]
+    },
+    {
+      "id": "sb2.fahrrad",
+      "teil": 2,
+      "title": "Mit dem Rad zur Arbeit",
+      "text": "Immer mehr Menschen in Deutschland fahren mit dem Fahrrad zur Arbeit. [1] einer aktuellen Umfrage nutzt inzwischen jeder fünfte Beschäftigte regelmäßig das Rad für den Arbeitsweg. Vor allem in Großstädten ist der Anteil gestiegen, [2] die Wege dort oft kurz sind und man mit dem Rad häufig schneller ankommt als mit dem Auto.\n\nViele Arbeitgeber unterstützen diesen Trend. Sie bieten ihren Mitarbeitenden ein Dienstrad an, [3] die Beschäftigten über ihr Gehalt bezahlen und das sie auch privat nutzen dürfen. Außerdem richten immer mehr Firmen Duschen und sichere Abstellplätze ein. „Wer morgens mit dem Rad kommt, ist wacher und seltener krank [4] Kolleginnen und Kollegen, die mit dem Auto fahren“, sagt eine Sprecherin des Fahrradclubs.\n\nEs gibt [5] auch Probleme. In vielen Städten fehlen breite und sichere Radwege. Radfahrerinnen und Radfahrer müssen sich die Straße oft [6] Autos und Lastwagen teilen, was gefährlich sein kann. Die Zahl der Unfälle mit Fahrrädern ist in den letzten Jahren [7] gestiegen. Die Verbände fordern deshalb, mehr Geld [8] den Ausbau der Radwege auszugeben.\n\nAuch das Wetter hält manche davon ab, das Auto stehen zu lassen. [9] Regen und Kälte steigen im Winter viele wieder auf Bus und Bahn um. Wer trotzdem fährt, sollte auf gute Kleidung und funktionierendes Licht achten – [10] wird der Weg zur Arbeit schnell zum Risiko.",
+      "box": [
+        "allerdings",
+        "als",
+        "bei",
+        "da",
+        "das",
+        "denn",
+        "die",
+        "für",
+        "laut",
+        "mit",
+        "ob",
+        "obwohl",
+        "sonst",
+        "stark",
+        "trotz"
+      ],
+      "gaps": [
+        {
+          "correct": 8,
+          "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+          "errorCode": "KASUS_PRAEP",
+          "explanation": "laut + Dat. = nach Angaben von: laut einer Umfrage."
+        },
+        {
+          "correct": 3,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Grund mit Verb am Ende (sind): da. „denn“ verlangt das Verb an zweiter Stelle, „obwohl“ passt nicht zum Sinn."
+        },
+        {
+          "correct": 4,
+          "nodeId": "GR.RELATIVSATZ",
+          "errorCode": "RELATIV_PRONOMEN",
+          "explanation": "das Dienstrad (neutrum), Akkusativ: das. Das zweite „das sie auch privat nutzen“ bestätigt es."
+        },
+        {
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Vergleich nach einem Komparativ (wacher, seltener): als."
+        },
+        {
+          "correct": 0,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "allerdings = aber, im Mittelfeld nach dem Verb: Es gibt allerdings auch Probleme."
+        },
+        {
+          "correct": 9,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich etwas mit jemandem teilen."
+        },
+        {
+          "correct": 13,
+          "nodeId": "WS.MEINUNG_GESELLSCHAFT",
+          "errorCode": "WS_WORTWAHL",
+          "explanation": "stark gestiegen = deutlich gestiegen."
+        },
+        {
+          "correct": 7,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "Geld für etwas ausgeben."
+        },
+        {
+          "correct": 2,
+          "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+          "errorCode": "KASUS_PRAEP",
+          "explanation": "bei Regen = wenn es regnet. „trotz Regen“ ergäbe das Gegenteil: Sie fahren ja gerade nicht mit dem Rad."
+        },
+        {
+          "correct": 12,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "sonst = wenn man das nicht tut. Adverb, das Verb folgt sofort (sonst wird …)."
+        }
+      ]
+    },
+    {
+      "id": "sb2.nachbarschaft",
+      "teil": 2,
+      "title": "Nachbarn helfen Nachbarn",
+      "text": "Liebe Nachbarinnen und Nachbarn,\n\nvor einem Jahr haben wir unsere Nachbarschaftsinitiative „Hand in Hand“ gegründet. [1] dieser Zeit ist viel passiert: Wir haben einen Tauschschrank im Hof aufgestellt, ein Sommerfest organisiert und mehreren älteren Menschen [2] Einkaufen geholfen. Dafür möchten wir uns [3] allen bedanken, die mitgemacht haben.\n\nNun möchten wir das Angebot erweitern. Viele von Ihnen haben uns erzählt, dass sie sich manchmal gern Werkzeug ausleihen würden, [4] sie es nur selten brauchen und deshalb nicht kaufen wollen. Wir planen deshalb eine kleine „Leihbar“ im Keller des Hauses Nummer 12. Dort sollen Bohrmaschinen, Leitern und andere Geräte stehen, [5] sich alle Mitglieder kostenlos ausleihen können.\n\nDamit das funktioniert, brauchen wir Ihre Hilfe. Wir suchen Menschen, die bereit sind, einmal im Monat für zwei Stunden die Ausleihe zu betreuen. Außerdem freuen wir uns [6] Spenden von gut erhaltenen Geräten. Bitte bringen Sie [7] keine defekten Sachen mit – für deren Reparatur fehlt uns leider die Zeit.\n\nWer Interesse hat, ist herzlich zu unserem nächsten Treffen eingeladen. Es findet am Donnerstag, dem 14. März, um 19 Uhr im Gemeinschaftsraum statt. [8] Sie an diesem Abend keine Zeit haben, können Sie sich auch per E-Mail [9] uns wenden. Jede Idee und jede helfende Hand ist willkommen – je mehr Menschen mitmachen, [10] besser funktioniert unsere Nachbarschaft.\n\nIhr Team von „Hand in Hand“",
+      "box": [
+        "aber",
+        "an",
+        "bei",
+        "beim",
+        "dass",
+        "denn",
+        "deren",
+        "desto",
+        "die",
+        "falls",
+        "in",
+        "seitdem",
+        "über",
+        "vom",
+        "weil"
+      ],
+      "gaps": [
+        {
+          "correct": 10,
+          "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+          "errorCode": "KASUS_PRAEP",
+          "explanation": "in dieser Zeit = während dieser Zeit. „seitdem“ ist ein Adverb oder Konnektor und kann kein Nomen anschließen."
+        },
+        {
+          "correct": 3,
+          "nodeId": "GR.KASUS_PRAEPOSITIONEN",
+          "errorCode": "KASUS_PRAEP",
+          "explanation": "jemandem beim Einkaufen helfen - bei + dem nominalisierten Infinitiv."
+        },
+        {
+          "correct": 2,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich bei jemandem (für etwas) bedanken."
+        },
+        {
+          "correct": 14,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Grund mit Verb am Ende (brauchen … wollen): weil. Nach „denn“ stünde das Verb an zweiter Stelle."
+        },
+        {
+          "correct": 8,
+          "nodeId": "GR.RELATIVSATZ",
+          "errorCode": "RELATIV_PRONOMEN",
+          "explanation": "die Geräte (Plural), Akkusativ - sich etwas ausleihen: die."
+        },
+        {
+          "correct": 12,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich über etwas freuen - über Spenden, die man bekommt."
+        },
+        {
+          "correct": 0,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "aber schränkt die Bitte ein: Spenden ja, aber keine defekten Sachen."
+        },
+        {
+          "correct": 9,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Bedingung: Falls Sie keine Zeit haben, …"
+        },
+        {
+          "correct": 1,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich an jemanden wenden."
+        },
+        {
+          "correct": 7,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "je + Komparativ …, desto + Komparativ …"
+        }
+      ]
     }
   ]
 }

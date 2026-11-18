@@ -160,9 +160,19 @@ else
         <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
     </MudPaper>
 
+    <MudPaper Class="pa-4 mb-3" Elevation="1" id="daten">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Deine Daten</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Dein ganzer Lernstand als eine Datei: Profil, Lernstand je Thema, Wiederholungsplan, Sessions, Antworten, Texte, Fehlerjournal und telc-Ergebnisse. Als Sicherung oder für den Umzug auf einen anderen Rechner. Passwort, Passkeys und der Tutor-Schlüssel sind nicht darin.</MudText>
+        @* A plain anchor with "download": Blazor's router leaves it alone, so the browser fetches the endpoint with the
+           auth cookie instead of trying to route /konto/export as a page. *@
+        <a href="konto/export" download class="mud-button-root mud-button mud-button-outlined mud-button-outlined-primary mud-button-outlined-size-medium mud-ripple" style="text-decoration:none">
+            <span class="mud-button-label">Lernstand herunterladen (JSON)</span>
+        </a>
+    </MudPaper>
+
     <MudPaper Class="pa-4" Elevation="1" Style="border:1px solid var(--mud-palette-error)">
         <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Zurücksetzen</MudText>
-        <MudText Typo="Typo.body2" Class="mb-2">Löscht deinen Lernstand, deine Sessions und dein Fehlerjournal – nur dieses Konto. Inhalte, die gemeinsame Übungsbank und deine Tutor-Einstellungen bleiben.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">Löscht deinen Lernstand, deine Sessions und dein Fehlerjournal – nur dieses Konto. Inhalte, die gemeinsame Übungsbank und deine Tutor-Einstellungen bleiben. Wer sichergehen will, lädt vorher unter „Deine Daten“ eine Kopie herunter.</MudText>
         @if (!_confirmReset)
         {
             <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _confirmReset = true">Alle Lerndaten löschen</MudButton>

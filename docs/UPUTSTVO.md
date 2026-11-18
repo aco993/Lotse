@@ -1,8 +1,23 @@
 # Lotse – uputstvo za upotrebu
 
-Lotse je tvoj lični, adaptivni trener za nemački do nivoa B2 (Goethe-Zertifikat B2 kao referentni format; telc B2 je praktično isto). Aplikacija radi lokalno na tvom računaru, svi podaci ostaju kod tebe.
+Lotse je tvoj lični, adaptivni trener za nemački do nivoa B2, za telc Deutsch B2 ili Goethe-Zertifikat B2 (svaki ispit u svom formatu). Aplikacija radi lokalno na tvom računaru, svi podaci ostaju kod tebe.
 
 ## 1. Instalacija i pokretanje
+
+**Najlakše na Windowsu: jednom instaliraj, posle samo klikni.**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/install-windows.ps1
+```
+
+Skript napravi samostalnu kopiju u `%LOCALAPPDATA%\Lotse\app` i doda **Lotse** u Start meni i na desktop. Klik pokrene server u pozadini (ako već ne radi) i otvori pregledač. Nema terminala ni `dotnet run`.
+- Podaci su u `%LOCALAPPDATA%\Lotse\data`, odvojeno od programa. Pri prvoj instalaciji skript tamo prekopira tvoju postojeću bazu iz `src/Lotse.Web/data`, sa ključem za sačuvani API ključ. Original ostaje netaknut.
+- `-Autostart`: server se pokreće sam kad se prijaviš u Windows, pa je Lotse uvek spreman.
+- Ažuriranje: posle `git pull` pokreni skript ponovo. Uklanjanje: `-Uninstall` (podaci ostaju).
+- Log servera (i link za reset lozinke) je u `%LOCALAPPDATA%\Lotse\lotse.log`.
+- Bez .NET SDK-a: svako izdanje na GitHubu ima zip. Raspakuj ga i dvaput klikni `Lotse starten.cmd`.
+
+**Iz repozitorijuma (za razvoj):**
 
 Potrebno: .NET 10 SDK (https://dotnet.microsoft.com/download). Za prepoznavanje govora Chrome ili Edge.
 
@@ -270,6 +285,8 @@ Iskreno o kvalitetu: modeli od 3B parametara greše u nemačkoj gramatici i pone
 
 **Einstellungen**: ime (za uzorna rešenja), zanimanje (kontekst za tutora), dnevni minuti, datum ispita (početna strana onda odbrojava). „Alle Lerndaten löschen" briše samo tvoj napredak, sadržaj ostaje.
 
+**Deine Daten → „Lernstand herunterladen (JSON)"** preuzima ceo tvoj lernstand kao jednu datoteku: profil, stanje po temama, plan ponavljanja, sesije, odgovore, tekstove, dnevnik grešaka i telc rezultate. Korisno kao rezervna kopija pre reseta ili pre prelaska na drugi računar. Lozinka, passkey-evi i API ključ nisu u njoj.
+
 ## 8. Uz Claude Chat
 
 **Najbolje preko MCP-a** ([MCP.md](MCP.md)). Kad povežeš Claude Desktop ili Claude Code sa Lotse-om, chat sam vidi tvoj datum ispita, najslabije teme i dnevnik grešaka. Ne moraš ništa da kopiraš. Na kraju razgovora upiše greške u Lotse i doda vežbe za tvoje slabe teme, a sledeća sesija u aplikaciji onda cilja baš njih. Bodove i ponavljanja ne može da menja: vežba se i dalje u aplikaciji. Kratko uputstvo:
@@ -290,4 +307,4 @@ Bez MCP-a: u Claude Projektu koristi prompt iz `docs/CLAUDE_CHAT_PROMPT.md`. Gre
 - Zvuk robotski: nisi pokrenuo `tools/install-piper.ps1` (vidi 1c). U konzoli piše koji je glas aktivan – `Lokale Sprachausgabe aktiv: ...` znači da Piper radi, `nicht eingerichtet` znači da app koristi glasove pregledača.
 - Nema zvuka uopšte: bez Pipera trebaju ti glasovi pregledača – Windows: Einstellungen → Zeit und Sprache → Sprache → Deutsch dodati. Sa Piperom to nije potrebno.
 - Svi likovi zvuče isto: nedostaje ženski glas `de_DE-kerstin-low`; pokreni skript iz 1c ponovo.
-- Log servera vidiš u konzoli u kojoj si pokrenuo `dotnet run`.
+- Log servera vidiš u konzoli u kojoj si pokrenuo `dotnet run`, a kod instalacije preko `install-windows.ps1` u `%LOCALAPPDATA%\Lotse\lotse.log`.

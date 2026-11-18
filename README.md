@@ -5,7 +5,7 @@
 ![Blazor Server](https://img.shields.io/badge/Blazor-Server-5C2D91)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**Lotse** (German for a harbour pilot) is a personal, adaptive German-learning application built to get one specific learner – a Serbian-speaking software developer living in Germany – from an uneven B1–B2 to a solid, exam-ready B2 (Goethe-Zertifikat B2 format; telc B2 transfers).
+**Lotse** (German for a harbour pilot) is a personal, adaptive German-learning application built to get one specific learner – a Serbian-speaking software developer living in Germany – from an uneven B1–B2 to a solid, exam-ready B2 (telc Deutsch B2 or Goethe-Zertifikat B2).
 
 It is not a course. It is a closed loop: every answer updates a per-topic ability model, every mistake is tagged with an error code, and a planner composes each day's 5–30-minute session from due repetitions, targeted drills on the weakest topics, one production task (writing or speaking) and scheduled re-checks of topics that used to be weak.
 
@@ -14,41 +14,66 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 >
 > Languages, deliberately: docs and code comments in English; the app's interface, changelog and commit messages in German (the language being learned); the user guide in Serbian, the learner's first language.
 
-## Highlights
+## At a glance
 
-- **A course with a story.** 24 lessons in two parts follow two years at a Bremen software company. Part 1: the first day in the team, the first formal mail to the boss, a stand-up, an angry customer, the Bürgeramt, the flat and the neighbours, the doctor, a production incident, the home-office debate, weekend small talk, the salary talk, exam day. Part 2: mentoring a new colleague, a Kita parents' evening, organising the company outing, presenting to the customer, a team conflict, an evening course at the VHS, disputing the utility bill, rumours of a merger, an internal application, listening to the news, and the two exam days (Lesen, Schreiben). Each lesson opens with an interactive dialogue in which you choose your own lines and every option is explained, continues with a grammar focus explained through German↔Serbian (or German↔English) example pairs, each one speakable, and ends with a writing or speaking task.
-- **Interactive exercise types.** Dialogues, spot-the-error (tap the wrong word in a colleague's message), pair matching, gap fill, transformation, translation, word order, vocabulary with article, dictation, free writing, speaking.
-- **Skill map underneath.** 62 skill nodes (grammar, vocabulary, Redemittel, reading, listening, writing, speaking) on CEFR sub-bands, three of them above B2; 57 error codes; contrastive Serbian↔German notes on every interference-prone topic.
-- **Adaptive engine, fully deterministic and unit-tested.** Rasch/Elo-style ability per node, SM-2-family spaced repetition with behaviour-derived grades, weak-area analysis with trends, a session planner that explains every choice, a 7/21/60-day re-check cycle for recovered weaknesses, exam readiness per module.
-- **Production first.** Typed gap fills, transformations, Serbian→German translation, word order, vocabulary with article, dictation, daily free writing/speaking. Tolerant checking (umlauts, ß, one typo, capitalisation, missing article) that still logs every slip.
-- **Works without any API key.** 2,251 exercises (1,041 vocabulary items with article, plural, example and a gloss in your bridge language), rule-based feedback on free writing, self-check rubrics with model answers, local neural speech.
-- **Two bridge languages, one target language.** The interface, the tasks and the feedback are German throughout - that is the point. Serbian or English only carries the vocabulary prompts, the translation sources, the second column of the grammar tables and the contrastive notes, switchable per account. The notes are written for each first language rather than translated: what trips up a Serbian speaker (articles, verb-second) and an English one (cases, verb-final clauses) is not the same list.
-- **B2 or C1 as the declared goal.** One setting moves one thing: how far above B2 the planner's focus may reach. A C1 learner gets the three C1 nodes - elevated vocabulary, the connectors that mark a C1 text (zumal, sofern, ungeachtet, geschweige denn) and the fixed phrases you cannot build word by word - plus the B2.2 grammar in their daily focus, and a "C1-Nähe" figure on Heute; a B2 learner never does. The placement, the difficulty targeting and the exam pages stay B2 - and the exam page says so, because an app without a C1 blueprint should not imply it has one.
-- **Your field, as a nudge and nothing more.** Pick a Branche (IT, care, construction, medicine, office, retail, electrical engineering) and matching vocabulary nodes get a small priority boost while equally suitable exercises break ties in its favour - and the session says so when it mattered ("Vorgezogen, weil du in der Pflege arbeitest"). Weaknesses still decide what is practised; the field never hides material.
-- **The course knows your name.** Lesson dialogues and model answers carry `{Vorname}` / `{Nachname}` / `{Name}` tokens instead of the author's name; the profile fills them in at the moment content is handed to one learner, so the shared exercise bank stays neutral and no name leaks between accounts on the same machine.
-- **Progress you can act on, not points.** A weekly goal in minutes, a Monday review of the week that ended, and three cards built from the spaced-repetition state: how many items have stuck (stability past three weeks), how much falls due over the next seven days, and what share of the scheduled material you would get right this minute. No XP, no badges, no leaderboard.
-- **Readiness with a direction.** The exam-readiness number keeps a daily snapshot and shows its change against roughly a week ago - or says nothing at all until there is something to compare with.
-- **Measured grammar coverage.** A 51-item reference inventory of B2 grammar (`tools/b2-grammar-reference.json`, compiled from Profile Deutsch, the common ground of the standard B2 textbooks, and the Goethe rating criteria) is scored against the content by `tools/grammar-coverage.py`; every *Muss* item now reaches the top grade, every writing and speaking task demands a named structure in its rubric, and tests keep both from falling back. Report: [docs/GRAMMATIK_ABDECKUNG.md](docs/GRAMMATIK_ABDECKUNG.md).
-- **FSRS-6 spaced repetition, fitted to you.** The scheduler generation Anki ships: every item has a memory stability and a difficulty, comes due when its recall probability drops to 90 %, and a lapse shrinks stability instead of resetting it. After about 150 reviews the forgetting curve's decay is fitted to the learner's own history (one-parameter grid search on log loss - fitting all 21 weights would overfit one person's data). Grades come from behaviour (wrong / slip / hint / speed), never from self-rating.
-- **Real feedback on free writing without any key.** A rule-based analyzer built for what a Serbian speaker's German actually trips over - haben/sein in the perfect, verb position after *weil/dass* and fronted adverbials, the missing comma, ä/ö/ü/ß, case after prepositions (gender from the vocabulary bank), n-declension, verb + preposition, formal register - tags every finding with a catalogue code so it feeds the journal and the learner model. Precision over recall: a clean B2 text produces nothing.
-- **Tested by ten simulated learners.** A nurse on her phone, a keyboard-only user, a DaF examiner, a 19-year-old on TikTok time - each a scripted Playwright persona with its own account and a brief to be honest. Their report (`docs/NUTZERTEST_2026-09.md`) became the 0.8.0 backlog; `tools/persona-harness` re-checks every finding against the running app.
-- **Separate accounts, own login, passkeys.** Register/log in (ASP.NET Core Identity, cookie auth, lockout, encrypted-at-rest API key) and everything - skill state, sessions, error journal, Tutor settings - is scoped to that account alone; a second account starts from a blank slate and can never see the first one's data or spend its API key. Every page requires sign-in by default (fallback authorization policy), with the login/registration pages the one deliberate exception. Passkeys (WebAuthn - fingerprint, face, device PIN) work alongside the password, end-to-end tested with Chromium's virtual authenticator.
-- **AI with guardrails, and measured.** Hints come as a ladder (topic → rule → shape of the answer) and the AI may add a Socratic question, but no rung ever contains the answer: a test checks the whole bank, and an AI hint that gives it away is discarded. Unrestricted AI help during practice lowers later exam scores, and a hint-only tutor removes most of that harm (Bastani et al., PNAS 2025), which is why the app works this way. The AI rater is evaluated against a golden set: quadratic weighted kappa, ±1-band agreement, planted-error recall, quote precision and prompt-injection resistance. The rule-based rater and "always B" serve as baselines. Method, numbers and their limits are in [docs/EVALS.md](docs/EVALS.md). The tutor also writes new telc tasks, which pass format rules, a copy check, a critic model and a human review before anyone practises them. The review page reports the pipeline's acceptance rate and how often the critic agrees with the human.
-- **Your chat, connected (MCP).** `tools/Lotse.Mcp` lets Claude Desktop, Claude Code or any MCP client read your learning state (exam date, weakest topics, error journal, telc points) and write back checked exercises and the mistakes it found. The checks are the same ones the app's own tutor faces, and the chat cannot change scores. The chat becomes a client of the app instead of a replacement ([docs/MCP.md](docs/MCP.md)).
-- **Pronunciation, free.** Read spoken exam phrases aloud; the browser's recogniser transcribes, and each word shows whether it was understood, heard as something else, or missed. Honest about what it measures: intelligibility, not phonetics.
-- **telc Deutsch B2 as well as Goethe.** Every part in telc format and telc points, with own texts and no copied exam material. Includes a full simulation, a forecast of where the points are lost, and a weekly plan counted back from the exam date.
-- **On the phone, on a server.** A three-minute quick session on Heute and as a shortcut on the app icon. A Docker image (data in a volume, non-root) runs behind a TLS proxy. Settings close registration on a personal server or offer a one-click demo account with two weeks of history on a public one. See [docs/DEPLOY.md](docs/DEPLOY.md).
-- **AI tutor (optional), provider-agnostic, configured in the app.** Rubric-based evaluation of writing and speaking with tagged errors that feed the model, on-demand exercise and reading/listening generation, a discussion partner for the oral exam. Pick a provider on the settings page: Groq (free, fast, the default suggestion), Claude via the official Anthropic SDK, OpenRouter, Ollama or LM Studio locally, Mistral, DeepSeek, OpenAI or any OpenAI-compatible server. Connection test, encrypted key storage (ASP.NET Data Protection), switch at runtime, graceful fallback from `json_schema` to `json_object` to plain text, retries with backoff. The time budget per answer follows the provider: hosted models get 120 s, local ones 300 s, because a 7B on a desktop GPU needs one to three minutes for a full evaluation - measured, not guessed.
-- **Self-diagnosis and self-repair.** Health panel (content, database integrity, tutor) with one-click repair, `/health` endpoint, error boundary with friendly recovery, provider errors translated into actionable sentences.
-- **Mobile-first details.** Bottom navigation on phones, installable PWA, system dark mode, keyboard shortcuts on desktop (Enter, digits) hidden on touch.
-- **Exam realism.** Goethe B2 blueprint as data, writing/speaking tasks in exact exam formats, reading and audio-only listening tasks in exam part formats, readiness report against the 60 % rule.
+- **A closed loop, not a course.** Rasch/Elo ability per skill node, FSRS-6 spaced repetition fitted to the learner, a planner that explains every choice, and a 7/21/60-day re-check for recovered weaknesses. Deterministic and unit-tested.
+- **Both B2 exams, in their own formats.** Every part of telc Deutsch B2 (Lesen 1–3, Sprachbausteine 1–2, Hören 1–3, the email, the three oral parts), counted in telc points, with full simulations and a plan counted back from the exam date. The Goethe-Zertifikat B2 blueprint sits next to it. All tasks are original texts in the exam format, never copied exam material.
+- **Works without any key.** 2,250 exercises, a 24-lesson story course, rule-based feedback on free writing built for what a Serbian speaker gets wrong in German, local neural speech, and a read-aloud pronunciation check.
+- **AI with guardrails, and measured.** An optional tutor (Groq, Claude, Ollama, any OpenAI-compatible server) gives hints as a ladder and never the answer, rates writing on telc criteria, and writes new telc tasks that pass format rules, a copy check, a critic model and a human review. The rater is evaluated against a golden set ([docs/EVALS.md](docs/EVALS.md)).
+- **Your chat, connected.** An MCP server lets Claude Desktop or Claude Code read the learner's state and write checked exercises back ([docs/MCP.md](docs/MCP.md)).
+- **Built like a product.** Accounts with passkeys, per-account isolation tested by enumerating the EF model, a data export, WCAG 2.2 AA checked by axe-core on phone and desktop in light and dark, a Docker image with a demo mode, a one-click Windows install, and CI with a format gate, 400+ tests and Playwright E2E.
+
+The full list, with the reasoning behind each piece: [docs/FEATURES.md](docs/FEATURES.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Clients
+        B["Browser / PWA"]
+        C["Claude Desktop / Code (MCP client)"]
+    end
+    subgraph Web["Lotse.Web – ASP.NET Core, Blazor Server"]
+        UI["Pages and components (MudBlazor)"]
+        ID["Identity + passkeys"]
+        EX["/konto/export"]
+    end
+    MCP["tools/Lotse.Mcp (stdio)"]
+    subgraph Infra["Lotse.Infrastructure"]
+        LS["LearningService, TelcService"]
+        CB["ChatBridge"]
+        TU["Tutor registry: Claude / OpenAI-compatible"]
+        DB[("SQLite via EF Core")]
+    end
+    subgraph Core["Lotse.Core – no dependencies"]
+        EN["Engine: ability, FSRS-6, planner, answer checker"]
+        TE["telc + Goethe blueprints, ratings, readiness"]
+    end
+    CT[("content/*.json: exercises, lessons, telc")]
+    B --> UI --> LS
+    UI --> ID
+    EX --> DB
+    C --> MCP --> CB --> LS
+    LS --> EN
+    LS --> TE
+    LS --> DB
+    LS -. optional .-> TU
+    CT --> LS
+```
+
+Dependencies point inward: the engine knows nothing about EF Core, Blazor or any AI SDK, which keeps it testable in milliseconds. Details: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md).
 
 ## Screens
 
-| Login | Heute | Session |
+| Heute | telc Leseverstehen Teil 3 | Session |
 |---|---|---|
-| ![Login](docs/screenshots/login.png) | ![Heute](docs/screenshots/heute.png) | ![Session](docs/screenshots/session.png) |
-| Own account per learner (ASP.NET Core Identity, passkeys supported). | Streak, minutes, due reviews, readiness; one button starts the planned session; weak areas and exam prognosis. | One item per step with topic and CEFR tags, immediate feedback with explanation and Serbian contrast. |
+| ![Heute](docs/screenshots/heute.png) | ![telc Lesen Teil 3](docs/screenshots/telc-lesen3.png) | ![Session](docs/screenshots/session.png) |
+| The exam date, due reviews, the weekly goal and one button for today's planned session; below it the weakest topics in plain language and the telc forecast. | Twelve ads, ten situations, one answer row each, and the exam's timer. Every task is an original text in the exam format. | One item per step with topic and level, immediate feedback, the Serbian contrast, and hints before answers. |
+
+| telc overview | Fortschritt | Phone, dark |
+|---|---|---|
+| ![telc](docs/screenshots/telc.png) | ![Fortschritt](docs/screenshots/fortschritt.png) | ![Heute on a phone in dark mode](docs/screenshots/mobil-heute-dunkel.png) |
+| Points per part against the pass marks, where the points are lost, and this week's plan. | What has stuck, what falls due, and how sure each estimate is. | Bottom navigation, system dark mode, installable as a PWA. |
 
 Also: *Kurs* (24 story-driven lessons), *Schreiben* (micro tasks, exam Teil 1/2), *Sprechen* (spontaneous, Vortrag, discussion with AI partner), *Prüfung B2* (blueprint + simulations), *Fortschritt*, *Fehlerjournal*, *Themen* (focus sessions, generate exercises), *Einstellungen*, *Konto* (register/log in/change password - every other page requires being signed in).
 
@@ -64,6 +89,14 @@ dotnet run --project src/Lotse.Web
 Open http://localhost:5178 (or the port printed in the console), register an account (no email confirmation required - registration signs you in right away), and you're at the dashboard. Data lives in `src/Lotse.Web/data/lotse.db` (SQLite, created on first start).
 
 No mail server is configured on a fresh clone, so "Passwort vergessen?" logs the reset link to the console instead of emailing it - watch the terminal Lotse is running in after requesting one.
+
+### On Windows, without a terminal
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/install-windows.ps1
+```
+
+This builds a self-contained copy into `%LOCALAPPDATA%\Lotse\app` and adds *Lotse* to the Start menu and the desktop. A click starts the server in the background if it is not already running, then opens the browser. Data lives in `%LOCALAPPDATA%\Lotse\data`, apart from the program; on the first install an existing database from `src/Lotse.Web/data` is copied over. `-Autostart` starts the server at sign-in, `-Uninstall` removes the program and keeps the data. Without the SDK: every tagged release carries a zip (`Lotse-<version>-win-x64.zip`); unzip it and double-click `Lotse starten.cmd`.
 
 ### Better pronunciation (optional, recommended)
 
@@ -112,7 +145,7 @@ dotnet test tests/Lotse.Core.Tests tests/Lotse.Web.Tests
 
 No browser needed for these. (A bare `dotnet test` at the root also runs the Playwright suite below, which is red until Chromium has been downloaded once - do that step first if you want everything in one go.)
 
-381 tests (307 engine/content/service/evals/MCP bridge, 74 component/host): lesson and dialogue integrity, grammar coverage and production pressure against the B2 reference inventory, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, migrations vs. model drift, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, multi-user isolation (two accounts, neither can see the other's skill state, sessions or Tutor API key; a reset empties every per-account table in the EF model for one account and none for the other), the exam rules (play counts per Hören part, time limits per Lesen part, speaker split of conversations), the hint ladder (no rung of any exercise contains its answer), the telc task pipeline with a scripted tutor (format, copy check, critic, review, restart), the eval harness (golden set valid, kappa against a hand-computed example, the rule baseline beating "always B"), the open-redirect guard and the German Identity messages, bUnit component tests for the exercise flow, and the real host in-process (`WebApplicationFactory`: public static assets, static login page, signed-out redirects, password policy). `dotnet format --verify-no-changes` is clean (EF migrations exempted as generated code).
+422 tests (308 engine/content/service/evals/MCP bridge/export, 114 component/host): lesson and dialogue integrity, grammar coverage and production pressure against the B2 reference inventory, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, migrations vs. model drift, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, multi-user isolation (two accounts, neither can see the other's skill state, sessions or Tutor API key; a reset empties every per-account table in the EF model for one account and none for the other), every shipped telc task rendered in its page, the data export (every per-account table, nothing of another account, no API key), the exam rules (play counts per Hören part, time limits per Lesen part, speaker split of conversations), the hint ladder (no rung of any exercise contains its answer), the telc task pipeline with a scripted tutor (format, copy check, critic, review, restart), the eval harness (golden set valid, kappa against a hand-computed example, the rule baseline beating "always B"), the open-redirect guard and the German Identity messages, bUnit component tests for the exercise flow, and the real host in-process (`WebApplicationFactory`: public static assets, static login page, signed-out redirects, password policy). `dotnet format --verify-no-changes` is clean (EF migrations exempted as generated code).
 
 ### End-to-end (Playwright)
 
@@ -136,7 +169,7 @@ The real app on Kestrel (`WebApplicationFactory.UseKestrel`, .NET 10) in a real 
 | Speech | Piper (MIT) rendering the voices `de_DE-thorsten` / `de_DE-kerstin` (CC0) locally, picked per character from the speaker label, WAVs cached and served behind the login; the browser's own voices as the fallback when Piper is not installed | Near-native German without a key, a cloud voice, or lesson text leaving the machine |
 | Browser | Web Speech API (recognition, fallback voices), PWA manifest, CSS custom properties + `color-mix()` for theme-aware accents | Phone-first, installable, dark mode for free |
 | Tests | xUnit v3 on Microsoft.Testing.Platform, bUnit 2, `WebApplicationFactory` in-process (TestServer) and on Kestrel, Playwright 1.64 with CDP virtual authenticator, axe-core for WCAG 2.2 AA | Engine in ms, components in memory, the host as it ships, the browser as the learner sees it |
-| Delivery | GitHub Actions (format → build → tests → E2E, traces on failure), Dependabot (NuGet + actions, weekly, grouped), MIT | Green main, current dependencies |
+| Delivery | GitHub Actions (format → build → tests → E2E, traces on failure; a tag builds and smoke-tests a self-contained Windows zip for the release), Dependabot (NuGet + actions, weekly, grouped), MIT | Green main, current dependencies, runs without the SDK |
 
 ## Project layout
 
@@ -152,17 +185,18 @@ tools/persona-harness    Playwright layer for persona tests and verify-fixes.mjs
 tools/Lotse.Mcp          MCP server (stdio): a chat assistant reads the learner's state and writes checked exercises and mistakes back
 tools/Lotse.Evals        eval harness for the AI rating (docs/EVALS.md)
 tools/install-piper.ps1  one-off setup of the local neural voice (Piper + de_DE-thorsten), idempotent
+tools/install-windows.ps1 self-contained install with a Start-menu entry and launcher; tools/release/ holds the zip's starter
 docs/                    concept, plan, architecture, grammar-coverage report
 tools/                   B2 grammar reference inventory + the script that measures coverage
 ```
 
 ## How this was built
 
-With an AI pair (Claude Code) — the commit trailers say so, and there is no reason to hide it. What kept that honest was the discipline around it: every change goes through the same gates a team would enforce — `dotnet format`, the 381 tests across engine, content, service, components, host and Playwright, and, for anything visible, the page exercised in a browser before the commit. Commit messages carry the measurement behind the decision (tokens per second, a contrast ratio, a key distribution), the alternative that was rejected, and what was checked. Ten scripted personas ([docs/NUTZERTEST_2026-09.md](docs/NUTZERTEST_2026-09.md)) reviewed the app as a nurse on a phone, a keyboard-only user and a DaF examiner would; their findings became the 0.8.0 backlog. A full review on 2026-09-08 — pedagogy, code, repository, AI reliability, fresh install — produced the 0.9.0 changes listed in [CHANGELOG.md](CHANGELOG.md).
+With an AI pair (Claude Code) — the commit trailers say so, and there is no reason to hide it. What kept that honest was the discipline around it: every change goes through the same gates a team would enforce — `dotnet format`, the 422 tests across engine, content, service, components, host and Playwright, and, for anything visible, the page exercised in a browser before the commit. Commit messages carry the measurement behind the decision (tokens per second, a contrast ratio, a key distribution), the alternative that was rejected, and what was checked. Ten scripted personas ([docs/NUTZERTEST_2026-09.md](docs/NUTZERTEST_2026-09.md)) reviewed the app as a nurse on a phone, a keyboard-only user and a DaF examiner would; their findings became the 0.8.0 backlog. A full review on 2026-09-08 — pedagogy, code, repository, AI reliability, fresh install — produced the 0.9.0 changes listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## Status
 
-**0.9.0 + unreleased.** Done: course, adaptive engine (FSRS-6, Rasch/Elo), B2-Training, telc B2 with simulation and plan, accounts and passkeys, AI tutor with provider presets, hint ladder, telc task pipeline, eval harness, MCP server, read-aloud pronunciation check, automated WCAG 2.2 AA checks, Docker image and demo mode, local neural speech, Playwright E2E and CI. Next: an AI row in the eval table, examiner-rated golden set and oral transcripts in the evals, multi-voice listening for every part.
+**0.9.0 + unreleased.** Done: course, adaptive engine (FSRS-6, Rasch/Elo), B2-Training, telc B2 with simulation and plan, accounts and passkeys, AI tutor with provider presets, hint ladder, telc task pipeline, eval harness, MCP server, read-aloud pronunciation check, automated WCAG 2.2 AA checks, five original tasks for every objective telc part, data export, Windows install and release package, Docker image and demo mode, local neural speech, Playwright E2E and CI. Next: an AI row in the eval table, examiner-rated golden set and oral transcripts in the evals, multi-voice listening for every part.
 
 ## License
 

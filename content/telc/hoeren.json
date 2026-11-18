@@ -114,6 +114,487 @@
         { "label": "U-Bahn", "audio": "Sehr geehrte Fahrgäste, wegen einer Signalstörung fährt die Linie U2 zwischen Hauptbahnhof und Messe nur alle zwanzig Minuten. Zwischen Messe und Flughafen verkehren die Züge normal. Wir bitten um Ihr Verständnis.",
           "statements": [ { "text": "Zwischen Messe und Flughafen gibt es keine Probleme.", "true": true } ] }
       ]
+    },
+    {
+      "id": "hv1.nachrichten-c",
+      "teil": 1,
+      "title": "Nachrichten am Morgen",
+      "recordings": [
+        {
+          "label": "Meldung 1",
+          "audio": "Berlin. Der Bundestag hat ein neues Gesetz zum Schutz von Mieterinnen und Mietern beschlossen. Künftig dürfen die Mieten in Städten mit knappem Wohnraum innerhalb von drei Jahren um höchstens elf Prozent steigen. Bisher lag die Grenze bei fünfzehn Prozent. Vermieterverbände kritisierten die Entscheidung scharf.",
+          "statements": [
+            {
+              "text": "Die Mieten dürfen künftig stärker steigen als bisher.",
+              "true": false,
+              "explanation": "Die Grenze sinkt: elf statt bisher fünfzehn Prozent."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 2",
+          "audio": "Stuttgart. Nach heftigen Regenfällen ist in mehreren Orten in Baden-Württemberg der Neckar über die Ufer getreten. Einige Straßen mussten gesperrt werden, verletzt wurde aber niemand. Die Feuerwehr rechnet damit, dass das Wasser bis morgen Abend wieder sinkt.",
+          "statements": [
+            {
+              "text": "Bei dem Hochwasser wurde niemand verletzt.",
+              "true": true,
+              "explanation": "„verletzt wurde aber niemand“."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 3",
+          "audio": "Wirtschaft. Ein großer deutscher Autohersteller will in den kommenden fünf Jahren rund 3.000 neue Stellen in der Softwareentwicklung schaffen. Gleichzeitig sollen in der Produktion von Verbrennungsmotoren Arbeitsplätze wegfallen. Entlassungen soll es nach Angaben des Unternehmens jedoch nicht geben.",
+          "statements": [
+            {
+              "text": "Das Unternehmen plant, Mitarbeitende zu entlassen.",
+              "true": false,
+              "explanation": "Stellen fallen weg, aber „Entlassungen soll es … nicht geben“."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 4",
+          "audio": "Gesundheit. Ab Januar können sich alle Erwachsenen über 60 kostenlos gegen Gürtelrose impfen lassen. Die Krankenkassen übernehmen die Kosten für beide notwendigen Impfungen. Bisher galt das nur für Menschen mit bestimmten Vorerkrankungen.",
+          "statements": [
+            {
+              "text": "Ab Januar ist die Impfung für mehr Menschen kostenlos.",
+              "true": true,
+              "explanation": "Bisher nur mit Vorerkrankungen, ab Januar für alle über 60."
+            }
+          ]
+        },
+        {
+          "label": "Wetter",
+          "audio": "Und nun das Wetter. Heute bleibt es im ganzen Land trocken, nur an der Küste weht ein kräftiger Wind. Am Nachmittag steigen die Temperaturen auf bis zu 22 Grad. Am Wochenende wird es deutlich kühler, und von Westen ziehen Regenschauer auf.",
+          "statements": [
+            {
+              "text": "Am Wochenende soll es wärmer werden.",
+              "true": false,
+              "explanation": "„Am Wochenende wird es deutlich kühler“."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv1.nachrichten-d",
+      "teil": 1,
+      "title": "Nachrichten am Nachmittag",
+      "recordings": [
+        {
+          "label": "Meldung 1",
+          "audio": "Bremerhaven. Im Hafen von Bremerhaven ist heute eines der größten Containerschiffe der Welt angekommen. Das Schiff ist 400 Meter lang und kann mehr als 24.000 Container transportieren. Hunderte Schaulustige verfolgten die Ankunft vom Ufer aus.",
+          "statements": [
+            {
+              "text": "Viele Menschen haben sich die Ankunft des Schiffes angesehen.",
+              "true": true,
+              "explanation": "„Hunderte Schaulustige verfolgten die Ankunft“."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 2",
+          "audio": "Bildung. Die Kultusminister der Länder haben sich darauf geeinigt, dass Schülerinnen und Schüler ab der fünften Klasse Informatik als Pflichtfach haben sollen. Die Umsetzung soll bis 2030 abgeschlossen sein. Für viele Schulen ist das eine Herausforderung, weil Lehrkräfte für das Fach fehlen.",
+          "statements": [
+            {
+              "text": "Alle Schulen bieten schon in diesem Jahr Informatik als Pflichtfach an.",
+              "true": false,
+              "explanation": "Die Umsetzung soll erst „bis 2030“ abgeschlossen sein."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 3",
+          "audio": "Kultur. Das Filmfestival in Leipzig hat in diesem Jahr einen Besucherrekord gemeldet. Mehr als 50.000 Menschen sahen sich die Filme an. Den Hauptpreis gewann ein Dokumentarfilm über eine Hebamme in einem kleinen Dorf in Rumänien.",
+          "statements": [
+            {
+              "text": "Ein Spielfilm über eine Ärztin hat den wichtigsten Preis gewonnen.",
+              "true": false,
+              "explanation": "Es war ein Dokumentarfilm über eine Hebamme."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 4",
+          "audio": "Verbraucher. Die Preise für Butter sind im vergangenen Monat deutlich gesunken. Ein Päckchen kostet im Durchschnitt rund zwanzig Cent weniger als noch im Sommer. Als Grund nennen Fachleute eine gute Milchproduktion in ganz Europa.",
+          "statements": [
+            {
+              "text": "Butter ist inzwischen günstiger als im Sommer.",
+              "true": true,
+              "explanation": "„rund zwanzig Cent weniger als noch im Sommer“."
+            }
+          ]
+        },
+        {
+          "label": "Verkehr",
+          "audio": "Verkehr. Wegen Bauarbeiten ist die Autobahn A1 zwischen Hamburg und Bremen ab Freitagabend für das gesamte Wochenende in Richtung Süden gesperrt. Eine Umleitung ist ausgeschildert. Autofahrer müssen mit Verzögerungen von bis zu einer Stunde rechnen.",
+          "statements": [
+            {
+              "text": "Die Sperrung der A1 betrifft beide Fahrtrichtungen.",
+              "true": false,
+              "explanation": "Gesperrt ist nur die Richtung Süden."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv1.nachrichten-e",
+      "teil": 1,
+      "title": "Nachrichten zum Feierabend",
+      "recordings": [
+        {
+          "label": "Meldung 1",
+          "audio": "Brüssel. Die Europäische Union hat beschlossen, dass neue Smartphones künftig einen Akku haben müssen, den die Nutzer selbst austauschen können. Die Hersteller sollen außerdem sieben Jahre lang Ersatzteile anbieten. Umweltverbände sprechen von einem wichtigen Schritt gegen den wachsenden Elektroschrott.",
+          "statements": [
+            {
+              "text": "Nach der neuen Regel müssen Hersteller Ersatzteile anbieten.",
+              "true": true,
+              "explanation": "„sieben Jahre lang Ersatzteile anbieten“."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 2",
+          "audio": "Dresden. Die Stadt Dresden testet seit heute einen Bus, der ohne Fahrer unterwegs ist. Der kleine Elektrobus fährt zunächst auf einer zwei Kilometer langen Strecke in der Altstadt. Zur Sicherheit ist während der Testphase immer eine Begleitperson an Bord.",
+          "statements": [
+            {
+              "text": "Während des Tests ist niemand vom Verkehrsbetrieb im Bus.",
+              "true": false,
+              "explanation": "„immer eine Begleitperson an Bord“."
+            }
+          ]
+        },
+        {
+          "label": "Meldung 3",
+          "audio": "Arbeitsmarkt. Immer mehr Menschen in Deutschland arbeiten in Teilzeit. Nach einer neuen Statistik ist es inzwischen fast jeder dritte Beschäftigte. Besonders häufig arbeiten Frauen in Teilzeit, aber auch der Anteil der Männer ist in den letzten Jahren gestiegen.",
+          "statements": [
+            {
+              "text": "Auch bei den Männern arbeiten mehr in Teilzeit als früher.",
+              "true": true,
+              "explanation": "„auch der Anteil der Männer ist … gestiegen“."
+            }
+          ]
+        },
+        {
+          "label": "Sport",
+          "audio": "Sport. Die deutsche Fußballnationalmannschaft der Frauen hat ihr Testspiel gegen Schweden mit null zu zwei verloren. Die Bundestrainerin zeigte sich trotz der Niederlage zufrieden mit der Leistung ihrer jungen Spielerinnen. Das nächste Spiel findet am Dienstag in Wolfsburg statt.",
+          "statements": [
+            {
+              "text": "Die Trainerin war mit dem Spiel unzufrieden.",
+              "true": false,
+              "explanation": "Sie war „trotz der Niederlage zufrieden“ - das Ergebnis ist die Falle."
+            }
+          ]
+        },
+        {
+          "label": "Wetter",
+          "audio": "Das Wetter für die Nacht: Im Süden kann es Glätte geben, die Temperaturen fallen dort bis auf minus fünf Grad. Autofahrer sollten morgens vorsichtig sein. Im Norden bleibt es mild, aber regnerisch.",
+          "statements": [
+            {
+              "text": "Im Süden können die Straßen morgen früh glatt sein.",
+              "true": true,
+              "explanation": "„Im Süden kann es Glätte geben … Autofahrer sollten morgens vorsichtig sein.“"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv2.umschulung",
+      "teil": 2,
+      "title": "Interview: Mit 36 noch einmal Azubi",
+      "recordings": [
+        {
+          "audio": "Moderator: Willkommen zu „Neue Wege“. Mein Gast ist heute Mirela Hadžić. Sie hat mit 36 Jahren noch einmal eine Ausbildung begonnen – als Elektronikerin. Frau Hadžić, warum dieser Schritt?\nFrau Hadžić: Ich habe in Bosnien Wirtschaft studiert, aber in Deutschland wurde mein Abschluss nur teilweise anerkannt. Ein paar Jahre habe ich in einem Callcenter gearbeitet. Die Arbeit war in Ordnung, aber ich hatte das Gefühl, dass ich mich nicht weiterentwickle. Und Technik hat mich schon als Kind interessiert – mein Vater hatte eine kleine Werkstatt.\nModerator: War es schwer, mit über dreißig noch einen Ausbildungsplatz zu finden?\nFrau Hadžić: Ehrlich gesagt, nein. Ich hatte mit vielen Absagen gerechnet, aber schon die dritte Firma hat mich zum Gespräch eingeladen. Viele Betriebe suchen dringend Leute, und das Alter spielt kaum eine Rolle. Mein Chef hat sogar gesagt, er schätzt es, dass ich schon Berufserfahrung habe und weiß, was ich will.\nModerator: Und finanziell? Eine Ausbildungsvergütung ist ja deutlich weniger als ein normales Gehalt.\nFrau Hadžić: Das war meine größte Sorge. Ich habe zwei Kinder. Die Agentur für Arbeit hat mich aber beraten, und weil es eine Umschulung ist, bekomme ich einen Zuschuss. Außerdem verdient mein Mann ganz gut. Ohne diese Unterstützung hätte ich es nicht gemacht.\nModerator: Wie ist es in der Berufsschule – zwischen lauter Achtzehnjährigen?\nFrau Hadžić: Am Anfang war das komisch. Die jungen Leute dachten, ich sei die neue Lehrerin. Aber inzwischen verstehen wir uns gut. Ich helfe ihnen in Mathematik, und sie erklären mir die neuesten Apps. Schwierig war für mich eher die Fachsprache. Am Anfang habe ich jeden Abend eine Stunde Vokabeln gelernt.\nModerator: Würden Sie den Schritt wieder machen?\nFrau Hadžić: Auf jeden Fall. Weil ich schon einen Abschluss habe, dauert die Ausbildung bei mir nur zweieinhalb statt dreieinhalb Jahre. Danach möchte ich mich zur Technikerin weiterbilden. Mein Rat an alle in einer ähnlichen Situation: Lassen Sie sich beraten, bevor Sie sagen, das geht nicht. Es gibt mehr Möglichkeiten, als man denkt.\nModerator: Frau Hadžić, vielen Dank und viel Erfolg.",
+          "statements": [
+            {
+              "text": "Frau Hadžić hat in ihrem Heimatland studiert.",
+              "true": true
+            },
+            {
+              "text": "Ihr Abschluss wurde in Deutschland vollständig anerkannt.",
+              "true": false,
+              "explanation": "„nur teilweise anerkannt“."
+            },
+            {
+              "text": "Ihr Interesse an Technik begann schon in der Kindheit.",
+              "true": true
+            },
+            {
+              "text": "Sie hat sehr viele Absagen bekommen, bevor sie einen Platz fand.",
+              "true": false,
+              "explanation": "„schon die dritte Firma hat mich … eingeladen“."
+            },
+            {
+              "text": "Ihr Chef findet ihre Berufserfahrung wertvoll.",
+              "true": true
+            },
+            {
+              "text": "Während der Ausbildung bekommt sie keine finanzielle Unterstützung.",
+              "true": false,
+              "explanation": "Sie bekommt einen Zuschuss, weil es eine Umschulung ist."
+            },
+            {
+              "text": "In der Berufsschule hielten die anderen sie anfangs für eine Lehrerin.",
+              "true": true
+            },
+            {
+              "text": "Am schwierigsten war für sie Mathematik.",
+              "true": false,
+              "explanation": "In Mathematik hilft sie den anderen - schwierig war die Fachsprache."
+            },
+            {
+              "text": "Ihre Ausbildung ist kürzer als üblich.",
+              "true": true,
+              "explanation": "zweieinhalb statt dreieinhalb Jahre."
+            },
+            {
+              "text": "Sie rät, sich ohne Beratung direkt zu bewerben.",
+              "true": false,
+              "explanation": "„Lassen Sie sich beraten, bevor Sie sagen, das geht nicht.“"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv2.stadtgarten",
+      "teil": 2,
+      "title": "Interview: Ein Garten für alle",
+      "recordings": [
+        {
+          "audio": "Moderatorin: Guten Tag und willkommen bei „Grünes Leben“. Bei mir im Studio ist Jonas Petersen. Er ist einer der Gründer des Gemeinschaftsgartens „Wurzelwerk“ in Hannover. Herr Petersen, was muss man sich unter einem Gemeinschaftsgarten vorstellen?\nHerr Petersen: Ganz einfach: eine Fläche in der Stadt, die von vielen Menschen gemeinsam bewirtschaftet wird. Bei uns ist das ein ehemaliger Parkplatz hinter einem Supermarkt. Weil der Boden dort nicht gut ist, pflanzen wir fast alles in Hochbeeten und alten Kisten.\nModeratorin: Und wer gärtnert bei Ihnen?\nHerr Petersen: Die Mischung ist das Schöne. Wir haben Studierende, Familien mit kleinen Kindern, Rentnerinnen und Rentner und viele Menschen, die erst seit kurzem in Deutschland leben. Manche von ihnen haben in ihrer Heimat in der Landwirtschaft gearbeitet und wissen viel mehr über Pflanzen als wir Gründer. Von ihnen haben wir am meisten gelernt.\nModeratorin: Hat jeder ein eigenes Beet?\nHerr Petersen: Nein, und das war eine bewusste Entscheidung. Alle Beete gehören allen. Wir treffen uns zweimal pro Woche zum gemeinsamen Arbeiten, und die Ernte wird geteilt. Am Anfang gab es deswegen manchmal Streit, zum Beispiel darüber, wer wie viele Tomaten mitnehmen darf. Inzwischen klappt das gut.\nModeratorin: Wie finanzieren Sie sich?\nHerr Petersen: Der Supermarkt stellt uns die Fläche kostenlos zur Verfügung und bezahlt das Wasser. Für Saatgut und Werkzeug sammeln wir Spenden. Außerdem haben wir im letzten Jahr einen Preis der Stadt gewonnen, mit dem wir ein kleines Gartenhaus bauen konnten.\nModeratorin: Gibt es auch Probleme?\nHerr Petersen: Leider ja. Im Sommer wurden zweimal nachts Pflanzen herausgerissen. Wer das war, wissen wir nicht. Wir haben aber beschlossen, keinen Zaun zu bauen. Der Garten soll offen bleiben – das ist uns wichtiger.\nModeratorin: Was planen Sie für die Zukunft?\nHerr Petersen: Wir möchten mit Schulen zusammenarbeiten. Viele Kinder in der Stadt wissen nicht, wie eine Kartoffel wächst. Ab dem Frühjahr kommt eine Grundschulklasse jede Woche zu uns, und wenn es gut läuft, sollen weitere Klassen folgen.\nModeratorin: Herr Petersen, vielen Dank für das Gespräch.",
+          "statements": [
+            {
+              "text": "Der Garten liegt auf einem früheren Parkplatz.",
+              "true": true
+            },
+            {
+              "text": "Die Pflanzen wachsen direkt im Boden des Grundstücks.",
+              "true": false,
+              "explanation": "Der Boden ist nicht gut - fast alles wächst in Hochbeeten und Kisten."
+            },
+            {
+              "text": "Im Garten arbeiten nur junge Leute.",
+              "true": false,
+              "explanation": "Auch Familien, Rentnerinnen und Rentner."
+            },
+            {
+              "text": "Die Gründer haben viel von Menschen mit Erfahrung in der Landwirtschaft gelernt.",
+              "true": true
+            },
+            {
+              "text": "Jedes Mitglied hat ein eigenes Beet.",
+              "true": false,
+              "explanation": "„Alle Beete gehören allen.“"
+            },
+            {
+              "text": "Über die Verteilung der Ernte gab es anfangs Streit.",
+              "true": true
+            },
+            {
+              "text": "Der Supermarkt verlangt Miete für die Fläche.",
+              "true": false,
+              "explanation": "Er stellt sie „kostenlos zur Verfügung“."
+            },
+            {
+              "text": "Mit dem Geld aus einem Preis wurde ein Gartenhaus gebaut.",
+              "true": true
+            },
+            {
+              "text": "Nach den Schäden im Sommer wurde ein Zaun gebaut.",
+              "true": false,
+              "explanation": "„beschlossen, keinen Zaun zu bauen“."
+            },
+            {
+              "text": "Künftig soll regelmäßig eine Schulklasse in den Garten kommen.",
+              "true": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv3.ansagen-c",
+      "teil": 3,
+      "title": "Ansagen am Telefon",
+      "recordings": [
+        {
+          "label": "Arztpraxis",
+          "audio": "Sie sind verbunden mit der Praxis Doktor Schulte. Unsere Sprechzeiten sind Montag bis Freitag von acht bis zwölf Uhr, montags und donnerstags zusätzlich von fünfzehn bis achtzehn Uhr. Rezepte können Sie auch online bestellen. Bei Fieber oder Erkältung kommen Sie bitte nicht ohne Anmeldung in die Praxis, sondern rufen Sie vorher an.",
+          "statements": [
+            {
+              "text": "Patienten mit Fieber sollen vor dem Besuch in der Praxis anrufen.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Kundenservice",
+          "audio": "Willkommen beim Kundenservice der Stadtwerke Nord. Alle Mitarbeiterinnen und Mitarbeiter sind im Moment im Gespräch. Die Wartezeit beträgt etwa fünfzehn Minuten. Ihren Zählerstand können Sie ohne Wartezeit auch auf unserer Internetseite angeben. Bei einer Störung der Stromversorgung wählen Sie bitte die Nummer auf Ihrer Rechnung.",
+          "statements": [
+            {
+              "text": "Den Zählerstand kann man nur telefonisch melden.",
+              "true": false,
+              "explanation": "Er lässt sich „auch auf unserer Internetseite angeben“."
+            }
+          ]
+        },
+        {
+          "label": "Mailbox",
+          "audio": "Hallo Frau Petrović, hier ist Markus Lang vom Autohaus Lang. Ihr Wagen ist fertig. Bei der Inspektion haben wir festgestellt, dass die Bremsen bald erneuert werden müssen. Das haben wir aber noch nicht gemacht, weil wir zuerst mit Ihnen sprechen wollten. Sie können das Auto heute bis achtzehn Uhr abholen.",
+          "statements": [
+            {
+              "text": "Die Werkstatt hat die Bremsen schon erneuert.",
+              "true": false,
+              "explanation": "„Das haben wir aber noch nicht gemacht“."
+            }
+          ]
+        },
+        {
+          "label": "Kino",
+          "audio": "Herzlich willkommen im Kino Lichtspiele. Das aktuelle Programm finden Sie auf unserer Internetseite. Bitte beachten Sie: Jeden Dienstag kosten alle Vorstellungen nur sechs Euro. Für Reservierungen drücken Sie die Eins. Reservierte Karten müssen spätestens eine halbe Stunde vor Beginn abgeholt werden.",
+          "statements": [
+            {
+              "text": "Am Dienstag sind die Kinokarten günstiger.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Mailbox",
+          "audio": "Hi, hier ist Lena. Du, wegen Samstag: Wir treffen uns nicht wie geplant um sieben bei mir, sondern um halb acht direkt im Restaurant. Tom kommt später, weil er noch arbeiten muss. Sag mir bitte kurz Bescheid, ob das für dich passt.",
+          "statements": [
+            {
+              "text": "Das Treffen findet bei Lena zu Hause statt.",
+              "true": false,
+              "explanation": "„nicht wie geplant … bei mir, sondern … direkt im Restaurant“ - die zweite Angabe zählt."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv3.ansagen-d",
+      "teil": 3,
+      "title": "Ansagen in der Stadt",
+      "recordings": [
+        {
+          "label": "Bahnhof",
+          "audio": "Information zum Regionalexpress nach Kassel, planmäßige Abfahrt 17 Uhr 05: Dieser Zug fällt heute aus. Reisende nach Kassel nutzen bitte den Regionalexpress um 17 Uhr 35 von Gleis 4. Ihre Fahrkarten behalten ihre Gültigkeit.",
+          "statements": [
+            {
+              "text": "Für den späteren Zug braucht man eine neue Fahrkarte.",
+              "true": false,
+              "explanation": "„Ihre Fahrkarten behalten ihre Gültigkeit.“"
+            }
+          ]
+        },
+        {
+          "label": "Museum",
+          "audio": "Liebe Besucherinnen und Besucher, das Museum schließt in einer Viertelstunde. Bitte begeben Sie sich langsam zum Ausgang. Der Museumsshop im Erdgeschoss ist noch bis neunzehn Uhr für Sie geöffnet. Wir danken für Ihren Besuch.",
+          "statements": [
+            {
+              "text": "Der Museumsshop schließt später als das Museum.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Supermarkt",
+          "audio": "Liebe Kundinnen und Kunden, der Besitzer eines silbernen Kombis mit dem Kennzeichen H – LK 482 wird gebeten, zu seinem Fahrzeug zu kommen. Das Licht ist noch eingeschaltet. Vielen Dank.",
+          "statements": [
+            {
+              "text": "Ein Autofahrer hat vergessen, das Licht auszuschalten.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Freibad",
+          "audio": "Achtung, eine Durchsage: Wegen eines Gewitters muss das Freibad sofort geschlossen werden. Bitte verlassen Sie das Wasser und die Liegewiese. Ihre Eintrittskarte können Sie an der Kasse gegen einen Gutschein für einen weiteren Besuch tauschen.",
+          "statements": [
+            {
+              "text": "Die Besucher bekommen ihr Geld bar zurück.",
+              "true": false,
+              "explanation": "Sie bekommen einen Gutschein, kein Geld."
+            }
+          ]
+        },
+        {
+          "label": "Bürgerbüro",
+          "audio": "Sie haben die Nummer des Bürgerbüros gewählt. Wegen einer Betriebsversammlung bleibt das Bürgerbüro am Mittwoch, dem 9. Oktober, ganztägig geschlossen. Bereits vereinbarte Termine werden automatisch auf den folgenden Tag verschoben. Sie erhalten dazu eine E-Mail.",
+          "statements": [
+            {
+              "text": "Wer am 9. Oktober einen Termin hatte, muss selbst einen neuen vereinbaren.",
+              "true": false,
+              "explanation": "Die Termine werden „automatisch … verschoben“."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hv3.ansagen-e",
+      "teil": 3,
+      "title": "Ansagen auf Reisen",
+      "recordings": [
+        {
+          "label": "Flugzeug",
+          "audio": "Meine Damen und Herren, hier spricht Ihr Kapitän. Wir haben unsere Reiseflughöhe erreicht. In etwa zwei Stunden landen wir in Belgrad, wo uns sonniges Wetter bei 24 Grad erwartet. Wegen leichter Turbulenzen bitten wir Sie, angeschnallt zu bleiben, solange Sie sitzen.",
+          "statements": [
+            {
+              "text": "Am Zielort ist das Wetter schlecht.",
+              "true": false,
+              "explanation": "„sonniges Wetter bei 24 Grad“."
+            }
+          ]
+        },
+        {
+          "label": "Fähre",
+          "audio": "Liebe Passagiere, in wenigen Minuten erreichen wir den Hafen von Puttgarden. Autofahrerinnen und Autofahrer werden gebeten, sich jetzt zu ihren Fahrzeugen zu begeben. Fußgänger verlassen das Schiff bitte über Deck 5.",
+          "statements": [
+            {
+              "text": "Autofahrer sollen jetzt zu ihren Autos gehen.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Hotel",
+          "audio": "Guten Morgen, liebe Gäste. Wegen einer Veranstaltung wird das Frühstück heute nicht im Restaurant, sondern im Wintergarten im ersten Stock serviert. Die Frühstückszeiten bleiben unverändert: von sieben bis zehn Uhr.",
+          "statements": [
+            {
+              "text": "Das Frühstück gibt es heute zu anderen Zeiten.",
+              "true": false,
+              "explanation": "Nur der Ort ändert sich, die Zeiten „bleiben unverändert“."
+            }
+          ]
+        },
+        {
+          "label": "Reisebus",
+          "audio": "So, liebe Reisegruppe, wir sind jetzt in Rothenburg. Sie haben zwei Stunden Zeit für einen Spaziergang durch die Altstadt. Um vierzehn Uhr dreißig treffen wir uns wieder hier am Bus. Bitte seien Sie pünktlich, denn wir möchten vor dem Abendessen im Hotel sein.",
+          "statements": [
+            {
+              "text": "Nach dem Spaziergang trifft sich die Gruppe wieder am Bus.",
+              "true": true
+            }
+          ]
+        },
+        {
+          "label": "Tourist-Information",
+          "audio": "Willkommen bei der Tourist-Information Lindau. Unser Büro am Hafen ist von April bis Oktober täglich von neun bis achtzehn Uhr geöffnet, in den Wintermonaten nur von Montag bis Freitag. Stadtführungen können Sie auch online buchen.",
+          "statements": [
+            {
+              "text": "Im Winter ist das Büro auch am Wochenende geöffnet.",
+              "true": false,
+              "explanation": "Im Winter „nur von Montag bis Freitag“."
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -14,7 +14,7 @@
 }
 
 <div class="tc-bar">
-    <span class="tc-part">@TelcBlueprint.Info(Part).Title</span>
+    <h1 class="tc-part">@TelcBlueprint.Info(Part).Title</h1>
     @if (_recording || _countdown > 0)
     {
         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(Left <= 15 ? Color.Warning : Color.Default)">⏱ @Clock(Left)</MudChip>

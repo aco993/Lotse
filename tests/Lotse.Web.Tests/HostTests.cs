@@ -72,6 +72,7 @@ public class HostTests : IDisposable
     [InlineData("/themen")]
     [InlineData("/einstellungen")]
     [InlineData("/diese-seite-gibt-es-nicht")]
+    [InlineData("/konto/export")]
     public async Task Protected_pages_send_a_signed_out_visitor_to_login(string path)
     {
         var client = _host.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
