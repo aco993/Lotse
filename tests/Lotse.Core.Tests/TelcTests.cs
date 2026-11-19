@@ -311,11 +311,87 @@ public sealed class TelcServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task A_paper_mock_exam_counts_as_a_simulation_and_stays_out_of_the_learner_model()
+    {
+        var points = new Dictionary<TelcPart, double>
+        {
+            [TelcPart.Lesen1] = TelcBlueprint.ObjectivePoints(TelcPart.Lesen1, 3),
+            [TelcPart.Sprachbausteine1] = TelcBlueprint.ObjectivePoints(TelcPart.Sprachbausteine1, 8),
+            [TelcPart.Schreiben] = 33,
+        };
+        var day = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-2);
+        var sim = await _svc.RecordMockExamAsync("telc-b2-ut1", day, points);
+
+        Assert.NotNull(sim.CompletedUtc);
+        Assert.Equal("telc-b2-ut1", sim.Source?.Id);
+        Assert.Equal(15 + 12 + 33, sim.Result.Written);
+
+        var overview = await _svc.GetOverviewAsync();
+        var row = Assert.Single(overview.Simulations);
+        Assert.Equal("Übungstest 1 (Modelltest)", row.Source);
+        Assert.Equal(15, overview.Readiness.Of(TelcPart.Lesen1).Points);
+        Assert.Null(overview.Readiness.Of(TelcPart.Lesen2).Points); // left out = not taken, never zero
+        Assert.Null(overview.OpenSimulationId);
+        Assert.All(await _svc.HistoryAsync(), h => Assert.True(h.Simulation));
+
+        await using var db = _factory.CreateDbContext();
+        Assert.Empty(db.Attempts.Where(a => a.UserId == UserId));
+        Assert.Empty(db.SkillStates.Where(s => EF.Property<string>(s, Lotse.Infrastructure.Data.LotseDbContext.UserIdShadow) == UserId));
+    }
+
+    [Fact]
+    public async Task A_mock_exam_entry_rejects_what_no_paper_test_can_produce()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        await Assert.ThrowsAsync<ArgumentException>(() => _svc.RecordMockExamAsync("telc-b1-ut1", today, new Dictionary<TelcPart, double> { [TelcPart.Lesen1] = 10 }));
+        await Assert.ThrowsAsync<ArgumentException>(() => _svc.RecordMockExamAsync("telc-b2-ut1", today, new Dictionary<TelcPart, double>()));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _svc.RecordMockExamAsync("telc-b2-ut1", today, new Dictionary<TelcPart, double> { [TelcPart.Schreiben] = 46 }));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _svc.RecordMockExamAsync("telc-b2-ut1", today.AddDays(1), new Dictionary<TelcPart, double> { [TelcPart.Lesen1] = 10 }));
+        Assert.Empty((await _svc.GetOverviewAsync()).Simulations);
+    }
+
+    [Fact]
     public async Task Practice_rotates_to_the_task_done_least_recently()
     {
         var first = await _svc.NextTaskIdAsync(TelcPart.Lesen2);
         var key = _content.Key(TelcPart.Lesen2, first!)!;
         await _svc.SubmitObjectiveAsync(TelcPart.Lesen2, first!, key.Select(k => (int?)k).ToList());
         Assert.NotEqual(first, await _svc.NextTaskIdAsync(TelcPart.Lesen2));
+    }
+}
+
+public sealed class TelcMaterialsTests
+{
+    [Fact]
+    public void Every_link_goes_to_the_publishers_own_site_over_https()
+    {
+        foreach (var m in TelcMaterials.All)
+        {
+            Assert.NotEmpty(m.Links);
+            foreach (var (label, url) in m.Links)
+            {
+                Assert.False(string.IsNullOrWhiteSpace(label));
+                var uri = new Uri(url);
+                Assert.Equal("https", uri.Scheme);
+                Assert.Contains(uri.Host, TelcMaterials.OfficialHosts);
+            }
+        }
+    }
+
+    [Fact]
+    public void Ids_are_unique_and_survive_the_round_trip_through_a_task_id()
+    {
+        Assert.Equal(TelcMaterials.All.Count, TelcMaterials.All.Select(m => m.Id).Distinct().Count());
+        foreach (var m in TelcMaterials.MockExams)
+            Assert.Same(m, TelcMaterials.FromTaskId(TelcMaterials.ExternalTaskId(m.Id)));
+        Assert.Null(TelcMaterials.FromTaskId("lesen1.technik"));
+    }
+
+    [Fact]
+    public void Only_B2_mock_exams_may_enter_the_B2_forecast()
+    {
+        Assert.Contains(TelcMaterials.B2MockExams, m => m.Id == "telc-b2-ut1" && m.Free);
+        Assert.DoesNotContain(TelcMaterials.B2MockExams, m => m.Id == "telc-b1-ut1");
+        Assert.All(TelcMaterials.B2MockExams, m => Assert.Equal(TelcBlueprint.Name, m.Exam));
     }
 }

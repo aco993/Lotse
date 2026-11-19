@@ -54,7 +54,10 @@ public sealed class LotseE2EFixture : IAsyncLifetime
         _playwright = await Playwright.CreateAsync();
         // Headless is not silent: a dictation auto-plays on render and "Gespräch anhören" streams a WAV rendered
         // by Piper, so without --mute-audio a test run talks German through the machine's speakers.
-        _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true, Args = ["--mute-audio"] });
+        // LOTSE_E2E_CHANNEL=msedge (or chrome) runs the suite on a browser already installed on the machine, for a
+        // local run without "playwright install". CI leaves it unset and uses Playwright's own Chromium.
+        var channel = Environment.GetEnvironmentVariable("LOTSE_E2E_CHANNEL");
+        _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true, Args = ["--mute-audio"], Channel = string.IsNullOrWhiteSpace(channel) ? null : channel });
     }
 
     public async ValueTask DisposeAsync()

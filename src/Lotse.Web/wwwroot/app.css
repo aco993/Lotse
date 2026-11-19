@@ -541,3 +541,12 @@ a.acct-btn:hover { text-decoration: none; }
 .ra-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; color: var(--mud-palette-text-secondary); }
 .ra-legend .ra-word { cursor: default; }
 @media (max-width: 600px) { .ra-sentence { font-size: 1.15rem; } }
+
+/* Official materials and the entry form for a paper mock exam */
+.tc-material-links { margin: 0; padding-left: 1.2rem; font-size: .9rem; }
+/* Each link is its own line with room to tap (WCAG 2.5.8: 24 px targets). */
+.tc-material-links li { margin: 2px 0; }
+.tc-material-links a { display: inline-block; min-height: 24px; padding: 4px 0; color: var(--mud-palette-primary); text-decoration: underline; }
+.tc-mock-grid { display: grid; gap: 4px 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.tc-mock-row { display: grid; grid-template-columns: minmax(0, 1fr) 70px; align-items: center; gap: 8px; }
+.tc-mock-points { font-variant-numeric: tabular-nums; text-align: right; color: var(--mud-palette-text-secondary); font-size: .85rem; }

@@ -36,6 +36,16 @@ dotnet run --project src/Lotse.Web --launch-profile lan
 
 pa na telefonu otvori `http://<IP-adresa-računara>:5178` (IP vidiš sa `ipconfig`). Za govor i na telefonu koristi Chrome. U Chrome meniju „Zum Startbildschirm hinzufügen" – aplikacija se instalira kao PWA sa svojom ikonom, donjom navigacijom i bez adresne trake.
 
+**Sa telefona bilo gde, besplatno i bez kartice (Tailscale):**
+
+Instaliraj [Tailscale](https://tailscale.com/download) na računar i na telefon i prijavi se na oba istim nalogom (besplatan Personal plan). Onda:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/install-windows.ps1 -Autostart -Tailscale
+```
+
+Lotse dobije HTTPS adresu `https://<računar>.<tailnet>.ts.net` (vidiš je sa `tailscale serve status`) koju mogu da otvore samo tvoji uređaji. Ništa nije javno na internetu, ruter se ne dira. Uslov: računar je uključen. Zato `-Autostart`. Na telefonu otvori adresu u Chrome-u i instaliraj kao aplikaciju. Ukidanje: `tailscale serve reset`.
+
 ## 1a. Nalog
 
 Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 karaktera), nema potvrde mejlom, odmah si ulogovan/a. Svaki sledeći nalog (npr. na drugom uređaju, ili neko drugi ko proba app) dobija potpuno svoj, prazan napredak – ništa se ne meša sa tvojim. Podaci ostaju samo na ovom računaru (lokalna SQLite baza), nikuda se ne šalju.
@@ -177,7 +187,20 @@ Promena važi odmah, bez restarta, i vezana je za tvoj nalog — drugi nalog na 
 
 Na početnoj strani klikni **Einstufung starten**: 28 kratkih zadataka iz 14 ključnih tema, oko 15–20 minuta, prvo lakši prolaz kroz sve teme, pa teži. Odgovaraj iskreno, „Weiß ich nicht" je legitiman odgovor – cilj je da sistem zna gde stojiš, ne da skupiš poene. Ako prekineš pre 70 %, ne računa se; nastavi kasnije preko **Weitermachen**.
 
-## 2a. Kurs: 24 lekcije sa pričom (dva dela)
+## 2a. Zvanični telc Übungstest: najbolji test za prognozu
+
+telc → **Offizielle Übungstests** (`/telc/material`) skuplja ono što telc, Goethe-Institut i Deutsche Welle sami besplatno objavljuju. Svaki link je proveren na stranici izdavača:
+- **telc Deutsch B2 Übungstest 1**: cela pismena i usmena provera, ključ rešenja, kriterijumi ocenjivanja i audio (ZIP sa telc.net, ili PDF i MP3 iz telc prodavnice, oba besplatno). Format i bodovi u Lotse-u su uzeti baš iz ovog testa.
+- **Übungstest Version 2 i 3**: isto, ali u štampi i plaćeno (12,50 € po svesci).
+- **telc B1 Übungstest 1**: za zagrevanje, ne ulazi u B2 prognozu.
+- **Handbuch** (ciljevi i teme) i **Tipps zur Prüfungsvorbereitung** (ocenjeni primeri mejlova sa komentarom ocenjivača).
+- **Goethe B2 Übungsmaterial** kao dodatni Lesen/Hören, i **DW Langsam gesprochene Nachrichten** (B2, svaki dan, sa tekstom), što je tačno format Hörverstehen Teil 1.
+
+Preporuka: Übungstest 1 uradi odmah, na papiru, pod ispitnim uslovima (90 minuta u komadu, pa 20 minuta Hören). Na istoj stranici upiši broj tačnih odgovora po delu, a Lotse ga preračuna u telc bodove. Rezultat se računa kao simulacija u prognozi. Version 2 sačuvaj za otprilike tri nedelje pre ispita. Upisani rezultati ne menjaju procenu tvojih gramatičkih tema, jer broj bodova na papiru ne kaže koje je pravilo palo.
+
+Lotse ne kopira te testove u aplikaciju: zaštićeni su i ostaju kod izdavača. Sopstveni zadaci u Lotse-u su napisani u istom formatu.
+
+## 2b. Kurs: 24 lekcije sa pričom (dva dela)
 
 Pored dnevnih sesija postoji **Kurs** (meni → Kurs): 24 lekcije u dva dela koje prate tvoje dve godine u firmi Nordlicht GmbH u Bremenu.
 

@@ -196,9 +196,30 @@ public static class LearnerAnalysis
         ("Sprechen", SkillArea.Sprechen, [SkillArea.Grammatik, SkillArea.Redemittel]),
     ];
 
-    /// <summary>Applies an attempt to the node state and manages the weak → recovered → re-check lifecycle.</summary>
-    public static void ApplyAttempt(SkillState state, Exercise exercise, double score, DateTime nowUtc)
+    /// <summary>
+    /// What a right answer given after a hint is worth to the ability estimate: no more than an even chance at the
+    /// item's difficulty. The hint did part of the work, so the answer shows the learner can follow the rule, not that
+    /// they would have found it alone.
+    /// </summary>
+    public const double AssistedCreditCap = 0.5;
+
+    /// <summary>
+    /// Applies an attempt to the node state and manages the weak → recovered → re-check lifecycle.
+    /// <paramref name="assisted"/> marks an answer given after a hint. A wrong one counts as any wrong answer. A right
+    /// one moves the ability by at most <see cref="AssistedCreditCap"/> and is neither a success nor an error: it
+    /// does not grow the streak, does not count as correct and cannot pass a re-check, which waits for an answer
+    /// found without help.
+    /// </summary>
+    public static void ApplyAttempt(SkillState state, Exercise exercise, double score, DateTime nowUtc, bool assisted = false)
     {
+        if (assisted && score >= 0.7)
+        {
+            state.Theta = Ability.Update(state.Theta, state.Attempts, exercise.Band.Difficulty(), Math.Min(score, AssistedCreditCap));
+            state.Attempts++;
+            state.LastPracticedUtc = nowUtc;
+            return;
+        }
+
         var wasWeakBefore = state.IsWeak;
         state.Theta = Ability.Update(state.Theta, state.Attempts, exercise.Band.Difficulty(), score);
         state.Attempts++;

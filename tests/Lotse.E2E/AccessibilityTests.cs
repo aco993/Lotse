@@ -36,6 +36,8 @@ public class AccessibilityTests(LotseE2EFixture app) : IClassFixture<LotseE2EFix
         // The exam itself: twelve ads in a grid, and the email with its live checks.
         ("/telc/ueben/Lesen3", null),
         ("/telc/ueben/Schreiben", null),
+        // Links to the official tests and the form for a paper result.
+        ("/telc/material", "Ergebnis eines Übungstests eintragen"),
     ];
 
     public static TheoryData<int, int, ColorScheme> Layouts => new()

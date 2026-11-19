@@ -745,7 +745,7 @@ public sealed class LearningService(
 
         // skill state (the exercise's node, plus slip nodes when they differ)
         var state = await GetOrCreateStateAsync(db, userId, exercise.NodeId, ct);
-        LearnerAnalysis.ApplyAttempt(state, exercise, check.Score, now);
+        LearnerAnalysis.ApplyAttempt(state, exercise, check.Score, now, assisted: hintUsed);
         foreach (var code in check.SlipCodes)
         {
             var slipNode = Catalog.Error(code)?.NodeId;

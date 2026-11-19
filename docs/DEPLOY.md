@@ -7,6 +7,21 @@ Lotse runs fine on one machine with `dotnet run`. There are two reasons to put i
 
 Both use the same image and differ only in configuration.
 
+## Your own PC as the server: Tailscale (free, no card)
+
+For one learner, the cheapest server is the PC that already runs Lotse. [Tailscale](https://tailscale.com/download)'s free Personal plan puts the PC, the phone and the laptop into one private network, and `tailscale serve` gives the app an HTTPS address that only those devices can open. Nothing is exposed to the internet, no port is opened on the router, and no hosting account or card is needed.
+
+```powershell
+# once: install Tailscale on the PC and the phone, sign in on both with the same account
+powershell -ExecutionPolicy Bypass -File tools/install-windows.ps1 -Autostart -Tailscale
+```
+
+`-Tailscale` runs `tailscale serve --bg 5178` and tells the launcher to trust the forwarded headers (`Lotse__Hosting__BehindProxy=true`). That is safe here for the same reason as behind Caddy: the server listens on `localhost` only, so the one proxy that can reach it is `tailscaled` on the same machine. `tailscale serve status` shows the address (`https://<pc>.<tailnet>.ts.net`); open it on the phone and install it as an app. `-Autostart` keeps the server running from sign-in, so the address works whenever the PC is on. `tailscale serve reset` takes the address away again.
+
+The trade-off against a real server: the PC has to be on. The installer's handling of a missing Tailscale and the proxy setting are tested; `tailscale serve` itself was not run on the author's machine.
+
+The free alternatives with a public address were checked in November 2026 and all fall short for this app: the free tiers that need no card have no persistent disk for SQLite (Render) or no longer offer Docker for free (Hugging Face Spaces), and the ones with a real disk ask for a card (Oracle Cloud, Fly.io).
+
 ## The image
 
 ```bash

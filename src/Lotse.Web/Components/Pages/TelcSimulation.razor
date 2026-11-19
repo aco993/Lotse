@@ -13,11 +13,22 @@
     return;
 }
 
-<MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">Simulation vom @_sim.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudText>
-<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
-    Die Teile in der Reihenfolge der Prüfung. Jeder Teil läuft mit seiner Prüfungszeit; was einmal abgegeben ist, zählt.
-    Am Ende steht das Ergebnis so, wie telc es berechnet.
-</MudText>
+@if (_sim.Source is { } source)
+{
+    <MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">@source.Title vom @_sim.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudText>
+    <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
+        Auf Papier gemacht und hier eingetragen (@source.Exam, @source.Publisher). Zählt in der Prognose wie eine Simulation.
+        Teile ohne Punkte gelten als nicht gemacht. <MudLink Href="telc/material">Übungstests und Material</MudLink>
+    </MudText>
+}
+else
+{
+    <MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">Simulation vom @_sim.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudText>
+    <MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
+        Die Teile in der Reihenfolge der Prüfung. Jeder Teil läuft mit seiner Prüfungszeit; was einmal abgegeben ist, zählt.
+        Am Ende steht das Ergebnis so, wie telc es berechnet.
+    </MudText>
+}
 
 @foreach (var block in Blocks)
 {
@@ -34,7 +45,7 @@
             var done = _sim.Done.GetValueOrDefault(part);
             var isNext = _sim.Next == part && _sim.CompletedUtc is null;
             <div class="tc-partrow @(isNext ? "next" : "")">
-                <div class="tc-partrow-main"><b>@info.Title</b> <span class="tc-muted">@Telc.Content.TaskTitle(part, _sim.Tasks.GetValueOrDefault(part) ?? "")</span></div>
+                <div class="tc-partrow-main"><b>@info.Title</b> @if (_sim.Source is null) { <span class="tc-muted">@Telc.Content.TaskTitle(part, _sim.Tasks.GetValueOrDefault(part) ?? "")</span> }</div>
                 <div class="tc-partrow-side">
                     @if (done is not null)
                     {
@@ -46,7 +57,7 @@
                     }
                     else
                     {
-                        <span class="tc-muted">offen</span>
+                        <span class="tc-muted">@(_sim.Source is null ? "offen" : "nicht eingetragen")</span>
                     }
                 </div>
             </div>

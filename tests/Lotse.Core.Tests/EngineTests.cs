@@ -441,6 +441,42 @@ public class RecheckLifecycleTests
     }
 
     [Fact]
+    public void A_right_answer_after_a_hint_is_worth_less_than_one_found_alone()
+    {
+        var alone = new SkillState { NodeId = "GR.PASSIV", Theta = 0, Attempts = 10, Correct = 5, CurrentStreak = 2 };
+        var hinted = new SkillState { NodeId = "GR.PASSIV", Theta = 0, Attempts = 10, Correct = 5, CurrentStreak = 2 };
+        LearnerAnalysis.ApplyAttempt(alone, B2Item, 1, T0);
+        LearnerAnalysis.ApplyAttempt(hinted, B2Item, 1, T0, assisted: true);
+
+        Assert.True(hinted.Theta < alone.Theta);
+        Assert.Equal(11, hinted.Attempts);
+        Assert.Equal(5, hinted.Correct);       // not a success ...
+        Assert.Equal(2, hinted.CurrentStreak); // ... and not an error either
+        Assert.Null(hinted.LastErrorUtc);
+    }
+
+    [Fact]
+    public void A_hinted_answer_cannot_pass_a_recheck()
+    {
+        var s = new SkillState { NodeId = "GR.PASSIV", Theta = 1.5, Attempts = 20, Correct = 18, WasWeak = true, CurrentStreak = 5, RecheckDueUtc = T0 };
+        LearnerAnalysis.ApplyAttempt(s, B2Item, 1, T0.AddHours(1), assisted: true);
+        Assert.Equal(0, s.RechecksPassed);
+        Assert.Equal(T0, s.RecheckDueUtc); // still waiting for an answer found without help
+    }
+
+    [Fact]
+    public void A_wrong_answer_after_a_hint_counts_as_wrong()
+    {
+        var plain = new SkillState { NodeId = "GR.PASSIV", Theta = 0.5, Attempts = 10, Correct = 6, CurrentStreak = 3 };
+        var hinted = new SkillState { NodeId = "GR.PASSIV", Theta = 0.5, Attempts = 10, Correct = 6, CurrentStreak = 3 };
+        LearnerAnalysis.ApplyAttempt(plain, B2Item, 0, T0);
+        LearnerAnalysis.ApplyAttempt(hinted, B2Item, 0, T0, assisted: true);
+        Assert.Equal(plain.Theta, hinted.Theta);
+        Assert.Equal(0, hinted.CurrentStreak);
+        Assert.Equal(T0, hinted.LastErrorUtc);
+    }
+
+    [Fact]
     public void Failing_a_recheck_resets_the_counter()
     {
         var s = new SkillState { NodeId = "GR.PASSIV", Theta = 1.0, Attempts = 20, Correct = 15, WasWeak = true, RechecksPassed = 1, RecheckDueUtc = T0 };
