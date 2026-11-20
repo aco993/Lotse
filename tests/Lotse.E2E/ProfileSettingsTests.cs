@@ -93,6 +93,9 @@ public class ProfileSettingsTests(LotseE2EFixture app) : IClassFixture<LotseE2EF
         await page.GotoAsync("/einstellungen");
         await OpenSelectAsync(page, "Wochenziel");
         await page.Locator(".mud-list-item", new() { HasTextString = "120 Minuten pro Woche" }).First.ClickAsync();
+        // Wait until the select shows the new value: saving 30 ms after the click stored the old 60 - a speed no
+        // person clicks at, but the test did, and it failed every run once the browser got that fast.
+        await Expect(page.GetByRole(AriaRole.Combobox, new() { Name = "Wochenziel", Exact = true })).ToContainTextAsync("120 Minuten pro Woche");
         await page.GetByRole(AriaRole.Button, new() { Name = "Speichern", Exact = true }).ClickAsync();
         await Expect(page.GetByText("Gespeichert.")).ToBeVisibleAsync();
 

@@ -105,8 +105,30 @@ public sealed class EvalTests
         var alwaysB = await EvalHarness.RunAsync("Immer B", Golden, EvalHarness.AlwaysB(), utc);
         Assert.Equal(0, rules.Metrics.Failed);
         Assert.True(rules.Metrics.Kappa > alwaysB.Metrics.Kappa.GetValueOrDefault(), "die Formgrenzen sollen mehr leisten als Raten");
-        Assert.Contains("| Regeln | 12 |", rules.SummaryRow());
+        Assert.Contains($"| Regeln | {Golden.Cases.Count} |", rules.SummaryRow());
         Assert.Contains("g04.laptop.schwach", rules.CaseTable(Golden.Cases));
+    }
+
+    /// <summary>
+    /// The eval as a gate that needs no key: the rule-based rater may not fall below the stored run. The two recall
+    /// figures are kept apart on purpose - the rules were tuned on the v1 cases, so only the holdout figure says what
+    /// a learner's new text can expect. Raise the floors when a rule improves them; never lower one to pass.
+    /// </summary>
+    [Fact]
+    public async Task The_rule_baseline_does_not_regress_and_spares_the_flawless_letters()
+    {
+        var run = await EvalHarness.RunAsync("Regeln", Golden, EvalHarness.Rules(Telc, Lexicon.FromCatalog(Catalog)), DateTime.UtcNow);
+        var tuned = RaterMetrics.Compute([.. Golden.Cases.Where(c => !c.Holdout)], run.Results);
+        Assert.True(tuned.PlantedRecall >= 0.85, $"Recall auf v1: {tuned.PlantedRecall:P0}");
+        Assert.True(run.Metrics.HoldoutRecall >= 0.20, $"Recall auf neuen Fällen: {run.Metrics.HoldoutRecall:P0}");
+        Assert.True(run.Metrics.Kappa >= 0.25, $"QWK {run.Metrics.Kappa:0.00}");
+        Assert.Equal(1.0, run.Metrics.QuotePrecision);
+
+        // A finding in a text the reference rates AAA is a false alarm by definition.
+        foreach (var c in Golden.Cases.Where(c => c.Bands.All(b => b == TelcBand.A)))
+            Assert.True(run.Results.Single(r => r.CaseId == c.Id).Errors.Count == 0,
+                $"{c.Id}: " + string.Join("; ", run.Results.Single(r => r.CaseId == c.Id).Errors.Select(e => $"{e.Code} „{e.Snippet}“")));
+        Assert.Contains(Golden.Cases, c => c.Holdout && c.Bands.All(b => b == TelcBand.A));
     }
 
     [Fact]

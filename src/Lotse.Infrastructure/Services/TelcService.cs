@@ -67,8 +67,8 @@ public interface ITelcService
     Task<LearnerContext> LearnerContextAsync(CancellationToken ct = default);
     /// <summary>One turn of the AI exam partner in an oral part. Throws when no tutor is configured.</summary>
     Task<string> PartnerAsync(TelcPart part, string taskId, IReadOnlyList<ChatTurn> history, CancellationToken ct = default);
-    /// <summary>What the deterministic analyzer finds in a text - the corrections between 4/3/2 rounds without a tutor.</summary>
-    IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken);
+    /// <summary>What the deterministic analyzer finds in a text - the corrections between 4/3/2 rounds and in the email, without a tutor. <paramref name="formal"/> is the task's register, for the email.</summary>
+    IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken, bool? formal = null);
     /// <summary>The task as the candidate reads it, in plain text - what the tutor gets as context.</summary>
     string TaskText(TelcPart part, string taskId);
     /// <summary>Fills the {Name}/{Vorname}/{Nachname} tokens of a model answer with the learner's own name.</summary>
@@ -246,10 +246,11 @@ public sealed class TelcService(
         return await tutor.PartnerAsync(part, TaskText(part, taskId), history, context, ct);
     }
 
-    public IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken)
+    public IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken, bool? formal = null)
     {
         var task = new Exercise { Id = "telc.quick", Type = spoken ? ExerciseType.Speak : ExerciseType.FreeWrite, NodeId = "SP.VORTRAG", Band = CefrBand.B2_1, Prompt = "telc" };
-        return FreeTextAnalyzer.Analyze(text, task, catalogProvider.Lexicon, spoken).Findings;
+        // The stand-in task carries no register of its own, so the caller says it.
+        return FreeTextAnalyzer.Analyze(text, task, catalogProvider.Lexicon, spoken, formal).Findings;
     }
 
     public async Task<TelcProductionResult> SubmitProductionAsync(TelcPart part, string taskId, string text, IReadOnlyList<TelcBand> bands, bool themaVerfehlt = false, TelcAiRating? ai = null, int? durationSeconds = null, Guid? simulationId = null, CancellationToken ct = default)

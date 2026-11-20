@@ -22,6 +22,24 @@ The trade-off against a real server: the PC has to be on. The installer's handli
 
 The free alternatives with a public address were checked in November 2026 and all fall short for this app: the free tiers that need no card have no persistent disk for SQLite (Render) or no longer offer Docker for free (Hugging Face Spaces), and the ones with a real disk ask for a card (Oracle Cloud, Fly.io).
 
+## A public demo for free: Render
+
+[`render.yaml`](../render.yaml) is a Render blueprint for the portfolio demo: the Docker image, the free instance type, demo mode on, registration closed, no provider key. Render's free instance type needs no card.
+
+1. Sign in at render.com with GitHub.
+2. New → Blueprint → pick this repository. Render reads `render.yaml`, builds the image and starts it.
+3. Put the `https://lotse-demo-….onrender.com` address in the README.
+
+Or use the button in the README, which opens the same blueprint.
+
+Three things to know about the free type:
+
+- **It sleeps.** After 15 minutes without a request it stops. The next visitor waits about a minute while it starts again. Render counts messages on an open WebSocket as traffic, so a Blazor circuit that is in use keeps it awake.
+- **The disk is not kept.** On every start the database is empty and the demo account is filled again from the real services. That suits a shared demo. It also means a new key ring each time, so a visitor who comes back after a restart signs in again.
+- **512 MB of memory.** Enough for the app. There is no Piper voice in the image, so speech uses the browser's voices.
+
+The service sits behind Render's proxy, which terminates TLS and is the only way in. That is why `Lotse__Hosting__BehindProxy=true` is safe here.
+
 ## The image
 
 ```bash

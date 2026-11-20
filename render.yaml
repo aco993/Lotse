@@ -1,0 +1,24 @@
+# A free public demo on Render (blueprint spec: https://render.com/docs/blueprint-spec).
+# The free instance type needs no card. It sleeps after 15 minutes without traffic and wakes on the next request
+# in about a minute, and its disk is not kept across restarts: the demo account is rebuilt from the real services
+# on every start, which is what a shared demo wants anyway. See docs/DEPLOY.md.
+services:
+  - type: web
+    name: lotse-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # The image listens on 8080; Render routes to the port named here.
+      - key: PORT
+        value: "8080"
+      # Render's proxy terminates TLS and is the only way in, so trusting its forwarded headers is safe.
+      - key: Lotse__Hosting__BehindProxy
+        value: "true"
+      - key: Lotse__Hosting__RegistrationOpen
+        value: "false"
+      - key: Lotse__Hosting__Demo__Enabled
+        value: "true"
+      # No provider key: every visitor would spend it. The demo shows what works without AI.
