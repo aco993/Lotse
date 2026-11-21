@@ -2,6 +2,23 @@
 
 ## Nicht veröffentlicht
 
+### Alle Seiten auf Handy, Tablet und Desktop geprüft, hell und dunkel – das Design merkt sich die Wahl
+
+Ein Durchlauf über 21 Seiten in drei Größen (390, 820, 1440 px) und beiden Designs: 126 Bildschirme, dazu eine automatische Prüfung auf Seiten, die breiter sind als der Bildschirm, auf fehlende Überschriften und auf zu kleine Bedienelemente. Gefunden und behoben:
+
+- **Das Design vergaß die Wahl.** Der Mond-Knopf schaltete nur bis zum nächsten Neuladen um, die Anmeldeseiten folgten immer dem Gerät, und einmal umgeschaltet gab es keinen Weg zurück zu „wie das Gerät“. Jetzt bleibt die Wahl (ein Cookie, ein Wort), die Anmeldeseiten lesen sie auf dem Server, und unter *Einstellungen → Design* gibt es „Wie das Gerät“, „Hell“ und „Dunkel“. „Wie das Gerät“ wechselt sofort mit, wenn Handy oder PC abends auf dunkel stellen.
+- **Kein heller Blitz mehr auf dunklen Geräten**, und der KI-Tutor ist wirklich vor der ersten Seite geladen. `MainLayout` zeichnete beim ersten `await` schon die Seite, mit hellem Design und den Standard-Tutor-Einstellungen, und schaltete dann um. Der Kommentar dort behauptete das Gegenteil. Jetzt wartet das Layout auf beides, und die Einstellungsseite zeigt die richtige Wahl.
+- **Fortschritt war auf dem Handy breiter als der Bildschirm.** Dreißig Balken mit festen 14 px ergaben 507 px auf 390 px. Die Seite ließ sich seitlich schieben, und der Design-Knopf rutschte aus der Leiste. Jetzt schrumpfen die Spalten mit.
+- **telc-Übungen auf dem Handy dasselbe**, um 31 px: Der Zurück-Knopf und die Aufgabenwahl passten nicht nebeneinander. Die Wahl steht jetzt darunter.
+- **Lektionstitel über den Köpfen.** Der Titel lag auf dem Bild, und die Figuren jeder Szene stehen in der Mitte. Jetzt steht das Bild oben und der Titel darunter auf dem Markenblau.
+- **Eine laufende Session hatte keine Überschrift**, ein Screenreader sagte nur „Lotse“. Jetzt heißt sie „Session, Aufgabe 2 von 12“ (unsichtbar).
+- **Die Bereichsfilter auf Themen waren 14 px hoch**, unter den 24 px von WCAG 2.2. Jetzt sind es Pillen mit 30 px und dem Farbpunkt des Bereichs.
+- **Die Fußzeile der Anmeldeseite war kaum lesbar**: grau auf Blau, 1,6:1. Axe prüft Text auf Verläufen nicht. Jetzt ist sie weiß mit 80 % Deckkraft, mindestens 5,2:1.
+
+Dazu ein offener Punkt aus der ersten KI-Messung:
+
+- **Ein KI-Hinweis, der die Lösung verrät, bekommt einen zweiten Versuch.** Bisher verwarf der Filter ihn, und der Lerner bekam von der KI nichts. Das war bei qwen2.5 jede zweite Anfrage. Jetzt fragt Lotse einmal nach und sagt dem Modell, welcher Hinweis verworfen wurde und warum. Verrät auch der zweite die Lösung, bleibt es bei der eigenen Hinweisleiter, und einen dritten Versuch gibt es nie. App und Evaluation nutzen denselben Weg (`SocraticHint`). Nachgemessen auf denselben zehn Übungen: 7 Hinweise erreichen den Lerner statt 5. Bei zehn Übungen ist das eine Richtung, keine feste Zahl. `--hints-only` misst die Hinweise allein, in Minuten statt Stunden.
+
 ### Die KI-Bewertung zum ersten Mal gemessen – und gegen Anweisungen im Lernertext abgesichert
 
 - **Erster gespeicherter Lauf eines KI-Bewerters**, kostenlos und lokal: qwen2.5:7b über Ollama auf der Laptop-CPU, 18 Briefe in zweieinhalb Stunden. Gegenüber den Regeln: QWK 0,58 statt 0,33, exakt 61 % statt 52 %, auf den Holdout-Fällen doppelt so viele gepflanzte Fehler (42 % statt 21 %). Aber zu streng in Kriterium II (fünfmal C, wo die Referenz B oder A sagt), daher seltener einig bei „B2 erreicht“ (67 % statt 78 %). Die Hälfte seiner Hinweise hätte die Lösung verraten; der Filter fing alle ab. `docs/EVALS.md` erklärt die Zahlen.

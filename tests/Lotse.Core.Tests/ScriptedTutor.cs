@@ -21,8 +21,15 @@ public sealed class ScriptedTutor : ITutor
     public Task<TaskCritique> CritiqueTelcAsync(TelcPart part, string taskWithKey, LearnerContext context, CancellationToken ct = default)
         => Task.FromResult(Critique(taskWithKey));
 
-    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
-        => Task.FromResult(Hint(exercise));
+    /// <summary>The answer to a second try, given the rejected first hint; unset = the same as <see cref="Hint"/>.</summary>
+    public Func<Exercise, string, string>? Retry { get; set; }
+    public List<string?> RejectedSeen { get; } = [];
+
+    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default)
+    {
+        RejectedSeen.Add(rejected);
+        return Task.FromResult(rejected is not null && Retry is not null ? Retry(exercise, rejected) : Hint(exercise));
+    }
 
     public Task<TelcAiRating> RateTelcAsync(TelcRatingRequest request, LearnerContext context, CancellationToken ct = default)
         => Task.FromResult(Rate(request));

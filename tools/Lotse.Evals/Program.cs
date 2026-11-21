@@ -4,6 +4,7 @@
 //   dotnet run --project tools/Lotse.Evals -- --preset groq        + the AI tutor; key from the preset's variable (GROQ_API_KEY)
 //   ... --model openai/gpt-oss-20b --hints 40 --write
 //   ... --preset ollama --model qwen2.5-lotse --timeout 1200   a local model on a CPU needs minutes per letter
+//   ... --hints-only --hints 20 --write                        only the Socratic hints, stored next to the rating runs
 //
 // --write stores each run in evals/results/ and regenerates the results section of docs/EVALS.md from the newest
 // run of every rater. Without it nothing on disk changes.
@@ -56,8 +57,11 @@ if (options.Preset is { } presetId)
         : new OpenAiCompatibleTutor(tutorOptions, NullLogger<OpenAiCompatibleTutor>.Instance);
     var context = new LearnerContext("Serbisch", [], [], catalog.ErrorTypes.ToList());
     var name = $"{settings.Preset.Id} · {tutorOptions.Model}";
-    Console.WriteLine($"KI-Bewerter {name}:");
-    runs.Insert(0, await EvalHarness.RunAsync(name, set, EvalHarness.Ai(tutor, telc, context), now, progress));
+    if (!options.HintsOnly)
+    {
+        Console.WriteLine($"KI-Bewerter {name}:");
+        runs.Insert(0, await EvalHarness.RunAsync(name, set, EvalHarness.Ai(tutor, telc, context), now, progress));
+    }
     if (options.Hints > 0)
     {
         Console.WriteLine($"Sokratische Hinweise, {options.Hints} Übungen:");
@@ -70,16 +74,26 @@ Console.WriteLine();
 Console.WriteLine(RaterRun.SummaryHeader);
 foreach (var run in runs) Console.WriteLine(run.SummaryRow());
 if (hints is not null)
-    Console.WriteLine($"\nHinweise: {hints.Asked} gefragt, {hints.Failed} ausgefallen, {Pct(hints.LeakRate)} hätten die Lösung verraten (abgefangen), {Pct(hints.QuestionRate)} sind Fragen.");
+    Console.WriteLine($"\nHinweise: {hints.Asked} gefragt, {hints.Failed} ausgefallen, {Pct(hints.LeakRate)} hätten beim ersten Versuch die Lösung verraten (abgefangen), {Pct(hints.ShownRate)} erreichen den Lerner nach einem zweiten Versuch, {Pct(hints.QuestionRate)} davon sind Fragen.");
 
 if (options.Write)
 {
     var resultsDir = Path.Combine(root, "evals", "results");
     Directory.CreateDirectory(resultsDir);
-    foreach (var run in runs)
+    if (options.HintsOnly)
     {
-        var file = Path.Combine(resultsDir, $"{now:yyyy-MM-dd}-{Slug(run.Rater)}.json");
-        await File.WriteAllTextAsync(file, JsonSerializer.Serialize(new StoredRun(run, run == runs[0] ? hints : null), ContentLoader.Options).ReplaceLineEndings("\n") + "\n");
+        // Only the hints were measured: they go to a file of their own, and the stored rating runs stay as they are.
+        if (hints is not null)
+            await File.WriteAllTextAsync(Path.Combine(resultsDir, $"{now:yyyy-MM-dd}-{Slug(hints.Rater)}{EvalsDoc.HintsSuffix}"),
+                JsonSerializer.Serialize(new StoredHints(hints, now), ContentLoader.Options).ReplaceLineEndings("\n") + "\n");
+    }
+    else
+    {
+        foreach (var run in runs)
+        {
+            var file = Path.Combine(resultsDir, $"{now:yyyy-MM-dd}-{Slug(run.Rater)}.json");
+            await File.WriteAllTextAsync(file, JsonSerializer.Serialize(new StoredRun(run, run == runs[0] ? hints : null), ContentLoader.Options).ReplaceLineEndings("\n") + "\n");
+        }
     }
     var doc = Path.Combine(root, "docs", "EVALS.md");
     await File.WriteAllTextAsync(doc, EvalsDoc.Regenerate(await File.ReadAllTextAsync(doc), resultsDir, set));
@@ -101,13 +115,16 @@ static string FindRepoRoot()
 /// <summary>One stored run; the hint figures ride along with the AI run they belong to.</summary>
 internal sealed record StoredRun(RaterRun Run, EvalHarness.HintRun? Hints);
 
-internal sealed record Args(string? Preset, string? Model, int Hints, bool Write, int? TimeoutSeconds)
+/// <summary>A hint measurement on its own (<c>--hints-only</c>): minutes instead of the hours a local model needs for the letters.</summary>
+internal sealed record StoredHints(EvalHarness.HintRun Hints, DateTime Utc);
+
+internal sealed record Args(string? Preset, string? Model, int Hints, bool Write, int? TimeoutSeconds, bool HintsOnly)
 {
     public static Args Parse(string[] args)
     {
         string? Value(string name) => Array.IndexOf(args, name) is var i && i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
         return new Args(Value("--preset"), Value("--model"), int.TryParse(Value("--hints"), out var h) ? h : 40, args.Contains("--write"),
-            int.TryParse(Value("--timeout"), out var t) && t > 0 ? t : null);
+            int.TryParse(Value("--timeout"), out var t) && t > 0 ? t : null, args.Contains("--hints-only"));
     }
 }
 
@@ -116,10 +133,12 @@ internal static class EvalsDoc
 {
     private const string Start = "<!-- results:start -->";
     private const string End = "<!-- results:end -->";
+    public const string HintsSuffix = ".hints.json";
 
     public static string Regenerate(string doc, string resultsDir, GoldenSet set)
     {
-        var stored = Directory.EnumerateFiles(resultsDir, "*.json")
+        var files = Directory.EnumerateFiles(resultsDir, "*.json").ToList();
+        var stored = files.Where(f => !f.EndsWith(HintsSuffix, StringComparison.Ordinal))
             .Select(f => JsonSerializer.Deserialize<StoredRun>(File.ReadAllText(f), ContentLoader.Options)!)
             .GroupBy(s => s.Run.Rater).Select(g => g.OrderByDescending(s => s.Run.Utc).First())
             .OrderBy(s => s.Run.Rater is "Rule-based (no AI)" or "Always B")
@@ -131,15 +150,17 @@ internal static class EvalsDoc
             .AppendLine()
             .AppendLine(RaterRun.SummaryHeader);
         foreach (var s in stored) sb.AppendLine(s.Run.SummaryRow());
-        var withHints = stored.Where(s => s.Hints is not null).ToList();
-        if (withHints.Count > 0)
+        // Every hint measurement, oldest first: there are few, and before/after a change is the point of keeping them.
+        var hintRuns = stored.Where(s => s.Hints is not null).Select(s => (s.Hints!, s.Run.Utc))
+            .Concat(files.Where(f => f.EndsWith(HintsSuffix, StringComparison.Ordinal))
+                .Select(f => JsonSerializer.Deserialize<StoredHints>(File.ReadAllText(f), ContentLoader.Options)!)
+                .Select(s => (s.Hints, s.Utc)))
+            .OrderBy(h => h.Utc).ToList();
+        if (hintRuns.Count > 0)
         {
-            sb.AppendLine().AppendLine("| Hints from | Asked | Failed | Would have given the answer (caught) | Phrased as a question | Median latency |").AppendLine("|---|---|---|---|---|---|");
-            foreach (var s in withHints)
-            {
-                var h = s.Hints!;
-                sb.AppendLine($"| {h.Rater} | {h.Asked} | {h.Failed} | {Pct(h.LeakRate)} | {Pct(h.QuestionRate)} | {(h.MedianLatencyMs is { } ms ? (ms / 1000.0).ToString("0.0", CultureInfo.InvariantCulture) + " s" : "–")} |");
-            }
+            sb.AppendLine().AppendLine("| Hints from | Run | Asked | Failed | First try gave the answer (caught) | Reach the learner (one retry) | Phrased as a question | Median latency |").AppendLine("|---|---|---|---|---|---|---|---|");
+            foreach (var (h, utc) in hintRuns)
+                sb.AppendLine($"| {h.Rater} | {utc:yyyy-MM-dd} | {h.Asked} | {h.Failed} | {Pct(h.LeakRate)} | {(h.Shown is null ? "– (no retry yet)" : Pct(h.ShownRate))} | {Pct(h.QuestionRate)} | {(h.MedianLatencyMs is { } ms ? (ms / 1000.0).ToString("0.0", CultureInfo.InvariantCulture) + " s" : "–")} |");
         }
         foreach (var s in stored)
         {

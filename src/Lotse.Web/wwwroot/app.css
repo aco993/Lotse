@@ -46,8 +46,11 @@ html, body { height: 100%; margin: 0; } /* margin: MudBlazor's reset is not load
 /* FocusOnNavigate (Routes.razor) moves focus to the new page's h1 so a screen reader announces it. The heading is not a
    control, so it gets no ring - Chrome otherwise draws one after every navigation, mouse or not. */
 h1:focus { outline: none; }
-.task-legend button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-.task-legend button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 4px; font-weight: 600; }
+/* The area filter on Themen: bare words were 14-16px tall, below WCAG 2.2's 24px target size and hard to hit with a
+   thumb. Pills of 30px with the area's colour dot; the pressed one is filled. */
+.task-legend button { font: inherit; color: inherit; background: none; border: 1px solid var(--mud-palette-lines-default); border-radius: 15px; min-height: 30px; padding: 2px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.task-legend button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--task-accent, currentColor); }
+.task-legend button[aria-pressed="true"] { font-weight: 600; color: var(--mud-palette-text-primary); background: var(--mud-palette-action-default-hover); border-color: var(--mud-palette-primary); }
 
 /* Recording pulse */
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(224,122,31,.5);} 70% { box-shadow: 0 0 0 14px rgba(224,122,31,0);} 100% { box-shadow: 0 0 0 0 rgba(224,122,31,0);} }
@@ -129,15 +132,20 @@ h1:focus { outline: none; }
 .lesson-title { font-size: 1.1rem; font-weight: 600; }
 .lesson-sub { font-size: .88rem; opacity: .8; }
 .lesson-state { margin-top: 6px; display: flex; align-items: center; gap: 6px; font-size: .82rem; }
-.lesson-hero { position: relative; border-radius: 14px; overflow: hidden; margin-bottom: 16px; aspect-ratio: 320 / 110; max-height: 220px; }
-.lesson-hero .lesson-art { position: absolute; inset: 0; height: 100%; }
-.lesson-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 45%, transparent 70%); }
-.lesson-hero-text { position: absolute; left: 20px; right: 20px; bottom: 16px; text-shadow: 0 1px 6px rgba(0,0,0,.45); z-index: 1; }
+/* The title used to sit on top of the picture, and the figures of every scene stand in the middle: the heading ran
+   across their heads on every screen size. Picture above, title below on the brand band (white on #1F5F8B is 6.9:1). */
+.lesson-hero { border-radius: 14px; overflow: hidden; margin-bottom: 16px; background: linear-gradient(135deg, #1F5F8B 0%, #16324A 100%); }
+.lesson-hero .lesson-art { width: 100%; height: auto; aspect-ratio: 320 / 122; max-height: 220px; }
+.lesson-hero-text { padding: 10px 20px 14px; }
+/* Fortschritt, last 30 days: thirty columns that shrink on a phone and stop at 14px on a wide screen. */
+.day-bars { display: grid; grid-template-columns: repeat(30, minmax(0, 14px)); gap: 3px; align-items: end; height: 90px; }
+.day-bars .mud-tooltip-root { display: block; min-width: 0; }
+.day-bar { width: 100%; border-radius: 3px; }
 .text-none, .text-none .mud-button-label { text-transform: none !important; letter-spacing: normal; }
 .example-table { width: 100%; border-collapse: collapse; }
 .example-table th { text-align: left; font-size: .75rem; color: var(--mud-palette-text-secondary); padding: 4px 8px; }
 .example-table td { padding: 8px; border-top: 1px solid var(--mud-palette-lines-default); vertical-align: top; }
-@media (max-width: 600px) { .lesson-card.compact { flex-direction: column; } .lesson-card.compact .lesson-art-wrap { width: 100%; } .lesson-hero { aspect-ratio: 320 / 150; } }
+@media (max-width: 600px) { .lesson-card.compact { flex-direction: column; } .lesson-card.compact .lesson-art-wrap { width: 100%; } .lesson-hero .lesson-art { aspect-ratio: 320 / 132; } }
 
 /* Keyboard hints make no sense on touch screens */
 @media (hover: none) and (pointer: coarse) { .kbd-hint { display: none; } }
@@ -174,8 +182,17 @@ h1:focus { outline: none; }
     min-height: 100vh; display: flex; background: var(--acct-bg); color: var(--acct-text);
     font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5;
 }
+/* Dark when the learner chose it (html[data-theme=dark], set by App.razor from the theme cookie), or when the device
+   prefers it and the learner did not choose light. */
+html[data-theme="dark"] .acct {
+    --acct-bg: #111820; --acct-surface: #1A2430; --acct-text: #E8EDF2; --acct-muted: #9FB0C0; --acct-line: #2A3644;
+    --acct-primary: #6FB1E0; --acct-primary-soft: rgba(111,177,224,.14); --acct-ring: rgba(111,177,224,.30);
+    --acct-btn: #6FB1E0; --acct-btn-text: #0F1A24; --acct-btn-shadow: rgba(111,177,224,.18);
+    --acct-success: #5CC08A; --acct-error: #E8766A; --acct-input-bg: #16202B; --acct-card-shadow: rgba(0,0,0,.45);
+    color-scheme: dark;
+}
 @media (prefers-color-scheme: dark) {
-    .acct {
+    html:not([data-theme="light"]) .acct {
         --acct-bg: #111820; --acct-surface: #1A2430; --acct-text: #E8EDF2; --acct-muted: #9FB0C0; --acct-line: #2A3644;
         --acct-primary: #6FB1E0; --acct-primary-soft: rgba(111,177,224,.14); --acct-ring: rgba(111,177,224,.30);
         --acct-btn: #6FB1E0; --acct-btn-text: #0F1A24; --acct-btn-shadow: rgba(111,177,224,.18);
@@ -208,7 +225,8 @@ h1:focus { outline: none; }
     .acct-points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 1rem; }
     .acct-points li { display: flex; align-items: flex-start; gap: 12px; opacity: .95; }
     .acct-points svg { width: 22px; height: 22px; flex: none; color: #F2A65A; margin-top: 1px; }
-    .acct-foot { margin: 40px 0 0; font-size: .85rem; color: var(--acct-muted); max-width: 30em; line-height: 1.5; }
+    /* On the blue brand panel, not on the page: the muted grey of the form side read at 1.6:1 here (axe skips text on a gradient). White at .8 is 5.2:1 on the lightest end of the gradient, over 7:1 where the footer sits. */
+    .acct-foot { margin: 40px 0 0; font-size: .85rem; color: rgba(255,255,255,.8); max-width: 30em; line-height: 1.5; }
 }
 
 /* Form card */
@@ -245,8 +263,8 @@ h1:focus { outline: none; }
 .acct-pw-toggle[aria-pressed="true"] .eye-off { display: block; }
 .acct-hint { font-size: .78rem; color: var(--acct-muted); margin-top: 6px; }
 .acct-error { display: block; font-size: .78rem; color: var(--acct-error); margin-top: 6px; }
-.acct-check { display: flex; align-items: center; gap: 10px; font-size: .9rem; margin: 2px 0 20px; cursor: pointer; }
-.acct-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--acct-primary); cursor: pointer; }
+.acct-check { display: flex; align-items: center; gap: 10px; font-size: .9rem; margin: 2px 0 20px; cursor: pointer; min-height: 28px; }
+.acct-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--acct-primary); cursor: pointer; }
 
 .acct-btn {
     width: 100%; height: 48px; border: none; border-radius: 12px; background: var(--acct-btn); color: var(--acct-btn-text);

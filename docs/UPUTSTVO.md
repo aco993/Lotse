@@ -54,6 +54,8 @@ Prvi ekran koji vidiš je **Registrieren** – unesi email i lozinku (min. 8 kar
 
 Zaboravljena lozinka: **Passwort vergessen?** na login strani. Kako na ovoj mašini nije podešen mejl-server, link za reset se ne šalje na mejl nego ispisuje u konzoli gde `dotnet run` radi – otvori terminal i potraži ga posle klika na „Link anfordern".
 
+**Svetla ili tamna tema:** dugme sa mesecom/suncem gore desno menja temu i aplikacija to pamti (i posle reload-a, i na stranici za prijavu). U *Einstellungen → Design* biraš „Wie das Gerät“ (prati telefon/PC, i kad on uveče pređe na tamno), „Hell“ ili „Dunkel“. Izbor važi za taj browser.
+
 „Alle Lerndaten löschen" (u Einstellungen) briše SAMO tvoj napredak (sesije, greške, savladanost tema) – ne i tvoj nalog, ne i tuđe naloge, ne Tutor-podešavanja (ključ ostaje) i ne zajedničku banku vežbi koje je Tutor generisao (nju dele svi nalozi na ovom računaru).
 
 ## 1b. Šta je novo u 0.8.0 (posle testa sa 10 persona)

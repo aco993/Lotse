@@ -213,4 +213,22 @@ public sealed class TelcPipelineTests : IAsyncLifetime
         _tutor.Hint = _ => "Welcher Fall folgt auf diese Präposition?";
         Assert.Equal("Welcher Fall folgt auf diese Präposition?", await _learning.GetAiHintAsync(cloze.Id, "der"));
     }
+
+    [Fact]
+    public async Task A_leaking_hint_gets_one_more_try_told_why_and_the_learner_gets_the_clean_one()
+    {
+        var cloze = _catalog.Catalog.Exercises.First(e => e.Type == ExerciseType.Cloze && e.Answers[0].Length > 3);
+        var leak = $"Probier es mit „{cloze.Answers[0]}“.";
+        _tutor.Hint = _ => leak;
+        _tutor.Retry = (_, rejected) => rejected == leak ? "Welcher Fall folgt auf diese Präposition?" : "falsch verdrahtet";
+
+        Assert.Equal("Welcher Fall folgt auf diese Präposition?", await _learning.GetAiHintAsync(cloze.Id, null));
+        Assert.Equal([null, leak], _tutor.RejectedSeen);
+
+        // Two leaks in a row: nothing from the AI, the app's own ladder stays. Never a third call.
+        _tutor.RejectedSeen.Clear();
+        _tutor.Retry = (e, _) => $"Es ist „{e.Answers[0]}“, oder?";
+        Assert.Null(await _learning.GetAiHintAsync(cloze.Id, null));
+        Assert.Equal(2, _tutor.RejectedSeen.Count);
+    }
 }

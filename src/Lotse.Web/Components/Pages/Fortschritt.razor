@@ -63,7 +63,9 @@ else
         @if (_history.Count == 0) { <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary)">Noch keine Aufgaben bearbeitet.</MudText> }
         else
         {
-            <div style="display:flex; align-items:flex-end; gap:3px; height:90px">
+            @* Thirty fixed 14px bars and their gaps were 507px: on a phone the page scrolled sideways and pushed the
+               theme toggle out of the bar. A grid of thirty shrinkable columns fits any width and keeps 14px as the most. *@
+            <div class="day-bars">
                 @{ var max = Math.Max(1, _history.Max(h => h.Attempts)); }
                 @foreach (var day in Enumerable.Range(0, 30).Select(i => DateTime.UtcNow.Date.AddDays(-29 + i)))
                 {
@@ -71,7 +73,7 @@ else
                     var height = h == default ? 2 : Math.Max(4, 86.0 * h.Attempts / max);
                     var color = h == default ? "var(--mud-palette-lines-default)" : h.Accuracy >= 0.8 ? "var(--mud-palette-tertiary)" : h.Accuracy >= 0.6 ? "var(--mud-palette-primary)" : "var(--mud-palette-secondary)";
                     <MudTooltip Text="@(h == default ? day.ToString("dd.MM.") : $"{day:dd.MM.}: {h.Attempts} Aufgaben, {h.Accuracy:P0} richtig")">
-                        <div style="@($"width:14px;height:{height:F0}px;background:{color};border-radius:3px")"></div>
+                        <div class="day-bar" style="@($"height:{height:F0}px;background:{color}")"></div>
                     </MudTooltip>
                 }
             </div>

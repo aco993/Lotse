@@ -100,11 +100,18 @@ public static class EvalHarness
 
     // ---- Hint guard ---------------------------------------------------------------------------------------------
 
-    /// <summary>How often the tutor's Socratic hint would have given the answer away (caught by <see cref="HintLadder.Leaks(string, Exercise)"/>), and how often it is a question at all.</summary>
-    public sealed record HintRun(string Rater, int Asked, int Failed, int Leaked, int Questions, int? MedianLatencyMs)
+    /// <summary>
+    /// How often the tutor's first Socratic hint would have given the answer away (caught by
+    /// <see cref="HintLadder.Leaks(string, Exercise)"/>), how often the learner ends up with a hint after the one retry
+    /// of <see cref="SocraticHint"/>, and how often the shown hint is a question at all. Runs stored before the retry
+    /// existed have no <see cref="Shown"/>.
+    /// </summary>
+    public sealed record HintRun(string Rater, int Asked, int Failed, int Leaked, int Questions, int? MedianLatencyMs, int? Shown = null)
     {
         public double? LeakRate => Asked - Failed == 0 ? null : Leaked / (double)(Asked - Failed);
-        public double? QuestionRate => Asked - Failed == 0 ? null : Questions / (double)(Asked - Failed);
+        /// <summary>Of the hints a learner would see; for old runs, of all hints.</summary>
+        public double? QuestionRate => Shown is { } s ? (s == 0 ? null : Questions / (double)s) : Asked - Failed == 0 ? null : Questions / (double)(Asked - Failed);
+        public double? ShownRate => Shown is not { } s || Asked - Failed == 0 ? null : s / (double)(Asked - Failed);
     }
 
     /// <summary>A fixed, spread sample of drills: every n-th closed item in id order, so two runs ask the same questions.</summary>
@@ -122,17 +129,22 @@ public static class EvalHarness
 
     public static async Task<HintRun> RunHintsAsync(string raterName, ITutor tutor, IReadOnlyList<Exercise> sample, LearnerContext context, CancellationToken ct = default)
     {
-        int failed = 0, leaked = 0, questions = 0;
+        int failed = 0, leaked = 0, questions = 0, shown = 0;
         var latencies = new List<int>();
         foreach (var e in sample)
         {
             var watch = Stopwatch.StartNew();
             try
             {
-                var hint = (await tutor.HintAsync(e, null, context, ct)).Trim();
+                // The app's own path, retry included, so "shown" is what a learner would get.
+                var result = await SocraticHint.AskAsync(tutor, e, null, context, ct);
                 latencies.Add((int)watch.ElapsedMilliseconds);
-                if (HintLadder.Leaks(hint, e)) leaked++;
-                if (hint.EndsWith('?')) questions++;
+                if (result.FirstLeaked) leaked++;
+                if (result.Hint is { } hint)
+                {
+                    shown++;
+                    if (hint.EndsWith('?')) questions++;
+                }
             }
             catch (Exception) when (!ct.IsCancellationRequested)
             {
@@ -140,6 +152,6 @@ public static class EvalHarness
             }
         }
         latencies.Sort();
-        return new HintRun(raterName, sample.Count, failed, leaked, questions, latencies.Count == 0 ? null : latencies[latencies.Count / 2]);
+        return new HintRun(raterName, sample.Count, failed, leaked, questions, latencies.Count == 0 ? null : latencies[latencies.Count / 2], shown);
     }
 }

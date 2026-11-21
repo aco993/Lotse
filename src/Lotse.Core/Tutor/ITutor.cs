@@ -79,8 +79,10 @@ public interface ITutor
     /// <summary>
     /// One Socratic question that moves the learner a step towards the answer of <paramref name="exercise"/>
     /// without stating it. The caller still filters the result with <see cref="Engine.HintLadder.Leaks(string, Exercise)"/>.
+    /// <paramref name="rejected"/> is the previous hint, thrown away because it gave the answer: the second try is
+    /// told so (see <see cref="SocraticHint"/>).
     /// </summary>
-    Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default);
+    Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default);
 
     /// <summary>
     /// A new task for an objective telc part as raw JSON in the shape of <paramref name="exampleJson"/>. The caller
@@ -116,7 +118,7 @@ public sealed class NullTutor(string? description = null) : ITutor
     public Task<string> PartnerAsync(TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
 
-    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default)
         => throw new InvalidOperationException("Kein KI-Tutor konfiguriert.");
 
     public Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)

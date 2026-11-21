@@ -172,6 +172,26 @@ public sealed class EvalTests
     }
 
     [Fact]
+    public async Task The_hint_eval_counts_first_try_leaks_and_what_reaches_the_learner_after_the_retry()
+    {
+        var sample = EvalHarness.HintSample(Catalog, 4);
+        var leakyIds = sample.Take(2).Select(e => e.Id).ToHashSet();
+        var tutor = new ScriptedTutor
+        {
+            // Half the first tries name the answer; the retry is clean for the first of them and leaks again for the second.
+            Hint = e => leakyIds.Contains(e.Id) ? $"Nimm „{Answer(e)}“?" : "Welche Regel gilt hier?",
+            Retry = (e, _) => e.Id == sample[0].Id ? "Welcher Fall steht nach dieser Präposition?" : $"Also „{Answer(e)}“.",
+        };
+        var context = new LearnerContext("Serbisch", [], [], Catalog.ErrorTypes.ToList());
+        var run = await EvalHarness.RunHintsAsync("Skript", tutor, sample, context);
+        Assert.Equal(0.5, run.LeakRate);
+        Assert.Equal(0.75, run.ShownRate);
+        Assert.Equal(1.0, run.QuestionRate);
+
+        static string Answer(Exercise e) => e.Type == ExerciseType.MultipleChoice ? e.Options[e.CorrectIndex!.Value] : e.Answers[0];
+    }
+
+    [Fact]
     public void The_hint_sample_is_fixed_and_spread_over_the_bank()
     {
         var a = EvalHarness.HintSample(Catalog, 40);
