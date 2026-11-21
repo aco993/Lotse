@@ -143,6 +143,87 @@ public class FreeTextAnalyzerTests
         Assert.True(r.ConnectorCount >= 3);
     }
 
+    /// <summary>Each rule from the 2026-11 pass: the mistake is caught, and the correct sentence next to it stays silent.</summary>
+    [Theory]
+    [InlineData("ART_GENUS", "Ich war in Ihre Hotel.", "Ich war in Ihrem Hotel.")]
+    [InlineData("ART_GENUS", "Ich habe kein Erfahrung als Projektleiter.", "Ich habe keine Erfahrung als Projektleiter.")]
+    [InlineData("ART_GENUS", "Ich erwarte einen neuen Gerät.", "Ich erwarte ein neues Gerät.")]
+    [InlineData("ART_GENUS", "Die Zimmer sind klein, aber das Frau am Empfang war nett.", "Die Zimmer sind klein, aber die Frau am Empfang war nett.")]
+    [InlineData("KASUS_OBJEKT", "Ich habe ein Termin beim Arzt.", "Ich habe einen Termin beim Arzt.")]
+    [InlineData("KASUS_OBJEKT", "Gestern hat er ein Brief bekommen.", "Gestern hat er einen Brief bekommen.")]
+    [InlineData("KASUS_PRAEP", "Ich bin seit zwei Monate Mitglied.", "Ich bin seit zwei Monaten Mitglied.")]
+    [InlineData("KASUS_PRAEP", "Ich wohne mit meine Frau in Mannheim.", "Ich wohne mit meiner Frau in Mannheim.")]
+    [InlineData("KASUS_PRAEP", "Er startet mit einem schwarzen Bildschirm und eine laute Lüftung.", "Er startet mit einem schwarzen Bildschirm und einer lauten Lüftung.")]
+    [InlineData("GENITIV", "Trotz mehrere Versuche habe ich niemanden erreicht.", "Trotz mehrerer Versuche habe ich niemanden erreicht.")]
+    [InlineData("WORTST_SATZKLAMMER", "Ich möchte wissen die Nebenkosten.", "Ich möchte die Nebenkosten wissen.")]
+    [InlineData("WORTST_SATZKLAMMER", "Ich habe angerufen den Service.", "Ich habe den Service angerufen.")]
+    [InlineData("WORTST_SATZKLAMMER", "Er ist gekommen nach zehn Tagen.", "Er ist nach zehn Tagen gekommen.")]
+    [InlineData("WORTST_NEBENSATZ", "Ich möchte wissen, was ist der Inhalt.", "Ich möchte wissen, was der Inhalt ist.")]
+    [InlineData("WORTST_NEBENSATZ", "Es ist ein Problem, weil er nicht funktioniert gut.", "Es ist ein Problem, weil er nicht gut funktioniert.")]
+    [InlineData("PRAEPADVERB", "Ich bin sehr enttäuscht über das, weil ich bezahlt habe.", "Ich bin sehr enttäuscht darüber, weil ich bezahlt habe.")]
+    public void Agreement_and_bracket_rules_catch_the_mistake_and_spare_the_fix(string code, string wrong, string right)
+    {
+        Assert.Contains(code, Codes(wrong));
+        Assert.DoesNotContain(code, Codes(right));
+    }
+
+    [Fact]
+    public void The_gender_correction_takes_its_case_from_the_preposition()
+    {
+        string Fix(string text) => FreeTextAnalyzer.Analyze(text, Casual, Lex()).Findings.Single(f => f.Code == "ART_GENUS").Correction;
+        Assert.Equal("Ihrem Hotel", Fix("Ich habe mit Ihre Hotel telefoniert."));
+        Assert.Equal("ihrem Hotel (wo?) / ihr Hotel (wohin?)", Fix("Ich war in ihre Hotel."));
+        Assert.Equal("keine Erfahrung", Fix("Ich habe kein Erfahrung."));
+    }
+
+    /// <summary>Correct German that looks like the new patterns. Each line was a false alarm in a draft of the rules.</summary>
+    [Theory]
+    [InlineData("Das ist meiner Meinung nach die Lösung.")]              // nach after its noun
+    [InlineData("Seit die Sauna geschlossen ist, komme ich seltener.")]  // seit as a conjunction
+    [InlineData("Die Frist verlängert sich auf bis zu neun Monate.")]    // bis zu + amount
+    [InlineData("Das Hotel, das Frau Meier empfohlen hat, war gut.")]   // relative pronoun
+    [InlineData("War das Absicht?")]                                    // pronoun + bare predicate noun
+    [InlineData("Ich hoffe, dass ich kommen kann.")]                    // verb cluster at the end
+    [InlineData("Wenn Sie nicht kommen können, rufen Sie bitte an.")]
+    [InlineData("Ich mache das, weil wir arbeiten und lernen.")]        // second clause after und
+    [InlineData("Danke für das, was Sie getan haben.")]                 // das + relative clause
+    [InlineData("Ich habe Erfahrung im Projektmanagement und brauche Hilfe.")] // mass nouns without article
+    [InlineData("Bitte lassen Sie Ihr Gepäck während der Kontrolle nicht allein.")] // während as a preposition
+    [InlineData("Er kam nicht, einfach weil er keine Lust hatte.")]     // comma before "einfach weil"
+    [InlineData("Ich gehe, ohne dass jemand es merkt.")]
+    [InlineData("Die neuen Computer und die alten Zimmer sind laut.")]   // plural spelled like the singular
+    [InlineData("Wegen der Lieferung und trotz des Wetters bin ich gekommen.")]
+    public void Correct_sentences_near_the_new_patterns_stay_silent(string sentence)
+    {
+        Assert.Empty(FreeTextAnalyzer.Analyze(sentence, Casual, Lex()).Findings);
+    }
+
+    [Fact]
+    public void A_telc_letter_is_formal_even_when_the_exercise_does_not_say_so()
+    {
+        var text = "Hallo zusammen, wie geht's euch?\n\nIhr habt mir einen Trainer versprochen.\n\nLG\nMilan";
+        var neutral = Casual with { Prompt = "telc" };
+        Assert.DoesNotContain(FreeTextAnalyzer.Analyze(text, neutral, Lex()).Findings, f => f.Code.StartsWith("REG_", StringComparison.Ordinal));
+        var findings = FreeTextAnalyzer.Analyze(text, neutral, Lex(), formal: true).Findings;
+        Assert.Contains(findings, f => f.Code == "REG_ANREDE_GRUSS" && f.Snippet.StartsWith("Hallo zusammen", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Code == "REG_ANREDE_GRUSS" && f.Snippet.StartsWith("LG", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Code == "REG_FORMELL" && f.Snippet.Contains("Ihr habt", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Code == "REG_FORMELL" && f.Snippet.Contains("euch", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Gender_comes_from_the_entry_the_compound_head_or_a_reliable_suffix()
+    {
+        var lex = Lex();
+        Assert.True(lex.TryGetGender("Hotel", out var a, out _)); Assert.Equal("das", a);
+        Assert.True(lex.TryGetGender("Arbeitsplatz", out a, out _)); Assert.Equal("der", a);
+        Assert.True(lex.TryGetGender("Weiterbildung", out a, out _)); Assert.Equal("die", a);
+        Assert.True(lex.TryGetGender("Zimmer", out _, out var same)); Assert.True(same);
+        Assert.True(lex.TryGetGender("Rückantwort", out a, out _)); Assert.Equal("die", a); // die Antwort, not "Ant" + das Wort
+        Assert.False(lex.TryGetGender("Ursprung", out _, out _));                  // -ung, but masculine
+        Assert.False(lex.TryGetGender("Laptop", out _, out _));                    // der and das are both correct
+    }
+
     [Fact]
     public void False_friends_are_hints_not_errors()
     {

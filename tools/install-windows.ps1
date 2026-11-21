@@ -24,6 +24,12 @@
 .PARAMETER Uninstall
     Entfernt Programm, Starter und Verknuepfungen. Die Daten bleiben liegen.
 
+.PARAMETER Tailscale
+    Macht Lotse auf den eigenen Geraeten im Tailscale-Netz erreichbar (Handy, Laptop), per HTTPS und ohne
+    oeffentlichen Server: "tailscale serve" leitet https://<rechner>.<tailnet>.ts.net an den lokalen Port weiter.
+    Der Server bleibt an localhost gebunden; nur deshalb darf er den Weiterleitungs-Headern trauen
+    (Lotse__Hosting__BehindProxy). Tailscale muss installiert und angemeldet sein (kostenloser Personal-Plan).
+
 .PARAMETER Root
     Installationsordner. Standard: %LOCALAPPDATA%\Lotse (dort liegt auch die Sprachausgabe aus install-piper.ps1).
 
@@ -38,6 +44,7 @@ param(
     [int]$Port = 5178,
     [switch]$Autostart,
     [switch]$Uninstall,
+    [switch]$Tailscale,
     [string]$Root = (Join-Path $env:LOCALAPPDATA 'Lotse'),
     # For tests: build and write files, but create no shortcuts.
     [switch]$NoShortcuts
@@ -125,6 +132,9 @@ if (-not (Test-Lotse)) {
     $env:Lotse__DataDirectory = Join-Path $root 'data'
     $env:Lotse__ContentDirectory = Join-Path $root 'app\content'
     $env:ASPNETCORE_ENVIRONMENT = 'Production'
+    # Only set with -Tailscale. Safe because the server listens on localhost alone: the one proxy that can reach
+    # it is tailscaled on this machine, so its X-Forwarded-Proto (https) may be trusted for cookies and passkeys.
+    if ('__BEHINDPROXY__' -eq 'true') { $env:Lotse__Hosting__BehindProxy = 'true' }
     $exe = Join-Path $root 'app\Lotse.Web.exe'
     $log = Join-Path $root 'lotse.log'
     # A hidden PowerShell hosts the server so its console output (including password-reset links) lands in a log.
@@ -142,7 +152,8 @@ if (-not (Test-Lotse)) {
 }
 if (-not $NoBrowser) { Start-Process $url }
 '@
-$launcherBody.Replace('__ROOT__', $Root).Replace('__PORT__', [string]$Port) | Set-Content -Path $launcher -Encoding UTF8
+$behindProxy = if ($Tailscale) { 'true' } else { 'false' }
+$launcherBody.Replace('__ROOT__', $Root).Replace('__PORT__', [string]$Port).Replace('__BEHINDPROXY__', $behindProxy) | Set-Content -Path $launcher -Encoding UTF8
 
 # ---- 4. Shortcuts ------------------------------------------------------------------------------------------------
 if (-not $NoShortcuts) {
@@ -158,4 +169,25 @@ Write-Host "  Starten:   Startmenue oder Desktop -> Lotse (oeffnet http://localh
 Write-Host "  Daten:     $dataDir"
 Write-Host "  Protokoll: $(Join-Path $Root 'lotse.log')"
 if ($Autostart) { Write-Host '  Autostart: Lotse laeuft ab der naechsten Anmeldung im Hintergrund.' }
+
+# ---- 5. Tailscale (optional) -------------------------------------------------------------------------------------
+if ($Tailscale) {
+    $ts = Get-Command tailscale -ErrorAction SilentlyContinue
+    if (-not $ts) { $ts = Get-Item (Join-Path $env:ProgramFiles 'Tailscale	ailscale.exe') -ErrorAction SilentlyContinue }
+    if (-not $ts) {
+        Write-Host ''
+        Write-Warning 'Tailscale ist nicht installiert. https://tailscale.com/download installieren, anmelden und dieses Skript mit -Tailscale erneut ausfuehren.'
+    }
+    else {
+        $tsExe = if ($ts.Source) { $ts.Source } else { $ts.FullName }
+        # A running server keeps its old environment; restart it so the proxy setting takes effect.
+        Get-Process -Name 'Lotse.Web' -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq (Join-Path $appDir 'Lotse.Web.exe') } | Stop-Process -Force
+        & $tsExe serve --bg $Port
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  Tailscale: Lotse ist auf deinen Geraeten im Tailnet erreichbar - die Adresse steht oben bzw. unter 'tailscale serve status'."
+            Write-Host '             Der Rechner muss dafuer an sein und Lotse laufen (am einfachsten mit -Autostart).'
+        }
+        else { Write-Warning "tailscale serve ist fehlgeschlagen (Exit-Code $LASTEXITCODE). Ist Tailscale angemeldet? ('tailscale up')" }
+    }
+}
 Write-Host '  Aktualisieren: dieses Skript nach "git pull" erneut ausfuehren. Entfernen: -Uninstall'

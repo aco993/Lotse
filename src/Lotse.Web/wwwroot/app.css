@@ -427,7 +427,7 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-ask { font-size: .85rem; opacity: .8; padding-top: 3px; }
 .tc-list div { padding: 2px 0; }
 .tc-list b, .tc-letter { display: inline-block; min-width: 1.4em; color: var(--mud-palette-primary); }
-.tc-longtext, .tc-transcript, .tc-stimulus, .tc-box, .tc-ad, .tc-checks, .tc-rate, .tc-task, .tc-listen, .tc-record, .tc-round, .tc-chat { background: var(--mud-palette-background-gray); border-radius: 12px; }
+.tc-longtext, .tc-transcript, .tc-stimulus, .tc-box, .tc-ad, .tc-checks, .tc-findings, .tc-rate, .tc-task, .tc-listen, .tc-record, .tc-round, .tc-chat { background: var(--mud-palette-background-gray); border-radius: 12px; }
 .tc-longtext { max-height: 60vh; overflow: auto; }
 .tc-stimulus { padding: 10px 12px; border-left: 4px solid var(--mud-palette-primary); }
 .tc-ad { height: 100%; }
@@ -457,6 +457,10 @@ a.acct-btn:hover { text-decoration: none; }
 .tc-checkrow .ok, .tc-simrow .ok, .tc-half-value.ok { color: var(--mud-palette-success); }
 .tc-checkrow .bad, .tc-simrow .bad, .tc-half-value.bad { color: var(--mud-palette-error); }
 .tc-hint { font-size: .88rem; margin-top: 4px; }
+.tc-finding-list { margin: 0 0 6px; padding-left: 1.1rem; font-size: .9rem; }
+.tc-finding-list li { margin-bottom: 6px; }
+.tc-finding-wrong { text-decoration: line-through; text-decoration-color: var(--mud-palette-error); }
+.tc-finding-why { display: block; font-size: .82rem; color: var(--mud-palette-text-secondary); }
 .tc-crit { margin: 10px 0; }
 .tc-crit-q { font-size: .82rem; opacity: .8; }
 .tc-crit .tr-conf { margin-top: 4px; }
@@ -541,3 +545,12 @@ a.acct-btn:hover { text-decoration: none; }
 .ra-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; color: var(--mud-palette-text-secondary); }
 .ra-legend .ra-word { cursor: default; }
 @media (max-width: 600px) { .ra-sentence { font-size: 1.15rem; } }
+
+/* Official materials and the entry form for a paper mock exam */
+.tc-material-links { margin: 0; padding-left: 1.2rem; font-size: .9rem; }
+/* Each link is its own line with room to tap (WCAG 2.5.8: 24 px targets). */
+.tc-material-links li { margin: 2px 0; }
+.tc-material-links a { display: inline-block; min-height: 24px; padding: 4px 0; color: var(--mud-palette-primary); text-decoration: underline; }
+.tc-mock-grid { display: grid; gap: 4px 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.tc-mock-row { display: grid; grid-template-columns: minmax(0, 1fr) 70px; align-items: center; gap: 8px; }
+.tc-mock-points { font-variant-numeric: tabular-nums; text-align: right; color: var(--mud-palette-text-secondary); font-size: .85rem; }

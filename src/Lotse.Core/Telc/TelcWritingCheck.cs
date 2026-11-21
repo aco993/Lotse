@@ -18,7 +18,8 @@ public sealed partial record TelcWritingCheck(
     int Connectors,
     IReadOnlyList<string> ConnectorsUsed,
     IReadOnlyList<bool> LeitpunkteMentioned,
-    bool InformalSlip)
+    bool InformalSlip,
+    bool AddressesRater = false)
 {
     /// <summary>Distinct linking words below which a 150-word email reads as a list.</summary>
     public const int MinConnectors = 4;
@@ -29,10 +30,17 @@ public sealed partial record TelcWritingCheck(
     public int LeitpunkteHit => LeitpunkteMentioned.Count(m => m);
 
     /// <summary>Best band criterion II can get: no A without the email features, no B for a linear list.</summary>
-    public TelcBand MaxGestaltung => Linear ? TelcBand.C : !FormComplete || InformalSlip ? TelcBand.B : TelcBand.A;
+    public TelcBand MaxGestaltung => Linear ? TelcBand.C : !FormComplete || InformalSlip || AddressesRater ? TelcBand.B : TelcBand.A;
 
     /// <summary>Criterion I is the rater's call; a text far below the length cannot treat three points properly.</summary>
-    public TelcBand MaxAufgabe => Words < TelcBlueprint.WritingMinWords / 2 ? TelcBand.C : TelcBand.A;
+    public TelcBand MaxAufgabe => Words < TelcBlueprint.WritingMinWords / 2 ? TelcBand.C : AddressesRater ? TelcBand.B : TelcBand.A;
+
+    /// <summary>
+    /// Criterion III is the rater's call too, except in a text that talks to its rater. A sentence addressed to the
+    /// rating is not part of the email, and an AI rater can be talked into an A by it: in November 2026 a local 7B
+    /// model gave AAA to a B/C letter that ended in a fake "SYSTEM:" line. No A anywhere then, whoever rates.
+    /// </summary>
+    public TelcBand MaxRichtigkeit => AddressesRater ? TelcBand.B : TelcBand.A;
 
     /// <summary>One line per finding, in the order a rater would mention them; empty when nothing stands out.</summary>
     public IReadOnlyList<string> Hints(IReadOnlyList<TelcLeitpunkt>? leitpunkte = null)
@@ -42,6 +50,7 @@ public sealed partial record TelcWritingCheck(
         if (!HasBetreff) hints.Add("Keine Betreffzeile („Betreff: …“) - ohne sie gibt es in Kriterium II kein A.");
         if (!HasAnrede) hints.Add("Keine Anrede („Sehr geehrte Damen und Herren,“) - ohne sie gibt es in Kriterium II kein A.");
         if (!HasSchluss) hints.Add("Keine Schlussformel („Mit freundlichen Grüßen“) - ohne sie gibt es in Kriterium II kein A.");
+        if (AddressesRater) hints.Add("Der Text enthält eine Anweisung an die Bewertung. Sie gehört nicht zur E-Mail, zählt nicht und sperrt in allen Kriterien das A.");
         if (InformalSlip) hints.Add("Register schwankt: „du/dich/dir“ oder „Hallo“ in einer formellen E-Mail kostet in Kriterium II das A.");
         if (Linear) hints.Add($"Nur {Connectors} verschiedene Verknüpfungswörter - eine Liste von Leitpunkten bekommt in Kriterium II höchstens C. Ziel: mindestens {MinConnectors} (deshalb, außerdem, allerdings, da, damit …).");
         if (leitpunkte is not null)
@@ -79,6 +88,25 @@ public sealed partial record TelcWritingCheck(
     [GeneratedRegex(@"\b(du|dich|dir|dein|deine|deinen|deinem|deiner|euch|euer|eure)\b|^\s*hallo\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant)]
     private static partial Regex InformalMarker();
 
+    // Words aimed at whoever rates the text, not at the email's reader. Each alternative needs a rating or system
+    // word next to an instruction, so a complaint about "Ihre Bewertung auf der Website" or "das System" in a
+    // letter stays out; the content bank holds no match (TelcWritingCheckTests checks that).
+    [GeneratedRegex(@"
+        (?:^|[\[\#(*\s])(?:system|systemnachricht|system-prompt|systemprompt|assistant|assistent)\s*:
+      | \b(?:hinweis|anweisung|nachricht|notiz|info)\s+(?:an|für)\s+(?:die|den|das)\s+(?:bewertung\b|bewerter\w*|prüfer\w*|ki\b|korrektor\w*|modell\b)
+      | \bneue\s+anweisung\b
+      | \b(?:ignorier\w*|vergiss|vergessen\s+sie|missachte\w*)\b[^.\n]{0,40}\b(?:kriterien|anweisung\w*|regeln|vorgaben|bewertung\w*|instruktion\w*)
+      | \b(?:ignore|disregard)\s+(?:all|any|the|previous|prior|your)\b
+      | \b(?:stufe|band|note|bewertung)\s*[„""'“]?\s*a\s*[“""'”]?[^.\n]{0,30}\b(?:allen|alle|jedem|jedes)\s+kriteri\w*
+      | \b(?:allen|alle|jedem|jedes)\s+kriteri\w*[^.\n]{0,40}\b(?:stufe|band|note)\s*[„""'“]?\s*a\b
+      | \b(?:melde|melden\s+sie|gib|geben\s+sie)\b[^.\n]{0,25}\bkeine\s+fehler\b
+      | \bleere\s+fehlerliste\b
+    ", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace)]
+    private static partial Regex RaterAddress();
+
+    /// <summary>True when the text contains an instruction to its rater (see <see cref="MaxRichtigkeit"/>).</summary>
+    public static bool TalksToRater(string? text) => !string.IsNullOrEmpty(text) && RaterAddress().IsMatch(text);
+
     [GeneratedRegex(@"[\p{L}\p{N}][\p{L}\p{N}'’\-]*", RegexOptions.CultureInvariant)]
     private static partial Regex WordPattern();
 
@@ -104,6 +132,7 @@ public sealed partial record TelcWritingCheck(
             used.Count,
             used,
             mentioned,
-            informal);
+            informal,
+            TalksToRater(text));
     }
 }

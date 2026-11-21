@@ -3,6 +3,7 @@
 //   dotnet run --project tools/Lotse.Evals                         rule-based baseline and "always B" (no key needed)
 //   dotnet run --project tools/Lotse.Evals -- --preset groq        + the AI tutor; key from the preset's variable (GROQ_API_KEY)
 //   ... --model openai/gpt-oss-20b --hints 40 --write
+//   ... --preset ollama --model qwen2.5-lotse --timeout 1200   a local model on a CPU needs minutes per letter
 //
 // --write stores each run in evals/results/ and regenerates the results section of docs/EVALS.md from the newest
 // run of every rater. Without it nothing on disk changes.
@@ -43,6 +44,7 @@ if (options.Preset is { } presetId)
 {
     var settings = TutorSettings.ForPreset(presetId);
     if (options.Model is { } model) settings = settings with { Model = model };
+    if (options.TimeoutSeconds is { } timeout) settings = settings with { TimeoutSeconds = timeout };
     var tutorOptions = settings.ToOptions(Environment.GetEnvironmentVariable);
     if (settings.Preset.NeedsKey && string.IsNullOrWhiteSpace(tutorOptions.ApiKey))
     {
@@ -99,12 +101,13 @@ static string FindRepoRoot()
 /// <summary>One stored run; the hint figures ride along with the AI run they belong to.</summary>
 internal sealed record StoredRun(RaterRun Run, EvalHarness.HintRun? Hints);
 
-internal sealed record Args(string? Preset, string? Model, int Hints, bool Write)
+internal sealed record Args(string? Preset, string? Model, int Hints, bool Write, int? TimeoutSeconds)
 {
     public static Args Parse(string[] args)
     {
         string? Value(string name) => Array.IndexOf(args, name) is var i && i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
-        return new Args(Value("--preset"), Value("--model"), int.TryParse(Value("--hints"), out var h) ? h : 40, args.Contains("--write"));
+        return new Args(Value("--preset"), Value("--model"), int.TryParse(Value("--hints"), out var h) ? h : 40, args.Contains("--write"),
+            int.TryParse(Value("--timeout"), out var t) && t > 0 ? t : null);
     }
 }
 

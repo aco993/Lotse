@@ -34,6 +34,7 @@ public sealed record TelcWritingRating(TelcBand Aufgabe, TelcBand Gestaltung, Te
     {
         Aufgabe = Max(Aufgabe, check.MaxAufgabe),
         Gestaltung = Max(Gestaltung, check.MaxGestaltung),
+        Richtigkeit = Max(Richtigkeit, check.MaxRichtigkeit),
     };
 
     /// <summary>The worse of the two bands (D is worse than A).</summary>

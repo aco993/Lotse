@@ -20,7 +20,7 @@ public sealed record FreeTextReport(
 /// <summary>Nouns the analyzer knows: gender and countability, harvested from the vocabulary bank.</summary>
 public sealed class Lexicon
 {
-    private readonly Dictionary<string, (string Article, bool Countable)> _nouns = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, (string Article, bool Countable, string? Plural)> _nouns = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _umlautForms = new(StringComparer.OrdinalIgnoreCase);
 
     public static Lexicon FromCatalog(ContentCatalog catalog)
@@ -29,10 +29,16 @@ public sealed class Lexicon
         foreach (var e in catalog.Exercises.Where(e => e.Type == ExerciseType.Vocab && e.Article is not null && !string.IsNullOrWhiteSpace(e.Lemma)))
         {
             if (e.Lemma!.Contains(' ')) continue;
-            lex._nouns[e.Lemma] = (e.Article!, !string.Equals(e.Plural, "nur Sg.", StringComparison.OrdinalIgnoreCase));
+            var plural = e.Plural is { } p && !p.StartsWith("nur", StringComparison.OrdinalIgnoreCase) ? p.Split(' ').Last() : null;
+            lex._nouns[e.Lemma] = (e.Article!, !string.Equals(e.Plural, "nur Sg.", StringComparison.OrdinalIgnoreCase), plural);
             lex.AddUmlautForm(e.Lemma);
-            if (e.Plural is { } plural && !plural.StartsWith("nur", StringComparison.OrdinalIgnoreCase))
-                lex.AddUmlautForm(plural.Split(' ').Last());
+            if (plural is not null) lex.AddUmlautForm(plural);
+        }
+        foreach (var (article, lemma, plural) in CoreNouns.All)
+        {
+            if (!lex._nouns.TryAdd(lemma, (article, plural is not null, plural))) continue;
+            lex.AddUmlautForm(lemma);
+            if (plural is not null) lex.AddUmlautForm(plural);
         }
         foreach (var w in CommonUmlautWords) lex.AddUmlautForm(w);
         return lex;
@@ -45,6 +51,41 @@ public sealed class Lexicon
         if (_nouns.TryGetValue(word, out var n)) { article = n.Article; countable = n.Countable; return true; }
         article = ""; countable = false; return false;
     }
+
+    /// <summary>
+    /// The gender of a singular noun for the agreement rules: the entry itself, else the head of a compound
+    /// ("Kundenservice" → nothing, "Arbeitsplatz" → der Platz), else one of the suffixes that never lie (-ung, -heit,
+    /// -keit, -schaft, -tion, -sion, -tät are feminine). <paramref name="pluralLooksSame"/> is true for nouns like
+    /// "Zimmer", whose plural is spelled like the singular - "die Zimmer" is then a correct plural, not a gender slip.
+    /// </summary>
+    public bool TryGetGender(string noun, out string article, out bool pluralLooksSame)
+    {
+        if (_nouns.TryGetValue(noun, out var n)) { article = n.Article; pluralLooksSame = n.Plural == noun; return true; }
+        // Heads of at least four letters after a first part of at least four: "Antwort" is not "Ant" + das Wort.
+        for (var k = 4; k <= noun.Length - 4; k++)
+        {
+            var head = char.ToUpperInvariant(noun[k]) + noun[(k + 1)..];
+            if (UnreliableHeads.Contains(head) || !_nouns.TryGetValue(head, out var h)) continue;
+            article = h.Article; pluralLooksSame = h.Plural == head; return true;
+        }
+        if (noun.Length >= 6 && FeminineSuffixes.Any(s => noun.EndsWith(s, StringComparison.Ordinal)) && !MasculineUng.Any(s => noun.EndsWith(s, StringComparison.Ordinal)))
+        {
+            article = "die"; pluralLooksSame = false; return true;
+        }
+        article = ""; pluralLooksSame = false; return false;
+    }
+
+    /// <summary>True for the plural form of a noun the lexicon knows ("Monate", "Versuche").</summary>
+    public bool IsPlural(string word) => _plurals.Value.Contains(word);
+
+    private readonly Lazy<HashSet<string>> _plurals;
+
+    private Lexicon() => _plurals = new(() => _nouns.Values.Where(n => n.Plural is not null).Select(n => n.Plural!).ToHashSet(StringComparer.Ordinal));
+
+    private static readonly string[] FeminineSuffixes = ["ung", "heit", "keit", "schaft", "tion", "sion", "tät"];
+    private static readonly string[] MasculineUng = ["sprung", "schwung"];
+    // Heads that give the wrong gender inside a compound: die Erdkunde, die Reisende/der Reisende, der/das Teil.
+    private static readonly HashSet<string> UnreliableHeads = new(StringComparer.Ordinal) { "Kunde", "Ende", "Teil" };
 
     /// <summary>The correctly spelled form for a word written with ae/oe/ue/ss (e.g. "fuer" → "für"), if known.</summary>
     public string? UmlautCorrection(string word) => _umlautForms.GetValueOrDefault(word);
@@ -77,7 +118,9 @@ public sealed class Lexicon
 public static class FreeTextAnalyzer
 {
     private const string Pronouns = "ich|du|er|sie|es|wir|ihr|man";
-    private const string Finite = "bin|bist|ist|sind|seid|habe|hast|hat|haben|habt|hatte|hatten|war|waren|kann|kannst|können|könnt|muss|musst|müssen|müsst|will|willst|wollen|wollt|soll|sollst|sollen|darf|darfst|dürfen|werde|wirst|wird|werden|möchte|möchtest|möchten|würde|würdest|würden|könnte|könnten|müsste|müssten|sollte|sollten|gehe|gehst|geht|gehen|komme|kommst|kommt|kommen|mache|machst|macht|machen|arbeite|arbeitest|arbeitet|arbeiten|finde|findest|findet|finden|denke|denkst|denkt|denken|glaube|glaubst|glaubt|glauben|brauche|brauchst|braucht|brauchen|wohne|wohnst|wohnt|wohnen|lerne|lernst|lernt|lernen|sehe|siehst|sieht|sehen|weiß|weißt|wissen";
+    private const string Finite = "bin|bist|ist|sind|seid|habe|hast|hat|haben|habt|hatte|hatten|war|waren|kann|kannst|können|könnt|muss|musst|müssen|müsst|will|willst|wollen|wollt|soll|sollst|sollen|darf|darfst|dürfen|werde|wirst|wird|werden|möchte|möchtest|möchten|würde|würdest|würden|könnte|könnten|müsste|müssten|sollte|sollten|gehe|gehst|geht|gehen|komme|kommst|kommt|kommen|mache|machst|macht|machen|arbeite|arbeitest|arbeitet|arbeiten|finde|findest|findet|finden|denke|denkst|denkt|denken|glaube|glaubst|glaubt|glauben|brauche|brauchst|braucht|brauchen|wohne|wohnst|wohnt|wohnen|lerne|lernst|lernt|lernen|sehe|siehst|sieht|sehen|weiß|weißt|wissen|funktioniert|funktionieren|gibt|gefällt|passt|kostet|dauert|fehlt|hilft|liegt|steht|bleibt|kenne|kennt|spreche|spricht|verstehe|versteht|zahle|zahlt|bekomme|bekommt|kaufe|kauft|suche|sucht";
+    // One adverb may stand between subject and verb: "weil er nicht funktioniert gut".
+    private const string MidAdverbs = "nicht|auch|schon|noch|jetzt|leider|immer|oft|gern|sehr|wirklich|bald|dann|nur";
     private const string Subordinators = "dass|weil|obwohl|ob|damit|während|nachdem|bevor|sodass|falls|sobald|solange|wenn";
     private static readonly string[] Connectors =
     [
@@ -112,6 +155,9 @@ public static class FreeTextAnalyzer
     {
         "Angst", "Hunger", "Durst", "Zeit", "Lust", "Recht", "Glück", "Pech", "Urlaub", "Feierabend", "Geburtstag", "Fieber",
         "Besuch", "Spaß", "Ahnung", "Mut", "Geduld", "Erfolg", "Kontakt", "Platz", "Bedarf", "Vorrang", "Schuld", "Sinn",
+        // Mass use without an article is correct for these too: "Ich habe Erfahrung", "braucht Hilfe", "hatte Verspätung".
+        "Erfahrung", "Hilfe", "Arbeit", "Familie", "Schule", "Training", "Unterricht", "Verspätung", "Rückmeldung", "Unterstützung",
+        "Feedback", "Bescheid", "Auskunft", "Ärger", "Stress", "Interesse", "Zugang", "Anspruch", "Kurs", "Dienst", "Schicht", "Frühstück",
     };
     private static readonly Dictionary<string, string> SzSpellings = new(StringComparer.Ordinal)
     {
@@ -172,7 +218,7 @@ public static class FreeTextAnalyzer
 
     private static readonly Regex WordRe = new(@"\p{L}[\p{L}\-]*", RegexOptions.Compiled);
     private static readonly Regex MissingCommaRe = new($@"(?<=[\p{{L}}\d])\s+(?<sub>{Subordinators})\s+(?={Pronouns}|der|die|das|es|man|ein|eine|sie|wir)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex SubordinateOrderRe = new($@"\b(?<sub>{Subordinators})\s+(?<subj>{Pronouns})\s+(?<verb>{Finite})\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex SubordinateOrderRe = new($@"\b(?<sub>{Subordinators})\s+(?<subj>{Pronouns})\s+(?:(?<adv>{MidAdverbs})\s+)?(?<verb>{Finite})\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex FrontedAdverbRe = new($@"(?:^|[.!?]\s+)(?<adv>Gestern|Heute|Morgen|Dann|Danach|Deshalb|Deswegen|Trotzdem|Leider|Zuerst|Jetzt|Später|Manchmal|Oft|Vielleicht|Natürlich|Außerdem|Zum Glück|Am Wochenende|Am Montag|Am Dienstag|Am Freitag|Im Sommer|Im Winter|Seit einem Jahr|Nächste Woche|Letzte Woche|Am Anfang|Zum Schluss)\s*,?\s+(?<subj>{Pronouns})\s+(?<verb>{Finite})\b", RegexOptions.Compiled);
     private static readonly Regex DativePrepRe = new(@"\b(?<prep>mit|nach|aus|bei|von|zu|seit|gegenüber)\s+(?<art>die|das|ein|eine|einen|meine|deine|seine|ihre|unsere)\s+(?<noun>\p{Lu}\p{L}+)", RegexOptions.Compiled);
     private static readonly Regex AccusativePrepRe = new(@"\b(?<prep>für|ohne|gegen|um|durch)\s+(?<art>dem|einem|einer|meinem|deinem|seinem|ihrem|unserem)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -180,10 +226,45 @@ public static class FreeTextAnalyzer
     private static readonly Regex MissingArticleRe = new(@"\b(?<verb>habe|hast|hat|haben|brauche|brauchst|braucht|brauchen|suche|suchst|sucht|suchen|schreibe|schreibt|bekomme|bekommt|möchte|möchten|kaufe|kauft|hatte|hatten)\s+(?<noun>\p{Lu}\p{L}+)(?=[\s.,!?;:]|$)", RegexOptions.Compiled);
     private static readonly Regex LowercaseNounRe = new(@"\b(?<det>der|die|das|den|dem|des|ein|eine|einen|einem|einer|mein|meine|meinen|meinem|dein|deine|sein|seine|ihr|ihre|unser|unsere|kein|keine|keinen|dieser|diese|dieses|jeder|jede|jedes)\s+(?<word>\p{Ll}\p{L}+)(?=[\s.,!?;:]|$)", RegexOptions.Compiled);
     private static readonly Regex GreetingRe = new(@"\bMit\s+freundliche(?:n)?\s+Gr(?:ü|ue)(?:ß|ss)e(?:n)?\b", RegexOptions.Compiled);
-    private static readonly Regex InformalRe = new(@"\b(du|dich|dir|dein|deine|deinen|deinem|hallo|hi|tschüss|lg)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    // One finding per informal form, quoted with the word before it, so the learner sees where it stands.
+    private static readonly Regex InformalRe = new(@"(?:\S+[ \t]+)?\b(?:du|dich|dir|dein|deine|deinen|deinem|deiner|euch|euer|eure|euren|eurem|eurer)\b|\b[Ii]hr\s+(?:habt|seid|könnt|müsst|wisst|wollt|sollt|solltet|dürft|macht|wart|hattet|lasst)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex InformalOpeningRe = new(@"^(?:Hallo|Hi|Hey|Servus|Moin)\b[^\n]*", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+    private static readonly Regex InformalClosingRe = new(@"^(?:LG|VG|Tschüss|Tschüs|Ciao|Bis bald|Bis dann)\b[^\n]*(?:\n[^\n]+)?", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+    private const string Determiners = "der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines|kein|keine|keinen|keinem|keiner|keines|mein|meine|meinen|meinem|meiner|meines|dein|deine|deinen|deinem|deiner|deines|unser|unsere|unseren|unserem|unserer|unseres|seine|seinen|seinem|seiner|seines|ihre|ihren|ihrem|ihrer|ihres|diese|dieser|dieses|diesen|diesem|jede|jeder|jedes|jeden|jedem";
+    // An inflected adjective - never a determiner itself: "das keine Frage", "ist das eine Investition".
+    private const string Adjective = $@"(?!(?:{Determiners}|aber|oder|immer|wieder|sehr|wenige|viele|einige|andere|beide)\b)\p{{Ll}}+(?:e|en|er|es|em)";
+    // Determiner, at most one adjective (or two joined by und/oder), noun. The noun must be capitalised, so a
+    // speech transcript in lower case never reaches the agreement rules.
+    private static readonly Regex DeterminerNounRe = new($@"\b(?<det>(?i:{Determiners}))\s+(?:(?<adj>{Adjective})\s+(?:(?:und|oder)\s+{Adjective}\s+)?)?(?<noun>\p{{Lu}}\p{{L}}+)(?=[\s.,!?;:)]|$)", RegexOptions.Compiled);
+    // A subject pronoun and a verb that takes an accusative object, then an uninflected ein/kein/mein: with a
+    // masculine noun that object needs "-en". The pronoun is the subject, so "ein Laptop" cannot be one.
+    private const string AccusativeVerbs = "habe|hast|hat|haben|habt|hatte|hatten|brauche|brauchst|braucht|brauchen|suche|suchst|sucht|suchen|kaufe|kaufst|kauft|kaufen|bestelle|bestellst|bestellt|bestellen|bekomme|bekommst|bekommt|bekommen|möchte|möchtest|möchten|kenne|kennst|kennt|kennen|gibt";
+    private static readonly Regex AccusativeObjectRe = new($@"\b(?:(?<subj>(?i:ich|du|er|sie|es|wir|ihr|man))\s+(?<verb>{AccusativeVerbs})|(?<verb>(?i:{AccusativeVerbs}))\s+(?<subj>ich|du|er|sie|es|wir|ihr|man))\s+(?:(?:auch|schon|noch|gestern|leider|nur|jetzt|bereits|heute|online|bei\s+\p{{L}}+)\s+){{0,3}}(?<det>ein|kein|mein|dein|unser)\s+(?:(?<adj>\p{{Ll}}+e[rs]?)\s+)?(?<noun>\p{{Lu}}\p{{L}}+)(?=[\s.,!?;:)]|$)", RegexOptions.Compiled);
+    // Dative plural takes -n: "seit zwei Monate" → "seit zwei Monaten". Only the prepositions that never take the
+    // accusative ("auf zwei Tage begrenzt" is correct).
+    private static readonly Regex DativePluralRe = new(@"\b(?<prep>(?i:mit|nach|aus|bei|von|zu|seit|gegenüber))\s+(?<num>zwei|drei|vier|fünf|sechs|sieben|acht|neun|zehn|elf|zwölf|zwanzig|dreißig|vielen|einigen|mehreren|wenigen|\d+)\s+(?<noun>\p{Lu}\p{L}*e)(?=[\s.,!?;:)]|$)", RegexOptions.Compiled);
+    // Genitive prepositions followed by a nominative/accusative form, which is wrong in every register ("wegen dem"
+    // is colloquial; "wegen die" is not German). "während" and "statt" are left out: both also start clauses.
+    private static readonly Regex GenitivePrepRe = new(@"\b(?<prep>(?i:trotz|wegen|innerhalb|außerhalb|aufgrund|infolge))\s+(?<det>die|das|ein|eine|einen|mehrere|viele|einige|wenige|meine|deine|seine|ihre|unsere|Ihre|keine)\s+", RegexOptions.Compiled);
+    // The preposition governs both halves of "mit einem Bildschirm und eine Lüftung".
+    private static readonly Regex CoordinatedDativeRe = new($@"\b(?<prep>(?i:mit|von|bei|aus|zu|nach))\s+(?:dem|einem|der|einer|meinem|meiner|deinem|seinem|seiner|ihrem|ihrer|Ihrem|Ihrer|unserem|unserer)\s+(?:{Adjective}\s+)?\p{{Lu}}\p{{L}}+\s+(?:und|oder)\s+(?<det2>die|das|ein|eine|einen|meine|deine|seine|ihre|Ihre|unsere|keine)\s+(?:(?<adj2>{Adjective})\s+)?(?<noun2>\p{{Lu}}\p{{L}}+)(?=\s*[.,!?;:]|\s*$|\s+(?:und|oder)\b)", RegexOptions.Compiled);
+    // Modal + infinitive + object: the infinitive closes the clause ("Ich möchte die Nebenkosten wissen").
+    private static readonly Regex ModalBracketRe = new($@"\b(?<mod>(?i:möchte|möchten|möchtest|will|willst|wollen|kann|kannst|können|muss|musst|müssen|soll|sollen|darf|dürfen|würde|würden))\s+(?:(?:gern|gerne|auch|bitte|noch|jetzt|ich|du|er|sie|wir|man)\s+)?(?<inf>wissen|haben|sehen|machen|kaufen|bekommen|besuchen|nehmen|buchen|bestellen|bezahlen|zahlen|lernen|finden|sprechen|fragen|kennen|lesen|schreiben|mieten|kündigen|besichtigen|bringen|zurückgeben|reparieren|umtauschen|erhalten|treffen)\s+(?<obj>(?i:{Determiners}))\s+", RegexOptions.Compiled);
+    // Pronoun + auxiliary + participle + object or prepositional phrase: the participle closes the clause.
+    private static readonly HashSet<string> BracketParticiples = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "angerufen", "bestellt", "bezahlt", "geschickt", "erhalten", "versucht", "reserviert", "gebucht", "gewartet", "gekündigt",
+    };
+    private static readonly Regex PerfectBracketRe = new($@"\b(?<subj>(?i:ich|du|er|sie|es|wir|ihr|man))\s+(?<aux>bin|bist|ist|sind|seid|habe|hast|hat|haben|habt)\s+(?<part>ge\p{{L}}+|\p{{L}}+(?:t|en))\s+(?<next>(?i:{Determiners}|nach|mit|in|im|am|an|auf|bei|vor|seit|zum|zur|von|vom|aus))\s+", RegexOptions.Compiled);
+    // Indirect question after a verb of knowing or asking: the verb goes to the end ("wissen, was der Inhalt ist").
+    private static readonly Regex IndirectQuestionRe = new(@"\b(?<lead>wissen|fragen|frage mich|erfahren|mitteilen|sagen|erklären|weiß nicht|verstehe nicht)\s*,\s*(?<w>(?i:was|wer|wie viel|wie lange|wie oft|wie|wo|wann|warum|wieso|weshalb|wohin|woher|welche[rsmn]?))\s+(?<verb>ist|sind|kostet|kosten|gibt|hat|haben|kann|können|muss|müssen|soll|sollen|darf|dauert|beginnt|beginnen|fängt|findet|liegt|wird|werden)\s+(?=\p{L})", RegexOptions.Compiled);
+    // "über das, weil ..." → "darüber": a preposition with "das"/"es" closing the clause points back with da(r)-.
+    private static readonly Regex PronominalAdverbRe = new(@"\b(?<prep>(?i:über|auf|an|für|mit|von|um|nach|vor|zu|aus|bei|gegen))\s+(?<pro>das|es)(?=\s*[.!?;:]|\s*,(?!\s*(?:was|wie|wo\p{L}*|der|die|das)\b))", RegexOptions.Compiled);
 
     /// <param name="spoken">A speech transcript has no punctuation or capitalisation of its own - spelling, comma and greeting rules are skipped.</param>
-    public static FreeTextReport Analyze(string text, Exercise task, Lexicon lexicon, bool spoken = false)
+    /// <param name="formal">Overrides what the task's wording says: a telc letter is formal even when the exercise carries no such word.</param>
+    public static FreeTextReport Analyze(string text, Exercise task, Lexicon lexicon, bool spoken = false, bool? formal = null)
     {
         if (string.IsNullOrWhiteSpace(text)) return FreeTextReport.Empty;
         var findings = new List<TextFinding>();
@@ -197,7 +278,7 @@ public static class FreeTextAnalyzer
         var words = WordRe.Matches(text).Select(m => m.Value).ToList();
         var wordCount = AnswerChecker.CountWords(text);
         var lower = text.ToLowerInvariant();
-        var formal = IsFormalTask(task);
+        var isFormal = formal ?? IsFormalTask(task);
 
         // --- spelling: umlaut digraphs and ß -----------------------------------------------------------
         foreach (var w in spoken ? [] : words.Distinct(StringComparer.Ordinal))
@@ -240,9 +321,14 @@ public static class FreeTextAnalyzer
         foreach (Match m in SubordinateOrderRe.Matches(text))
         {
             var sub = m.Groups["sub"].Value; var subj = m.Groups["subj"].Value; var verb = m.Groups["verb"].Value;
-            var rest = text[(m.Index + m.Length)..].Split(['.', ',', '!', '?', ';'], 2)[0].Trim();
+            var rest = text[(m.Index + m.Length)..].Split(['.', ',', '!', '?', ';', '\n'], 2)[0].Trim();
             if (rest.Length == 0) continue; // "…, wenn ich kann." is fine
-            Add("WORTST_NEBENSATZ", $"{sub} {subj} {verb} {Shorten(rest)}", $"{sub} {subj} {Shorten(rest)} {verb}", $"Nach „{sub}“ steht das konjugierte Verb am Ende des Nebensatzes.");
+            // "weil wir arbeiten und lernen": the verb is last in its own clause, a second one follows.
+            if (Regex.IsMatch(rest, @"^(?:und|oder|aber|sondern|denn|bzw)\b", RegexOptions.IgnoreCase)) continue;
+            // "dass ich kommen kann", "wenn Sie nicht kommen können": the verb cluster closes the clause correctly.
+            if (IsVerbCluster(rest)) continue;
+            var adv = m.Groups["adv"].Success ? m.Groups["adv"].Value + " " : "";
+            Add("WORTST_NEBENSATZ", $"{sub} {subj} {adv}{verb} {Shorten(rest)}", $"{sub} {subj} {adv}{Shorten(rest)} {verb}", $"Nach „{sub}“ steht das konjugierte Verb am Ende des Nebensatzes.");
         }
         foreach (Match m in FrontedAdverbRe.Matches(text))
         {
@@ -257,6 +343,13 @@ public static class FreeTextAnalyzer
             var sub = m.Groups["sub"].Value;
             var before = text[..m.Index].Split([' ', '\n'], StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "";
             if (before.Equals("so", StringComparison.OrdinalIgnoreCase) || before.Equals("auch", StringComparison.OrdinalIgnoreCase) && sub.Equals("wenn", StringComparison.OrdinalIgnoreCase)) continue;
+            // The word before belongs to the conjunction ("ohne dass", "und ob", "erst wenn", "einfach weil"); the
+            // comma goes in front of both, so it is not missing here.
+            if (CommaJoinsBefore.Contains(before)) continue;
+            // A line break is a heading or a list, not a missing comma.
+            if (m.Value.Contains('\n')) continue;
+            // "während der Kontrolle", "seit dem Umzug": the preposition, followed by its article.
+            if (sub.Equals("während", StringComparison.OrdinalIgnoreCase) && Regex.IsMatch(text[(m.Index + m.Length)..], @"^(?:der|die|das|des|dem|den|ein|eine|einer|eines)\b", RegexOptions.IgnoreCase)) continue;
             Add("KOMMA", $"{before} {sub}", $"{before}, {sub}", $"Vor „{sub}“ beginnt ein Nebensatz – davor steht immer ein Komma.");
         }
 
@@ -264,7 +357,10 @@ public static class FreeTextAnalyzer
         foreach (Match m in DativePrepRe.Matches(text))
         {
             var prep = m.Groups["prep"].Value; var art = m.Groups["art"].Value; var noun = m.Groups["noun"].Value;
-            if (!lexicon.TryGetNoun(noun, out var gender, out _)) continue;
+            // "seit" also starts a clause ("seit die Sauna geschlossen ist"), and "nach" follows its noun in
+            // "meiner Meinung nach die Lösung" - neither is a preposition in front of this article.
+            if (prep == "seit" && art != "einen" || IsPostposition(text, m.Index, prep)) continue;
+            if (!lexicon.TryGetGender(noun, out var gender, out var pluralSame) || pluralSame && art is "die" or "meine" or "deine" or "seine" or "ihre" or "unsere") continue;
             var right = DativeArticle(art, gender);
             if (right is null || right == art) continue;
             Add("KASUS_PRAEP", $"{prep} {art} {noun}", $"{prep} {right} {noun}", $"„{prep}“ verlangt immer den Dativ: {gender} {noun} → {prep} {right} {noun}.");
@@ -298,6 +394,8 @@ public static class FreeTextAnalyzer
             Add("ORTH_GROSSSCHREIBUNG", $"{m.Groups["det"].Value} {word}", $"{m.Groups["det"].Value} {cap}", "Nomen werden im Deutschen großgeschrieben – nach einem Artikel steht fast immer eines.");
         }
 
+        if (!spoken) AgreementAndBracketRules(text, lexicon, Add);
+
         // --- verb + preposition --------------------------------------------------------------------------
         for (var i = 0; i < words.Count - 1; i++)
         {
@@ -316,11 +414,14 @@ public static class FreeTextAnalyzer
         // --- register and greeting (formal tasks) ---------------------------------------------------------
         if (!spoken && GreetingRe.Match(text) is { Success: true } g && g.Value != "Mit freundlichen Grüßen")
             Add("REG_ANREDE_GRUSS", g.Value, "Mit freundlichen Grüßen", "Feste Formel, Dativ Plural: „Mit freundlichen Grüßen“ – ohne Komma danach.");
-        if (formal)
+        if (isFormal)
         {
-            var informal = InformalRe.Matches(text).Select(m => m.Value).Distinct(StringComparer.OrdinalIgnoreCase).Take(3).ToList();
-            if (informal.Count > 0)
-                Add("REG_FORMELL", string.Join(", ", informal), "Sie / Ihnen / Ihr …", "Die Aufgabe ist formell: durchgehend „Sie“, keine Umgangssprache, formelle Anrede und Grußformel.");
+            foreach (var form in InformalRe.Matches(text).Select(m => m.Value.Trim()).DistinctBy(v => v.ToLowerInvariant()).Take(3))
+                Add("REG_FORMELL", form, "Sie / Ihnen / Ihr …", "Die Aufgabe ist formell: durchgehend „Sie“ – „du“, „ihr“ und „euch“ gehören in private Nachrichten.");
+            if (!spoken && InformalOpeningRe.Match(text) is { Success: true } open)
+                Add("REG_ANREDE_GRUSS", open.Value.Trim(), "Sehr geehrte Damen und Herren,", "Eine formelle Nachricht beginnt mit „Sehr geehrte Damen und Herren,“ oder „Sehr geehrte Frau …,“ – „Hallo“ ist privat.");
+            if (!spoken && InformalClosingRe.Match(text) is { Success: true } close)
+                Add("REG_ANREDE_GRUSS", close.Value.Trim(), "Mit freundlichen Grüßen", "Formeller Schluss: „Mit freundlichen Grüßen“ und der volle Name – Abkürzungen wie „LG“ sind privat.");
             if (!spoken && !lower.Contains("sehr geehrte") && !lower.Contains("liebe") && !lower.Contains("guten tag"))
                 hints.Add("Formelle Nachricht ohne Anrede – „Sehr geehrte Damen und Herren,“ oder „Sehr geehrte Frau …,“ gehört an den Anfang.");
         }
@@ -346,6 +447,246 @@ public static class FreeTextAnalyzer
             });
 
         return new FreeTextReport(findings, hints, wordCount, connectorCount);
+    }
+
+    /// <summary>
+    /// Gender agreement, case after und, genitive prepositions, the dative plural, pronominal adverbs and the verb
+    /// bracket. Written text only: the agreement rules need capitalised nouns, and a spoken "ich bin gekommen mit
+    /// dem Zug" is everyday German that only writing marks.
+    /// </summary>
+    private static void AgreementAndBracketRules(string text, Lexicon lexicon, Action<string, string, string, string> add)
+    {
+        foreach (Match m in DeterminerNounRe.Matches(text))
+        {
+            var det = m.Groups["det"].Value; var noun = m.Groups["noun"].Value;
+            var lower = det.ToLowerInvariant();
+            // After a comma der/die/das/den/dem are usually relative pronouns: "das Hotel, das Frau Meier empfahl".
+            if (lower is "der" or "die" or "das" or "den" or "dem" && PrecededByComma(text, m.Index)) continue;
+            // "Ist das Absicht?", "War das Zufall?": a pronoun with a bare predicate noun, not an article.
+            if (lower == "das" && Regex.IsMatch(text[..m.Index], @"\b(?:ist|war|wäre|sind|waren)\s*$", RegexOptions.IgnoreCase)) continue;
+            if (!lexicon.TryGetGender(noun, out var gender, out var pluralSame)) continue;
+            var form = DeterminerForm.Of(lower);
+            if (form.Agrees(gender) || pluralSame && form.FitsPlural(lower)) continue;
+            // A preposition in front decides the case: "in Ihre Hotel" → "in Ihrem Hotel" (wo?) or "in Ihr Hotel" (wohin?).
+            var prev = Regex.Match(text[..m.Index], @"(\p{L}+)\s*$").Groups[1].Value.ToLowerInvariant();
+            string? right = prev switch
+            {
+                "mit" or "nach" or "aus" or "bei" or "von" or "zu" or "seit" or "gegenüber" => form.For(gender, "dat"),
+                "für" or "ohne" or "gegen" or "um" or "durch" => form.For(gender, "akk"),
+                "in" or "an" or "auf" or "über" or "unter" or "vor" or "hinter" or "neben" or "zwischen" => null,
+                _ => form.For(gender, form.GuessCase()),
+            };
+            var adj = m.Groups["adj"].Success ? " …" : "";
+            add("ART_GENUS", $"{det} {(adj.Length > 0 ? m.Value[(det.Length + 1)..m.Value.LastIndexOf(noun, StringComparison.Ordinal)].Trim() + " " : "")}{noun}",
+                right is null
+                    ? $"{MatchCase(form.For(gender, "dat"), det)}{adj} {noun} (wo?) / {MatchCase(form.For(gender, "akk"), det)}{adj} {noun} (wohin?)"
+                    : $"{MatchCase(right, det)}{adj} {noun}",
+                $"„{noun}“ ist {GenderWord(gender)} ({gender} {noun}) – das Genus gehört zur Vokabel und stimmt oft nicht mit dem serbischen überein.");
+        }
+
+        foreach (Match m in AccusativeObjectRe.Matches(text))
+        {
+            var det = m.Groups["det"].Value; var noun = m.Groups["noun"].Value;
+            if (!lexicon.TryGetGender(noun, out var gender, out _) || gender != "der") continue;
+            var adj = m.Groups["adj"].Success ? m.Groups["adj"].Value : null;
+            add("KASUS_OBJEKT", $"{det} {(adj is null ? "" : adj + " ")}{noun}", $"{det}en {(adj is null ? "" : AccusativeAdjective(adj) + " ")}{noun}",
+                $"„{noun}“ ist maskulin und hier das Akkusativobjekt von „{m.Groups["verb"].Value}“: {det}en {noun}. Nur Maskulinum zeigt den Akkusativ am Artikel.");
+        }
+
+        foreach (Match m in DativePluralRe.Matches(text))
+        {
+            var prep = m.Groups["prep"].Value; var noun = m.Groups["noun"].Value;
+            if (IsPostposition(text, m.Index, prep)) continue;
+            // Only known plurals ("Monate", "Tage"), not units that never change ("16 Ampere"); and "bis zu neun
+            // Monate" is an amount, not a dative.
+            if (!lexicon.IsPlural(noun) || prep.Equals("zu", StringComparison.OrdinalIgnoreCase) && Regex.IsMatch(text[..m.Index], @"\bbis\s*$", RegexOptions.IgnoreCase)) continue;
+            add("KASUS_PRAEP", $"{prep} {m.Groups["num"].Value} {noun}", $"{prep} {m.Groups["num"].Value} {noun}n",
+                $"„{prep}“ verlangt den Dativ, und der Dativ Plural endet auf -n: {noun} → {noun}n.");
+        }
+
+        foreach (Match m in GenitivePrepRe.Matches(text))
+        {
+            var prep = m.Groups["prep"].Value; var det = m.Groups["det"].Value;
+            var right = det switch
+            {
+                "die" => "der",
+                "das" => "des",
+                "ein" => "eines",
+                "eine" => "einer",
+                "einen" => "eines",
+                "mehrere" => "mehrerer",
+                "viele" => "vieler",
+                "einige" => "einiger",
+                "wenige" => "weniger",
+                _ => det + "r", // meine → meiner, keine → keiner
+            };
+            add("GENITIV", $"{prep} {det}", $"{prep} {right}", $"„{prep}“ verlangt den Genitiv: {prep} {right} … (im Plural „der“/„-er“, Singular maskulin/neutral „des“/„-es“).");
+        }
+
+        foreach (Match m in CoordinatedDativeRe.Matches(text))
+        {
+            var prep = m.Groups["prep"].Value; var det = m.Groups["det2"].Value; var noun = m.Groups["noun2"].Value;
+            if (IsPostposition(text, m.Index, prep) || !lexicon.TryGetGender(noun, out var gender, out var pluralSame) || pluralSame) continue;
+            var right = DeterminerForm.Dative(det, gender);
+            if (right is null) continue;
+            var adj = m.Groups["adj2"].Success ? m.Groups["adj2"].Value + " " : "";
+            add("KASUS_PRAEP", $"und {det} {adj}{noun}", $"und {right} {(adj.Length > 0 ? DativeAdjective(adj.Trim()) + " " : "")}{noun}",
+                $"„{prep}“ gilt auch nach „und“: beide Teile stehen im Dativ.");
+        }
+
+        foreach (Match m in ModalBracketRe.Matches(text))
+        {
+            var mod = m.Groups["mod"].Value; var inf = m.Groups["inf"].Value; var obj = m.Groups["obj"].Value;
+            add("WORTST_SATZKLAMMER", $"{mod} {inf} {obj}", $"{mod} {obj} … {inf}", $"Das Modalverb steht auf Position 2, der Infinitiv „{inf}“ am Ende: die Satzklammer umschließt das Objekt.");
+        }
+
+        foreach (Match m in PerfectBracketRe.Matches(text))
+        {
+            var aux = m.Groups["aux"].Value; var part = m.Groups["part"].Value;
+            var isSein = aux is "bin" or "bist" or "ist" or "sind" or "seid";
+            var known = isSein ? SeinParticiples.Contains(part) : HabenParticiples.Contains(part) || BracketParticiples.Contains(part);
+            if (!known) continue;
+            var subj = m.Groups["subj"].Value; var next = m.Groups["next"].Value;
+            add("WORTST_SATZKLAMMER", $"{subj} {aux} {part} {next}", $"{subj} {aux} {next} … {part}", $"Im Perfekt steht das Partizip „{part}“ am Satzende – „{aux}“ und „{part}“ bilden die Klammer um den Rest.");
+        }
+
+        foreach (Match m in IndirectQuestionRe.Matches(text))
+        {
+            var w = m.Groups["w"].Value; var verb = m.Groups["verb"].Value;
+            add("WORTST_NEBENSATZ", $"{m.Groups["lead"].Value}, {w} {verb}", $"{m.Groups["lead"].Value}, {w} … {verb}", $"Eine indirekte Frage ist ein Nebensatz: nach „{w}“ steht das Verb am Ende – „…, {w} … {verb}“.");
+        }
+
+        foreach (Match m in PronominalAdverbRe.Matches(text))
+        {
+            var prep = m.Groups["prep"].Value;
+            var lowerPrep = prep.ToLowerInvariant();
+            var da = "da" + ("aeiouäöü".Contains(lowerPrep[0]) ? "r" : "") + lowerPrep;
+            add("PRAEPADVERB", $"{prep} {m.Groups["pro"].Value}", da, $"Auf eine Sache zurückverweisen: „{da}“ statt „{prep} {m.Groups["pro"].Value}“.");
+        }
+    }
+
+    private static readonly HashSet<string> CommaJoinsBefore = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "und", "oder", "sondern", "aber", "also", "ohne", "als", "einfach", "nur", "gerade", "erst", "besonders", "allem",
+        "Beispiel", "selbst", "sogar", "außer", "anstatt", "statt", "je", "bzw", "nämlich", "insbesondere", "kurz", "lange",
+    };
+
+    private static readonly HashSet<string> FiniteSet = new(Finite.Split('|').Concat(["lassen", "worden", "sein", "wird", "werden", "wurde", "wurden"]), StringComparer.OrdinalIgnoreCase);
+
+    private static bool IsVerbCluster(string rest)
+    {
+        var words = rest.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length is 0 or > 3 || words.Any(w => char.IsUpper(w[0]))) return false;
+        if (words.All(FiniteSet.Contains)) return true;
+        return words.Length == 1 && (words[0].StartsWith("ge", StringComparison.Ordinal) || words[0].EndsWith("en", StringComparison.Ordinal));
+    }
+
+    private static bool PrecededByComma(string text, int index)
+    {
+        for (var i = index - 1; i >= 0; i--)
+            if (!char.IsWhiteSpace(text[i])) return text[i] == ',';
+        return false;
+    }
+
+    /// <summary>"nach" (and "gegenüber") after a noun is a postposition: "meiner Meinung nach die Lösung".</summary>
+    private static bool IsPostposition(string text, int index, string prep)
+    {
+        if (!prep.Equals("nach", StringComparison.OrdinalIgnoreCase) && !prep.Equals("gegenüber", StringComparison.OrdinalIgnoreCase)) return false;
+        var before = text[..index].TrimEnd();
+        var lastSpace = before.LastIndexOfAny([' ', '\n', '\t']);
+        var word = before[(lastSpace + 1)..];
+        if (word.Length == 0 || !char.IsUpper(word[0])) return false;
+        var start = before[..(lastSpace + 1)].TrimEnd();
+        return start.Length > 0 && start[^1] is not ('.' or '!' or '?' or ':' or '\n');
+    }
+
+    private static string GenderWord(string article) => article switch { "der" => "maskulin", "die" => "feminin", _ => "neutral" };
+    private static string MatchCase(string word, string model) => char.IsUpper(model[0]) ? char.ToUpperInvariant(word[0]) + word[1..] : word;
+    private static string AccusativeAdjective(string adj) => adj.EndsWith("er", StringComparison.Ordinal) || adj.EndsWith("es", StringComparison.Ordinal) ? adj[..^2] + "en" : adj.EndsWith('e') ? adj + "n" : adj;
+    private static string DativeAdjective(string adj) => adj.EndsWith("en", StringComparison.Ordinal) ? adj : adj.EndsWith('e') ? adj + "n" : adj.EndsWith("er", StringComparison.Ordinal) || adj.EndsWith("es", StringComparison.Ordinal) ? adj[..^2] + "en" : adj;
+
+    /// <summary>The ending class of a determiner, which genders it can stand with in the singular, and the form a gender needs instead.</summary>
+    private readonly record struct DeterminerForm(string Stem, string Ending)
+    {
+        public static DeterminerForm Of(string det) => det switch
+        {
+            "der" or "die" or "das" or "den" or "dem" or "des" => new("d", det[1..]),
+            "ein" or "kein" or "mein" or "dein" or "unser" => new(det, ""),
+            "dieser" or "jeder" => new(det[..^2], "er-dies"),
+            _ when det.StartsWith("unser", StringComparison.Ordinal) => new("unser", det[5..]),
+            _ => new(det[..(det.Length - EndingLength(det))], det[(det.Length - EndingLength(det))..]),
+        };
+
+        private static int EndingLength(string det) => det.EndsWith('e') ? 1 : 2;
+
+        public bool Agrees(string gender) => (Stem, Ending, gender) switch
+        {
+            ("d", "er", "der" or "die") => true,
+            ("d", "ie", "die") => true,
+            ("d", "as", "das") => true,
+            ("d", "en", "der") => true,
+            ("d", "em" or "es", "der" or "das") => true,
+            (_, "", "der" or "das") => true,
+            (_, "er-dies", "der" or "die") => true,
+            (not "d", "e", "die") => true,
+            (not "d", "en", "der") => true,
+            (not "d", "em" or "es", "der" or "das") => true,
+            (not "d", "er", "die") => true,
+            _ => false,
+        };
+
+        /// <summary>Forms that also stand with a plural noun, for nouns spelled the same in the plural ("die Zimmer").</summary>
+        public bool FitsPlural(string det) => !det.StartsWith("ein", StringComparison.Ordinal) && !det.StartsWith("jed", StringComparison.Ordinal)
+            && (Ending is "er" or "ie" or "en" or "e" or "er-dies");
+
+        /// <summary>The case the learner probably meant, read off the ending they wrote.</summary>
+        public string GuessCase() => (Stem, Ending) switch
+        {
+            (_, "em") => "dat",
+            ("d", "er") => "nom",
+            (_, "er") => "dat",
+            (_, "es") => "gen",
+            (_, "en") => "akk",
+            _ => "nom",
+        };
+
+        /// <summary>This determiner in <paramref name="case"/> for the noun's real gender.</summary>
+        public string For(string gender, string @case)
+        {
+            if (Stem == "d")
+                return (@case, gender) switch
+                {
+                    ("dat", "die") => "der",
+                    ("dat", _) => "dem",
+                    ("gen", "die") => "der",
+                    ("gen", _) => "des",
+                    ("akk", "der") => "den",
+                    (_, "der") => "der",
+                    (_, "die") => "die",
+                    _ => "das",
+                };
+            var dies = Ending == "er-dies" || Stem is "dies" or "jed";
+            return (@case, gender) switch
+            {
+                ("dat", "die") => Stem + "er",
+                ("dat", _) => Stem + "em",
+                ("gen", "die") => Stem + "er",
+                ("gen", _) => Stem + "es",
+                ("akk", "der") => Stem + "en",
+                (_, "der") => dies ? Stem + "er" : Stem,
+                (_, "die") => Stem + "e",
+                _ => dies ? Stem + "es" : Stem,
+            };
+        }
+
+        /// <summary>The dative of a nominative/accusative determiner, or null when it already is one.</summary>
+        public static string? Dative(string det, string gender)
+        {
+            var f = Of(det.ToLowerInvariant());
+            if (f.Ending is "em" or "er") return null;
+            if (f.Stem == "d") return gender == "die" ? "der" : "dem";
+            return f.Stem + (gender == "die" ? "er" : "em");
+        }
     }
 
     private static bool IsFormalTask(Exercise task)

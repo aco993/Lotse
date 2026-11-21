@@ -17,11 +17,11 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 ## At a glance
 
 - **A closed loop, not a course.** Rasch/Elo ability per skill node, FSRS-6 spaced repetition fitted to the learner, a planner that explains every choice, and a 7/21/60-day re-check for recovered weaknesses. Deterministic and unit-tested.
-- **Both B2 exams, in their own formats.** Every part of telc Deutsch B2 (Lesen 1–3, Sprachbausteine 1–2, Hören 1–3, the email, the three oral parts), counted in telc points, with full simulations and a plan counted back from the exam date. The Goethe-Zertifikat B2 blueprint sits next to it. All tasks are original texts in the exam format, never copied exam material.
-- **Works without any key.** 2,250 exercises, a 24-lesson story course, rule-based feedback on free writing built for what a Serbian speaker gets wrong in German, local neural speech, and a read-aloud pronunciation check.
+- **Both B2 exams, in their own formats.** Every part of telc Deutsch B2 (Lesen 1–3, Sprachbausteine 1–2, Hören 1–3, the email, the three oral parts), counted in telc points, with full simulations and a plan counted back from the exam date. The Goethe-Zertifikat B2 blueprint sits next to it. All tasks are original texts in the exam format, never copied exam material; the official free mock exams are linked, and their paper results feed the same forecast.
+- **Works without any key.** 2,250 exercises, a 24-lesson story course, rule-based feedback on free writing built for what a Serbian speaker gets wrong in German (gender, case, verb bracket, register), held to zero false alarms on 25,000 words of correct German in CI, local neural speech, and a read-aloud pronunciation check.
 - **AI with guardrails, and measured.** An optional tutor (Groq, Claude, Ollama, any OpenAI-compatible server) gives hints as a ladder and never the answer, rates writing on telc criteria, and writes new telc tasks that pass format rules, a copy check, a critic model and a human review. The rater is evaluated against a golden set ([docs/EVALS.md](docs/EVALS.md)).
 - **Your chat, connected.** An MCP server lets Claude Desktop or Claude Code read the learner's state and write checked exercises back ([docs/MCP.md](docs/MCP.md)).
-- **Built like a product.** Accounts with passkeys, per-account isolation tested by enumerating the EF model, a data export, WCAG 2.2 AA checked by axe-core on phone and desktop in light and dark, a Docker image with a demo mode, a one-click Windows install, and CI with a format gate, 400+ tests and Playwright E2E.
+- **Built like a product.** Accounts with passkeys, per-account isolation tested by enumerating the EF model, a data export, WCAG 2.2 AA checked by axe-core on phone and desktop in light and dark, a Docker image with a demo mode, a one-click Windows install that can put the app on your phone over Tailscale, and CI with a format gate, 486 tests and Playwright E2E.
 
 The full list, with the reasoning behind each piece: [docs/FEATURES.md](docs/FEATURES.md).
 
@@ -90,6 +90,12 @@ Open http://localhost:5178 (or the port printed in the console), register an acc
 
 No mail server is configured on a fresh clone, so "Passwort vergessen?" logs the reset link to the console instead of emailing it - watch the terminal Lotse is running in after requesting one.
 
+### A public demo, free
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aco993/Lotse)
+
+The button builds the Docker image on Render's free tier (no card) with demo mode on: visitors click "Demo ansehen" and land in an account with two weeks of history. It sleeps after 15 minutes without traffic. Details in [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ### On Windows, without a terminal
 
 ```powershell
@@ -145,7 +151,7 @@ dotnet test tests/Lotse.Core.Tests tests/Lotse.Web.Tests
 
 No browser needed for these. (A bare `dotnet test` at the root also runs the Playwright suite below, which is red until Chromium has been downloaded once - do that step first if you want everything in one go.)
 
-422 tests (308 engine/content/service/evals/MCP bridge/export, 114 component/host): lesson and dialogue integrity, grammar coverage and production pressure against the B2 reference inventory, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, migrations vs. model drift, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, multi-user isolation (two accounts, neither can see the other's skill state, sessions or Tutor API key; a reset empties every per-account table in the EF model for one account and none for the other), every shipped telc task rendered in its page, the data export (every per-account table, nothing of another account, no API key), the exam rules (play counts per Hören part, time limits per Lesen part, speaker split of conversations), the hint ladder (no rung of any exercise contains its answer), the telc task pipeline with a scripted tutor (format, copy check, critic, review, restart), the eval harness (golden set valid, kappa against a hand-computed example, the rule baseline beating "always B"), the open-redirect guard and the German Identity messages, bUnit component tests for the exercise flow, and the real host in-process (`WebApplicationFactory`: public static assets, static login page, signed-out redirects, password policy). `dotnet format --verify-no-changes` is clean (EF migrations exempted as generated code).
+486 tests (367 engine/content/service/evals/MCP bridge/export, 119 component/host): lesson and dialogue integrity, grammar coverage and production pressure against the B2 reference inventory, engine (ability updates, answer checking, scheduler, re-check lifecycle, planner behaviour), content integrity (every exercise valid, every core node covered below and above the B1/B2 boundary, every seed answer accepted by the checker), application service against a temporary SQLite database, migrations vs. model drift, the OpenAI-compatible provider against a scripted HTTP handler (schema fallback, retries, error mapping), tutor settings persistence and encryption, multi-user isolation (two accounts, neither can see the other's skill state, sessions or Tutor API key; a reset empties every per-account table in the EF model for one account and none for the other), every shipped telc task rendered in its page, a paper mock-exam result stored as a simulation and kept out of the learner model, the official-material links (HTTPS, publishers' hosts only), answers after a hint never passing a re-check, the data export (every per-account table, nothing of another account, no API key), the exam rules (play counts per Hören part, time limits per Lesen part, speaker split of conversations), the hint ladder (no rung of any exercise contains its answer), the telc task pipeline with a scripted tutor (format, copy check, critic, review, restart), the eval harness (golden set valid, kappa against a hand-computed example, the rule baseline beating "always B"), the open-redirect guard and the German Identity messages, bUnit component tests for the exercise flow, and the real host in-process (`WebApplicationFactory`: public static assets, static login page, signed-out redirects, password policy). `dotnet format --verify-no-changes` is clean (EF migrations exempted as generated code).
 
 ### End-to-end (Playwright)
 
@@ -153,6 +159,7 @@ No browser needed for these. (A bare `dotnet test` at the root also runs the Pla
 dotnet build
 powershell -ExecutionPolicy Bypass -File tests/Lotse.E2E/bin/Debug/net10.0/playwright.ps1 install chromium   # once (~150 MB)
 dotnet test --project tests/Lotse.E2E
+# or, without the download, on the Edge or Chrome already installed: set LOTSE_E2E_CHANNEL=msedge (or chrome) first
 ```
 
 The real app on Kestrel (`WebApplicationFactory.UseKestrel`, .NET 10) in a real headless Chromium: the learner's day from registration to a resumed session, and the full passkey ceremony via the browser's virtual authenticator. On failure a Playwright trace lands in `tests/Lotse.E2E/bin/.../playwright-traces/` (`playwright show-trace <zip>`). CI runs all of it on every push to `main` and on every pull request.
@@ -192,7 +199,7 @@ tools/                   B2 grammar reference inventory + the script that measur
 
 ## How this was built
 
-With an AI pair (Claude Code) — the commit trailers say so, and there is no reason to hide it. What kept that honest was the discipline around it: every change goes through the same gates a team would enforce — `dotnet format`, the 422 tests across engine, content, service, components, host and Playwright, and, for anything visible, the page exercised in a browser before the commit. Commit messages carry the measurement behind the decision (tokens per second, a contrast ratio, a key distribution), the alternative that was rejected, and what was checked. Ten scripted personas ([docs/NUTZERTEST_2026-09.md](docs/NUTZERTEST_2026-09.md)) reviewed the app as a nurse on a phone, a keyboard-only user and a DaF examiner would; their findings became the 0.8.0 backlog. A full review on 2026-09-08 — pedagogy, code, repository, AI reliability, fresh install — produced the 0.9.0 changes listed in [CHANGELOG.md](CHANGELOG.md).
+With an AI pair (Claude Code) — the commit trailers say so, and there is no reason to hide it. What kept that honest was the discipline around it: every change goes through the same gates a team would enforce — `dotnet format`, the 434 tests across engine, content, service, components, host and Playwright, and, for anything visible, the page exercised in a browser before the commit. Commit messages carry the measurement behind the decision (tokens per second, a contrast ratio, a key distribution), the alternative that was rejected, and what was checked. Ten scripted personas ([docs/NUTZERTEST_2026-09.md](docs/NUTZERTEST_2026-09.md)) reviewed the app as a nurse on a phone, a keyboard-only user and a DaF examiner would; their findings became the 0.8.0 backlog. A full review on 2026-09-08 — pedagogy, code, repository, AI reliability, fresh install — produced the 0.9.0 changes listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## Status
 

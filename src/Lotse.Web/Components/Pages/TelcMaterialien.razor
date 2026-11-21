@@ -1,0 +1,165 @@
+@page "/telc/material"
+@inject ITelcService Telc
+@inject NavigationManager Nav
+@inject TimeProvider Clock
+
+<PageTitle>Offizielle Übungstests – Lotse</PageTitle>
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="telc" Class="mb-2">telc-Übersicht</MudButton>
+
+<MudText Typo="Typo.h5" HtmlTag="h1" Class="mb-1">Offizielle Übungstests und Material</MudText>
+<MudText Typo="Typo.body2" Class="mb-3" Style="opacity:.85">
+    Was die Prüfungsanbieter selbst kostenlos herausgeben. Lotse verlinkt nur dorthin – die Tests sind geschützt und bleiben auf den Seiten
+    der Anbieter. Mach einen offiziellen Test auf Papier unter Prüfungsbedingungen und trag die Punkte unten ein: Echtes Prüfungsmaterial ist
+    der beste Prüfstein für Lotses Prognose. Alle Adressen geprüft im @TelcMaterials.CheckedOn.
+</MudText>
+
+@foreach (var group in TelcMaterials.All.GroupBy(m => m.Kind))
+{
+    <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2 mt-2">@KindTitle(group.Key)</MudText>
+    <MudGrid Spacing="2" Class="mb-3">
+        @foreach (var m in group)
+        {
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="1" Class="pa-3 tc-material" Style="height:100%">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-1" Wrap="Wrap.Wrap">
+                        <MudText Typo="Typo.subtitle1" HtmlTag="h3" Style="font-weight:600;margin:0">@m.Title</MudText>
+                        <MudSpacer />
+                        <span class="tr-tag">@(m.Free ? "kostenlos" : "kostenpflichtig")</span>
+                    </MudStack>
+                    <div class="tc-muted mb-1">@m.Exam · @m.Publisher</div>
+                    <MudText Typo="Typo.body2" Class="mb-1">@m.Contents</MudText>
+                    <MudText Typo="Typo.body2" Class="mb-2"><b>Mit Lotse:</b> @m.Use</MudText>
+                    <ul class="tc-material-links">
+                        @foreach (var (label, url) in m.Links)
+                        {
+                            <li><a href="@url" target="_blank" rel="noopener noreferrer">@label<span class="sr-only"> (öffnet in neuem Tab)</span></a></li>
+                        }
+                    </ul>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+<MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2 mt-2" id="eintragen">Ergebnis eines Übungstests eintragen</MudText>
+<MudPaper Elevation="1" Class="pa-3 mb-3">
+    <MudText Typo="Typo.body2" Class="mb-2">
+        Trag bei Lesen, Sprachbausteinen und Hören die Zahl der richtigen Antworten nach dem Lösungsschlüssel ein – Lotse rechnet sie in telc-Punkte um.
+        Schreiben und Sprechen nur, wenn jemand nach den telc-Kriterien bewertet hat (Lehrkraft, Tandempartner, oder du selbst mit den
+        bewerteten Beispielen aus den „Tipps“). Leere Felder zählen als nicht gemacht, nicht als null.
+    </MudText>
+    <MudGrid Spacing="2">
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" @bind-Value="_material" Label="Welcher Test?" Variant="Variant.Outlined" Dense="true">
+                @foreach (var m in TelcMaterials.B2MockExams)
+                {
+                    <MudSelectItem Value="@m.Id">@m.Title</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudDatePicker @bind-Date="_date" Label="Gemacht am" Variant="Variant.Outlined" MaxDate="@Today" DateFormat="dd.MM.yyyy" Editable="true" />
+        </MudItem>
+    </MudGrid>
+
+    <div class="tc-mock-grid mt-3">
+        @foreach (var info in TelcBlueprint.Parts)
+        {
+            var part = info.Part;
+            <div class="tc-mock-row">
+                @if (TelcBlueprint.IsObjective(part))
+                {
+                    <MudNumericField T="int?" Value="@Correct(part)" ValueChanged="@(v => SetCorrect(part, v))" Min="0" Max="@info.Items" Label="@info.Title" InputId="@($"mock-{part}")"
+                                     Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="@($"richtig von {info.Items}")" Clearable="true" />
+                }
+                else
+                {
+                    <MudNumericField T="double?" Value="@Points(part)" ValueChanged="@(v => SetPoints(part, v))" Min="0" Max="@info.MaxPoints" Step="0.5" Label="@info.Title" InputId="@($"mock-{part}")"
+                                     Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="@($"Punkte von {info.MaxPoints:0}")" Clearable="true" />
+                }
+                <span class="tc-mock-points">@(Result.TryGetValue(part, out var p) ? $"{p:0.#} / {info.MaxPoints:0}" : "–")</span>
+            </div>
+        }
+    </div>
+
+    @if (Result.Count > 0)
+    {
+        var r = new TelcResult(Result);
+        <MudText Typo="Typo.body2" Class="mt-2">
+            Schriftlich <b>@r.Written.ToString("0.#")</b> / 225@(r.WrittenComplete ? (r.WrittenPassed ? " – bestanden" : " – unter der Hürde von 135") : ""),
+            mündlich <b>@r.Oral.ToString("0.#")</b> / 75@(r.OralComplete ? (r.OralPassed ? " – bestanden" : " – unter der Hürde von 45") : "").
+        </MudText>
+    }
+    @if (_error is not null)
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="mt-2">@_error</MudAlert>
+    }
+    <MudStack Row="true" Spacing="2" Class="mt-3">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(Result.Count == 0 || _saving)" OnClick="SaveAsync">Eintragen</MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudText Typo="Typo.caption" Class="d-block mb-4" Style="color:var(--mud-palette-text-secondary)">
+    Eingetragene Ergebnisse zählen in der Prognose wie eine Simulation in Lotse, erscheinen in der Liste der Simulationen und landen in der Datei
+    unter Einstellungen → Deine Daten. Sie ändern nicht die Einschätzung deiner Grammatik- und Wortschatzthemen: Eine Punktzahl auf Papier sagt nicht,
+    welche Regel daneben lag. Der B1-Test zählt nicht in die B2-Prognose.
+</MudText>
+
+@code {
+    private string _material = TelcMaterials.B2MockExams.First().Id;
+    private DateTime? _date;
+    private readonly Dictionary<TelcPart, int?> _correct = [];
+    private readonly Dictionary<TelcPart, double?> _points = [];
+    private string? _error;
+    private bool _saving;
+
+    private DateTime Today => Clock.GetLocalNow().Date;
+
+    protected override void OnInitialized() => _date = Today;
+
+    private static string KindTitle(MaterialKind kind) => kind switch
+    {
+        MaterialKind.MockExam => "Komplette Übungstests",
+        MaterialKind.Guide => "Was die Prüfung verlangt",
+        _ => "Zusätzliches Training",
+    };
+
+    private int? Correct(TelcPart part) => _correct.GetValueOrDefault(part);
+    private double? Points(TelcPart part) => _points.GetValueOrDefault(part);
+    private void SetCorrect(TelcPart part, int? v) { _correct[part] = v; _error = null; }
+    private void SetPoints(TelcPart part, double? v) { _points[part] = v; _error = null; }
+
+    /// <summary>The entered parts in telc points.</summary>
+    private Dictionary<TelcPart, double> Result
+    {
+        get
+        {
+            var result = new Dictionary<TelcPart, double>();
+            foreach (var (part, c) in _correct)
+                if (c is { } n) result[part] = TelcBlueprint.ObjectivePoints(part, n);
+            foreach (var (part, p) in _points)
+                if (p is { } x) result[part] = Math.Clamp(x, 0, TelcBlueprint.Info(part).MaxPoints);
+            return result;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        try
+        {
+            var date = DateOnly.FromDateTime(_date ?? Today);
+            var sim = await Telc.RecordMockExamAsync(_material, date, Result);
+            Nav.NavigateTo($"telc/simulation/{sim.Id}");
+        }
+        catch (ArgumentException ex)
+        {
+            _error = ex.Message.Split(" (Parameter")[0];
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

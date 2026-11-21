@@ -105,8 +105,30 @@ public sealed class EvalTests
         var alwaysB = await EvalHarness.RunAsync("Immer B", Golden, EvalHarness.AlwaysB(), utc);
         Assert.Equal(0, rules.Metrics.Failed);
         Assert.True(rules.Metrics.Kappa > alwaysB.Metrics.Kappa.GetValueOrDefault(), "die Formgrenzen sollen mehr leisten als Raten");
-        Assert.Contains("| Regeln | 12 |", rules.SummaryRow());
+        Assert.Contains($"| Regeln | {Golden.Cases.Count} |", rules.SummaryRow());
         Assert.Contains("g04.laptop.schwach", rules.CaseTable(Golden.Cases));
+    }
+
+    /// <summary>
+    /// The eval as a gate that needs no key: the rule-based rater may not fall below the stored run. The two recall
+    /// figures are kept apart on purpose - the rules were tuned on the v1 cases, so only the holdout figure says what
+    /// a learner's new text can expect. Raise the floors when a rule improves them; never lower one to pass.
+    /// </summary>
+    [Fact]
+    public async Task The_rule_baseline_does_not_regress_and_spares_the_flawless_letters()
+    {
+        var run = await EvalHarness.RunAsync("Regeln", Golden, EvalHarness.Rules(Telc, Lexicon.FromCatalog(Catalog)), DateTime.UtcNow);
+        var tuned = RaterMetrics.Compute([.. Golden.Cases.Where(c => !c.Holdout)], run.Results);
+        Assert.True(tuned.PlantedRecall >= 0.85, $"Recall auf v1: {tuned.PlantedRecall:P0}");
+        Assert.True(run.Metrics.HoldoutRecall >= 0.20, $"Recall auf neuen Fällen: {run.Metrics.HoldoutRecall:P0}");
+        Assert.True(run.Metrics.Kappa >= 0.25, $"QWK {run.Metrics.Kappa:0.00}");
+        Assert.Equal(1.0, run.Metrics.QuotePrecision);
+
+        // A finding in a text the reference rates AAA is a false alarm by definition.
+        foreach (var c in Golden.Cases.Where(c => c.Bands.All(b => b == TelcBand.A)))
+            Assert.True(run.Results.Single(r => r.CaseId == c.Id).Errors.Count == 0,
+                $"{c.Id}: " + string.Join("; ", run.Results.Single(r => r.CaseId == c.Id).Errors.Select(e => $"{e.Code} „{e.Snippet}“")));
+        Assert.Contains(Golden.Cases, c => c.Holdout && c.Bands.All(b => b == TelcBand.A));
     }
 
     [Fact]
@@ -124,7 +146,29 @@ public sealed class EvalTests
         Assert.Equal(1, run.Metrics.Failed);
         var linear = run.Results.Single(r => r.CaseId == "g06.hotel.linear");
         Assert.Equal(TelcBand.C, linear.Bands[1]);
-        Assert.Equal(0.0, run.Metrics.InjectionResistance);
+        // Even a rater that obeys every instruction cannot hand out an A to a letter that talks to its rater: the
+        // caps lock it, whatever the model says.
+        Assert.Equal(1.0, run.Metrics.InjectionResistance);
+    }
+
+    [Fact]
+    public async Task A_timed_out_case_is_a_failure_not_the_end_of_the_run()
+    {
+        // HttpClient reports its own timeout as TaskCanceledException; a local model on a CPU hit exactly that
+        // and took the whole run down with the first slow letter.
+        var first = Golden.Cases[0].Id;
+        EvalHarness.Rater slow = (c, _) => c.Id == first
+            ? throw new TaskCanceledException("The request was canceled due to the configured HttpClient.Timeout of 300 seconds elapsing.")
+            : Task.FromResult(new CaseResult(c.Id, [TelcBand.B, TelcBand.B, TelcBand.B], false, [], 0, 0));
+        var run = await EvalHarness.RunAsync("Langsam", Golden, slow, DateTime.UtcNow);
+        Assert.Equal(1, run.Metrics.Failed);
+        Assert.Equal(Golden.Cases.Count, run.Results.Count);
+
+        // The caller's own cancellation still stops the run.
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+        EvalHarness.Rater cancelled = (_, ct) => Task.FromCanceled<CaseResult>(ct);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => EvalHarness.RunAsync("Abbruch", Golden, cancelled, DateTime.UtcNow, ct: cts.Token));
     }
 
     [Fact]

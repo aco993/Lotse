@@ -96,6 +96,23 @@
     </MudPaper>
 }
 
+@if (_ai is null && _findings is { Count: > 0 })
+{
+    @* Rule-based, so it works without a key; the AI rating, once asked, lists its own mistakes instead. *@
+    <MudPaper Elevation="0" Class="pa-3 mt-3 tc-findings">
+        <MudText Typo="Typo.subtitle2" Class="mb-1">Stellen für Kriterium III (ohne KI gefunden)</MudText>
+        <ul class="tc-finding-list">
+            @foreach (var f in _findings.Take(MaxFindings))
+            {
+                <li><span class="tc-finding-wrong">„@f.Snippet“</span> → <b>@f.Correction</b><span class="tc-finding-why">@f.Explanation</span></li>
+            }
+        </ul>
+        <MudText Typo="Typo.caption" Style="color:var(--mud-palette-text-secondary)">
+            @(_findings.Count > MaxFindings ? $"Die ersten {MaxFindings} von {_findings.Count}. " : "")Die Regeln melden nur, was sicher falsch ist, und finden etwa jeden fünften Fehler – kein Eintrag heißt nicht fehlerfrei.
+        </MudText>
+    </MudPaper>
+}
+
 @if (_result is null)
 {
     <MudPaper Elevation="0" Class="pa-3 mt-3 tc-rate">
@@ -166,6 +183,9 @@ else
     private string _text = "";
     private bool _finished, _busy, _themaVerfehlt;
     private TelcWritingCheck? _check;
+    // Length and linking are already in the check above; these are the quoted mistakes.
+    private IReadOnlyList<TextFinding>? _findings;
+    private const int MaxFindings = 8;
     private TelcAiRating? _ai;
     private string? _aiError;
     private readonly TelcBand?[] _bands = new TelcBand?[3];
@@ -220,6 +240,7 @@ else
         _timer?.Dispose();
         _timer = null;
         _check = TelcWritingCheck.Analyze(_text, _task);
+        _findings = [.. Telc.QuickFindings(_text, spoken: false, formal: _task?.Formal).Where(f => f.Code is not ("TXT_LAENGE" or "TXT_KOHAERENZ"))];
         for (var i = 0; i < 2; i++)
             if (_bands[i] is { } b && b < (i == 0 ? _check.MaxAufgabe : _check.MaxGestaltung)) _bands[i] = null;
     }

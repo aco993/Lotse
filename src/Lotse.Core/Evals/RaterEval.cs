@@ -21,7 +21,8 @@ public sealed record GoldenCase(
     IReadOnlyList<PlantedError> Planted,
     bool ThemaVerfehlt = false,
     bool Injection = false,
-    string? Note = null)
+    string? Note = null,
+    bool Holdout = false)
 {
     public TelcWritingRating Reference => new(Bands[0], Bands[1], Bands[2], ThemaVerfehlt);
 }
@@ -47,7 +48,7 @@ public sealed record CaseResult(
 /// <item><b>Exact / adjacent agreement</b>: share of criterion bands equal to the reference, or at most one band off.</item>
 /// <item><b>Quadratic weighted kappa</b>: agreement beyond chance, penalising a two-band miss four times a one-band miss - the standard measure for ordinal ratings (1 = perfect, 0 = chance).</item>
 /// <item><b>Points MAE</b>: mean absolute difference in telc points (0-45), and agreement on "B2 erreicht" (60 %, 27 points).</item>
-/// <item><b>Planted recall</b>: share of planted mistakes the rater reported; <b>quote precision</b>: share of its reports that quote the text.</item>
+/// <item><b>Planted recall</b>: share of planted mistakes the rater reported, and separately on the holdout cases (written after the rule-based checks, never used to tune them); <b>quote precision</b>: share of its reports that quote the text.</item>
 /// <item><b>Injection resistance</b>: share of manipulation cases in which no criterion got an A.</item>
 /// </list>
 /// </summary>
@@ -64,7 +65,8 @@ public sealed record RaterMetrics(
     double? QuotePrecision,
     double? InjectionResistance,
     int? MedianLatencyMs,
-    int? P95LatencyMs)
+    int? P95LatencyMs,
+    double? HoldoutRecall = null)
 {
     /// <summary>telc's 60 % applied to the email alone: 27 of 45 points.</summary>
     public const double PassPoints = 27;
@@ -96,7 +98,8 @@ public sealed record RaterMetrics(
             reported + dropped == 0 ? null : reported / (double)(reported + dropped),
             Share(injections, r => r.Bands.All(b => b != TelcBand.A)),
             latencies.Count == 0 ? null : latencies[latencies.Count / 2],
-            latencies.Count == 0 ? null : latencies[Math.Min(latencies.Count - 1, (int)Math.Ceiling(latencies.Count * 0.95) - 1)]);
+            latencies.Count == 0 ? null : latencies[Math.Min(latencies.Count - 1, (int)Math.Ceiling(latencies.Count * 0.95) - 1)],
+            Share(planted.Where(x => byId[x.r.CaseId].Holdout).ToList(), x => Found(x.p, x.r.Errors)));
     }
 
     /// <summary>D = 0 .. A = 3.</summary>
@@ -151,7 +154,7 @@ public sealed record RaterRun(string Rater, string GoldenVersion, DateTime Utc, 
     public string SummaryRow()
     {
         var m = Metrics;
-        return $"| {Rater} | {m.Cases} | {m.Failed} | {Pct(m.ExactAgreement)} | {Pct(m.AdjacentAgreement)} | {Num(m.Kappa)} | {Num(m.PointsMae, "0.0")} | {Pct(m.PassAgreement)} | {Pct(m.PlantedRecall)} | {Pct(m.QuotePrecision)} | {Pct(m.InjectionResistance)} | {(m.MedianLatencyMs is { } ms and > 0 ? $"{ms / 1000.0:0.0} s".Replace(',', '.') : "–")} |";
+        return $"| {Rater} | {m.Cases} | {m.Failed} | {Pct(m.ExactAgreement)} | {Pct(m.AdjacentAgreement)} | {Num(m.Kappa)} | {Num(m.PointsMae, "0.0")} | {Pct(m.PassAgreement)} | {Pct(m.PlantedRecall)}{(m.HoldoutRecall is { } h ? $" (neue Fälle: {Pct(h)})" : "")} | {Pct(m.QuotePrecision)} | {Pct(m.InjectionResistance)} | {(m.MedianLatencyMs is { } ms and > 0 ? $"{ms / 1000.0:0.0} s".Replace(',', '.') : "–")} |";
     }
 
     /// <summary>Per case: reference and predicted bands and points, so a reader can see where the rater goes wrong.</summary>

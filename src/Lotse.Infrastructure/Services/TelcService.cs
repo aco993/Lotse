@@ -19,7 +19,8 @@ public sealed record TelcProductionResult(TelcPart Part, string TaskId, double P
 
 public sealed record TelcAttemptRow(long Id, TelcPart Part, string TaskId, string Title, double Points, double Max, DateTime Utc, bool Simulation);
 
-public sealed record TelcSimulationRow(Guid Id, DateTime StartedUtc, DateTime? CompletedUtc, TelcResult Result);
+/// <param name="Source">Set for a result entered from an official paper mock exam: its title. Null for Lotse's own simulations.</param>
+public sealed record TelcSimulationRow(Guid Id, DateTime StartedUtc, DateTime? CompletedUtc, TelcResult Result, string? Source = null);
 
 public sealed record TelcOverview(
     ExamProvider Exam,
@@ -33,6 +34,8 @@ public sealed record TelcOverview(
 /// <summary>A simulation in progress or done. <see cref="Next"/> is the first part without a result.</summary>
 public sealed record TelcSimulationView(Guid Id, DateTime StartedUtc, DateTime? CompletedUtc, IReadOnlyDictionary<TelcPart, string> Tasks, IReadOnlyDictionary<TelcPart, TelcAttemptRow> Done)
 {
+    /// <summary>The official mock exam this result was entered from, or null for a simulation done in Lotse.</summary>
+    public TelcMaterial? Source => Tasks.Values.Select(TelcMaterials.FromTaskId).FirstOrDefault(m => m is not null);
     public TelcResult Result => new(Done.ToDictionary(d => d.Key, d => d.Value.Points));
     public TelcPart? Next => Enum.GetValues<TelcPart>().Where(p => !Done.ContainsKey(p)).Cast<TelcPart?>().FirstOrDefault();
     public bool AllDone => Next is null;
@@ -55,11 +58,17 @@ public interface ITelcService
     Task<TelcSimulationView?> GetSimulationAsync(Guid id, CancellationToken ct = default);
     Task<TelcSimulationView> CompleteSimulationAsync(Guid id, CancellationToken ct = default);
     Task AbandonSimulationAsync(Guid id, CancellationToken ct = default);
+    /// <summary>
+    /// Stores the points of an official mock exam done on paper (<see cref="TelcMaterials.B2MockExams"/>) as a
+    /// completed simulation, so it weighs like one in the forecast. Parts left out stay "not taken". It never reaches
+    /// the learner model: one paper result says nothing about which grammar node went wrong.
+    /// </summary>
+    Task<TelcSimulationView> RecordMockExamAsync(string materialId, DateOnly date, IReadOnlyDictionary<TelcPart, double> points, CancellationToken ct = default);
     Task<LearnerContext> LearnerContextAsync(CancellationToken ct = default);
     /// <summary>One turn of the AI exam partner in an oral part. Throws when no tutor is configured.</summary>
     Task<string> PartnerAsync(TelcPart part, string taskId, IReadOnlyList<ChatTurn> history, CancellationToken ct = default);
-    /// <summary>What the deterministic analyzer finds in a text - the corrections between 4/3/2 rounds without a tutor.</summary>
-    IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken);
+    /// <summary>What the deterministic analyzer finds in a text - the corrections between 4/3/2 rounds and in the email, without a tutor. <paramref name="formal"/> is the task's register, for the email.</summary>
+    IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken, bool? formal = null);
     /// <summary>The task as the candidate reads it, in plain text - what the tutor gets as context.</summary>
     string TaskText(TelcPart part, string taskId);
     /// <summary>Fills the {Name}/{Vorname}/{Nachname} tokens of a model answer with the learner's own name.</summary>
@@ -102,7 +111,8 @@ public sealed class TelcService(
         var sims = await db.TelcSimulations.AsNoTracking().Where(s => s.UserId == userId).OrderByDescending(s => s.StartedUtc).ToListAsync(ct);
         var simRows = sims.Where(s => s.CompletedUtc is not null)
             .Select(s => new TelcSimulationRow(s.Id, s.StartedUtc, s.CompletedUtc,
-                new TelcResult(attempts.Where(a => a.SimulationId == s.Id).GroupBy(a => a.Part).ToDictionary(g => g.Key, g => g.First().Points))))
+                new TelcResult(attempts.Where(a => a.SimulationId == s.Id).GroupBy(a => a.Part).ToDictionary(g => g.Key, g => g.First().Points)),
+                attempts.Where(a => a.SimulationId == s.Id).Select(a => TelcMaterials.FromTaskId(a.TaskId)?.Title).FirstOrDefault(t => t is not null)))
             .ToList();
         var open = sims.FirstOrDefault(s => s.CompletedUtc is null);
 
@@ -153,7 +163,8 @@ public sealed class TelcService(
     private TelcAttemptRow Row(TelcAttemptEntity a) => new(a.Id, a.Part, a.TaskId, Title(a.Part, a.TaskId), a.Points, a.MaxPoints, a.Utc, a.SimulationId is not null);
 
     private string Title(TelcPart part, string taskId)
-        => part == TelcPart.Schreiben && Bank.FindWritingTask(taskId) is { } w
+        => TelcMaterials.FromTaskId(taskId) is { } material ? $"{material.Exam}, {material.Title}"
+        : part == TelcPart.Schreiben && Bank.FindWritingTask(taskId) is { } w
             ? $"{w.Task.Kind} ({(w.Pair.A.Id == taskId ? "A" : "B")})"
             : Bank.TaskTitle(part, taskId) ?? taskId;
 
@@ -235,10 +246,11 @@ public sealed class TelcService(
         return await tutor.PartnerAsync(part, TaskText(part, taskId), history, context, ct);
     }
 
-    public IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken)
+    public IReadOnlyList<TextFinding> QuickFindings(string text, bool spoken, bool? formal = null)
     {
         var task = new Exercise { Id = "telc.quick", Type = spoken ? ExerciseType.Speak : ExerciseType.FreeWrite, NodeId = "SP.VORTRAG", Band = CefrBand.B2_1, Prompt = "telc" };
-        return FreeTextAnalyzer.Analyze(text, task, catalogProvider.Lexicon, spoken).Findings;
+        // The stand-in task carries no register of its own, so the caller says it.
+        return FreeTextAnalyzer.Analyze(text, task, catalogProvider.Lexicon, spoken, formal).Findings;
     }
 
     public async Task<TelcProductionResult> SubmitProductionAsync(TelcPart part, string taskId, string text, IReadOnlyList<TelcBand> bands, bool themaVerfehlt = false, TelcAiRating? ai = null, int? durationSeconds = null, Guid? simulationId = null, CancellationToken ct = default)
@@ -349,6 +361,49 @@ public sealed class TelcService(
         // The parts already done stay as practice results; only the frame goes.
         await db.TelcAttempts.Where(a => a.UserId == userId && a.SimulationId == id).ExecuteUpdateAsync(u => u.SetProperty(a => a.SimulationId, (Guid?)null), ct);
         await db.TelcSimulations.Where(s => s.Id == id && s.UserId == userId && s.CompletedUtc == null).ExecuteDeleteAsync(ct);
+    }
+
+    public async Task<TelcSimulationView> RecordMockExamAsync(string materialId, DateOnly date, IReadOnlyDictionary<TelcPart, double> points, CancellationToken ct = default)
+    {
+        var material = TelcMaterials.B2MockExams.FirstOrDefault(m => m.Id == materialId)
+            ?? throw new ArgumentException($"„{materialId}“ ist kein telc-B2-Übungstest.", nameof(materialId));
+        if (points.Count == 0) throw new ArgumentException("Mindestens ein Teil braucht Punkte.", nameof(points));
+        foreach (var (part, p) in points)
+        {
+            var max = TelcBlueprint.Info(part).MaxPoints;
+            if (double.IsNaN(p) || p < 0 || p > max)
+                throw new ArgumentOutOfRangeException(nameof(points), $"{TelcBlueprint.Info(part).Title}: {p} liegt nicht zwischen 0 und {max}.");
+        }
+        var today = DateOnly.FromDateTime(Now);
+        if (date > today) throw new ArgumentOutOfRangeException(nameof(date), "Das Datum liegt in der Zukunft.");
+
+        var userId = await currentUser.GetUserIdAsync();
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        // Today keeps the clock time, so it sorts after what was practised earlier today; an earlier day gets noon.
+        var utc = date == today ? Now : date.ToDateTime(new TimeOnly(12, 0), DateTimeKind.Utc);
+        var taskId = TelcMaterials.ExternalTaskId(material.Id);
+        var sim = new TelcSimulationEntity
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            StartedUtc = utc,
+            CompletedUtc = utc,
+            TasksJson = JsonSerializer.Serialize(points.Keys.ToDictionary(p => p.ToString(), _ => taskId)),
+        };
+        db.TelcSimulations.Add(sim);
+        foreach (var (part, p) in points)
+            db.TelcAttempts.Add(new TelcAttemptEntity
+            {
+                UserId = userId,
+                Part = part,
+                TaskId = taskId,
+                Points = p,
+                MaxPoints = TelcBlueprint.Info(part).MaxPoints,
+                Utc = utc,
+                SimulationId = sim.Id,
+            });
+        await db.SaveChangesAsync(ct);
+        return await ViewAsync(db, sim, ct);
     }
 
     private async Task<TelcSimulationView> ViewAsync(LotseDbContext db, TelcSimulationEntity sim, CancellationToken ct)

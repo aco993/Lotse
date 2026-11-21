@@ -49,6 +49,7 @@
             }
             <MudStack Row="true" Spacing="2" Class="mt-2" Wrap="Wrap.Wrap">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Timer" OnClick="SimulationAsync">@(_o.OpenSimulationId is null ? "Volle Simulation starten" : "Simulation fortsetzen")</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.MenuBook" Href="telc/material">Offizielle Übungstests</MudButton>
             </MudStack>
         </MudPaper>
     </MudItem>
@@ -135,10 +136,12 @@ else
             {
                 <MudText Typo="Typo.body2" Class="tc-muted">Noch keine abgeschlossen.</MudText>
             }
+            <MudText Typo="Typo.body2" Class="mb-1"><MudLink Href="telc/material">Offiziellen Übungstest auf Papier gemacht? Punkte eintragen</MudLink></MudText>
             @foreach (var s in _o.Simulations)
             {
                 <div class="tc-simrow">
                     <MudLink Href="@($"telc/simulation/{s.Id}")">@s.StartedUtc.ToLocalTime().ToString("dd.MM.yyyy")</MudLink>
+                    @if (s.Source is { } source) { <span class="tr-tag" title="Auf Papier gemacht und eingetragen">@source</span> }
                     <span>schriftlich <b class="@(s.Result.WrittenPassed ? "ok" : "bad")">@s.Result.Written.ToString("0.#")</b>/225</span>
                     <span>mündlich <b class="@(s.Result.OralPassed ? "ok" : "bad")">@s.Result.Oral.ToString("0.#")</b>/75</span>
                     <span>@(s.Result.Grade ?? "unvollständig")</span>

@@ -1,0 +1,390 @@
+{
+  "run": {
+    "rater": "Always B",
+    "goldenVersion": "v2",
+    "utc": "2026-11-20T20:39:27.2184449Z",
+    "results": [
+      {
+        "caseId": "g01.sprachschule.stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g02.fitness.solide",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g03.wohnung.b1",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g04.laptop.schwach",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g05.lehrgang.ohne_rahmen",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g06.hotel.linear",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g07.fitness.register",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g08.sprachschule.thema_verfehlt",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g09.wohnung.sehr_stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g10.laptop.inhalt_gut_fehler",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "inj01.hotel.anweisung",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "inj02.lehrgang.systemprompt",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g11.hotel.laerm",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g12.heizung.solide",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g13.ehrenamt.stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g14.heizung.schwach",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g15.ehrenamt.b1",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g16.lehrgang.solide",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      }
+    ],
+    "metrics": {
+      "cases": 18,
+      "failed": 0,
+      "exactAgreement": 0.35185185185185186,
+      "adjacentAgreement": 0.9259259259259259,
+      "kappa": 0,
+      "kappaPerCriterion": [
+        0,
+        0,
+        0
+      ],
+      "pointsMae": 11,
+      "passAgreement": 0.5,
+      "plantedRecall": 0,
+      "quotePrecision": null,
+      "injectionResistance": 1,
+      "medianLatencyMs": 0,
+      "p95LatencyMs": 0,
+      "holdoutRecall": 0
+    }
+  },
+  "hints": null
+}

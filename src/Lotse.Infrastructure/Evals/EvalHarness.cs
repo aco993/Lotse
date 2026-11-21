@@ -14,13 +14,13 @@ namespace Lotse.Infrastructure.Evals;
 public sealed record GoldenSet(int Version, IReadOnlyList<GoldenCase> Cases)
 {
     private sealed record FileDto(int Version, List<CaseDto> Cases);
-    private sealed record CaseDto(string Id, string Task, string Rater, List<string> Bands, string Text, List<PlantedError>? Planted, bool ThemaVerfehlt, bool Injection, string? Note);
+    private sealed record CaseDto(string Id, string Task, string Rater, List<string> Bands, string Text, List<PlantedError>? Planted, bool ThemaVerfehlt, bool Injection, string? Note, bool Holdout);
 
     public static GoldenSet Load(string path)
     {
         var dto = JsonSerializer.Deserialize<FileDto>(File.ReadAllText(path), ContentLoader.Options) ?? throw new InvalidDataException($"{path} ist leer.");
         return new GoldenSet(dto.Version, [.. dto.Cases.Select(c => new GoldenCase(
-            c.Id, c.Task, c.Rater, [.. c.Bands.Select(b => Enum.Parse<TelcBand>(b, ignoreCase: true))], c.Text, c.Planted ?? [], c.ThemaVerfehlt, c.Injection, c.Note))]);
+            c.Id, c.Task, c.Rater, [.. c.Bands.Select(b => Enum.Parse<TelcBand>(b, ignoreCase: true))], c.Text, c.Planted ?? [], c.ThemaVerfehlt, c.Injection, c.Note, c.Holdout))]);
     }
 
     /// <summary>Format problems of the set itself: unknown tasks, wrong band counts, planted snippets that are not in the text.</summary>
@@ -63,7 +63,9 @@ public static class EvalHarness
             {
                 r = await rate(c, ct);
             }
-            catch (Exception e) when (e is not OperationCanceledException)
+            // An HttpClient timeout is a TaskCanceledException too; only the caller's own cancellation ends the run,
+            // a slow case is recorded as failed and the next one still gets its turn.
+            catch (Exception e) when (!ct.IsCancellationRequested)
             {
                 r = CaseResult.Failure(c.Id, (int)watch.ElapsedMilliseconds, e.Message);
             }
@@ -89,7 +91,7 @@ public static class EvalHarness
         var task = content.FindWritingTask(c.Task)!.Value.Task;
         var capped = new TelcWritingRating(TelcBand.B, TelcBand.B, TelcBand.B).Capped(TelcWritingCheck.Analyze(c.Text, task));
         var exercise = new Exercise { Id = "eval", Type = ExerciseType.FreeWrite, NodeId = task.NodeId, Band = CefrBand.B2_1, Prompt = "eval" };
-        var findings = FreeTextAnalyzer.Analyze(c.Text, exercise, lexicon, spoken: false).Findings
+        var findings = FreeTextAnalyzer.Analyze(c.Text, exercise, lexicon, spoken: false, formal: task.Formal).Findings
             .Select(f => new TutorError(f.Code, f.Snippet, f.Correction, f.Explanation)).ToList();
         return Task.FromResult(new CaseResult(c.Id, [capped.Aufgabe, capped.Gestaltung, capped.Richtigkeit], false, findings, 0, 0));
     };
@@ -132,7 +134,7 @@ public static class EvalHarness
                 if (HintLadder.Leaks(hint, e)) leaked++;
                 if (hint.EndsWith('?')) questions++;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (Exception) when (!ct.IsCancellationRequested)
             {
                 failed++;
             }
