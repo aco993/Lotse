@@ -62,4 +62,12 @@ public sealed class AnalyzerPrecisionTests
             .ToList();
         Assert.True(alarms.Count == 0, $"{alarms.Count} Fehlalarme:\n" + string.Join("\n", alarms.Take(80)));
     }
+
+    [Fact]
+    public void No_text_in_the_content_bank_reads_as_an_instruction_to_the_rater()
+    {
+        // The guard locks every A, so a false alarm would cost a good letter its grade.
+        var alarms = Corpus().Where(c => TelcWritingCheck.TalksToRater(c.Text)).Select(c => c.Source).ToList();
+        Assert.True(alarms.Count == 0, "Fehlalarme: " + string.Join(", ", alarms));
+    }
 }

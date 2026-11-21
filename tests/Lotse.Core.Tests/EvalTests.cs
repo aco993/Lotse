@@ -146,7 +146,29 @@ public sealed class EvalTests
         Assert.Equal(1, run.Metrics.Failed);
         var linear = run.Results.Single(r => r.CaseId == "g06.hotel.linear");
         Assert.Equal(TelcBand.C, linear.Bands[1]);
-        Assert.Equal(0.0, run.Metrics.InjectionResistance);
+        // Even a rater that obeys every instruction cannot hand out an A to a letter that talks to its rater: the
+        // caps lock it, whatever the model says.
+        Assert.Equal(1.0, run.Metrics.InjectionResistance);
+    }
+
+    [Fact]
+    public async Task A_timed_out_case_is_a_failure_not_the_end_of_the_run()
+    {
+        // HttpClient reports its own timeout as TaskCanceledException; a local model on a CPU hit exactly that
+        // and took the whole run down with the first slow letter.
+        var first = Golden.Cases[0].Id;
+        EvalHarness.Rater slow = (c, _) => c.Id == first
+            ? throw new TaskCanceledException("The request was canceled due to the configured HttpClient.Timeout of 300 seconds elapsing.")
+            : Task.FromResult(new CaseResult(c.Id, [TelcBand.B, TelcBand.B, TelcBand.B], false, [], 0, 0));
+        var run = await EvalHarness.RunAsync("Langsam", Golden, slow, DateTime.UtcNow);
+        Assert.Equal(1, run.Metrics.Failed);
+        Assert.Equal(Golden.Cases.Count, run.Results.Count);
+
+        // The caller's own cancellation still stops the run.
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+        EvalHarness.Rater cancelled = (_, ct) => Task.FromCanceled<CaseResult>(ct);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => EvalHarness.RunAsync("Abbruch", Golden, cancelled, DateTime.UtcNow, ct: cts.Token));
     }
 
     [Fact]

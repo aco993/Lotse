@@ -63,7 +63,9 @@ public static class EvalHarness
             {
                 r = await rate(c, ct);
             }
-            catch (Exception e) when (e is not OperationCanceledException)
+            // An HttpClient timeout is a TaskCanceledException too; only the caller's own cancellation ends the run,
+            // a slow case is recorded as failed and the next one still gets its turn.
+            catch (Exception e) when (!ct.IsCancellationRequested)
             {
                 r = CaseResult.Failure(c.Id, (int)watch.ElapsedMilliseconds, e.Message);
             }
@@ -132,7 +134,7 @@ public static class EvalHarness
                 if (HintLadder.Leaks(hint, e)) leaked++;
                 if (hint.EndsWith('?')) questions++;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (Exception) when (!ct.IsCancellationRequested)
             {
                 failed++;
             }
