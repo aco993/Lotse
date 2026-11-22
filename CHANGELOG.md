@@ -1,6 +1,6 @@
 # Changelog
 
-## Nicht veröffentlicht
+## 0.10.0 – 2026-11-22
 
 ### Zweiter KI-Lauf mit Korrektur, Sperre auch für das Mündliche, Hinweise auf 40 Übungen nachgemessen
 
@@ -9,6 +9,7 @@
 - **Kriterium II bekommt im Prompt trotzdem eine Beschreibung je Stufe**, wie I und III sie schon hatten. Vorher standen dort nur zwei Verbote. Die Wörter sind eigene, nicht die von telc. Nachgemessen hat das an Kriterium II nichts verändert, und das war auch nicht zu erwarten.
 - **Zweiter Lauf mit qwen2.5 auf denselben 18 Briefen:** QWK 0,57 statt 0,58, Abweichung in telc-Punkten 6,5 statt 7,7, ±1 Stufe 98 % statt 93 %, „B2 erreicht“ gleich (67 %). Manipulation widerstanden: 100 % statt 0 %, dank der Sperre im Code. Kriterium I wurde in drei Briefen strenger, obwohl sich an seinem Text nichts geändert hat. So groß ist das Rauschen eines Modells, das nie zweimal gleich antwortet, auf 18 Briefen. Unterm Strich ist die Bewertung gleich gut, und offen bleibt Kriterium III. Der nächste sinnvolle Vergleich ist ein anderes Modell, zum Beispiel Groq mit kostenlosem Schlüssel.
 - **Hinweise auf 40 Übungen statt 10:** Der erste Versuch verrät in 23 % die Lösung, **85 % der Hinweise erreichen den Lerner** (vor dem zweiten Versuch waren es 50 %), 65 % davon sind Fragen.
+- **Die Version steht in der App:** *Einstellungen → Zustand der App* zeigt „Lotse 0.10.0 (Commit)“. So lässt sich bei einem Fehler sagen, welcher Stand genau läuft.
 
 ### Alle Seiten auf Handy, Tablet und Desktop geprüft, hell und dunkel – das Design merkt sich die Wahl
 
