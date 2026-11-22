@@ -138,8 +138,10 @@ internal static class EvalsDoc
     public static string Regenerate(string doc, string resultsDir, GoldenSet set)
     {
         var files = Directory.EnumerateFiles(resultsDir, "*.json").ToList();
-        var stored = files.Where(f => !f.EndsWith(HintsSuffix, StringComparison.Ordinal))
+        var allRuns = files.Where(f => !f.EndsWith(HintsSuffix, StringComparison.Ordinal))
             .Select(f => JsonSerializer.Deserialize<StoredRun>(File.ReadAllText(f), ContentLoader.Options)!)
+            .ToList();
+        var stored = allRuns
             .GroupBy(s => s.Run.Rater).Select(g => g.OrderByDescending(s => s.Run.Utc).First())
             .OrderBy(s => s.Run.Rater is "Rule-based (no AI)" or "Always B")
             .ThenByDescending(s => s.Run.Metrics.Kappa ?? -1)
@@ -151,7 +153,8 @@ internal static class EvalsDoc
             .AppendLine(RaterRun.SummaryHeader);
         foreach (var s in stored) sb.AppendLine(s.Run.SummaryRow());
         // Every hint measurement, oldest first: there are few, and before/after a change is the point of keeping them.
-        var hintRuns = stored.Where(s => s.Hints is not null).Select(s => (s.Hints!, s.Run.Utc))
+        // From every stored run, not only the newest per rater: an older rating run keeps the hints measured with it.
+        var hintRuns = allRuns.Where(s => s.Hints is not null).Select(s => (s.Hints!, s.Run.Utc))
             .Concat(files.Where(f => f.EndsWith(HintsSuffix, StringComparison.Ordinal))
                 .Select(f => JsonSerializer.Deserialize<StoredHints>(File.ReadAllText(f), ContentLoader.Options)!)
                 .Select(s => (s.Hints, s.Utc)))

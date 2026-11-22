@@ -309,7 +309,9 @@ public abstract class TutorBase(ILogger logger) : ITutor
         var quoted = QuotedErrors.Filter(errors, request.LearnerText, out var unquoted);
         if (unquoted > 0) Logger.LogInformation("telc-Bewertung: {Count} nicht zitierbare Fehler verworfen.", unquoted);
 
-        return new TelcAiRating(bands, quoted, dto.Feedback ?? "", dto.Upgrades ?? [], dto.ThemaVerfehlt && !request.Speaking, unquoted);
+        var rating = new TelcAiRating(bands, quoted, dto.Feedback ?? "", dto.Upgrades ?? [], dto.ThemaVerfehlt && !request.Speaking, unquoted);
+        // Writing is capped downstream by TelcWritingCheck; a transcript has no such check, so the lock goes here.
+        return request.Speaking ? rating.LockedIfTalkingToRater(request.LearnerText) : rating;
     }
 
     private const string LearnerTextStart = "<<<LERNERTEXT_BEGINN>>>";
@@ -324,7 +326,7 @@ public abstract class TutorBase(ILogger logger) : ITutor
         ? """
           Du bist jetzt lizenzierte Bewerterin für telc Deutsch B2, Schriftlicher Ausdruck. Bewerte streng nach den telc-Kriterien:
           I Aufgabenbewältigung: A = drei Leitpunkte (oder zwei und ein eigener Aspekt) angemessen bearbeitet, B = zwei, C = einer, D = keiner. Ein Leitpunkt braucht mehr als ein einziges Satzgefüge.
-          II Kommunikative Gestaltung: Register, Verknüpfung, Wortschatzspektrum. Kein A ohne Betreff, Anrede und Schlussformel. Kein B, wenn das Register schwankt oder die Leitpunkte linear ohne Verknüpfung aufgelistet sind.
+          II Kommunikative Gestaltung: Register, Verknüpfung, Wortschatzspektrum. A = klar aufgebaut, Gedanken sinnvoll verknüpft, Register durchgehend passend, Wortschatz abwechslungsreich. B = im Großen und Ganzen angemessen: verständlicher Aufbau, einige Verknüpfungen, Register überwiegend passend, auch wenn der Wortschatz einfach bleibt. C = kaum noch angemessen: Leitpunkte nur aneinandergereiht ODER Register schwankt deutlich. D = kein erkennbarer Aufbau. Kein A ohne Betreff, Anrede und Schlussformel. Ein einfacher, aber geordneter Brief mit Verknüpfungen ist B, nicht C.
           III Formale Richtigkeit: A kaum Fehler, B wenige systematische Fehler, C mehrere systematische Fehler, aber verständlich, D viele elementare Fehler.
           „Thema verfehlt“ nur, wenn der Text mit dem Schreibanlass keine oder kaum eine Verbindung hat. B bedeutet „B2 erfüllt“, C bedeutet B1.
           Jeder gemeldete Fehler muss WÖRTLICH aus dem Text zitiert sein - melde nichts, was du nicht zitieren kannst.

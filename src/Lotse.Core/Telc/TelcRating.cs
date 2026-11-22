@@ -22,7 +22,7 @@ public sealed record TelcWritingRating(TelcBand Aufgabe, TelcBand Gestaltung, Te
     public static readonly IReadOnlyList<(string Title, string Question)> Criteria =
     [
         ("I Aufgabenbewältigung", "Wie viele Leitpunkte sind jeweils mit mehr als einem Satz angemessen bearbeitet? 3 = A, 2 = B, 1 = C, 0 = D."),
-        ("II Kommunikative Gestaltung", "Register, Verknüpfung, Wortschatzspektrum. Ohne Betreff, Anrede oder Schlussformel kein A; Leitpunkte nur aneinandergereiht: kein B."),
+        ("II Kommunikative Gestaltung", "Register, Verknüpfung, Wortschatzspektrum. A: klar aufgebaut, verknüpft, Register passend, Wortschatz abwechslungsreich. B: im Großen und Ganzen angemessen, auch mit einfachem Wortschatz. C: nur aneinandergereiht oder Register schwankt deutlich. Ohne Betreff, Anrede oder Schlussformel kein A."),
         ("III Formale Richtigkeit", "A: kaum Fehler. B: wenige systematische Fehler. C: mehrere systematische Fehler, aber verständlich. D: viele elementare Fehler."),
     ];
 
