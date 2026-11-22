@@ -269,10 +269,10 @@ public sealed class TutorRegistry : ITutor, ILearnerBound, IDisposable
         return await _active.Tutor.PartnerAsync(part, scenario, history, context, ct);
     }
 
-    public async Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+    public async Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default)
     {
         await EnsureCurrentAsync(ct);
-        return await _active.Tutor.HintAsync(exercise, attempt, context, ct);
+        return await _active.Tutor.HintAsync(exercise, attempt, context, rejected, ct);
     }
 
     public async Task<string> GenerateTelcAsync(TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)

@@ -1,11 +1,16 @@
 @inherits LayoutComponentBase
-@inject SpeechService Speech
 @inject NavigationManager Nav
 @inject Lotse.Infrastructure.Ai.TutorRegistry Tutors
 @inject Lotse.Web.Services.LearnerProfileState ProfileState
+@inject Lotse.Web.Services.ThemeState Theme
 @implements IDisposable
 
-<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_dark" />
+@* Nothing until the learner's settings are in: ComponentBase renders once at the first await of OnInitializedAsync, so
+   without this gate every page rendered - and initialised - with the tutor registry's defaults and in light, then
+   flipped. These pages are not prerendered, so the screen was blank until now anyway; the wait is two local reads. *@
+@if (_ready)
+{
+<MudThemeProvider Theme="_theme" IsDarkMode="Theme.IsDark" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -17,8 +22,8 @@
         <MudText Typo="Typo.h6" Class="ml-1" Style="font-weight:600; letter-spacing:.3px">Lotse</MudText>
         <MudText Typo="Typo.caption" Class="ml-2 d-none d-sm-inline" Style="opacity:.85">Dein Kurs auf @_target.Label()</MudText>
         <MudSpacer />
-        <MudTooltip Text="@(_dark ? "Helles Design" : "Dunkles Design")">
-            <MudIconButton Icon="@(_dark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="@(() => _dark = !_dark)" aria-label="Design wechseln" />
+        <MudTooltip Text="@(Theme.IsDark ? "Helles Design" : "Dunkles Design")">
+            <MudIconButton Icon="@(Theme.IsDark ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="Theme.ToggleAsync" aria-label="@(Theme.IsDark ? "Helles Design" : "Dunkles Design")" />
         </MudTooltip>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Md" ClipMode="DrawerClipMode.Always">
@@ -51,12 +56,13 @@
     </MudMainContent>
     <BottomNav />
 </MudLayout>
+}
 
 @code {
     [Inject] private IBrowserViewportService Viewport { get; set; } = default!;
 
     private bool _drawerOpen;
-    private bool _dark;
+    private bool _ready;
     private ErrorBoundary? _errors;
     private TargetLevel _target = TargetLevel.B2;
     private HelperLanguage _lang = HelperLanguage.Serbian;
@@ -66,8 +72,8 @@
         // A navigation clears a previous error so the next page renders normally.
         Nav.LocationChanged += (_, _) => { _errors?.Recover(); };
         // This learner's tutor settings (incl. the decrypted API key) are loaded BEFORE the first render of any page
-        // in this layout, so no page ever sees the registry's defaults - that is the one place the per-circuit
-        // cache gets filled. Every route on this layout sits behind the login (fallback policy + [Authorize]);
+        // in this layout (the _ready gate in the markup makes that true), so no page ever sees the registry's
+        // defaults - that is the one place the per-circuit cache gets filled. Every route on this layout sits behind the login (fallback policy + [Authorize]);
         // the static pages (Account/*, /Error, /not-found) use AccountLayout and never get here.
         // TutorRegistry.EnsureCurrentAsync remains as a cheap guard on every provider call: defence in depth,
         // not the mechanism.
@@ -76,7 +82,14 @@
         // listen: saving on Einstellungen must move the label without a full reload.
         ProfileState.Changed += OnProfileChanged;
         Apply(await ProfileState.GetAsync());
+        // Light or dark is known before the first render: these pages are not prerendered, so the circuit and JS are
+        // already there, and with the gate the old "light first, then dark" flash on a dark device is gone.
+        Theme.Changed += OnThemeChanged;
+        try { await Theme.InitializeAsync(); } catch (JSException) { }
+        _ready = true;
     }
+
+    private void OnThemeChanged() => _ = InvokeAsync(StateHasChanged);
 
     private void OnProfileChanged() => _ = InvokeAsync(async () =>
     {
@@ -90,15 +103,17 @@
         _lang = p.HelperLanguage;
     }
 
-    public void Dispose() => ProfileState.Changed -= OnProfileChanged;
+    public void Dispose()
+    {
+        ProfileState.Changed -= OnProfileChanged;
+        Theme.Changed -= OnThemeChanged;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         var bp = await Viewport.GetCurrentBreakpointAsync();
         _drawerOpen = bp >= Breakpoint.Md;
-        // Follow the operating system's dark mode on first load; the toggle in the bar overrides it.
-        try { _dark = await Speech.PrefersDarkAsync(); } catch (JSException) { }
         StateHasChanged();
     }
 

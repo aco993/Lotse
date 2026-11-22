@@ -59,7 +59,7 @@ public sealed class LearningServiceTests : IAsyncLifetime
         public Task<string> PartnerAsync(Lotse.Core.Telc.TelcPart part, string scenario, IReadOnlyList<ChatTurn> history, LearnerContext context, CancellationToken ct = default)
             => Task.FromResult("Antwort");
 
-        public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+        public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default)
             => Task.FromResult("Welcher Fall folgt auf diese Präposition?");
 
         public Task<string> GenerateTelcAsync(Lotse.Core.Telc.TelcPart part, string brief, string exampleJson, LearnerContext context, CancellationToken ct = default)

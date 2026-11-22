@@ -69,6 +69,9 @@ else if (_finished || _view.IsComplete)
 }
 else
 {
+    @* Every other page names itself with an h1; the running session did not, so a screen reader announced only "Lotse".
+       The visible line stays the plan summary, the heading says where the learner is. *@
+    <h1 class="sr-only">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung" : _view.Session.Kind == SessionKind.Lesson ? "Lektion" : "Session"), Aufgabe @(_index + 1) von @_view.Steps.Count</h1>
     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2" Spacing="2">
         <MudText Typo="Typo.subtitle2" Style="opacity:.8">@(_view.Session.Kind == SessionKind.Placement ? "Einstufung" : _view.Session.Summary)</MudText>
         <MudSpacer />

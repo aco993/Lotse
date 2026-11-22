@@ -370,7 +370,7 @@ public abstract class TutorBase(ILogger logger) : ITutor
     // Socratic hint: one question, never the answer
     // ------------------------------------------------------------------------------------------
 
-    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, CancellationToken ct = default)
+    public Task<string> HintAsync(Exercise exercise, string? attempt, LearnerContext context, string? rejected = null, CancellationToken ct = default)
     {
         var system = BuildSystemPrompt(context) + """
 
@@ -389,6 +389,9 @@ public abstract class TutorBase(ILogger logger) : ITutor
         // The model needs the solution to aim at it; the caller's leak filter makes sure it never comes back.
         user.AppendLine("LÖSUNG (nur für dich, niemals nennen): " + (exercise.Type == ExerciseType.MultipleChoice && exercise.CorrectIndex is { } c ? exercise.Options[c] : string.Join(" | ", exercise.Answers)));
         if (!string.IsNullOrWhiteSpace(attempt)) user.AppendLine($"VERSUCH DES LERNERS: {attempt}");
+        // Second try after the leak filter threw the first one away: say what went wrong and where to aim instead.
+        if (!string.IsNullOrWhiteSpace(rejected))
+            user.AppendLine($"DEIN LETZTER HINWEIS WURDE VERWORFEN, weil er die Lösung enthielt: „{rejected.Trim()}“. Frage diesmal nur nach der Regel, dem Fall, dem Signalwort oder der Stelle im Satz - ohne ein einziges Wort der Lösung.");
         return CompleteChatAsync(system, [new ChatTurn(true, user.ToString())], ct);
     }
 

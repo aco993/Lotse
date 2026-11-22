@@ -4,13 +4,15 @@
 
 <PageTitle>@(_part is { } p ? TelcBlueprint.Info(p).Title : "telc") – Lotse</PageTitle>
 
-<MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
-    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="@(Sim is { } s ? $"telc/simulation/{s}" : "telc")">@(Sim is null ? "telc-Übersicht" : "Zur Simulation")</MudButton>
+@* On a phone the back button and the task picker do not fit side by side: the picker goes below, full width,
+   instead of pushing the page 30px past the screen (which also pushed the theme toggle out of the bar). *@
+<MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2" Wrap="Wrap.Wrap">
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="@(Sim is { } s ? $"telc/simulation/{s}" : "telc")" Style="white-space:nowrap">@(Sim is null ? "telc-Übersicht" : "Zur Simulation")</MudButton>
     @if (Sim is not null) { <span class="tr-tag">Simulation</span> }
     <MudSpacer />
     @if (_part is { } part && Sim is null && _tasks.Count > 1)
     {
-        <MudSelect T="string" Value="_taskId" ValueChanged="Pick" Label="Aufgabe" Dense="true" Variant="Variant.Outlined" Style="max-width:320px">
+        <MudSelect T="string" Value="_taskId" ValueChanged="Pick" Label="Aufgabe" Dense="true" Variant="Variant.Outlined" Style="flex:1 1 240px; max-width:320px; min-width:0">
             @foreach (var id in _tasks) { <MudSelectItem T="string" Value="@id">@Telc.Content.TaskTitle(part, id)@(TelcContent.IsGenerated(id) ? " · KI, freigegeben" : "")</MudSelectItem> }
         </MudSelect>
     }

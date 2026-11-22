@@ -6,6 +6,8 @@
 @inject ISnackbar Snackbar
 @inject Lotse.Web.Services.LearnerProfileState ProfileState
 @inject Lotse.Web.Services.HostingOptions Hosting
+@inject Lotse.Web.Services.ThemeState Theme
+@implements IDisposable
 
 <PageTitle>Einstellungen – Lotse</PageTitle>
 
@@ -67,6 +69,17 @@ else
         {
             <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Einstufung am @done.ToLocalTime().ToString("dd.MM.yyyy") abgeschlossen.</MudText>
         }
+    </MudPaper>
+
+    @* Applies at once, no Speichern: it is a property of this browser, not of the learner's plan. *@
+    <MudPaper Class="pa-4 mb-3" Elevation="1" id="design">
+        <MudText Typo="Typo.subtitle1" Style="font-weight:600" Class="mb-1">Design</MudText>
+        <MudRadioGroup T="Lotse.Web.Services.ThemeChoice" Value="Theme.Choice" ValueChanged="Theme.SetAsync" aria-label="Design">
+            <MudRadio T="Lotse.Web.Services.ThemeChoice" Value="Lotse.Web.Services.ThemeChoice.System" Color="Color.Primary">Wie das Gerät</MudRadio>
+            <MudRadio T="Lotse.Web.Services.ThemeChoice" Value="Lotse.Web.Services.ThemeChoice.Light" Color="Color.Primary">Hell</MudRadio>
+            <MudRadio T="Lotse.Web.Services.ThemeChoice" Value="Lotse.Web.Services.ThemeChoice.Dark" Color="Color.Primary">Dunkel</MudRadio>
+        </MudRadioGroup>
+        <MudText Typo="Typo.caption" Class="d-block" Style="color:var(--mud-palette-text-secondary)">Gilt sofort und nur in diesem Browser. „Wie das Gerät“ wechselt mit, wenn Handy oder PC abends auf dunkel umstellen.</MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 mb-3" Elevation="1" id="tutor">
@@ -243,7 +256,13 @@ else
         _baseUrl = s.BaseUrl;
         _effort = s.Effort;
         _timeout = s.TimeoutSeconds;
+        // The moon button in the bar changes the choice too; the radio group has to show it.
+        Theme.Changed += OnThemeChanged;
     }
+
+    private void OnThemeChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Theme.Changed -= OnThemeChanged;
 
     private void OnPresetChanged(string id)
     {

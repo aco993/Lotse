@@ -159,10 +159,6 @@ export function stopRecognition() {
     }
 }
 
-export function prefersDark() {
-    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-}
-
 export function focusElement(id) {
     const el = document.getElementById(id);
     if (el) el.focus();
