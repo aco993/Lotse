@@ -170,7 +170,7 @@ else
                 <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Text" Class="mt-2">@string.Join(" ", _repairLog)</MudAlert>
             }
         }
-        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color:var(--mud-palette-text-secondary)">Lotse @AppVersion · Inhalte: @CatalogProvider.Catalog.Nodes.Count Themen · @CatalogProvider.Catalog.ErrorTypes.Count Fehlercodes · @CatalogProvider.SeedExerciseCount Übungen · @CatalogProvider.GeneratedExerciseCount generiert. Maschinenlesbar: <MudLink Href="/health" Target="_blank">/health</MudLink></MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 mb-3" Elevation="1" id="daten">
@@ -261,6 +261,19 @@ else
     }
 
     private void OnThemeChanged() => _ = InvokeAsync(StateHasChanged);
+
+    // The version from Directory.Build.props, with the commit the SDK appends ("0.10.0+57e2f3f…") cut to seven
+    // characters: enough to say exactly which build someone is running when they report a problem.
+    private static readonly string AppVersion = FormatVersion(typeof(Einstellungen).Assembly
+        .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+        .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion);
+
+    public static string FormatVersion(string? informational)
+    {
+        if (string.IsNullOrWhiteSpace(informational)) return "?";
+        var plus = informational.IndexOf('+');
+        return plus < 0 ? informational : $"{informational[..plus]} ({informational[(plus + 1)..Math.Min(informational.Length, plus + 8)]})";
+    }
 
     public void Dispose() => Theme.Changed -= OnThemeChanged;
 

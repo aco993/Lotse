@@ -1,0 +1,15 @@
+{
+  "hints": {
+    "rater": "ollama \u00B7 qwen2.5-lotse",
+    "asked": 40,
+    "failed": 0,
+    "leaked": 9,
+    "questions": 22,
+    "medianLatencyMs": 40057,
+    "shown": 34,
+    "leakRate": 0.225,
+    "questionRate": 0.6470588235294118,
+    "shownRate": 0.85
+  },
+  "utc": "2026-11-22T14:44:29.7265349Z"
+}

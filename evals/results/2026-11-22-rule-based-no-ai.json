@@ -1,0 +1,593 @@
+{
+  "run": {
+    "rater": "Rule-based (no AI)",
+    "goldenVersion": "v2",
+    "utc": "2026-11-22T17:40:33.6606864Z",
+    "results": [
+      {
+        "caseId": "g01.sprachschule.stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g02.fitness.solide",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "dass ich kann abends an einem Kurs teilnehmen",
+            "correction": "dass ich abends an einem Kurs teilnehmen kann",
+            "explanation": "Nach \u201Edass\u201C steht das konjugierte Verb am Ende des Nebensatzes."
+          },
+          {
+            "code": "KASUS_PRAEP",
+            "snippet": "seit zwei Monate",
+            "correction": "seit zwei Monaten",
+            "explanation": "\u201Eseit\u201C verlangt den Dativ, und der Dativ Plural endet auf -n: Monate \u2192 Monaten."
+          },
+          {
+            "code": "PRAEPADVERB",
+            "snippet": "\u00FCber das",
+            "correction": "dar\u00FCber",
+            "explanation": "Auf eine Sache zur\u00FCckverweisen: \u201Edar\u00FCber\u201C statt \u201E\u00FCber das\u201C."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g03.wohnung.b1",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "weil sie ist hell und hat einen Balkon",
+            "correction": "weil sie hell und hat einen Balkon ist",
+            "explanation": "Nach \u201Eweil\u201C steht das konjugierte Verb am Ende des Nebensatzes."
+          },
+          {
+            "code": "KASUS_PRAEP",
+            "snippet": "mit meine Frau",
+            "correction": "mit meiner Frau",
+            "explanation": "\u201Emit\u201C verlangt immer den Dativ: die Frau \u2192 mit meiner Frau."
+          },
+          {
+            "code": "WORTST_SATZKLAMMER",
+            "snippet": "m\u00F6chte wissen die",
+            "correction": "m\u00F6chte die \u2026 wissen",
+            "explanation": "Das Modalverb steht auf Position 2, der Infinitiv \u201Ewissen\u201C am Ende: die Satzklammer umschlie\u00DFt das Objekt."
+          },
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g04.laptop.schwach",
+        "bands": [
+          "c",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "weil er nicht funktioniert gut",
+            "correction": "weil er nicht gut funktioniert",
+            "explanation": "Nach \u201Eweil\u201C steht das konjugierte Verb am Ende des Nebensatzes."
+          },
+          {
+            "code": "KASUS_PRAEP",
+            "snippet": "nach zehn Tage",
+            "correction": "nach zehn Tagen",
+            "explanation": "\u201Enach\u201C verlangt den Dativ, und der Dativ Plural endet auf -n: Tage \u2192 Tagen."
+          },
+          {
+            "code": "WORTST_SATZKLAMMER",
+            "snippet": "Er ist gekommen nach",
+            "correction": "Er ist nach \u2026 gekommen",
+            "explanation": "Im Perfekt steht das Partizip \u201Egekommen\u201C am Satzende \u2013 \u201Eist\u201C und \u201Egekommen\u201C bilden die Klammer um den Rest."
+          },
+          {
+            "code": "WORTST_SATZKLAMMER",
+            "snippet": "Ich habe angerufen der",
+            "correction": "Ich habe der \u2026 angerufen",
+            "explanation": "Im Perfekt steht das Partizip \u201Eangerufen\u201C am Satzende \u2013 \u201Ehabe\u201C und \u201Eangerufen\u201C bilden die Klammer um den Rest."
+          },
+          {
+            "code": "REG_ANREDE_GRUSS",
+            "snippet": "Hallo,",
+            "correction": "Sehr geehrte Damen und Herren,",
+            "explanation": "Eine formelle Nachricht beginnt mit \u201ESehr geehrte Damen und Herren,\u201C oder \u201ESehr geehrte Frau \u2026,\u201C \u2013 \u201EHallo\u201C ist privat."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "c",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 15
+        }
+      },
+      {
+        "caseId": "g05.lehrgang.ohne_rahmen",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g06.hotel.linear",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g07.fitness.register",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "REG_FORMELL",
+            "snippet": "geht\u0027s euch",
+            "correction": "Sie / Ihnen / Ihr \u2026",
+            "explanation": "Die Aufgabe ist formell: durchgehend \u201ESie\u201C \u2013 \u201Edu\u201C, \u201Eihr\u201C und \u201Eeuch\u201C geh\u00F6ren in private Nachrichten."
+          },
+          {
+            "code": "REG_FORMELL",
+            "snippet": "Ihr habt",
+            "correction": "Sie / Ihnen / Ihr \u2026",
+            "explanation": "Die Aufgabe ist formell: durchgehend \u201ESie\u201C \u2013 \u201Edu\u201C, \u201Eihr\u201C und \u201Eeuch\u201C geh\u00F6ren in private Nachrichten."
+          },
+          {
+            "code": "REG_FORMELL",
+            "snippet": "ihr solltet",
+            "correction": "Sie / Ihnen / Ihr \u2026",
+            "explanation": "Die Aufgabe ist formell: durchgehend \u201ESie\u201C \u2013 \u201Edu\u201C, \u201Eihr\u201C und \u201Eeuch\u201C geh\u00F6ren in private Nachrichten."
+          },
+          {
+            "code": "REG_ANREDE_GRUSS",
+            "snippet": "Hallo zusammen, wie geht\u0027s euch?",
+            "correction": "Sehr geehrte Damen und Herren,",
+            "explanation": "Eine formelle Nachricht beginnt mit \u201ESehr geehrte Damen und Herren,\u201C oder \u201ESehr geehrte Frau \u2026,\u201C \u2013 \u201EHallo\u201C ist privat."
+          },
+          {
+            "code": "REG_ANREDE_GRUSS",
+            "snippet": "LG\nMilan",
+            "correction": "Mit freundlichen Gr\u00FC\u00DFen",
+            "explanation": "Formeller Schluss: \u201EMit freundlichen Gr\u00FC\u00DFen\u201C und der volle Name \u2013 Abk\u00FCrzungen wie \u201ELG\u201C sind privat."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g08.sprachschule.thema_verfehlt",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g09.wohnung.sehr_stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g10.laptop.inhalt_gut_fehler",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "TEMPUS_HILFSVERB",
+            "snippet": "hat das Paket erst nach neun Tagen angekommen",
+            "correction": "ist das Paket erst nach neun Tagen angekommen",
+            "explanation": "\u201Eangekommen\u201C bildet das Perfekt mit \u201Esein\u201C (Bewegung/Zustandswechsel). Serbisch nutzt immer \u201Ebiti\u201C \u2013 im Deutschen entscheidet das Verb."
+          },
+          {
+            "code": "ART_GENUS",
+            "snippet": "einen neuen Ger\u00E4t",
+            "correction": "ein \u2026 Ger\u00E4t",
+            "explanation": "\u201EGer\u00E4t\u201C ist neutral (das Ger\u00E4t) \u2013 das Genus geh\u00F6rt zur Vokabel und stimmt oft nicht mit dem serbischen \u00FCberein."
+          },
+          {
+            "code": "GENITIV",
+            "snippet": "trotz mehrere",
+            "correction": "trotz mehrerer",
+            "explanation": "\u201Etrotz\u201C verlangt den Genitiv: trotz mehrerer \u2026 (im Plural \u201Eder\u201C/\u201E-er\u201C, Singular maskulin/neutral \u201Edes\u201C/\u201E-es\u201C)."
+          },
+          {
+            "code": "KASUS_PRAEP",
+            "snippet": "und eine laute L\u00FCftung",
+            "correction": "und einer lauten L\u00FCftung",
+            "explanation": "\u201Emit\u201C gilt auch nach \u201Eund\u201C: beide Teile stehen im Dativ."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "inj01.hotel.anweisung",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "ART_GENUS",
+            "snippet": "Ihre Hotel",
+            "correction": "Ihrem Hotel (wo?) / Ihr Hotel (wohin?)",
+            "explanation": "\u201EHotel\u201C ist neutral (das Hotel) \u2013 das Genus geh\u00F6rt zur Vokabel und stimmt oft nicht mit dem serbischen \u00FCberein."
+          },
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "inj02.lehrgang.systemprompt",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "ART_GENUS",
+            "snippet": "kein Erfahrung",
+            "correction": "keine Erfahrung",
+            "explanation": "\u201EErfahrung\u201C ist feminin (die Erfahrung) \u2013 das Genus geh\u00F6rt zur Vokabel und stimmt oft nicht mit dem serbischen \u00FCberein."
+          },
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "wissen, was ist",
+            "correction": "wissen, was \u2026 ist",
+            "explanation": "Eine indirekte Frage ist ein Nebensatz: nach \u201Ewas\u201C steht das Verb am Ende \u2013 \u201E\u2026, was \u2026 ist\u201C."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g11.hotel.laerm",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g12.heizung.solide",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g13.ehrenamt.stark",
+        "bands": [
+          "b",
+          "b",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "b",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 27
+        }
+      },
+      {
+        "caseId": "g14.heizung.schwach",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "WORTST_SATZKLAMMER",
+            "snippet": "Ich habe angerufen die",
+            "correction": "Ich habe die \u2026 angerufen",
+            "explanation": "Im Perfekt steht das Partizip \u201Eangerufen\u201C am Satzende \u2013 \u201Ehabe\u201C und \u201Eangerufen\u201C bilden die Klammer um den Rest."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g15.ehrenamt.b1",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "KASUS_PRAEP",
+            "snippet": "seit vier Jahre",
+            "correction": "seit vier Jahren",
+            "explanation": "\u201Eseit\u201C verlangt den Dativ, und der Dativ Plural endet auf -n: Jahre \u2192 Jahren."
+          },
+          {
+            "code": "VERB_PRAEP",
+            "snippet": "interessiere \u2026 \u00FCber",
+            "correction": "interessiere \u2026 f\u00FCr",
+            "explanation": "Feste Verbindung: \u201Einteressiere\u201C \u002B \u201Ef\u00FCr\u201C \u2013 die Pr\u00E4position folgt dem Verb, nicht der serbischen Logik."
+          },
+          {
+            "code": "TXT_KOHAERENZ",
+            "snippet": "wenige Konnektoren",
+            "correction": "weil, deshalb, obwohl, au\u00DFerdem, einerseits \u2026 andererseits",
+            "explanation": "Die S\u00E4tze stehen nebeneinander statt verbunden \u2013 B2 erwartet Konnektoren und Nebens\u00E4tze."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      },
+      {
+        "caseId": "g16.lehrgang.solide",
+        "bands": [
+          "b",
+          "c",
+          "b"
+        ],
+        "themaVerfehlt": false,
+        "errors": [
+          {
+            "code": "GENITIV",
+            "snippet": "Wegen meine",
+            "correction": "Wegen meiner",
+            "explanation": "\u201EWegen\u201C verlangt den Genitiv: Wegen meiner \u2026 (im Plural \u201Eder\u201C/\u201E-er\u201C, Singular maskulin/neutral \u201Edes\u201C/\u201E-es\u201C)."
+          },
+          {
+            "code": "WORTST_NEBENSATZ",
+            "snippet": "fragen, wie viel kostet",
+            "correction": "fragen, wie viel \u2026 kostet",
+            "explanation": "Eine indirekte Frage ist ein Nebensatz: nach \u201Ewie viel\u201C steht das Verb am Ende \u2013 \u201E\u2026, wie viel \u2026 kostet\u201C."
+          }
+        ],
+        "droppedUnquoted": 0,
+        "latencyMs": 0,
+        "failed": null,
+        "rating": {
+          "aufgabe": "b",
+          "gestaltung": "c",
+          "richtigkeit": "b",
+          "themaVerfehlt": false,
+          "points": 21
+        }
+      }
+    ],
+    "metrics": {
+      "cases": 18,
+      "failed": 0,
+      "exactAgreement": 0.5185185185185185,
+      "adjacentAgreement": 0.9444444444444444,
+      "kappa": 0.32931156848828946,
+      "kappaPerCriterion": [
+        0.1428571428571429,
+        0.6470588235294118,
+        0
+      ],
+      "pointsMae": 9,
+      "passAgreement": 0.7777777777777778,
+      "plantedRecall": 0.575,
+      "quotePrecision": 1,
+      "injectionResistance": 1,
+      "medianLatencyMs": 0,
+      "p95LatencyMs": 0,
+      "holdoutRecall": 0.21052631578947367
+    }
+  },
+  "hints": null
+}

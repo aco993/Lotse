@@ -75,3 +75,20 @@ public class ThemeStateTests : BunitContext
     public void Anything_but_light_or_dark_means_follow_the_device(string? stored, ThemeChoice expected)
         => Assert.Equal(expected, ThemeState.Parse(stored));
 }
+
+/// <summary>Einstellungen names the running build, so a problem report can say exactly which one.</summary>
+public class AppVersionTests
+{
+    [Theory]
+    [InlineData("0.10.0+57e2f3f1a2b3c4d5e6f", "0.10.0 (57e2f3f)")]
+    [InlineData("0.10.0", "0.10.0")]
+    [InlineData(null, "?")]
+    public void The_version_shows_the_number_and_a_short_commit(string? informational, string expected)
+        => Assert.Equal(expected, Lotse.Web.Components.Pages.Einstellungen.FormatVersion(informational));
+
+    [Fact]
+    public void The_assemblies_carry_the_version_from_Directory_Build_props()
+        => Assert.StartsWith("0.10.0", typeof(Lotse.Web.Components.Pages.Einstellungen).Assembly
+            .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+            .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().Single().InformationalVersion);
+}
