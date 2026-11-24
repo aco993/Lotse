@@ -1,5 +1,13 @@
 # Changelog
 
+## Nicht veröffentlicht
+
+### Vier neue Sprachbausteine für die Stellen, an denen B2 am häufigsten hakt
+
+- **Zwei Texte für Teil 1** (Rundmail zum Büroumzug, Rückmeldung an eine Volkshochschule) und **zwei für Teil 2** (Mehrgenerationenhaus, Vier-Tage-Woche). Alle Texte sind eigene. Die 40 Lücken zielen auf das, was die vorhandenen zehn Texte kaum abfragten: Genitiv (vorher 0 Lücken, jetzt 7), Adjektivdeklination ohne Artikel (0 → 4), Passiv (3 → 7), Plusquamperfekt nach „nachdem“ (1 → 3), Konjunktiv II der Vergangenheit, damit vs. um … zu, „nicht brauchen zu“ und feste Nomen-Verb-Verbindungen. Damit gibt es sieben Texte je Teil statt fünf.
+- **Die richtige Antwort steht verteilt auf a, b und c.** Beim ersten Entwurf stand sie fast immer an erster Stelle, die Position hätte sie verraten. In Teil 2 ist der Kasten alphabetisch, und jedes falsche Wort ist geprüft: Es passt in keine Lücke, weder grammatisch noch inhaltlich.
+- **Pakete:** Microsoft.* 10.0.15, MudBlazor 9.14, Anthropic 13.12 und weitere (#33). Dependabots .NET-11-Pakete für eine .NET-10-App bleiben draußen, und solche Sprünge schlägt Dependabot nicht mehr vor.
+
 ## 0.10.0 – 2026-11-22
 
 ### Zweiter KI-Lauf mit Korrektur, Sperre auch für das Mündliche, Hinweise auf 40 Übungen nachgemessen
