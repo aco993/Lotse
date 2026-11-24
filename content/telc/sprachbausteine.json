@@ -519,6 +519,412 @@
           "explanation": "je + Komparativ …, desto + Komparativ …"
         }
       ]
+    },
+    {
+      "id": "sb1.umzug",
+      "teil": 1,
+      "title": "Rundmail zum Umzug ins neue Bürogebäude",
+      "text": "Liebe Kolleginnen und Kollegen,\n\nwie Sie wissen, ziehen wir Ende des Monats in das neue Gebäude am Hafen. Während [1] Umzugs bleibt unser Kundenservice telefonisch erreichbar. Die Räume sind in den letzten Wochen von einer Fachfirma vollständig renoviert [2], und auch die Netzwerktechnik wurde erneuert.\n\nNachdem die Geschäftsleitung im Frühjahr mehrere Angebote geprüft [3], fiel die Entscheidung für den Standort am Hafen. Ausschlaggebend war vor allem die gute Anbindung an [4] öffentlichen Nahverkehr. Wer trotzdem mit dem Auto kommt, findet im Untergeschoss genügend Parkplätze.\n\nBitte packen Sie Ihre Unterlagen bis Donnerstag in die bereitgestellten Kartons. Persönliche Gegenstände sollten [5] beschriftet werden, damit nichts verloren geht. Die Kartons werden am Freitag von einer Spedition abgeholt; Sie [6] also an diesem Tag nicht ins Büro zu kommen.\n\nMit [7] Ausstattung ändern sich auch einige Abläufe. So gibt es künftig keine festen Arbeitsplätze mehr, sondern Tische, die man über eine App reserviert. Eine Einführung in das System findet am Montag statt.\n\nUns ist bewusst, dass der Zeitpunkt nicht ideal ist. Eigentlich [8] der Umzug schon im Sommer stattfinden sollen, aber wegen [9] Lieferschwierigkeiten verzögerten sich die Bauarbeiten. Wir danken Ihnen für Ihr Verständnis und [10] uns auf die Zusammenarbeit in den neuen Räumen.\n\nMit freundlichen Grüßen\nPetra Lindner\nPersonalabteilung",
+      "gaps": [
+        {
+          "options": [
+            "dem",
+            "des",
+            "den"
+          ],
+          "correct": 1,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "während + Genitiv: während des Umzugs. „während dem“ hört man oft, in der Prüfung gilt der Genitiv."
+        },
+        {
+          "options": [
+            "werden",
+            "wurden",
+            "worden"
+          ],
+          "correct": 2,
+          "nodeId": "GR.PASSIV",
+          "errorCode": "PASSIV_FORM",
+          "explanation": "Perfekt Passiv: sind … renoviert worden. Nach dem Partizip steht „worden“, nicht „geworden“ und nicht „werden“."
+        },
+        {
+          "options": [
+            "hatte",
+            "hat",
+            "habe"
+          ],
+          "correct": 0,
+          "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR",
+          "errorCode": "TEMPUS_PLUSQ",
+          "explanation": "nachdem + Plusquamperfekt, wenn der Hauptsatz im Präteritum steht (fiel): Das Prüfen war vorher abgeschlossen."
+        },
+        {
+          "options": [
+            "dem",
+            "die",
+            "den"
+          ],
+          "correct": 2,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "die Anbindung an + Akkusativ: an den Nahverkehr (der Nahverkehr). „dem“ wäre Dativ."
+        },
+        {
+          "options": [
+            "deutliche",
+            "deutlich",
+            "deutlichen"
+          ],
+          "correct": 1,
+          "nodeId": "GR.ADJEKTIVDEKLINATION",
+          "errorCode": "ADJ_ENDUNG",
+          "explanation": "Hier beschreibt das Wort das Verb (wie beschriften?): Adverb, ohne Endung."
+        },
+        {
+          "options": [
+            "brauchen",
+            "müssen",
+            "sollen"
+          ],
+          "correct": 0,
+          "nodeId": "GR.INFINITIV_ZU",
+          "errorCode": "INF_ZU",
+          "explanation": "nicht brauchen + zu + Infinitiv = nicht müssen. Modalverben wie müssen und sollen stehen ohne „zu“."
+        },
+        {
+          "options": [
+            "neuen",
+            "neue",
+            "neuer"
+          ],
+          "correct": 2,
+          "nodeId": "GR.ADJEKTIVDEKLINATION",
+          "errorCode": "ADJ_ENDUNG",
+          "explanation": "mit + Dativ, die Ausstattung (feminin), kein Artikel: Das Adjektiv zeigt den Fall selbst - mit neuer Ausstattung (wie: mit neuer Software)."
+        },
+        {
+          "options": [
+            "wäre",
+            "hätte",
+            "würde"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONJUNKTIV2",
+          "errorCode": "KONJ2_FORM",
+          "explanation": "Konjunktiv II der Vergangenheit mit Modalverb: hätte … stattfinden sollen. Zwei Infinitive am Ende, das Hilfsverb ist immer „hätte“."
+        },
+        {
+          "options": [
+            "anhaltender",
+            "anhaltenden",
+            "anhaltende"
+          ],
+          "correct": 0,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "wegen + Genitiv, Plural ohne Artikel: Das Adjektiv trägt die Genitivendung -er (wegen anhaltender Lieferschwierigkeiten). „anhaltenden“ wäre der umgangssprachliche Dativ."
+        },
+        {
+          "options": [
+            "erwarten",
+            "freuen",
+            "hoffen"
+          ],
+          "correct": 1,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich freuen auf + Akkusativ (etwas Kommendes). „hoffen“ und „erwarten“ sind nicht reflexiv."
+        }
+      ]
+    },
+    {
+      "id": "sb1.kursrueckmeldung",
+      "teil": 1,
+      "title": "Rückmeldung zum Abendkurs",
+      "text": "Sehr geehrte Frau Dr. Brandt,\n\nim Namen [1] Teilnehmerinnen und Teilnehmer des Abendkurses „Deutsch im Beruf B2“ möchte ich mich herzlich bei Ihnen bedanken. Der Kurs hat uns allen sehr geholfen, und fast alle von uns haben die Prüfung im Juni bestanden.\n\nBesonders gefallen hat uns, [2] die Kursleiterin immer wieder auf unsere beruflichen Situationen eingegangen ist. Wir haben zum Beispiel geübt, wie man in einer Besprechung ein Problem [3] Sprache bringt, ohne jemanden anzugreifen.\n\nEinige Punkte möchten wir jedoch kritisch anmerken. Der Kursraum lag im dritten Stock eines Gebäudes, [4] Aufzug während des ganzen Semesters defekt war. Für eine Teilnehmerin mit [5] Knie war das ein echtes Problem. Außerdem sind mehrere Termine kurzfristig ausgefallen. Diese Stunden müssten unserer Meinung nach unbedingt nachgeholt [6]. Wenn wir früher von den Ausfällen gewusst [7], hätten wir uns schon im Mai an Sie gewandt.\n\nWir würden uns freuen, wenn der Kurs im nächsten Semester wieder angeboten würde, [8] in einem anderen Raum. Viele von uns möchten weiterlernen, [9] im nächsten Jahr die C1-Prüfung abzulegen. Bitte teilen Sie uns mit, ob ein solcher Kurs geplant ist.\n\nFür eine kurze Antwort wären wir Ihnen sehr [10].\n\nMit freundlichen Grüßen\nAna Kovačević\nKurssprecherin",
+      "gaps": [
+        {
+          "options": [
+            "den",
+            "die",
+            "der"
+          ],
+          "correct": 2,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "im Namen + Genitiv: im Namen der Teilnehmer (Plural). Wer? - die Teilnehmer; wessen Namen? - der Teilnehmer."
+        },
+        {
+          "options": [
+            "dass",
+            "ob",
+            "weil"
+          ],
+          "correct": 0,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Der Nebensatz ist das Subjekt von „gefallen“: Was hat uns gefallen? - dass … „weil“ ließe „gefallen“ ohne Subjekt."
+        },
+        {
+          "options": [
+            "in die",
+            "zur",
+            "auf die"
+          ],
+          "correct": 1,
+          "nodeId": "WS.NOMEN_VERB_VERBINDUNGEN",
+          "errorCode": "WS_KOLLOKATION",
+          "explanation": "Feste Verbindung: etwas zur Sprache bringen = ansprechen."
+        },
+        {
+          "options": [
+            "deren",
+            "dessen",
+            "dem"
+          ],
+          "correct": 1,
+          "nodeId": "GR.RELATIVSATZ",
+          "errorCode": "RELATIV_PRONOMEN",
+          "explanation": "Relativpronomen im Genitiv: das Gebäude (neutrum) - dessen Aufzug. „deren“ steht nach femininen Wörtern und im Plural."
+        },
+        {
+          "options": [
+            "verletzten",
+            "verletztes",
+            "verletztem"
+          ],
+          "correct": 2,
+          "nodeId": "GR.ADJEKTIVDEKLINATION",
+          "errorCode": "ADJ_ENDUNG",
+          "explanation": "mit + Dativ, das Knie (neutrum), ohne Artikel: Das Adjektiv übernimmt die Endung des Artikels (dem → verletztem)."
+        },
+        {
+          "options": [
+            "werden",
+            "worden",
+            "wurden"
+          ],
+          "correct": 0,
+          "nodeId": "GR.PASSIV",
+          "errorCode": "PASSIV_FORM",
+          "explanation": "Passiv mit Modalverb: Modalverb + Partizip II + werden (müssten nachgeholt werden)."
+        },
+        {
+          "options": [
+            "wären",
+            "hätten",
+            "würden"
+          ],
+          "correct": 1,
+          "nodeId": "GR.KONJUNKTIV2",
+          "errorCode": "KONJ2_FORM",
+          "explanation": "Irreale Bedingung in der Vergangenheit: wenn wir es gewusst hätten. „wissen“ bildet das Perfekt mit „haben“."
+        },
+        {
+          "options": [
+            "obwohl",
+            "sondern",
+            "allerdings"
+          ],
+          "correct": 2,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Einschränkung ohne eigenen Satz: …, allerdings in einem anderen Raum. „sondern“ braucht eine Verneinung davor, „obwohl“ einen ganzen Nebensatz."
+        },
+        {
+          "options": [
+            "um",
+            "damit",
+            "dass"
+          ],
+          "correct": 0,
+          "nodeId": "GR.INFINITIV_ZU",
+          "errorCode": "INF_ZU",
+          "explanation": "Ziel, gleiches Subjekt (viele von uns), am Ende „abzulegen“: um … zu. „damit“ bräuchte ein eigenes Subjekt und ein konjugiertes Verb."
+        },
+        {
+          "options": [
+            "danken",
+            "bedankt",
+            "dankbar"
+          ],
+          "correct": 2,
+          "nodeId": "WS.BERUF_BUERO",
+          "errorCode": "WS_LUECKE",
+          "explanation": "Feste Wendung im Brief: Für eine Antwort wären wir Ihnen dankbar."
+        }
+      ]
+    },
+    {
+      "id": "sb2.mehrgenerationen",
+      "teil": 2,
+      "title": "Jung und Alt unter einem Dach",
+      "text": "Jung und Alt unter einem Dach\n\nAls das Mehrgenerationenhaus in Freiburg vor fünf Jahren eröffnet wurde, waren viele skeptisch. Heute leben dort 45 Menschen [1] Alters: Das jüngste Kind ist drei, die älteste Bewohnerin 89 Jahre alt. Die Idee ist einfach: Die Älteren helfen bei der Kinderbetreuung, die Jüngeren übernehmen Einkäufe oder kleine Reparaturen. [2] gibt es jede Woche einen gemeinsamen Abend, an dem gekocht und gespielt wird.\n\nDie meisten Bewohner haben sich ganz bewusst [3] diese Wohnform entschieden. Viele von ihnen hatten vorher allein gelebt und sich oft einsam gefühlt, [4] sie nach einer neuen Lösung suchten. Inzwischen wird das Projekt [5] einer Stiftung unterstützt, die einen Teil der Kosten übernimmt. Ohne diese Hilfe [6] die Miete für viele Familien kaum bezahlbar.\n\nNatürlich gibt es auch Konflikte, etwa [7] des Lärms im Treppenhaus. Solche Probleme werden in einer Versammlung besprochen, [8] Termin jeden Monat im Hausflur aushängt. Die Stadt plant nun, ähnliche Häuser auch in anderen Stadtteilen zu bauen. Bis [9] ersten Bewohner dort einziehen können, werden allerdings noch einige Jahre vergehen. Wer Interesse hat, kann sich schon jetzt [10] der Hausverwaltung melden.",
+      "box": [
+        "außerdem",
+        "bei",
+        "deren",
+        "dessen",
+        "die",
+        "für",
+        "obwohl",
+        "sondern",
+        "trotz",
+        "unterschiedlichen",
+        "von",
+        "wegen",
+        "weshalb",
+        "wäre",
+        "würde"
+      ],
+      "gaps": [
+        {
+          "correct": 9,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "Genitivattribut ohne Artikel: Menschen unterschiedlichen Alters (das Alter → des Alters). Ohne Artikel endet das Adjektiv hier auf -en, weil das Nomen das -s schon trägt."
+        },
+        {
+          "correct": 0,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_STELLUNG",
+          "explanation": "Das Verb (gibt) folgt direkt: ein Adverb auf Position 1, das etwas hinzufügt - außerdem. „obwohl“ schickt das Verb ans Ende, „sondern“ braucht eine Verneinung davor."
+        },
+        {
+          "correct": 5,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich entscheiden für + Akkusativ."
+        },
+        {
+          "correct": 12,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Folge, Verb am Ende (suchten): weshalb = und deshalb. „obwohl“ ergäbe einen Widerspruch, der hier nicht gemeint ist."
+        },
+        {
+          "correct": 10,
+          "nodeId": "GR.PASSIV",
+          "errorCode": "PASSIV_FORM",
+          "explanation": "Im Passiv steht der Handelnde mit „von“ + Dativ: wird von einer Stiftung unterstützt."
+        },
+        {
+          "correct": 13,
+          "nodeId": "GR.KONJUNKTIV2",
+          "errorCode": "KONJ2_FORM",
+          "explanation": "Irreale Folge (ohne diese Hilfe = wenn es die Hilfe nicht gäbe): wäre bezahlbar. „würde“ bräuchte am Ende noch „sein“."
+        },
+        {
+          "correct": 11,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "Grund + Genitiv: wegen des Lärms. „trotz“ ergibt hier keinen Sinn - der Lärm ist der Grund für den Streit."
+        },
+        {
+          "correct": 2,
+          "nodeId": "GR.RELATIVSATZ",
+          "errorCode": "RELATIV_PRONOMEN",
+          "explanation": "Relativpronomen im Genitiv: die Versammlung (feminin) - deren Termin. „dessen“ steht nach maskulinen und neutralen Wörtern."
+        },
+        {
+          "correct": 4,
+          "nodeId": "GR.ARTIKEL_GENUS",
+          "errorCode": "ART_FEHLT",
+          "explanation": "bis = Nebensatz-Konnektor (bis die Bewohner einziehen); danach der Artikel im Nominativ Plural: die ersten Bewohner."
+        },
+        {
+          "correct": 1,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "VERB_PRAEP",
+          "explanation": "sich bei jemandem melden (Kontakt aufnehmen)."
+        }
+      ]
+    },
+    {
+      "id": "sb2.viertagewoche",
+      "teil": 2,
+      "title": "Vier Tage arbeiten, drei Tage frei",
+      "text": "Vier Tage arbeiten, drei Tage frei\n\nEin Softwareunternehmen aus Leipzig hat im vergangenen Jahr die Vier-Tage-Woche ausprobiert. [1] des Versuchs arbeiteten die 60 Beschäftigten bei vollem Lohn nur 32 Stunden pro Woche. Die Geschäftsführung hatte sich lange [2] gewehrt, gab aber schließlich dem Wunsch der Belegschaft nach.\n\nNachdem man die ersten drei Monate ausgewertet [3], zog man eine Zwischenbilanz. Das Ergebnis überraschte selbst die Skeptiker: Die Zahl der Krankheitstage ging deutlich zurück, und die Kunden bemerkten [4] Unterschied. Allerdings zeigte sich auch, [5] nicht alle Abteilungen gleichermaßen profitierten. Im Kundenservice musste ein Schichtsystem eingeführt [6], [7] die Telefone auch freitags besetzt waren. Einige Beschäftigte klagten zudem über [8] Druck, weil sie die gleiche Arbeit in weniger Zeit erledigen mussten.\n\nTrotz [9] Einwände hat sich die Firma entschieden, das Modell beizubehalten. Wer sich dort bewirbt, sollte allerdings wissen: Die Arbeit an den vier Tagen ist intensiver als früher, und [10] man Überstunden macht, muss man sie innerhalb eines Monats ausgleichen.",
+      "box": [
+        "dagegen",
+        "damit",
+        "dass",
+        "denen",
+        "dieser",
+        "hat",
+        "hatte",
+        "höheren",
+        "höherer",
+        "keinen",
+        "nicht",
+        "um",
+        "wenn",
+        "werden",
+        "während"
+      ],
+      "gaps": [
+        {
+          "correct": 14,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "Zeitraum + Genitiv: während des Versuchs."
+        },
+        {
+          "correct": 0,
+          "nodeId": "GR.VERB_PRAEPOSITION",
+          "errorCode": "PRAEPADVERB",
+          "explanation": "sich wehren gegen etwas; steht die Sache nicht da, sagt man: sich dagegen wehren."
+        },
+        {
+          "correct": 6,
+          "nodeId": "GR.PLUSQUAMPERFEKT_FUTUR",
+          "errorCode": "TEMPUS_PLUSQ",
+          "explanation": "nachdem + Plusquamperfekt vor einem Hauptsatz im Präteritum (zog): ausgewertet hatte. „hat“ wäre eine Zeitstufe zu spät."
+        },
+        {
+          "correct": 9,
+          "nodeId": "GR.NEGATION",
+          "errorCode": "NEGATION",
+          "explanation": "Ein Nomen ohne Artikel (Unterschied, maskulin, Akkusativ) wird mit „kein“ verneint: keinen Unterschied, nicht „nicht Unterschied“."
+        },
+        {
+          "correct": 2,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Es zeigte sich, dass … - der Nebensatz sagt, was sich zeigte."
+        },
+        {
+          "correct": 13,
+          "nodeId": "GR.PASSIV",
+          "errorCode": "PASSIV_FORM",
+          "explanation": "Passiv mit Modalverb: musste eingeführt werden."
+        },
+        {
+          "correct": 1,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Zweck mit eigenem Subjekt (die Telefone) und konjugiertem Verb (waren): damit. „um … zu“ ginge nur mit gleichem Subjekt und Infinitiv."
+        },
+        {
+          "correct": 7,
+          "nodeId": "GR.ADJEKTIVDEKLINATION",
+          "errorCode": "ADJ_ENDUNG",
+          "explanation": "über + Akkusativ, der Druck (maskulin), ohne Artikel: höheren Druck (wie: den Druck → höheren)."
+        },
+        {
+          "correct": 4,
+          "nodeId": "GR.GENITIV",
+          "errorCode": "GENITIV",
+          "explanation": "trotz + Genitiv Plural: trotz dieser Einwände. „diesen“ wäre Dativ, dann hieße es „Einwänden“."
+        },
+        {
+          "correct": 12,
+          "nodeId": "GR.KONNEKTOREN",
+          "errorCode": "KONNEKTOR_WAHL",
+          "explanation": "Bedingung, Verb am Ende: wenn man Überstunden macht, …"
+        }
+      ]
     }
   ]
 }
