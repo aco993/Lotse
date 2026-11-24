@@ -14,6 +14,10 @@ It is not a course. It is a closed loop: every answer updates a per-topic abilit
 >
 > Languages, deliberately: docs and code comments in English; the app's interface, changelog and commit messages in German (the language being learned); the user guide in Serbian, the learner's first language.
 
+<p align="center"><img src="docs/screenshots/tour.gif" width="300" alt="A twenty-second tour on a phone: sign-in with the demo account, Heute, a three-minute session with an exercise and its correction, the telc overview with a points forecast, a Sprachbausteine task, rule-based findings in a telc email, Fortschritt, and the dark design"></p>
+
+**Try it on Windows without installing anything:** download `Lotse-<version>-win-x64.zip` from the [latest release](https://github.com/aco993/Lotse/releases/latest), unzip, double-click `Lotse starten.cmd`.
+
 ## At a glance
 
 - **A closed loop, not a course.** Rasch/Elo ability per skill node, FSRS-6 spaced repetition fitted to the learner, a planner that explains every choice, and a 7/21/60-day re-check for recovered weaknesses. Deterministic and unit-tested.
