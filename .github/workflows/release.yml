@@ -60,9 +60,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
+        # "release not found" is the normal case for a new tag. The runner's pwsh turns a native command's non-zero
+        # exit into a terminating error, which ended the step right here on v0.10.0 - no release was ever created.
         run: |
-          gh release view $env:GITHUB_REF_NAME 2>$null
+          $PSNativeCommandUseErrorActionPreference = $false
+          gh release view $env:GITHUB_REF_NAME *> $null
           if ($LASTEXITCODE -ne 0) {
             gh release create $env:GITHUB_REF_NAME --title "Lotse $env:GITHUB_REF_NAME" --notes "Windows-Paket: entpacken, „Lotse starten.cmd“ doppelklicken. Änderungen: siehe CHANGELOG.md."
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
           gh release upload $env:GITHUB_REF_NAME $env:PACKAGE --clobber
+          exit $LASTEXITCODE
