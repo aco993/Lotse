@@ -8,6 +8,14 @@ updates:
     groups:
       dotnet-and-tests:
         patterns: ["*"]
+    # The app targets .NET 10 (global.json). A Microsoft.* package from the next major ships the next runtime's
+    # Microsoft.Extensions assemblies and shadows the shared framework's own: #29 mixed 11.0.0 DataProtection and
+    # Hosting into a net10.0 app. Majors of these come with the SDK switch, by hand, never as a weekly bump.
+    ignore:
+      - dependency-name: "Microsoft.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "dotnet-ef"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
