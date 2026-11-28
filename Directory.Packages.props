@@ -13,7 +13,7 @@
          in the ASP.NET Core shared framework already referenced by Lotse.Web (Microsoft.NET.Sdk.Web) - no separate
          package needed for those. -->
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.15" />
-    <PackageVersion Include="Anthropic" Version="13.13.0" />
+    <PackageVersion Include="Anthropic" Version="13.14.0" />
     <!-- tools/Lotse.Mcp: the official C# SDK of the Model Context Protocol, and the generic host it runs in. -->
     <PackageVersion Include="ModelContextProtocol" Version="2.4.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.15" />
